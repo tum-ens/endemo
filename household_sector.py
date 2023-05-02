@@ -1,4 +1,4 @@
-from Sector import Sector
+from sector import Sector
 
 
 class Household(Sector):

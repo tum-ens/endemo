@@ -23,7 +23,7 @@ class ControlParameters:
 
     def get_active_sectors(self):
         # returns a list of sectors activated for calculation
-        return [sector for (sector, isActive) in self._sectors_active_values.items() if isActive is 1 ]
+        return [sector for (sector, isActive) in self._sectors_active_values.items() if isActive is 1]
 
     def get_parameter(self, name):
         # return the parameter value by parameter name with meaningful error message
