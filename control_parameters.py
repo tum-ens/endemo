@@ -6,9 +6,7 @@ class ControlParameters:
     _sectors_active_values = dict()
     _parameter_values = dict()
 
-    def __init__(self, excel):
-        assert isinstance(excel, pd.DataFrame)
-
+    def __init__(self, excel: pd.DataFrame):
         rows_it = pd.DataFrame(excel).itertuples()
 
         for row in rows_it:
@@ -25,7 +23,7 @@ class ControlParameters:
         # returns a list of sectors activated for calculation
         return [sector for (sector, isActive) in self._sectors_active_values.items() if isActive is 1]
 
-    def get_parameter(self, name):
+    def get_parameter(self, name: str):
         # return the parameter value by parameter name with meaningful error message
         try:
             return self._parameter_values[name]
