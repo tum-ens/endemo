@@ -66,7 +66,30 @@ def filter_out_NaN_and_Inf(data: list[(float, float)]):
 
     return filter_out_Inf(filter_out_NaN(data))
 
-def combine_data_on_x(new_x: list[(float, float)], new_y: list[(float, float)]):
-    pass
+def combine_data_on_x(new_x: list[(float, float)], new_y: list[(float, float)], ascending_x = False):
+    res = []
 
+    if ascending_x:
+        # runtime in O(n)
+        j = i = 0
+        while True:
+            if i >= len(new_x) or j >= len(new_y):
+                break
+            elif new_x[i][0] < new_y[j][0]:
+                i += 1
+                continue
+            elif new_x[i][0] == new_y[j][0]:
+                res.append((new_x[i][1], new_y[j][1]))
+                i += 1
+                continue
+            elif new_x[i][0] > new_y[j][0]:
+                j += 1
+                continue
+    else:
+        # runtime in O(n^2)
+        for i in range(0, len(new_x)):
+            for j in range(0, len(new_y)):
+                if new_x[i][0] == new_y[j][0]:
+                    res.append((new_x[i][1], new_y[j][1]))
 
+    return res
