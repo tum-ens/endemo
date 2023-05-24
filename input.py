@@ -1,0 +1,6 @@
+
+
+class Input:
+
+    pass
+

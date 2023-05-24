@@ -1,3 +1,4 @@
+from collections import namedtuple
 from typing import Tuple, List
 import numpy as np
 import matplotlib.pyplot as plt
@@ -47,6 +48,17 @@ def const_change(start_point: (float, float), change_rate: float, target_x: floa
     result = start_point + (target_x-start_x) * change_rate
     return result
 
+def lin_prediction(coef: (float, float), target_x: float):
+    k0 = coef[0]
+    k1 = coef[1]
+    return k0 + k1 * target_x
+
+def quadr_prediction(coef: (float, float, float), target_x: float):
+    k0 = coef[0]
+    k1 = coef[1]
+    k2 = coef[2]
+    return k0 + k1 * target_x + k2 * target_x**2
+
 def quadratic_regression_delta(data: list[(float, float)], visualize: bool = False) \
         -> ((float, float, float), dict[str, float]):
 
@@ -66,30 +78,36 @@ def filter_out_NaN_and_Inf(data: list[(float, float)]):
 
     return filter_out_Inf(filter_out_NaN(data))
 
+
+def zip_on_x(a: list[(float, float)], b: list[(float, float)]) -> ((float, float), (float, float)):
+    j = i = 0
+    while True:
+        if i >= len(a) or j >= len(b):
+            break
+        elif a[i][0] < b[j][0]:
+            i += 1
+            continue
+        elif a[i][0] == b[j][0]:
+            yield a[i], b[j]
+            i += 1
+            continue
+        elif a[i][0] > b[j][0]:
+            j += 1
+            continue
+
+
 def combine_data_on_x(new_x: list[(float, float)], new_y: list[(float, float)], ascending_x = False):
     res = []
 
     if ascending_x:
         # runtime in O(n)
-        j = i = 0
-        while True:
-            if i >= len(new_x) or j >= len(new_y):
-                break
-            elif new_x[i][0] < new_y[j][0]:
-                i += 1
-                continue
-            elif new_x[i][0] == new_y[j][0]:
-                res.append((new_x[i][1], new_y[j][1]))
-                i += 1
-                continue
-            elif new_x[i][0] > new_y[j][0]:
-                j += 1
-                continue
+        zipped = list(zip_on_x(new_x, new_y))
+        res = list(map(lambda arg: (arg[0][1], arg[1][1]), zipped))
     else:
         # runtime in O(n^2)
         for i in range(0, len(new_x)):
             for j in range(0, len(new_y)):
                 if new_x[i][0] == new_y[j][0]:
                     res.append((new_x[i][1], new_y[j][1]))
-
     return res
+
