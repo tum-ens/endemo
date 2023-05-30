@@ -1,34 +1,56 @@
 from collections import namedtuple
+from enum import Enum
+
 import numpy as np
 import utility as uty
 from statistics import mean
 
-Const = namedtuple("Const", ["k0"])
+Exp = namedtuple("Exp", ["x0", "y0", "r"]) # y(x) = y0 * (1+r)^(x - x0)
 Lin = namedtuple("Lin", ["k0", "k1"])
 Quadr = namedtuple("Quadr", ["k0", "k1", "k2"])
-Coef = namedtuple("Coef", ["const", "lin", "quadr"])
+Coef = namedtuple("Coef", ["exp", "lin", "quadr"])
 
 Interval = namedtuple("Interval", ["start", "end"])
+
+
+class StartPoint(Enum):
+    LAST_AVAILABLE = 0
+    AVERAGE_VALUE = 1
+    MANUAL = 2
 
 
 class Timeseries:
 
     _data: list[(float, float)]
-    _coef: Coef[Const, Lin, Quadr]
+    _coef: Coef[Exp, Lin, Quadr]
 
-    def __init__(self, data, setup_const=False, setup_lin=False, setup_quadr=False, rate_of_change=np.NaN):
+    def __init__(self, data, setup_exp=False, setup_lin=False, setup_quadr=False, rate_of_change=np.NaN):
         self._data = data
 
-        if setup_const:
+        if setup_exp:
             assert(rate_of_change is not np.NaN)
-            self._set_coef_const(rate_of_change)
+            self._set_coef_exp(rate_of_change, StartPoint.LAST_AVAILABLE)
         if setup_lin:
             self._calc_coef_lin()
         if setup_quadr:
             self._calc_coef_quadr()
 
-    def _set_coef_const(self, rate_of_change: float):
-        self._coef.const.k0 = rate_of_change
+    def _set_coef_exp(self, rate_of_change, start_point: StartPoint, manual: (float, float) = (0, 0)):
+        # TODO: implement manual startpoint in excel sheets
+        (start_x, start_y) = (0, 0)
+        match start_point:
+            case StartPoint.LAST_AVAILABLE:
+                (start_x, start_y) = self._data[-1]
+            case StartPoint.AVERAGE_VALUE:
+                (split_x, split_y) = zip(*self._data)
+                start_x = mean(split_x)
+                start_y = mean(split_y)
+            case StartPoint.MANUAL:
+                (start_x, start_y) = manual
+
+        self._coef.exp.x0 = start_x
+        self._coef.exp.y0 = start_y
+        self._coef.exp.r = rate_of_change
 
     def _calc_coef_lin(self):
         self._coef.lin = uty.linear_regression(self._data)
@@ -39,19 +61,14 @@ class Timeseries:
     def get_data(self) -> list[(float, float)]:
         return self._data
 
-    def get_prog_const(self, x) -> float:
-        return uty.const_change(start_point=self._data[-1], change_rate=self._coef.const.k0, target_x=x)
+    def get_prog_exp(self, x) -> float:
+        return uty.exp_change(start_point=self._data[-1], change_rate=self._coef.exp.k0, target_x=x)
 
     def get_prog_lin(self, x) -> float:
         return uty.lin_prediction(self._coef.lin, x)
 
     def get_prog_quadr(self, x) -> float:
         return uty.quadr_prediction(self._coef.lin, x)
-
-    def get_prog_const_mean(self, x) -> float:
-        avg = mean([y for (_, y) in self._data])
-        last_x = self._data[-1][0]
-        return uty.const_change((last_x, avg), self._coef.const.k0, x)
 
 
 class PredictedTimeseries(Timeseries):

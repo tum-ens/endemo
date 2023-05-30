@@ -9,6 +9,11 @@ class Demand:
     heat: Heat
     hydrogen: float
 
+    def __init__(self):
+        self.electricity = 0
+        self.heat = Heat(0, 0, 0, 0)
+        self.hydrogen = 0
+
     def __init__(self, electricity: float, heat: (float, float, float, float), hydrogen: float):
         self.electricity = electricity
         self.heat = heat

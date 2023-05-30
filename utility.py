@@ -1,3 +1,4 @@
+import warnings
 from collections import namedtuple
 from typing import Tuple, List
 import numpy as np
@@ -43,22 +44,6 @@ def quadratic_regression(data: list[(float, float)], visualize: bool = False) ->
 
     return k0, k1, k2
 
-def const_change(start_point: (float, float), change_rate: float, target_x: float) -> float:
-    (start_x, start_y) = start_point
-    result = start_point + (target_x-start_x) * change_rate
-    return result
-
-def lin_prediction(coef: (float, float), target_x: float):
-    k0 = coef[0]
-    k1 = coef[1]
-    return k0 + k1 * target_x
-
-def quadr_prediction(coef: (float, float, float), target_x: float):
-    k0 = coef[0]
-    k1 = coef[1]
-    k2 = coef[2]
-    return k0 + k1 * target_x + k2 * target_x**2
-
 def quadratic_regression_delta(data: list[(float, float)], visualize: bool = False) \
         -> ((float, float, float), dict[str, float]):
 
@@ -72,6 +57,25 @@ def quadratic_regression_delta(data: list[(float, float)], visualize: bool = Fal
 
     pass
 
+
+def exp_change(start_point: (float, float), change_rate: float, target_x: float) -> float:
+    (start_x, start_y) = start_point
+    result = start_y * (1 + change_rate)**(target_x - start_x)
+    return result
+
+
+def lin_prediction(coef: (float, float), target_x: float):
+    k0 = coef[0]
+    k1 = coef[1]
+    return k0 + k1 * target_x
+
+
+def quadr_prediction(coef: (float, float, float), target_x: float):
+    k0 = coef[0]
+    k1 = coef[1]
+    k2 = coef[2]
+    return k0 + k1 * target_x + k2 * target_x**2
+
 def filter_out_NaN_and_Inf(data: list[(float, float)]):
     filter_out_NaN = lambda data: [(x, y) for (x, y) in data if not math.isnan(x) and not math.isnan(y)]
     filter_out_Inf = lambda data: [(x, y) for (x, y) in data if not math.isinf(x) and not math.isinf(y)]
@@ -79,6 +83,7 @@ def filter_out_NaN_and_Inf(data: list[(float, float)]):
     return filter_out_Inf(filter_out_NaN(data))
 
 
+# zip 2 lists, where they have the same x value. Works only on ascending x values!!
 def zip_on_x(a: list[(float, float)], b: list[(float, float)]) -> ((float, float), (float, float)):
     j = i = 0
     while True:
@@ -104,6 +109,7 @@ def combine_data_on_x(new_x: list[(float, float)], new_y: list[(float, float)], 
         zipped = list(zip_on_x(new_x, new_y))
         res = list(map(lambda arg: (arg[0][1], arg[1][1]), zipped))
     else:
+        warnings.warn("Are you sure, that your data on x axis is not ascending?")
         # runtime in O(n^2)
         for i in range(0, len(new_x)):
             for j in range(0, len(new_y)):
