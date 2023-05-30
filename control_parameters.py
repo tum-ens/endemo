@@ -36,7 +36,8 @@ class IndustrySettings:
     h2_subst_of_heat: float
     skip_years: [int]
     last_available_year: int
-    products: dict[str, ProductSettings]
+    product_settings: dict[str, ProductSettings]
+    active_product_names = []
 
     def __init__(self, general_ex: pd.DataFrame, subsectors_ex: pd.DataFrame):
         forecast_method_string = general_ex[general_ex["Parameter"] == "Forecast method"].get("Value")
@@ -72,6 +73,12 @@ class IndustrySettings:
                 subsectors_ex[subsectors_ex["Subsectors"] == product].get("Parameter: technology substitution in %")
             sub_perc_used_float = float(sub_perc_used_string)
             settings.sub_perc_used = sub_perc_used_float / 100 if sub_perc_used_float != np.NaN else 100
+
+            self.product_settings[product] = settings
+
+            if settings.active:
+                self.active_product_names.append(product)
+
 
 
 class CountrySettings:

@@ -17,16 +17,6 @@ class Product:
     _bat: BAT
     _perc_used: float
     _exp_change_rate: float
-
-    def __init__(self, specific_consumption: SC, bat: BAT):
-        self._specific_consumption = specific_consumption
-        self._bat = bat
-
-    def calculate_demand(self, year: int) -> Demand:
-        raise NotImplementedError
-
-
-class ProductHistorical(Product):
     _amount_per_year: Timeseries
     _amount_per_gdp: Timeseries
     _amount_per_capita_per_year: Timeseries
@@ -34,7 +24,8 @@ class ProductHistorical(Product):
 
     def __init__(self, specific_consumption: SC, bat: BAT, amount_per_year: Timeseries, population: PredictedTimeseries = None,
                  gdp: TimeStepSequence = None):
-        super().__init__(specific_consumption, bat)
+        self._specific_consumption = specific_consumption
+        self._bat = bat
         self._amount_per_year = amount_per_year
 
         if population:
@@ -49,18 +40,16 @@ class ProductHistorical(Product):
                 _amount_per_capita_per_gdp = \
                     Timeseries(list(map(lambda arg: (arg[0][0], arg[0][1] / arg[1][1]), zipped)))
 
-    @overrides(Product)
     def calculate_demand(self, year: int) -> Demand:
-        # multiply by perc_used in the end
         raise NotImplementedError
 
 
-class ProductPrimSec(Product):
-    _primary: ProductHistorical
-    _secondary: ProductHistorical
-    _total: ProductHistorical
+class ProductPrimSec:
+    _primary: Product
+    _secondary: Product
+    _total: Product
 
-    def __init__(self, specific_consumption: SC, bat: BAT, prim: ProductHistorical, sec: ProductHistorical, total: ProductHistorical):
+    def __init__(self, specific_consumption: SC, bat: BAT, prim: Product, sec: Product, total: Product):
         super().__init__()
         self._primary = prim
         self._secondary = sec
@@ -69,17 +58,6 @@ class ProductPrimSec(Product):
     @overrides(Product)
     def calculate_demand(self, year: int) -> Demand:
         raise NotImplementedError
-
-
-class ProductFutureTech(Product):
-    _historical_counterpart: ProductHistorical
-
-    @overrides(Product)
-    def calculate_demand(self, year: int) -> Demand:
-        raise NotImplementedError
-
-
-
 
 
 
