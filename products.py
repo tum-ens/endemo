@@ -55,7 +55,6 @@ class ProductPrimSec:
         self._secondary = sec
         self._total = total
 
-    @overrides(Product)
     def calculate_demand(self, year: int) -> Demand:
         raise NotImplementedError
 

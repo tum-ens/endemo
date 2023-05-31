@@ -1,3 +1,4 @@
+from input import Input
 from prediction_models import PredictedTimeseries, TimeStepSequence
 from sector import Sector
 
@@ -9,6 +10,5 @@ class Country:
     _gdp: TimeStepSequence
     _sectors: dict[str, Sector]
 
-    def __init__(self, name: str, abbreviations: [str]):
+    def __init__(self, name: str, input_manager: Input):
         self._name = name
-        self._abbreviations = abbreviations

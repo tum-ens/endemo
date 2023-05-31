@@ -8,6 +8,7 @@ import pandas as pd
 
 ProductSettings = namedtuple("ProductSettings", ("active", "prod_quant_change", "sub_perc_used"))
 
+
 class ForecastMethod(Enum):
     LINEAR = 0
     QUADRATIC = 1
@@ -19,15 +20,16 @@ class ControlParameters:
     country_settings: CountrySettings
     industry_settings: IndustrySettings
 
-    def __init__(self, general_settings: GeneralSettings, country_settings: CountrySettings, industry_settings: IndustrySettings):
+    def __init__(self, general_settings: GeneralSettings, country_settings: CountrySettings,
+                 industry_settings: IndustrySettings):
         self.general_settings = general_settings
         self.country_settings = country_settings
         self.industry_settings = industry_settings
 
 
 class IndustrySettings:
-
-    forecast_map = {"Trend":ForecastMethod.LINEAR, "U-shape": ForecastMethod.QUADRATIC, "Exponential": ForecastMethod.EXPONENTIAL}
+    forecast_map = dict({"Trend": ForecastMethod.LINEAR, "U-shape": ForecastMethod.QUADRATIC,
+                         "Exponential": ForecastMethod.EXPONENTIAL})
 
     forecast_method: ForecastMethod
     time_trend_model_activation_quadratic: bool
@@ -36,49 +38,54 @@ class IndustrySettings:
     h2_subst_of_heat: float
     skip_years: [int]
     last_available_year: int
-    product_settings: dict[str, ProductSettings]
+    product_settings = dict()
     active_product_names = []
 
     def __init__(self, general_ex: pd.DataFrame, subsectors_ex: pd.DataFrame):
-        forecast_method_string = general_ex[general_ex["Parameter"] == "Forecast method"].get("Value")
+        forecast_method_string = general_ex[general_ex["Parameter"] == "Forecast method"].get("Value").iloc[0]
         self.forecast_method = IndustrySettings.forecast_map[forecast_method_string]
 
         self.time_trend_model_activation_quadratic = \
-            general_ex[general_ex["Parameter"] == "Time trend model activation for U-shape method"].get("Value")
+            general_ex[general_ex["Parameter"] == "Time trend model activation for U-shape method"].get("Value").iloc[0]
 
         self.production_quantity_calc_per_capita = \
-            general_ex[general_ex["Parameter"] == "Production quantity calculated per capita"].get("Value")
+            general_ex[general_ex["Parameter"] == "Production quantity calculated per capita"].get("Value").iloc[0]
 
         self.trend_calc_for_spec = \
-            general_ex[general_ex["Parameter"] == "Trend calculation for specific energy requirements"].get("Value")
+            general_ex[general_ex["Parameter"] == "Trend calculation for specific energy requirements"].get(
+                "Value").iloc[0]
 
         self.h2_subst_of_heat = \
-            general_ex[general_ex["Parameter"] == "H2 substitution of heat"].get("Value")
+            general_ex[general_ex["Parameter"] == "H2 substitution of heat"].get("Value").iloc[0]
 
-        skip_years_string = general_ex[general_ex["Parameter"] == "Skip years"].get("Value")
+        skip_years_string = general_ex[general_ex["Parameter"] == "Skip years"].get("Value").iloc[0]
         self.skip_years = [int(i) for i in skip_years_string.split(",")]
 
         self.last_available_year = \
-            general_ex[general_ex["Parameter"] == "Last available year"].get("Value")
+            general_ex[general_ex["Parameter"] == "Last available year"].get("Value").iloc[0]
 
         product_list = subsectors_ex.get("Subsectors")
 
         for product in product_list:
-            settings = ProductSettings(False, 0, 100)
-            settings.active = \
-                subsectors_ex[subsectors_ex["Subsectors"] == product].get("Active subsectors")
-            settings.prod_quant_change = \
-                subsectors_ex[subsectors_ex["Subsectors"] == product].get("Parameter: production quantity change in %/year")
+            active = \
+                subsectors_ex[subsectors_ex["Subsectors"] == product].get(
+                    "Active subsectors").iloc[0]
+            prod_quant_change = \
+                subsectors_ex[subsectors_ex["Subsectors"] == product].get(
+                    "Parameter: production quantity change in %/year").iloc[0]
             sub_perc_used_string = \
-                subsectors_ex[subsectors_ex["Subsectors"] == product].get("Parameter: technology substitution in %")
-            sub_perc_used_float = float(sub_perc_used_string)
-            settings.sub_perc_used = sub_perc_used_float / 100 if sub_perc_used_float != np.NaN else 100
+                subsectors_ex[subsectors_ex["Subsectors"] == product].get(
+                    "Parameter: technology substitution in %").iloc[0]
+            try:
+                sub_perc_used_float = float(sub_perc_used_string)
+                sub_perc_used = sub_perc_used_float / 100
+            except ValueError:
+                sub_perc_used = 1
 
-            self.product_settings[product] = settings
+            self.product_settings[product] = ProductSettings(active, prod_quant_change, sub_perc_used)
 
-            if settings.active:
+            if self.product_settings[product].active:
                 self.active_product_names.append(product)
-
 
 
 class CountrySettings:
@@ -88,11 +95,9 @@ class CountrySettings:
     def __init__(self, excel: pd.DataFrame):
         self.recognized_countries = excel.get("Country")
         self.active_countries = excel[excel["Active"] == 1].get("Country")
-        print(self.active_countries)
 
 
 class GeneralSettings:
-
     _sectors_active_values = dict()
     _parameter_values = dict()
 
@@ -111,11 +116,12 @@ class GeneralSettings:
 
     def get_active_sectors(self):
         # returns a list of sectors activated for calculation
-        return [sector for (sector, isActive) in self._sectors_active_values.items() if isActive is 1]
+        return [sector for (sector, isActive) in self._sectors_active_values.items() if isActive == True]
 
     def get_parameter(self, name: str):
         # return the parameter value by parameter name with meaningful error message
         try:
             return self._parameter_values[name]
         except KeyError:
-            KeyError("Parameter name not found. Does the parameter access string in the code match a parameter in the Set_and_Control_Parameters.xlsx input table?")
+            KeyError(
+                "Parameter name not found. Does the parameter access string in the code match a parameter in the Set_and_Control_Parameters.xlsx input table?")
