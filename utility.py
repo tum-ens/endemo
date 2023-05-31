@@ -5,8 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-def linear_regression(data: list[(float, float)], visualize: bool = False) -> (float, float):
 
+def linear_regression(data: list[(float, float)], visualize: bool = False) -> (float, float):
     # Unzip data List
     x, y = zip(*data)
 
@@ -25,6 +25,7 @@ def linear_regression(data: list[(float, float)], visualize: bool = False) -> (f
 
     return k0, k1
 
+
 def quadratic_regression(data: list[(float, float)], visualize: bool = False) -> (float, float, float):
     # Unzip data List
     x, y = zip(*data)
@@ -38,15 +39,15 @@ def quadratic_regression(data: list[(float, float)], visualize: bool = False) ->
         plt.plot(x, y, 'o', color="blue")
 
         # Plot regression line
-        plt.plot(x, [k2 * e**2 + k1 * e + k0 for e in x], color="blue")
+        plt.plot(x, [k2 * e ** 2 + k1 * e + k0 for e in x], color="blue")
 
         plt.show()
 
     return k0, k1, k2
 
+
 def quadratic_regression_delta(data: list[(float, float)], visualize: bool = False) \
         -> ((float, float, float), dict[str, float]):
-
     N = len(data)
 
     e_1 = a_1 = b_1 = c_1 = 0
@@ -60,7 +61,7 @@ def quadratic_regression_delta(data: list[(float, float)], visualize: bool = Fal
 
 def exp_change(start_point: (float, float), change_rate: float, target_x: float) -> float:
     (start_x, start_y) = start_point
-    result = start_y * (1 + change_rate)**(target_x - start_x)
+    result = start_y * (1 + change_rate) ** (target_x - start_x)
     return result
 
 
@@ -74,11 +75,12 @@ def quadr_prediction(coef: (float, float, float), target_x: float):
     k0 = coef[0]
     k1 = coef[1]
     k2 = coef[2]
-    return k0 + k1 * target_x + k2 * target_x**2
+    return k0 + k1 * target_x + k2 * target_x ** 2
+
 
 def filter_out_NaN_and_Inf(data: list[(float, float)]):
-    filter_out_NaN = lambda data: [(x, y) for (x, y) in data if not math.isnan(x) and not math.isnan(y)]
-    filter_out_Inf = lambda data: [(x, y) for (x, y) in data if not math.isinf(x) and not math.isinf(y)]
+    filter_out_NaN = lambda data: [(x, y) for (x, y) in data if not math.isnan(float(x)) and not math.isnan(float(y))]
+    filter_out_Inf = lambda data: [(x, y) for (x, y) in data if not math.isinf(float(x)) and not math.isinf(float(y))]
 
     return filter_out_Inf(filter_out_NaN(data))
 
@@ -101,7 +103,7 @@ def zip_on_x(a: list[(float, float)], b: list[(float, float)]) -> ((float, float
             continue
 
 
-def combine_data_on_x(new_x: list[(float, float)], new_y: list[(float, float)], ascending_x = False):
+def combine_data_on_x(new_x: list[(float, float)], new_y: list[(float, float)], ascending_x=False):
     res = []
 
     if ascending_x:
@@ -116,4 +118,3 @@ def combine_data_on_x(new_x: list[(float, float)], new_y: list[(float, float)], 
                 if new_x[i][0] == new_y[j][0]:
                     res.append((new_x[i][1], new_y[j][1]))
     return res
-

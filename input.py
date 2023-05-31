@@ -3,11 +3,16 @@ import os
 from collections import namedtuple
 from pathlib import Path
 from typing import Tuple, Any
+import utility as uty
 
 import pandas as pd
 
 from control_parameters import ControlParameters, GeneralSettings, CountrySettings, IndustrySettings
 from products import Product, SC, BAT
+
+CA = namedtuple("CA", ["abbreviation", "german"])
+HisProg = namedtuple("HisProg", ["historical", "prognosis"])
+Interval = namedtuple("Interval", ["start", "end"])
 
 
 class Input:
@@ -17,6 +22,7 @@ class Input:
     industry_path = input_path / 'industry'
 
     ctrl: ControlParameters
+    general_input: GeneralInput
     industry_input: IndustryInput
 
     def __init__(self):
@@ -33,8 +39,52 @@ class Input:
 
         self.ctrl = ControlParameters(general_settings, country_settings, industry_settings)
 
+        # read general
+        self.general_input = GeneralInput(self.ctrl, self.general_path)
+
         # read industry
         self.industry_input = IndustryInput(self.industry_path, industry_settings)
+
+
+class GeneralInput:
+    abbreviations: dict[str, CA]
+    population: dict[str, HisProg]
+    gpa: dict[str, HisProg[[(float, float)], [Interval, float]]]
+
+    def __init__(self, ctrl: ControlParameters, path: Path):
+        abbr_ex = pd.read_excel(path / "Abbreviations.xlsx")
+        pop_his_ex = pd.read_excel(path / "Population_historical_world.xls")
+        pop_prog_ex = pd.read_excel(path / "Population_projection_world.xlsx")
+        gdp_his_ex = pd.read_excel(path / "GDP_per_capita_historical.xlsx")
+        gdp_prog_ex = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx")
+
+        pop_his_dict = dict()
+        pop_prog_dict = dict()
+
+        pop_it = pd.DataFrame(pop_his_ex).itertuples()
+        for row in pop_it:
+            country_name = row[1]
+            zipped = list(zip(list(pop_his_ex)[1:], row[2:]))
+            his_data = uty.filter_out_NaN_and_Inf(zipped)
+            pop_his_dict[country_name] = his_data
+
+        pop_it = pd.DataFrame(pop_prog_ex).itertuples()
+        for row in pop_it:
+            country_name = row[1]
+            zipped = list(zip(list(pop_prog_ex)[1:], row[2:]))
+            prog_data = uty.filter_out_NaN_and_Inf(zipped)
+            pop_prog_dict[country_name] = prog_data
+
+        for country_name in ctrl.country_settings.active_countries:
+            # fill abbreviations
+            self.abbreviations = dict()
+            self.abbreviations[country_name] = \
+                CA(abbr_ex[abbr_ex["Country"] == country_name].get("Abbreviation").iloc[0],
+                   abbr_ex[abbr_ex["Country"] == country_name].get("Country_de").iloc[0])
+
+            # fill population
+            self.population = dict()
+            self.population[country_name] = HisProg(pop_his_dict[country_name], pop_prog_dict[country_name])
 
 
 class IndustryInput:
@@ -43,12 +93,10 @@ class IndustryInput:
         bat: dict[str, BAT]
         production: dict[str, (float, float)]
 
-    path: Path
     settings: IndustrySettings
     active_products: dict[str, ProductInput]
 
     def __init__(self, path: Path, industry_settings):
-        self.path = path
         self.settings = industry_settings
 
         # specify how to access files
@@ -80,8 +128,8 @@ class IndustryInput:
                                               lambda x: x.drop('Comment', axis=1)),
                             }
 
-        spec_ex = pd.ExcelFile(self.path / "Specific_Consumption.xlsx")
-        bat_ex = pd.ExcelFile(self.path / "BAT_Consumption.xlsx")
+        spec_ex = pd.ExcelFile(path / "Specific_Consumption.xlsx")
+        bat_ex = pd.ExcelFile(path / "BAT_Consumption.xlsx")
 
         # read the active sectors sheets
         for product_name in self.settings.active_product_names:

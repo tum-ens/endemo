@@ -58,7 +58,7 @@ class IndustrySettings:
         self.h2_subst_of_heat = \
             general_ex[general_ex["Parameter"] == "H2 substitution of heat"].get("Value").iloc[0]
 
-        skip_years_string = general_ex[general_ex["Parameter"] == "Skip years"].get("Value").iloc[0]
+        skip_years_string = str(general_ex[general_ex["Parameter"] == "Skip years"].get("Value").iloc[0])
         self.skip_years = [int(i) for i in skip_years_string.split(",")]
 
         self.last_available_year = \
