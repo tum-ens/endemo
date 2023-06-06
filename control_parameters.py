@@ -41,40 +41,40 @@ class IndustrySettings:
     product_settings = dict()
     active_product_names = []
 
-    def __init__(self, general_ex: pd.DataFrame, subsectors_ex: pd.DataFrame):
-        forecast_method_string = general_ex[general_ex["Parameter"] == "Forecast method"].get("Value").iloc[0]
+    def __init__(self, ex_general: pd.DataFrame, ex_subsectors: pd.DataFrame):
+        forecast_method_string = ex_general[ex_general["Parameter"] == "Forecast method"].get("Value").iloc[0]
         self.forecast_method = IndustrySettings.forecast_map[forecast_method_string]
 
         self.time_trend_model_activation_quadratic = \
-            general_ex[general_ex["Parameter"] == "Time trend model activation for U-shape method"].get("Value").iloc[0]
+            ex_general[ex_general["Parameter"] == "Time trend model activation for U-shape method"].get("Value").iloc[0]
 
         self.production_quantity_calc_per_capita = \
-            general_ex[general_ex["Parameter"] == "Production quantity calculated per capita"].get("Value").iloc[0]
+            ex_general[ex_general["Parameter"] == "Production quantity calculated per capita"].get("Value").iloc[0]
 
         self.trend_calc_for_spec = \
-            general_ex[general_ex["Parameter"] == "Trend calculation for specific energy requirements"].get(
+            ex_general[ex_general["Parameter"] == "Trend calculation for specific energy requirements"].get(
                 "Value").iloc[0]
 
         self.h2_subst_of_heat = \
-            general_ex[general_ex["Parameter"] == "H2 substitution of heat"].get("Value").iloc[0]
+            ex_general[ex_general["Parameter"] == "H2 substitution of heat"].get("Value").iloc[0]
 
-        skip_years_string = str(general_ex[general_ex["Parameter"] == "Skip years"].get("Value").iloc[0])
+        skip_years_string = str(ex_general[ex_general["Parameter"] == "Skip years"].get("Value").iloc[0])
         self.skip_years = [int(i) for i in skip_years_string.split(",")]
 
         self.last_available_year = \
-            general_ex[general_ex["Parameter"] == "Last available year"].get("Value").iloc[0]
+            ex_general[ex_general["Parameter"] == "Last available year"].get("Value").iloc[0]
 
-        product_list = subsectors_ex.get("Subsectors")
+        product_list = ex_subsectors.get("Subsectors")
 
         for product in product_list:
             active = \
-                subsectors_ex[subsectors_ex["Subsectors"] == product].get(
+                ex_subsectors[ex_subsectors["Subsectors"] == product].get(
                     "Active subsectors").iloc[0]
             prod_quant_change = \
-                subsectors_ex[subsectors_ex["Subsectors"] == product].get(
+                ex_subsectors[ex_subsectors["Subsectors"] == product].get(
                     "Parameter: production quantity change in %/year").iloc[0]
             sub_perc_used_string = \
-                subsectors_ex[subsectors_ex["Subsectors"] == product].get(
+                ex_subsectors[ex_subsectors["Subsectors"] == product].get(
                     "Parameter: technology substitution in %").iloc[0]
             try:
                 sub_perc_used_float = float(sub_perc_used_string)
@@ -88,7 +88,7 @@ class IndustrySettings:
                 self.active_product_names.append(product)
 
 
-class CountrySettings:
+class CountrySettings:  # TODO: merge with general settings
     recognized_countries: [str]
     active_countries: [str]
 
