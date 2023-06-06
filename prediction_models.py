@@ -5,7 +5,7 @@ import numpy as np
 import utility as uty
 from statistics import mean
 
-Exp = namedtuple("Exp", ["x0", "y0", "r"]) # y(x) = y0 * (1+r)^(x - x0)
+Exp = namedtuple("Exp", ["x0", "y0", "r"])  # y(x) = y0 * (1+r)^(x - x0)
 Lin = namedtuple("Lin", ["k0", "k1"])
 Quadr = namedtuple("Quadr", ["k0", "k1", "k2"])
 Coef = namedtuple("Coef", ["exp", "lin", "quadr"])
@@ -20,7 +20,6 @@ class StartPoint(Enum):
 
 
 class Timeseries:
-
     _data: list[(float, float)]
     _coef: Coef[Exp, Lin, Quadr]
 
@@ -28,7 +27,7 @@ class Timeseries:
         self._data = data
 
         if setup_exp:
-            assert(rate_of_change is not np.NaN)
+            assert (rate_of_change is not np.NaN)
             self._set_coef_exp(rate_of_change, StartPoint.LAST_AVAILABLE)
         if setup_lin:
             self._calc_coef_lin()
@@ -72,18 +71,48 @@ class Timeseries:
 
 
 class PredictedTimeseries(Timeseries):
-
     _prediction: list[(float, float)]
+
+    def __init__(self, historical_data, prediction_data, setup_exp=False, setup_lin=False, setup_quadr=False,
+                 rate_of_change=np.NaN):
+        super().__init__(historical_data, setup_exp, setup_lin, setup_quadr, rate_of_change)
+        self._prediction = prediction_data
 
     def get_manual_prog(self, target_x: float):
         return [y for (x, y) in self._prediction if x == target_x][0]
 
 
 class TimeStepSequence(Timeseries):
-
     _start_value: (float, float)
     _progression: list[(Interval, float)]
 
+    def __init__(self, historical_data, progression_data, setup_exp=False, setup_lin=False, setup_quadr=False,
+                 rate_of_change=np.NaN):
+        super().__init__(historical_data, setup_exp, setup_lin, setup_quadr, rate_of_change)
+
+        # determine start value
+        self._start_value = self._data[-1]
+
+        # cut out unnecessary progression
+        self._progression = [progression_point for progression_point in progression_data
+                             if progression_point[0].end > self._start_value[0]]
+
+        # map percentage to its hundredth
+        self._progression = [(prog[0], prog[1]/100) for prog in self._progression]
+
     def get_manual_prog(self, target_x: float):
-        pass
+
+        if target_x <= self._start_value[0]:
+            # historical data available
+            return [y for (x, y) in self._data if x == y][0] # Attention! Not handled if data doesnt exist
+
+        # calculate progression
+        result = self._start_value[1]
+        for progression in self._progression:
+            start = max(self._start_value[0], progression[0].start)     # cut off protruding years at start of calculation
+            end = min(target_x, progression[0].end)                     # cut off protruding years at end of calculation
+            exp = max(0, end - start)                                   # clamp to 0, so that only the correct intervals contribute
+            result *= (1 + progression[1])**exp
+
+        return result
 

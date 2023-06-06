@@ -94,7 +94,7 @@ class GeneralInput:
             gdp_his = uty.filter_out_NaN_and_Inf(zipped)
 
             # read gdp prognosis
-            interval_conv = lambda xs: [Interval(x.split('-')[0], x.split('-')[1]) for x in xs]
+            interval_conv = lambda xs: [Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
             intervals_europa = interval_conv(ex_gdp_prog_europa.columns[1:-1])
             intervals_world = interval_conv(ex_gdp_prog_world.columns[1:-1])
 
