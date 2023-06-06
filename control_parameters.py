@@ -17,13 +17,10 @@ class ForecastMethod(Enum):
 
 class ControlParameters:
     general_settings: GeneralSettings
-    country_settings: CountrySettings
     industry_settings: IndustrySettings
 
-    def __init__(self, general_settings: GeneralSettings, country_settings: CountrySettings,
-                 industry_settings: IndustrySettings):
+    def __init__(self, general_settings: GeneralSettings, industry_settings: IndustrySettings):
         self.general_settings = general_settings
-        self.country_settings = country_settings
         self.industry_settings = industry_settings
 
 
@@ -88,22 +85,18 @@ class IndustrySettings:
                 self.active_product_names.append(product)
 
 
-class CountrySettings:  # TODO: merge with general settings
-    recognized_countries: [str]
-    active_countries: [str]
-
-    def __init__(self, excel: pd.DataFrame):
-        self.recognized_countries = excel.get("Country")
-        self.active_countries = excel[excel["Active"] == 1].get("Country")
-
-
 class GeneralSettings:
     _sectors_active_values = dict()
     _parameter_values = dict()
 
-    def __init__(self, excel: pd.DataFrame):
-        rows_it = pd.DataFrame(excel).itertuples()
+    recognized_countries: [str]
+    active_countries: [str]
 
+    def __init__(self, ex_general: pd.DataFrame, ex_country: pd.DataFrame):
+        self.recognized_countries = ex_country.get("Country")
+        self.active_countries = ex_country[ex_country["Active"] == 1].get("Country")
+
+        rows_it = pd.DataFrame(ex_general).itertuples()
         for row in rows_it:
             if row.Parameter.startswith('Sector: '):
                 self._sectors_active_values[row.Parameter.removeprefix('Sector: ')] = row.Value

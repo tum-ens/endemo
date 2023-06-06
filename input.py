@@ -8,7 +8,7 @@ import utility as uty
 
 import pandas as pd
 
-from control_parameters import ControlParameters, GeneralSettings, CountrySettings, IndustrySettings
+from control_parameters import ControlParameters, GeneralSettings, IndustrySettings
 from products import Product, SC, BAT
 
 CA = namedtuple("CA", ["alpha2", "alpha3", "german_name"])
@@ -30,15 +30,14 @@ class Input:
         ctrl_ex = pd.ExcelFile(self.input_path / 'Set_and_Control_Parameters.xlsx')
 
         # read control parameters
-        general_settings = GeneralSettings(pd.read_excel(ctrl_ex, sheet_name="GeneralSettings"))
-        country_settings = \
-            CountrySettings(pd.read_excel(ctrl_ex, sheet_name="Countries"))
+        general_settings = GeneralSettings(pd.read_excel(ctrl_ex, sheet_name="GeneralSettings"),
+                                           pd.read_excel(ctrl_ex, sheet_name="Countries"))
         industry_settings = \
             IndustrySettings(
                 pd.read_excel(ctrl_ex, sheet_name="IND_general"),
                 pd.read_excel(ctrl_ex, sheet_name="IND_subsectors"))
 
-        self.ctrl = ControlParameters(general_settings, country_settings, industry_settings)
+        self.ctrl = ControlParameters(general_settings, industry_settings)
 
         # read general
         self.general_input = GeneralInput(self.ctrl, self.general_path)
@@ -78,7 +77,7 @@ class GeneralInput:
             prog_data = uty.filter_out_NaN_and_Inf(zipped)
             dict_pop_prog[country_name] = prog_data
 
-        for country_name in ctrl.country_settings.active_countries:
+        for country_name in ctrl.general_settings.active_countries:
             # fill abbreviations
             self.abbreviations[country_name] = \
                 CA(ex_abbr[ex_abbr["Country_en"] == country_name].get("alpha-2").iloc[0],
@@ -113,7 +112,6 @@ class GeneralInput:
                 zipped_gdp_prog = list(zip(intervals_europa, gdp_prog))
 
             self.gdp[country_name] = HisProg(gdp_his, zipped_gdp_prog)
-
 
 
 class IndustryInput:

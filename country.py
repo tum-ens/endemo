@@ -13,7 +13,8 @@ class Country:
     def __init__(self, name: str, input_manager: Input):
         self._name = name
 
-        # TODO: fill abbreviations
+        # fill abbreviations
+        self._abbreviations = input_manager.general_input.abbreviations[self._name]
 
 
 
