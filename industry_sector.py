@@ -1,25 +1,32 @@
+import warnings
+
 import pandas as pd
 
-from output import Demand
-from products import Product
-from sector import Sector
+import country as cty
+import input
+import output
+import prediction_models as pm
+import products as prd
+import sector
+import input
 
 
-class Industry(Sector):
-    _products: dict[str, Product]
+class Industry(sector.Sector):
+    _products = dict[str, prd.Product]()
 
-    #def __init__(self, country: Country, product_data: dict[str, list[float, float]]):
-     #   for [product_name, data] in product_data:
-      #      self._products[product_name] = Product()
+    def __init__(self, country_name: str, country_population: pm.PredictedTimeseries, country_gdp: pm.TimeStepSequence,
+                 input_manager: input.Input):
+        active_products = input_manager.industry_input.active_products
 
-    def __init__(self, products : dict[str, Product]):
-        self._products = products
+        for (product_name, product_input) in active_products.items():
+            self._products[product_name] = prd.Product(product_name, product_input,
+                                                       country_name, country_population, country_gdp)
 
-    def calculate_demand(self, year: int) -> Demand:
+    def calculate_demand(self, year: int) -> output.Demand:
         # calculate industry sector for country by summing up all products
-        result = Demand()
+        result = output.Demand()
 
-        for (name, obj) in self._products:
+        for (name, obj) in self._products.items():
             result.add(obj.calculate_demand(year))
 
         return result

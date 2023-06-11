@@ -5,6 +5,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+def str_dict(dict):
+    res = "\n"
+    res += "Dictionary: {"
+    for (a, b) in dict.items():
+        if type(b) is dict:
+            res += str(a) + ": " + str_dict(b) + ", "
+        else:
+            res += str(a) + ": " + str(b) + ", "
+    res += "}"
+    return res
+
+def is_zero(xs: [float]):
+    for x in xs:
+        if float(x) != 0:
+            return False
+    return True
 
 def linear_regression(data: list[(float, float)], visualize: bool = False) -> (float, float):
     # Unzip data List
@@ -14,6 +30,7 @@ def linear_regression(data: list[(float, float)], visualize: bool = False) -> (f
     ks = np.polyfit(x, y, 1)
     (k0, k1) = (float(ks[1]), float(ks[0]))
 
+    visualize = True
     if visualize:
         # Plot points
         plt.plot(x, y, 'o', color="green")
@@ -34,6 +51,7 @@ def quadratic_regression(data: list[(float, float)], visualize: bool = False) ->
     ks = np.polyfit(x, y, 2)
     (k0, k1, k2) = (float(ks[2]), float(ks[1]), float(ks[0]))
 
+    visualize = True
     if visualize:
         # Plot points
         plt.plot(x, y, 'o', color="blue")
@@ -78,11 +96,13 @@ def quadr_prediction(coef: (float, float, float), target_x: float):
     return k0 + k1 * target_x + k2 * target_x ** 2
 
 
-def filter_out_NaN_and_Inf(data: list[(float, float)]):
-    filter_out_NaN = lambda data: [(x, y) for (x, y) in data if not math.isnan(float(x)) and not math.isnan(float(y))]
-    filter_out_Inf = lambda data: [(x, y) for (x, y) in data if not math.isinf(float(x)) and not math.isinf(float(y))]
+def filter_out_nan_and_inf(data: list[(float, float)]):
+    filter_out_nan = \
+        lambda xys: [(float(x), float(y)) for (x, y) in xys if not math.isnan(float(x)) and not math.isnan(float(y))]
+    filter_out_inf = \
+        lambda xys: [(float(x), float(y)) for (x, y) in xys if not math.isinf(float(x)) and not math.isinf(float(y))]
 
-    return filter_out_Inf(filter_out_NaN(data))
+    return filter_out_inf(filter_out_nan(data))
 
 
 # zip 2 lists, where they have the same x value. Works only on ascending x values!!
@@ -91,14 +111,14 @@ def zip_on_x(a: list[(float, float)], b: list[(float, float)]) -> ((float, float
     while True:
         if i >= len(a) or j >= len(b):
             break
-        elif a[i][0] < b[j][0]:
+        elif float(a[i][0]) < float(b[j][0]):
             i += 1
             continue
-        elif a[i][0] == b[j][0]:
+        elif float(a[i][0]) == float(b[j][0]):
             yield a[i], b[j]
             i += 1
             continue
-        elif a[i][0] > b[j][0]:
+        elif float(a[i][0]) > float(b[j][0]):
             j += 1
             continue
 

@@ -8,7 +8,13 @@ from statistics import mean
 Exp = namedtuple("Exp", ["x0", "y0", "r"])  # y(x) = y0 * (1+r)^(x - x0)
 Lin = namedtuple("Lin", ["k0", "k1"])
 Quadr = namedtuple("Quadr", ["k0", "k1", "k2"])
-Coef = namedtuple("Coef", ["exp", "lin", "quadr"])
+
+
+class Coef:
+    exp: Exp
+    lin: Lin
+    quadr: Quadr
+
 
 Interval = namedtuple("Interval", ["start", "end"])
 
@@ -18,21 +24,45 @@ class StartPoint(Enum):
     AVERAGE_VALUE = 1
     MANUAL = 2
 
+class CalculationType(Enum):
+    EXPONENTIAL = 0
+    LINEAR = 1
+    QUADRATIC = 2
+
 
 class Timeseries:
     _data: list[(float, float)]
-    _coef: Coef[Exp, Lin, Quadr]
+    _coef = Coef()
+    _calculation_type: CalculationType
 
-    def __init__(self, data, setup_exp=False, setup_lin=False, setup_quadr=False, rate_of_change=np.NaN):
+    def __init__(self, data, calculation_type, rate_of_change=0):
         self._data = data
 
-        if setup_exp:
-            assert (rate_of_change is not np.NaN)
-            self._set_coef_exp(rate_of_change, StartPoint.LAST_AVAILABLE)
-        if setup_lin:
-            self._calc_coef_lin()
-        if setup_quadr:
-            self._calc_coef_quadr()
+        if len(self._data) < 2:
+            # with only one value available, no regression possible
+            self._calculation_type = CalculationType.EXPONENTIAL
+        elif len(self._data) < 3:
+            # quadratic regression only possible with > 2 data points
+            self._calculation_type = CalculationType.LINEAR
+        else:
+            self._calculation_type = calculation_type.QUADRATIC
+
+        match self._calculation_type:
+            case CalculationType.EXPONENTIAL:
+                self._set_coef_exp(rate_of_change, StartPoint.LAST_AVAILABLE)
+            case CalculationType.LINEAR:
+                self._calc_coef_lin()
+            case CalculationType.QUADRATIC:
+                self._calc_coef_quadr()
+
+    def get_prog(self, x):
+        match self._calculation_type:
+            case CalculationType.EXPONENTIAL:
+                self.get_prog_exp(x)
+            case CalculationType.LINEAR:
+                self.get_prog_lin(x)
+            case CalculationType.QUADRATIC:
+                self.get_prog_quadr(x)
 
     def _set_coef_exp(self, rate_of_change, start_point: StartPoint, manual: (float, float) = (0, 0)):
         # TODO: implement manual startpoint in excel sheets
@@ -47,15 +77,15 @@ class Timeseries:
             case StartPoint.MANUAL:
                 (start_x, start_y) = manual
 
-        self._coef.exp.x0 = start_x
-        self._coef.exp.y0 = start_y
-        self._coef.exp.r = rate_of_change
+        self._coef.exp = Exp(start_x, start_y, rate_of_change)
 
     def _calc_coef_lin(self):
-        self._coef.lin = uty.linear_regression(self._data)
+        lin_coef = uty.linear_regression(self._data)
+        self._coef.lin = Lin(lin_coef[0], lin_coef[1])
 
     def _calc_coef_quadr(self):
-        self._coef.quadr = uty.quadratic_regression(self._data)
+        quadr_coef = uty.quadratic_regression(self._data)
+        self._coef.quadr = Quadr(quadr_coef[0], quadr_coef[1], quadr_coef[2])
 
     def get_data(self) -> list[(float, float)]:
         return self._data
@@ -73,46 +103,63 @@ class Timeseries:
 class PredictedTimeseries(Timeseries):
     _prediction: list[(float, float)]
 
-    def __init__(self, historical_data, prediction_data, setup_exp=False, setup_lin=False, setup_quadr=False,
-                 rate_of_change=np.NaN):
-        super().__init__(historical_data, setup_exp, setup_lin, setup_quadr, rate_of_change)
+    def __init__(self, historical_data, prediction_data, calculation_type: CalculationType = CalculationType.LINEAR,
+                 rate_of_change=0):
+        super().__init__(historical_data, calculation_type, rate_of_change)
         self._prediction = prediction_data
 
     def get_manual_prog(self, target_x: float):
         return [y for (x, y) in self._prediction if x == target_x][0]
 
+    def get_prediction_raw(self):
+        return self._prediction
+
 
 class TimeStepSequence(Timeseries):
-    _start_value: (float, float)
-    _progression: list[(Interval, float)]
+    _his_end_value: (float, float)
+    _interval_changeRate: list[(Interval, float)]
 
-    def __init__(self, historical_data, progression_data, setup_exp=False, setup_lin=False, setup_quadr=False,
-                 rate_of_change=np.NaN):
-        super().__init__(historical_data, setup_exp, setup_lin, setup_quadr, rate_of_change)
+    def __init__(self, historical_data, progression_data, calculation_type: CalculationType = CalculationType.LINEAR,
+                 rate_of_change=0):
+        super().__init__(historical_data, calculation_type, rate_of_change)
 
         # determine start value
-        self._start_value = self._data[-1]
+        self._his_end_value = self._data[-1]
 
         # cut out unnecessary progression
-        self._progression = [progression_point for progression_point in progression_data
-                             if progression_point[0].end > self._start_value[0]]
+        self._interval_changeRate = [progression_point for progression_point in progression_data
+                                     if progression_point[0].end > self._his_end_value[0]]
 
         # map percentage to its hundredth
-        self._progression = [(prog[0], prog[1]/100) for prog in self._progression]
+        self._interval_changeRate = [(prog[0], prog[1] / 100) for prog in self._interval_changeRate]
 
     def get_manual_prog(self, target_x: float):
 
-        if target_x <= self._start_value[0]:
-            # historical data available
-            return [y for (x, y) in self._data if x == y][0] # Attention! Not handled if data doesnt exist
+        if target_x <= self._his_end_value[0]:
+            # take gdp from historical data
+            for (a1, a2), (b1, b2) in zip(self._data[:-1], self._data[1:]):
+                if a1 == target_x or target_x < a1:
+                    return a2
+                elif b1 == target_x:
+                    return b2
+                elif a1 < target_x < b1:
+                    # a gap in historical data => use the closest year
+                    if target_x - a1 <= b1 - target_x:
+                        return a2
+                    else:
+                        return b2
 
-        # calculate progression
-        result = self._start_value[1]
-        for progression in self._progression:
-            start = max(self._start_value[0], progression[0].start)     # cut off protruding years at start of calculation
-            end = min(target_x, progression[0].end)                     # cut off protruding years at end of calculation
-            exp = max(0, end - start)                                   # clamp to 0, so that only the correct intervals contribute
-            result *= (1 + progression[1])**exp
+        # calculate resulting gdp in future
+        result = self._his_end_value[1]
+        for interval_change in self._interval_changeRate:
+            start = max(self._his_end_value[0], interval_change[0].start)  # cut off protruding years at start
+            end = min(target_x, interval_change[0].end)  # cut off protruding years at end
+            exp = max(0, end - start)  # clamp to 0, to ignore certain intervals
+            result *= (1 + interval_change[1]) ** exp
 
         return result
 
+    def get_historical_data_raw(self):
+        return self._his_end_value
+    def get_interval_change_rate_raw(self):
+        return self._interval_changeRate
