@@ -1,7 +1,24 @@
 from __future__ import annotations
 from collections import namedtuple
 
-Heat = namedtuple("Heat", ["q1", "q2", "q3", "q4"])
+
+class Heat:
+    q1: float
+    q2: float
+    q3: float
+    q4: float
+
+    def __int__(self, q1=0, q2=0, q3=0, q4=0):
+        self.q1 = q1
+        self.q2 = q2
+        self.q3 = q3
+        self.q4 = q4
+
+    def add(self, heat: Heat):
+        self.q1 += heat.q1
+        self.q2 += heat.q2
+        self.q3 += heat.q3
+        self.q4 += heat.q4
 
 
 class Demand:

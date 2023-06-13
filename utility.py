@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+
 def str_dict(dict):
     res = "\n"
     res += "Dictionary: {"
@@ -16,11 +17,13 @@ def str_dict(dict):
     res += "}"
     return res
 
+
 def is_zero(xs: [float]):
     for x in xs:
-        if float(x) != 0:
+        if float(x) != 0 and float(x) != np.nan:
             return False
     return True
+
 
 def linear_regression(data: list[(float, float)], visualize: bool = False) -> (float, float):
     # Unzip data List
@@ -30,7 +33,6 @@ def linear_regression(data: list[(float, float)], visualize: bool = False) -> (f
     ks = np.polyfit(x, y, 1)
     (k0, k1) = (float(ks[1]), float(ks[0]))
 
-    visualize = True
     if visualize:
         # Plot points
         plt.plot(x, y, 'o', color="green")
@@ -51,7 +53,6 @@ def quadratic_regression(data: list[(float, float)], visualize: bool = False) ->
     ks = np.polyfit(x, y, 2)
     (k0, k1, k2) = (float(ks[2]), float(ks[1]), float(ks[0]))
 
-    visualize = True
     if visualize:
         # Plot points
         plt.plot(x, y, 'o', color="blue")

@@ -50,6 +50,7 @@ class GeneralInput:
     abbreviations = dict[str, CA]()
     population = dict[str, HisProg]()
     gdp = dict[str, HisProg[[(float, float)], [Interval, float]]]()
+    efficiency = dict[str, prd.BAT]
 
     def __init__(self, ctrl: cp.ControlParameters, path: Path):
         ex_abbr = pd.read_excel(path / "Abbreviations.xlsx")
@@ -58,6 +59,12 @@ class GeneralInput:
         ex_gdp_his = pd.read_excel(path / "GDP_per_capita_historical.xlsx", sheet_name="constant 2015 USD")
         ex_gdp_prog_europa = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data")
         ex_gdp_prog_world = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data_world")
+        ex_efficiency = pd.read_excel(path / "Efficiency_Combustion.xlsx")
+
+        # fill efficiency
+        for _, row in ex_efficiency.iterrows():
+            self.efficiency[row["Energy carrier"]] = \
+                prd.BAT(row["Electricity production [-]"], row["Heat production [-]"])
 
         # preprocess population historical data
         dict_pop_his = dict()
@@ -117,53 +124,65 @@ class GeneralInput:
 
 class IndustryInput:
     class ProductInput:
-        specific_consumption: dict[str, prd.SC]
+        specific_consumption_default: dict[str, prd.SC]
+        specific_consumption_historical: dict[str, (float, float)]
         bat: dict[str, prd.BAT]
         production: dict[str, (float, float)]
 
-        def __init__(self, sc, bat, prod):
-            self.specific_consumption = sc
+        def __init__(self, sc, bat, prod, sc_h, sc_h_active):
+            self.specific_consumption_default = sc
             self.bat = bat
             self.production = prod
+            if sc_h_active:
+                self.specific_consumption_historical = sc_h
+            else:
+                self.specific_consumption_historical = dict()
 
         def __str__(self):
-            return "\n\tSpecific Consumption: " + uty.str_dict(self.specific_consumption) + \
+            return "\n\tSpecific Consumption: " + uty.str_dict(self.specific_consumption_default) + \
                 "\n\t BAT: " + uty.str_dict(self.bat) + \
                 "\n\t Historical: " + uty.str_dict(self.production) + "\n"
 
     settings: cp.IndustrySettings
     active_products = dict[str, ProductInput]()
 
+    # specify how to access files
+    Retrieve = namedtuple("Retrieve", ["file_name", "sheet_name", "skip_rows", "sheet_transform"])
+    product_data_access = {
+        "steel": Retrieve("Steel_Production.xlsx", "Data_total", [], lambda x: x),
+        "steel_prim": Retrieve("Steel_Production.xlsx", "Steel_prim", [], lambda x: x),
+        "steel_sec": Retrieve("Steel_Production.xlsx", "Steel_sec", [], lambda x: x),
+        "steel_direct": Retrieve("Steel_Production.xlsx", "Data_total", [], lambda x: x),
+        "alu_prim": Retrieve("Aluminium_Production.xlsx", "Prim_Data", [], lambda x: x),
+        "alu_sec": Retrieve("Aluminium_Production.xlsx", "Sec_Data", [], lambda x: x),
+        "copper_prim": Retrieve("Copper_Production.xlsx", "Copper_WSP", [0, 1],
+                                lambda x: x.loc[x["Type"] == "Primary"].drop("Type", axis=1)),
+        "copper_sec": Retrieve("Copper_Production.xlsx", "Copper_WSP", [0, 1],
+                               lambda x: x.loc[x["Type"] == "Secondary"].drop("Type", axis=1)),
+        "chlorine": Retrieve("Chlorine_Production.xlsx", "Data", [], lambda x: x),
+        "ammonia": Retrieve("Ammonia_Production.xlsx", "Data", [], lambda x: x),
+        "methanol": Retrieve("Methanol_Production.xlsx", "Data", [], lambda x: x),
+        "ethylene": Retrieve("Ethylene_Production.xlsx", "Data", [], lambda x: x),
+        "propylene": Retrieve("Propylene_Production.xlsx", "Data", [], lambda x: x),
+        "aromate": Retrieve("Aromate_Production.xlsx", "Data", [], lambda x: x),
+        "ammonia_classic": Retrieve("Ammonia_Production.xlsx", "Data", [], lambda x: x),
+        "methanol_classic": Retrieve("Methanol_Production.xlsx", "Data", [], lambda x: x),
+        "ethylene_classic": Retrieve("Ethylene_Production.xlsx", "Data", [], lambda x: x),
+        "propylene_classic": Retrieve("Propylene_Production.xlsx", "Data", [], lambda x: x),
+        "aromate_classic": Retrieve("Aromate_Production.xlsx", "Data", [], lambda x: x),
+        "paper": Retrieve("Paper_Production.xlsx", "Data", [], lambda x: x),
+        "cement": Retrieve("Cement_Production.xlsx", "Data", [], lambda x: x),
+        "glass": Retrieve("Glass_Production.xlsx", "Data", [], lambda x: x),
+    }
+    sc_historical_data_file_names = {
+        "steel": "nrg_bal_s_steel.xls",
+        "paper": "nrg_bal_s_paper.xls"
+    }
+    sc_historical_sheet_names = ["Feste fossile Brennstoffe", "Synthetische Gase", "Erdgas", "Oel",
+                                 "Erneuerbare Energien", "Abfaelle", "Elektrizitaet", "Waerme"]
+
     def __init__(self, path: Path, industry_settings):
         self.settings = industry_settings
-
-        # specify how to access files
-        Retrieve = namedtuple("Retrieve", ["file_name", "sheet_name", "skip_rows", "sheet_transform"])
-        data_access_spec = {"steel": Retrieve("Steel_Production.xlsx", "Data_total", [], lambda x: x),
-                            "steel_prim": Retrieve("Steel_Production.xlsx", "Steel_prim", [], lambda x: x),
-                            "steel_sec": Retrieve("Steel_Production.xlsx", "Steel_sec", [], lambda x: x),
-                            "steel_direct": Retrieve("Steel_Production.xlsx", "Data_total", [], lambda x: x),
-                            "alu_prim": Retrieve("Aluminium_Production.xlsx", "Prim_Data", [], lambda x: x),
-                            "alu_sec": Retrieve("Aluminium_Production.xlsx", "Sec_Data", [], lambda x: x),
-                            "copper_prim": Retrieve("Copper_Production.xlsx", "Copper_WSP", [0, 1],
-                                                    lambda x: x.loc[x["Type"] == "Primary"].drop("Type", axis=1)),
-                            "copper_sec": Retrieve("Copper_Production.xlsx", "Copper_WSP", [0, 1],
-                                                   lambda x: x.loc[x["Type"] == "Secondary"].drop("Type", axis=1)),
-                            "chlorine": Retrieve("Chlorine_Production.xlsx", "Data", [], lambda x: x),
-                            "ammonia": Retrieve("Ammonia_Production.xlsx", "Data", [], lambda x: x),
-                            "methanol": Retrieve("Methanol_Production.xlsx", "Data", [], lambda x: x),
-                            "ethylene": Retrieve("Ethylene_Production.xlsx", "Data", [], lambda x: x),
-                            "propylene": Retrieve("Propylene_Production.xlsx", "Data", [], lambda x: x),
-                            "aromate": Retrieve("Aromate_Production.xlsx", "Data", [], lambda x: x),
-                            "ammonia_classic": Retrieve("Ammonia_Production.xlsx", "Data", [], lambda x: x),
-                            "methanol_classic": Retrieve("Methanol_Production.xlsx", "Data", [], lambda x: x),
-                            "ethylene_classic": Retrieve("Ethylene_Production.xlsx", "Data", [], lambda x: x),
-                            "propylene_classic": Retrieve("Propylene_Production.xlsx", "Data", [], lambda x: x),
-                            "aromate_classic": Retrieve("Aromate_Production.xlsx", "Data", [], lambda x: x),
-                            "paper": Retrieve("Paper_Production.xlsx", "Data", [], lambda x: x),
-                            "cement": Retrieve("Cement_Production.xlsx", "Data", [], lambda x: x),
-                            "glass": Retrieve("Glass_Production.xlsx", "Data", [], lambda x: x),
-                            }
 
         ex_spec = pd.ExcelFile(path / "Specific_Consumption.xlsx")
         ex_bat = pd.ExcelFile(path / "BAT_Consumption.xlsx")
@@ -174,9 +193,9 @@ class IndustryInput:
                 continue
 
             # read production data
-            retrieve_prod = data_access_spec[product_name]
+            retrieve_prod = self.product_data_access[product_name]
             ex_product_his = \
-                data_access_spec[product_name].sheet_transform(
+                self.product_data_access[product_name].sheet_transform(
                     pd.read_excel(path / retrieve_prod.file_name, retrieve_prod.sheet_name,
                                   skiprows=retrieve_prod.skip_rows))
 
@@ -194,21 +213,51 @@ class IndustryInput:
                 his_data = uty.filter_out_nan_and_inf(zipped)
                 dict_prod_his[row.Country] = his_data
 
-            # read specific consumption data
+            # read specific consumption default data
             prod_sc = pd.read_excel(ex_spec, sheet_name=product_name)
             dict_prod_sc_country = dict()
 
-            sc_it = pd.DataFrame(prod_sc).itertuples()
-            for row in sc_it:
-                dict_prod_sc_country[row.Country] = prd.SC(row._3, row._4, row._6, row._5)
+            for _, row in pd.DataFrame(prod_sc).iterrows():
+                dict_prod_sc_country[row.Country] = \
+                    prd.SC(row["Spec electricity consumption [GJ/t]"],
+                           row["Spec heat consumption [GJ/t]"],
+                           row["Spec hydrogen consumption [GJ/t]"],
+                           row["max. subst. of heat with H2 [%]"])
+
+            # read specific demand historical data
+            dict_sc_his = dict()
+            sc_his_calc = False
+            if product_name in self.sc_historical_data_file_names.keys():
+                sc_his_calc = True
+
+                sc_his_file_name = self.sc_historical_data_file_names[product_name]
+                ex_sc_his = pd.ExcelFile(path / sc_his_file_name)
+
+                for sheet_name in self.sc_historical_sheet_names:
+                    df_sc = pd.read_excel(ex_sc_his, sheet_name)
+                    for _, row in df_sc.iterrows():
+                        country_name = row["GEO/TIME"]
+                        years = df_sc.columns[1:]
+                        data = df_sc[df_sc["GEO/TIME"] == country_name].iloc[0][1:]
+
+                        if not uty.is_zero(data):
+                            # data exists -> fill into dictionary
+                            zipped = list(zip(years, data))
+                            his_data = uty.filter_out_nan_and_inf(zipped)
+
+                            if country_name not in dict_sc_his.keys():
+                                dict_sc_his[country_name] = dict()
+
+                            dict_sc_his[country_name][sheet_name] = his_data
 
             # read bat consumption data
             prod_bat = pd.read_excel(ex_bat, sheet_name=product_name)
             dict_prod_bat_country = dict()
 
-            bat_it = pd.DataFrame(prod_bat).itertuples()
-            for row in bat_it:
-                dict_prod_bat_country[row.Country] = prd.BAT(row._3, row._4)
+            for _, row in pd.DataFrame(prod_bat).iterrows():
+                dict_prod_bat_country[row.Country] = \
+                    prd.BAT(row["Spec electricity consumption [GJ/t]"],
+                            row["Spec heat consumption [GJ/t]"])
 
             self.active_products[product_name] = \
-                self.ProductInput(dict_prod_sc_country, dict_prod_bat_country, dict_prod_his)
+                self.ProductInput(dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his, sc_his_calc)

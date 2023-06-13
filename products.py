@@ -12,10 +12,46 @@ SC = namedtuple("SC", ["electricity", "heat", "hydrogen", "max_subst_h2"])
 BAT = namedtuple("BAT", ["electricity", "heat"])
 
 
+class SpecificConsumptionData:
+    default_specific_consumption: SC
+    historical_specific_consumption: dict[str, pm.Timeseries]
+    efficiency: dict[str, BAT]
+    _product_amount_per_year: pm.Timeseries
+
+    def __init__(self, product_name, product_amount_per_year: pm.Timeseries,  country_name: str, product_input: input.IndustryInput.ProductInput,
+                 input_manager: input.Input):
+
+        # get efficiency
+        self.efficiency = input_manager.general_input.efficiency
+
+        # read default specific consumption for product in countries industry
+        if country_name in product_input.specific_consumption_default.keys():
+            self._specific_consumption = product_input.specific_consumption_default[country_name]
+        else:
+            self._specific_consumption = product_input.specific_consumption_default["all"]
+
+        # read historical specific consumption data
+        dict_sc_his = product_input.specific_consumption_historical[country_name]
+        for key, value in dict_sc_his.items():
+            self.historical_specific_consumption[key] = pm.Timeseries(value, pm.CalculationType.LINEAR)
+
+    def get(self, year) -> SC:
+        if self.historical_specific_consumption:
+            electricity = 0
+            heat = output.Heat()
+            for key, value in self.historical_specific_consumption:
+                prog_amount = value.get_prog(year) / self._product_amount_per_year.get_prog(year)
+                electricity += prog_amount * self.efficiency[key].electricity
+                heat += prog_amount * self.efficiency[key].heat
+            return SC(electricity, heat, 0, 0)
+        else:
+            return self.default_specific_consumption
+
+
 class Product:
     _name: str
     _country_name: str
-    _specific_consumption: SC
+    _specific_consumption: SpecificConsumptionData
     _bat: BAT
     _perc_used: float
     _exp_change_rate: float
@@ -24,16 +60,16 @@ class Product:
     _amount_per_capita_per_year: pm.Timeseries
     _amount_per_capita_per_gdp: pm.Timeseries
 
-    def __init__(self, product_name: str, product_input: input.IndustryInput.ProductInput,
+    def __init__(self, product_name: str, product_input: input.IndustryInput.ProductInput, input_manager: input.Input,
                  country_name: str, population: pm.PredictedTimeseries = None, gdp: pm.TimeStepSequence = None):
         self._country_name = country_name
         self._name = product_name
 
-        # read specific consumption for product in countries industry
-        if country_name in product_input.specific_consumption.keys():
-            self._specific_consumption = product_input.specific_consumption[country_name]
-        else:
-            self._specific_consumption = product_input.specific_consumption["all"]
+        # TODO: read perc_used
+        # TODO: read heat levels
+
+        # read specific consumption data
+        self._specific_consumption = SpecificConsumptionData(product_name, product_amount_per_year, country_name, product_input, input_manager)
 
         # read bat consumption for product in countries industry
         if country_name in product_input.bat.keys():
@@ -68,6 +104,8 @@ class Product:
                                   pm.CalculationType.LINEAR)
 
     def calculate_demand(self, year: int) -> output.Demand:
+        # calc amount * perc * specific_consumption
+        # TODO: separate heat levels
         raise NotImplementedError
 
 

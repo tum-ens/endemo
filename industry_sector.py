@@ -19,12 +19,16 @@ class Industry(sector.Sector):
         active_products = input_manager.industry_input.active_products
 
         for (product_name, product_input) in active_products.items():
-            self._products[product_name] = prd.Product(product_name, product_input,
+            self._products[product_name] = prd.Product(product_name, product_input, input_manager,
                                                        country_name, country_population, country_gdp)
+
+        # create warnings
+        if not self._products:
+            warnings.warn("Industry Sector in Country " + country_name + " has an empty list of products.")
 
     def calculate_demand(self, year: int) -> output.Demand:
         # calculate industry sector for country by summing up all products
-        result = output.Demand()
+        result = output.Demand(0, 0, 0)
 
         for (name, obj) in self._products.items():
             result.add(obj.calculate_demand(year))
