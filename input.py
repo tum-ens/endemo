@@ -1,9 +1,13 @@
 from __future__ import annotations
+
+import math
 import os
 import warnings
 from collections import namedtuple
 from pathlib import Path
 from typing import Tuple, Any
+
+import output
 import utility as uty
 
 import pandas as pd
@@ -19,6 +23,7 @@ Interval = namedtuple("Interval", ["start", "end"])
 class Input:
     super_path = Path(os.path.abspath(''))
     input_path = super_path / 'input'
+    output_path = super_path / 'output'
     general_path = input_path / 'general'
     industry_path = input_path / 'industry'
 
@@ -47,76 +52,81 @@ class Input:
 
 
 class GeneralInput:
-    abbreviations = dict[str, CA]()
-    population = dict[str, HisProg]()
-    gdp = dict[str, HisProg[[(float, float)], [Interval, float]]]()
-    efficiency = dict[str, prd.BAT]
+    abbreviations: dict[str, CA]
+    population: dict[str, HisProg]
+    gdp: dict[str, HisProg[[(float, float)], [Interval, float]]]
+    efficiency: dict[str, prd.BAT]
 
     def __init__(self, ctrl: cp.ControlParameters, path: Path):
-        ex_abbr = pd.read_excel(path / "Abbreviations.xlsx")
-        ex_pop_his = pd.read_excel(path / "Population_historical_world.xls")
-        ex_pop_prog = pd.read_excel(path / "Population_projection_world.xlsx")
-        ex_gdp_his = pd.read_excel(path / "GDP_per_capita_historical.xlsx", sheet_name="constant 2015 USD")
-        ex_gdp_prog_europa = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data")
-        ex_gdp_prog_world = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data_world")
-        ex_efficiency = pd.read_excel(path / "Efficiency_Combustion.xlsx")
+        self.abbreviations = dict[str, CA]()
+        self.population = dict[str, HisProg]()
+        self.gdp = dict[str, HisProg[[(float, float)], [Interval, float]]]()
+        self.efficiency = dict[str, prd.BAT]()
+
+        df_abbr = pd.read_excel(path / "Abbreviations.xlsx")
+        df_pop_his = pd.read_excel(path / "Population_historical_world.xls")
+        df_pop_prog = pd.read_excel(path / "Population_projection_world.xlsx")
+        df_gdp_his = pd.read_excel(path / "GDP_per_capita_historical.xlsx", sheet_name="constant 2015 USD")
+        df_gdp_prog_europa = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data")
+        df_gdp_prog_world = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data_world")
+        df_efficiency = pd.read_excel(path / "Efficiency_Combustion.xlsx")
 
         # fill efficiency
-        for _, row in ex_efficiency.iterrows():
+        for _, row in df_efficiency.iterrows():
             self.efficiency[row["Energy carrier"]] = \
                 prd.BAT(row["Electricity production [-]"], row["Heat production [-]"])
 
         # preprocess population historical data
         dict_pop_his = dict()
-        pop_it = pd.DataFrame(ex_pop_his).itertuples()
+        pop_it = pd.DataFrame(df_pop_his).itertuples()
         for row in pop_it:
             country_name = row[1]
-            zipped = list(zip(list(ex_pop_his)[1:], row[2:]))
+            zipped = list(zip(list(df_pop_his)[1:], row[2:]))
             his_data = uty.filter_out_nan_and_inf(zipped)
             dict_pop_his[country_name] = his_data
 
         # preprocess population prognosis
         dict_pop_prog = dict()
-        pop_it = pd.DataFrame(ex_pop_prog).itertuples()
+        pop_it = df_pop_prog.itertuples()
         for row in pop_it:
             country_name = row[1]
-            zipped = list(zip(list(ex_pop_prog)[1:], row[2:]))
+            zipped = list(zip(list(df_pop_prog)[1:], row[2:]))
             prog_data = uty.filter_out_nan_and_inf(zipped)
             dict_pop_prog[country_name] = prog_data
 
         for country_name in ctrl.general_settings.active_countries:
             # fill abbreviations
             self.abbreviations[country_name] = \
-                CA(ex_abbr[ex_abbr["Country_en"] == country_name].get("alpha-2").iloc[0],
-                   ex_abbr[ex_abbr["Country_en"] == country_name].get("alpha-3").iloc[0],
-                   ex_abbr[ex_abbr["Country_en"] == country_name].get("Country_de").iloc[0])
+                CA(df_abbr[df_abbr["Country_en"] == country_name].get("alpha-2").iloc[0],
+                   df_abbr[df_abbr["Country_en"] == country_name].get("alpha-3").iloc[0],
+                   df_abbr[df_abbr["Country_en"] == country_name].get("Country_de").iloc[0])
 
             # fill population
             self.population[country_name] = HisProg(uty.filter_out_nan_and_inf(dict_pop_his[country_name]),
                                                     uty.filter_out_nan_and_inf(dict_pop_prog[country_name]))
 
             # read gdp historical
-            years = ex_gdp_his.columns[3:]
-            gdp_data = ex_gdp_his[ex_gdp_his["Country Code"] == self.abbreviations[country_name].alpha3].iloc[0][3:]
+            years = df_gdp_his.columns[3:]
+            gdp_data = df_gdp_his[df_gdp_his["Country Code"] == self.abbreviations[country_name].alpha3].iloc[0][3:]
             zipped = list(zip(years, gdp_data))
             gdp_his = uty.filter_out_nan_and_inf(zipped)
 
             # read gdp prognosis
             interval_conv = lambda xs: [Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
-            intervals_europa = interval_conv(ex_gdp_prog_europa.columns[1:-1])
-            intervals_world = interval_conv(ex_gdp_prog_world.columns[1:-1])
+            intervals_europa = interval_conv(df_gdp_prog_europa.columns[1:-1])
+            intervals_world = interval_conv(df_gdp_prog_world.columns[1:-1])
 
             zipped_gdp_prog: list[Interval, float]
-            if country_name in list(ex_gdp_prog_europa["Country"]):
-                gdp_prog = ex_gdp_prog_europa[ex_gdp_prog_europa["Country"] == country_name].iloc[0][1:-1]
+            if country_name in list(df_gdp_prog_europa["Country"]):
+                gdp_prog = df_gdp_prog_europa[df_gdp_prog_europa["Country"] == country_name].iloc[0][1:-1]
                 zipped_gdp_prog = list(zip(intervals_europa, gdp_prog))
-            elif country_name in list(ex_gdp_prog_world["Country"]):
-                gdp_prog = ex_gdp_prog_world[ex_gdp_prog_world["Country"] == country_name].iloc[0][1:-1]
+            elif country_name in list(df_gdp_prog_world["Country"]):
+                gdp_prog = df_gdp_prog_world[df_gdp_prog_world["Country"] == country_name].iloc[0][1:-1]
                 zipped_gdp_prog = list(zip(intervals_world, gdp_prog))
             else:
                 warnings.warn("Attention! For country \"" + country_name
                               + "\" no gdp prognosis data was found. Data from \"all\" is used instead now.")
-                gdp_prog = ex_gdp_prog_europa[ex_gdp_prog_europa["Country"] == "all"].iloc[0][1:-1]
+                gdp_prog = df_gdp_prog_europa[df_gdp_prog_europa["Country"] == "all"].iloc[0][1:-1]
                 zipped_gdp_prog = list(zip(intervals_europa, gdp_prog))
 
             self.gdp[country_name] = HisProg(gdp_his, zipped_gdp_prog)
@@ -128,8 +138,11 @@ class IndustryInput:
         specific_consumption_historical: dict[str, (float, float)]
         bat: dict[str, prd.BAT]
         production: dict[str, (float, float)]
+        heat_levels: output.Heat
+        manual_exp_change_rate: float
+        perc_used: float
 
-        def __init__(self, sc, bat, prod, sc_h, sc_h_active):
+        def __init__(self, sc, bat, prod, sc_h, sc_h_active, heat_levels, manual_exp_change_rate, perc_used):
             self.specific_consumption_default = sc
             self.bat = bat
             self.production = prod
@@ -137,6 +150,10 @@ class IndustryInput:
                 self.specific_consumption_historical = sc_h
             else:
                 self.specific_consumption_historical = dict()
+            self.heat_levels = heat_levels
+            self.manual_exp_change_rate = manual_exp_change_rate
+
+            self.perc_used = float(perc_used) if not math.isnan(float(perc_used)) else 100
 
         def __str__(self):
             return "\n\tSpecific Consumption: " + uty.str_dict(self.specific_consumption_default) + \
@@ -181,11 +198,18 @@ class IndustryInput:
     sc_historical_sheet_names = ["Feste fossile Brennstoffe", "Synthetische Gase", "Erdgas", "Oel",
                                  "Erneuerbare Energien", "Abfaelle", "Elektrizitaet", "Waerme"]
 
-    def __init__(self, path: Path, industry_settings):
+    def __init__(self, industry_path: Path, industry_settings: cp.IndustrySettings):
         self.settings = industry_settings
 
-        ex_spec = pd.ExcelFile(path / "Specific_Consumption.xlsx")
-        ex_bat = pd.ExcelFile(path / "BAT_Consumption.xlsx")
+        ex_spec = pd.ExcelFile(industry_path / "Specific_Consumption.xlsx")
+        ex_bat = pd.ExcelFile(industry_path / "BAT_Consumption.xlsx")
+
+        # read heat levels
+        df_heat_levels = pd.read_excel(industry_path / "Heat_levels.xlsx")
+        dict_heat_levels = dict()
+
+        for _, row in df_heat_levels.iterrows():
+            dict_heat_levels[row["Industry"]] = output.Heat(row["Q1"], row["Q2"], row["Q3"], row["Q4"])
 
         # read the active sectors sheets
         for product_name in self.settings.active_product_names:
@@ -196,7 +220,7 @@ class IndustryInput:
             retrieve_prod = self.product_data_access[product_name]
             ex_product_his = \
                 self.product_data_access[product_name].sheet_transform(
-                    pd.read_excel(path / retrieve_prod.file_name, retrieve_prod.sheet_name,
+                    pd.read_excel(industry_path / retrieve_prod.file_name, retrieve_prod.sheet_name,
                                   skiprows=retrieve_prod.skip_rows))
 
             dict_prod_his = dict()
@@ -207,11 +231,12 @@ class IndustryInput:
                 data = ex_product_his[ex_product_his["Country"] == row.Country].iloc[0][1:]
                 if uty.is_zero(data):
                     # country did not product this product at all => skip product for this country
-                    print("skipped " + product_name + " for country " + row.Country)
+                    # print("skipped " + product_name + " for country " + row.Country)
                     continue
                 zipped = list(zip(years, data))
                 his_data = uty.filter_out_nan_and_inf(zipped)
                 dict_prod_his[row.Country] = his_data
+
 
             # read specific consumption default data
             prod_sc = pd.read_excel(ex_spec, sheet_name=product_name)
@@ -231,7 +256,7 @@ class IndustryInput:
                 sc_his_calc = True
 
                 sc_his_file_name = self.sc_historical_data_file_names[product_name]
-                ex_sc_his = pd.ExcelFile(path / sc_his_file_name)
+                ex_sc_his = pd.ExcelFile(industry_path / sc_his_file_name)
 
                 for sheet_name in self.sc_historical_sheet_names:
                     df_sc = pd.read_excel(ex_sc_his, sheet_name)
@@ -251,13 +276,18 @@ class IndustryInput:
                             dict_sc_his[country_name][sheet_name] = his_data
 
             # read bat consumption data
-            prod_bat = pd.read_excel(ex_bat, sheet_name=product_name)
+            df_prod_bat = pd.read_excel(ex_bat, sheet_name=product_name)
             dict_prod_bat_country = dict()
 
-            for _, row in pd.DataFrame(prod_bat).iterrows():
+            for _, row in df_prod_bat.iterrows():
                 dict_prod_bat_country[row.Country] = \
                     prd.BAT(row["Spec electricity consumption [GJ/t]"],
                             row["Spec heat consumption [GJ/t]"])
 
             self.active_products[product_name] = \
-                self.ProductInput(dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his, sc_his_calc)
+                self.ProductInput(dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his, sc_his_calc,
+                                  dict_heat_levels[product_name],
+                                  industry_settings.product_settings[product_name].manual_exp_change_rate,
+                                  industry_settings.product_settings[product_name].perc_used)
+
+        print("Input was successfully read.")

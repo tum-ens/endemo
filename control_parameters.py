@@ -6,7 +6,7 @@ from enum import Enum
 import numpy as np
 import pandas as pd
 
-ProductSettings = namedtuple("ProductSettings", ("active", "prod_quant_change", "sub_perc_used"))
+ProductSettings = namedtuple("ProductSettings", ("active", "manual_exp_change_rate", "perc_used"))
 
 
 class ForecastMethod(Enum):
@@ -35,10 +35,12 @@ class IndustrySettings:
     h2_subst_of_heat: float
     skip_years: [int]
     last_available_year: int
-    product_settings = dict()
-    active_product_names = []
+    product_settings: dict[str, ProductSettings]
+    active_product_names: []
 
     def __init__(self, ex_general: pd.DataFrame, ex_subsectors: pd.DataFrame):
+        self.product_settings = dict()
+        self.active_product_names = []
         forecast_method_string = ex_general[ex_general["Parameter"] == "Forecast method"].get("Value").iloc[0]
         self.forecast_method = IndustrySettings.forecast_map[forecast_method_string]
 
@@ -86,13 +88,17 @@ class IndustrySettings:
 
 
 class GeneralSettings:
-    _sectors_active_values = dict()
-    _parameter_values = dict()
+    _sectors_active_values: dict
+    _parameter_values: dict
 
+    target_year: int
     recognized_countries: [str]
     active_countries: [str]
 
     def __init__(self, ex_general: pd.DataFrame, ex_country: pd.DataFrame):
+        self._sectors_active_values = dict()
+        self._parameter_values = dict()
+        self.target_year = int(ex_general[ex_general["Parameter"] == "Forecast year"].get("Value").iloc[0])
         self.recognized_countries = ex_country.get("Country")
         self.active_countries = ex_country[ex_country["Active"] == 1].get("Country")
 
@@ -109,7 +115,7 @@ class GeneralSettings:
 
     def get_active_sectors(self):
         # returns a list of sectors activated for calculation
-        return [sector for (sector, isActive) in self._sectors_active_values.items() if isActive == True]
+        return [sector for (sector, isActive) in self._sectors_active_values.items() if isActive]
 
     def get_parameter(self, name: str):
         # return the parameter value by parameter name with meaningful error message

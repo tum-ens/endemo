@@ -4,6 +4,7 @@ from enum import Enum
 import numpy as np
 import utility as uty
 from statistics import mean
+import control_parameters as cp
 
 Exp = namedtuple("Exp", ["x0", "y0", "r"])  # y(x) = y0 * (1+r)^(x - x0)
 Lin = namedtuple("Lin", ["k0", "k1"])
@@ -24,45 +25,41 @@ class StartPoint(Enum):
     AVERAGE_VALUE = 1
     MANUAL = 2
 
-class CalculationType(Enum):
-    EXPONENTIAL = 0
-    LINEAR = 1
-    QUADRATIC = 2
-
 
 class Timeseries:
     _data: list[(float, float)]
-    _coef = Coef()
-    _calculation_type: CalculationType
+    _coef: Coef
+    _calculation_type: cp.ForecastMethod
 
     def __init__(self, data, calculation_type, rate_of_change=0):
+        self._coef = Coef()
         self._data = data
 
         if len(self._data) < 2:
             # with only one value available, no regression possible
-            self._calculation_type = CalculationType.EXPONENTIAL
-        elif len(self._data) < 3:
+            self._calculation_type = cp.ForecastMethod.EXPONENTIAL
+        elif len(self._data) < 3 and calculation_type is not cp.ForecastMethod.EXPONENTIAL:
             # quadratic regression only possible with > 2 data points
-            self._calculation_type = CalculationType.LINEAR
+            self._calculation_type = cp.ForecastMethod.LINEAR
         else:
-            self._calculation_type = calculation_type.QUADRATIC
+            self._calculation_type = calculation_type
 
         match self._calculation_type:
-            case CalculationType.EXPONENTIAL:
+            case cp.ForecastMethod.EXPONENTIAL:
                 self._set_coef_exp(rate_of_change, StartPoint.LAST_AVAILABLE)
-            case CalculationType.LINEAR:
+            case cp.ForecastMethod.LINEAR:
                 self._calc_coef_lin()
-            case CalculationType.QUADRATIC:
+            case cp.ForecastMethod.QUADRATIC:
                 self._calc_coef_quadr()
 
-    def get_prog(self, x):
+    def get_prog(self, x) -> float:
         match self._calculation_type:
-            case CalculationType.EXPONENTIAL:
-                self.get_prog_exp(x)
-            case CalculationType.LINEAR:
-                self.get_prog_lin(x)
-            case CalculationType.QUADRATIC:
-                self.get_prog_quadr(x)
+            case cp.ForecastMethod.EXPONENTIAL:
+                return self.get_prog_exp(x)
+            case cp.ForecastMethod.LINEAR:
+                return self.get_prog_lin(x)
+            case cp.ForecastMethod.QUADRATIC:
+                return self.get_prog_quadr(x)
 
     def _set_coef_exp(self, rate_of_change, start_point: StartPoint, manual: (float, float) = (0, 0)):
         # TODO: implement manual startpoint in excel sheets
@@ -91,7 +88,7 @@ class Timeseries:
         return self._data
 
     def get_prog_exp(self, x) -> float:
-        return uty.exp_change(start_point=self._data[-1], change_rate=self._coef.exp.k0, target_x=x)
+        return uty.exp_change((self._coef.exp.x0, self._coef.exp.y0), self._coef.exp.r, x)
 
     def get_prog_lin(self, x) -> float:
         return uty.lin_prediction(self._coef.lin, x)
@@ -103,7 +100,7 @@ class Timeseries:
 class PredictedTimeseries(Timeseries):
     _prediction: list[(float, float)]
 
-    def __init__(self, historical_data, prediction_data, calculation_type: CalculationType = CalculationType.LINEAR,
+    def __init__(self, historical_data, prediction_data, calculation_type: cp.ForecastMethod = cp.ForecastMethod.LINEAR,
                  rate_of_change=0):
         super().__init__(historical_data, calculation_type, rate_of_change)
         self._prediction = prediction_data
@@ -119,7 +116,7 @@ class TimeStepSequence(Timeseries):
     _his_end_value: (float, float)
     _interval_changeRate: list[(Interval, float)]
 
-    def __init__(self, historical_data, progression_data, calculation_type: CalculationType = CalculationType.LINEAR,
+    def __init__(self, historical_data, progression_data, calculation_type: cp.ForecastMethod = cp.ForecastMethod.LINEAR,
                  rate_of_change=0):
         super().__init__(historical_data, calculation_type, rate_of_change)
 
@@ -132,6 +129,9 @@ class TimeStepSequence(Timeseries):
 
         # map percentage to its hundredth
         self._interval_changeRate = [(prog[0], prog[1] / 100) for prog in self._interval_changeRate]
+
+    def get_prog(self, target_x) -> float:
+        return self.get_manual_prog(target_x)
 
     def get_manual_prog(self, target_x: float):
 
