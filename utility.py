@@ -5,6 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+from prediction_models import Timeseries
+
 
 def str_dict(dict):
     res = "\n"
@@ -24,6 +26,25 @@ def is_zero(xs: [float]):
             return False
     return True
 
+
+def plot_timeseries(ts: Timeseries):
+    x, y = zip(*ts.get_data())
+
+    coef = ts.get_coef()
+
+    # Plot points
+    plt.plot(x, y, 'o', color="grey")
+
+    # Plot exp regression
+    plt.plot(x, [exp_change((coef.exp.x0, coef.exp.y0), coef.exp.r, e) for e in x], color="purple")
+
+    # Plot linear regression
+    plt.plot(x, [lin_prediction((coef.lin.k0, coef.lin.k1), e) for e in x], color="orange")
+
+    # Plot quadratic regression
+    plt.plot(x, [quadr_prediction((coef.quadr.k0, coef.quadr.k1, coef.quadr.k2), e) for e in x], color="blue")
+
+    plt.show()
 
 def linear_regression(data: list[(float, float)], visualize: bool = False) -> (float, float):
     # Unzip data List

@@ -16,6 +16,12 @@ class Coef:
     lin: Lin
     quadr: Quadr
 
+    def __init__(self):
+        self.exp = Exp(0, 0, 0)
+        self.lin = Lin(0, 0)
+        self.quadr = Quadr(0, 0, 0)
+
+
 
 Interval = namedtuple("Interval", ["start", "end"])
 
@@ -84,6 +90,9 @@ class Timeseries:
         quadr_coef = uty.quadratic_regression(self._data)
         self._coef.quadr = Quadr(quadr_coef[0], quadr_coef[1], quadr_coef[2])
 
+    def get_coef(self):
+        return self._coef
+
     def get_data(self) -> list[(float, float)]:
         return self._data
 
@@ -116,7 +125,8 @@ class TimeStepSequence(Timeseries):
     _his_end_value: (float, float)
     _interval_changeRate: list[(Interval, float)]
 
-    def __init__(self, historical_data, progression_data, calculation_type: cp.ForecastMethod = cp.ForecastMethod.LINEAR,
+    def __init__(self, historical_data, progression_data,
+                 calculation_type: cp.ForecastMethod = cp.ForecastMethod.LINEAR,
                  rate_of_change=0):
         super().__init__(historical_data, calculation_type, rate_of_change)
 
@@ -161,5 +171,6 @@ class TimeStepSequence(Timeseries):
 
     def get_historical_data_raw(self):
         return self._his_end_value
+
     def get_interval_change_rate_raw(self):
         return self._interval_changeRate

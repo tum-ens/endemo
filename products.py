@@ -119,6 +119,9 @@ class Product:
             pm.Timeseries(list(map(lambda arg: (arg[0][0], arg[0][1] / arg[1][1]), zipped_data)),
                           industry_settings.forecast_method, rate_of_change=self._exp_change_rate)
 
+        if product_name == "cement":
+            uty.plot_timeseries(self._amount_per_year)
+
         # read specific consumption data
         self._specific_consumption = SpecificConsumptionData(product_name, self._amount_per_year,
                                                              country_name, product_input, input_manager)
