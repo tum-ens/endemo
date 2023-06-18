@@ -22,7 +22,6 @@ class Coef:
         self.quadr = Quadr(0, 0, 0)
 
 
-
 Interval = namedtuple("Interval", ["start", "end"])
 
 

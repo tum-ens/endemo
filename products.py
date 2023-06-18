@@ -119,9 +119,6 @@ class Product:
             pm.Timeseries(list(map(lambda arg: (arg[0][0], arg[0][1] / arg[1][1]), zipped_data)),
                           industry_settings.forecast_method, rate_of_change=self._exp_change_rate)
 
-        if product_name == "cement":
-            uty.plot_timeseries(self._amount_per_year)
-
         # read specific consumption data
         self._specific_consumption = SpecificConsumptionData(product_name, self._amount_per_year,
                                                              country_name, product_input, input_manager)
@@ -149,14 +146,32 @@ class Product:
     def get_amount_prog(self, year: int) -> float:
         if self._empty_product:
             return 0
+
+        prog_amount = 0
+
         if not self._use_per_capita and not self._use_gdp_as_x:
-            return self._amount_per_year.get_prog(year)
+            prog_amount = self._amount_per_year.get_prog(year)
         elif self._use_per_capita and not self._use_gdp_as_x:
-            return self._amount_per_capita_per_year.get_prog(year)
+            prog_amount = self._amount_per_capita_per_year.get_prog(year)
         elif not self._use_per_capita and self._use_gdp_as_x:
-            return self._amount_per_gdp.get_prog(year)
+            prog_amount = self._amount_per_gdp.get_prog(year)
         elif self._use_per_capita and self._use_gdp_as_x:
-            return self._amount_per_capita_per_gdp.get_prog(year)
+            prog_amount = self._amount_per_capita_per_gdp.get_prog(year)
+
+        prog_amount = max(0, prog_amount)
+        return prog_amount
+
+    def get_coef(self) -> pm.Coef:
+        if self._empty_product:
+            return pm.Coef()
+        if not self._use_per_capita and not self._use_gdp_as_x:
+            return self._amount_per_year.get_coef()
+        elif self._use_per_capita and not self._use_gdp_as_x:
+            return self._amount_per_capita_per_year.get_coef()
+        elif not self._use_per_capita and self._use_gdp_as_x:
+            return self._amount_per_gdp.get_coef()
+        elif self._use_per_capita and self._use_gdp_as_x:
+            return self._amount_per_capita_per_gdp.get_coef()
 
 
 class ProductPrimSec:

@@ -27,6 +27,9 @@ class Industry(sector.Sector):
         if not self._products:
             warnings.warn("Industry Sector in Country " + country_name + " has an empty list of products.")
 
+    def get_product(self, name: str) -> prd.Product:
+        return self._products[name]
+
     def calculate_total_demand(self, year: int) -> output.Demand:
         # calculate industry sector for country by summing up all products
         result = output.Demand()
