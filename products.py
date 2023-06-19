@@ -173,6 +173,18 @@ class Product:
         elif self._use_per_capita and self._use_gdp_as_x:
             return self._amount_per_capita_per_gdp.get_coef()
 
+    def get_active_timeseries(self) -> pm.Timeseries:
+        if self._empty_product:
+            return pm.Timeseries([], cp.ForecastMethod.LINEAR)
+        if not self._use_per_capita and not self._use_gdp_as_x:
+            return self._amount_per_year
+        elif self._use_per_capita and not self._use_gdp_as_x:
+            return self._amount_per_capita_per_year
+        elif not self._use_per_capita and self._use_gdp_as_x:
+            return self._amount_per_gdp
+        elif self._use_per_capita and self._use_gdp_as_x:
+            return self._amount_per_capita_per_gdp
+
 
 class ProductPrimSec:
     _primary: Product

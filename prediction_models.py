@@ -71,7 +71,10 @@ class Timeseries:
         (start_x, start_y) = (0, 0)
         match start_point:
             case StartPoint.LAST_AVAILABLE:
-                (start_x, start_y) = self._data[-1]
+                if len(self._data) <= 0:
+                    (start_x, start_y) = (np.NaN, np.NaN)
+                else:
+                    (start_x, start_y) = self._data[-1]
             case StartPoint.AVERAGE_VALUE:
                 (split_x, split_y) = zip(*self._data)
                 start_x = mean(split_x)
@@ -94,6 +97,12 @@ class Timeseries:
 
     def get_data(self) -> list[(float, float)]:
         return self._data
+
+    def get_last_data_entry(self) -> (float, float):
+        if len(self._data) <= 0:
+            return (np.NaN, np.NaN)
+        else:
+            return self._data[-1]
 
     def get_prog_exp(self, x) -> float:
         return uty.exp_change((self._coef.exp.x0, self._coef.exp.y0), self._coef.exp.r, x)
