@@ -122,6 +122,9 @@ class PredictedTimeseries(Timeseries):
         super().__init__(historical_data, calculation_type, rate_of_change)
         self._prediction = prediction_data
 
+    def get_prog(self, target_x) -> float:
+        return self.get_manual_prog(target_x)
+
     def get_manual_prog(self, target_x: float):
         return [y for (x, y) in self._prediction if x == target_x][0]
 

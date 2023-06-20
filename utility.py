@@ -27,6 +27,13 @@ def is_zero(xs: [float]):
     return True
 
 
+def is_tuple_list_zero(xys: [(float, float)]):
+    if not xys or len(xys) == 0:
+        return True
+    else:
+        return is_zero(list(zip(*xys))[1])
+
+
 def plot_timeseries(ts: Timeseries):
     x, y = zip(*ts.get_data())
 
@@ -118,13 +125,17 @@ def quadr_prediction(coef: (float, float, float), target_x: float):
     return k0 + k1 * target_x + k2 * target_x ** 2
 
 
-def filter_out_nan_and_inf(data: list[(float, float)]):
-    filter_out_nan = \
-        lambda xys: [(float(x), float(y)) for (x, y) in xys if not math.isnan(float(x)) and not math.isnan(float(y))]
-    filter_out_inf = \
-        lambda xys: [(float(x), float(y)) for (x, y) in xys if not math.isinf(float(x)) and not math.isinf(float(y))]
+def is_permissible_float(x: str):
+    try:
+        return not math.isnan(float(x)) and not math.isinf(float(x))
+    except ValueError:
+        return False
 
-    return filter_out_inf(filter_out_nan(data))
+
+def filter_out_nan_and_inf(data: list[(float, float)]):
+    filter_lambda = \
+        lambda xys: [(float(x), float(y)) for (x, y) in xys if is_permissible_float(x) and is_permissible_float(y)]
+    return filter_lambda(data)
 
 
 # zip 2 lists, where they have the same x value. Works only on ascending x values!!
@@ -160,3 +171,15 @@ def combine_data_on_x(new_x: list[(float, float)], new_y: list[(float, float)], 
                 if new_x[i][0] == new_y[j][0]:
                     res.append((new_x[i][1], new_y[j][1]))
     return res
+
+
+def cut_after_x(data: [(float, float)], last_x: float):
+    if last_x is np.NaN:
+        return data
+
+    counter = 0
+    for x, y in reversed(data):
+        if x < last_x:
+            return data[:-counter]
+        counter += 1
+

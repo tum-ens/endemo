@@ -20,8 +20,14 @@ class SpecificConsumptionData:
     _product_amount_per_year: pm.Timeseries
     _calculate_sc: bool
 
-    def __init__(self, product_name, product_amount_per_year: pm.Timeseries,  country_name: str, product_input: input.IndustryInput.ProductInput,
-                 input_manager: input.Input):
+    def __init__(self, product_input: input.IndustryInput.ProductInput, product_amount_per_year: pm.Timeseries = None,
+                 country_name: str = "",
+                 input_manager: input.Input = None):
+        if product_amount_per_year is None:
+            self.default_specific_consumption = product_input.specific_consumption_default["all"]
+            self._calculate_sc = False
+            return
+
         self.historical_specific_consumption = dict[str, pm.Timeseries]()
         self._product_amount_per_year = product_amount_per_year
         self._calculate_sc = input_manager.industry_input.settings.trend_calc_for_spec
@@ -46,8 +52,8 @@ class SpecificConsumptionData:
     def get(self, year) -> SC:
         if self._calculate_sc and self.historical_specific_consumption:
             electricity = 0
-            heat = output.Heat()
-            for key, value in self.historical_specific_consumption:
+            heat = 0.0
+            for key, value in self.historical_specific_consumption.items():
                 prog_amount = value.get_prog(year) / self._product_amount_per_year.get_prog(year)
                 electricity += prog_amount * self.efficiency[key].electricity
                 heat += prog_amount * self.efficiency[key].heat
@@ -96,7 +102,7 @@ class Product:
 
         # read historical production data
         if country_name in product_input.production.keys() \
-                and not uty.is_zero(list(zip(*product_input.production[country_name]))[1]):
+                and not uty.is_tuple_list_zero(product_input.production[country_name]):
             self._empty_product = False
             self._amount_per_year = \
                 pm.Timeseries(product_input.production[country_name], industry_settings.forecast_method,
@@ -104,6 +110,7 @@ class Product:
         else:
             # warnings.warn("Country " + country_name + " has no production data for " + product_name)
             self._empty_product = True
+            self._specific_consumption = SpecificConsumptionData(product_input)
             return
 
         # calculate rest of member variables
@@ -120,8 +127,17 @@ class Product:
                           industry_settings.forecast_method, rate_of_change=self._exp_change_rate)
 
         # read specific consumption data
-        self._specific_consumption = SpecificConsumptionData(product_name, self._amount_per_year,
-                                                             country_name, product_input, input_manager)
+        self._specific_consumption = SpecificConsumptionData(product_amount_per_year=self._amount_per_year,
+                                                             country_name=country_name, product_input=product_input,
+                                                             input_manager=input_manager)
+
+        if country_name == "Greece" and product_name == "cement":
+            uty.plot_timeseries(self._amount_per_year)
+            uty.plot_timeseries(self._amount_per_capita_per_year)
+
+    def split_heat_levels(self, x: float) -> (float, float, float, float):
+        heat = self._heat_levels
+        heat.mutable_multiply_scalar(x)
 
     def calculate_demand(self, year: int) -> output.Demand:
         if self._empty_product:
@@ -139,7 +155,7 @@ class Product:
         hydrogen = cached_perc_amount * sc.hydrogen
 
         heat = self._heat_levels
-        heat.multiply_scalar(cached_perc_amount * sc.heat)   # separate heat levels
+        heat.mutable_multiply_scalar(cached_perc_amount * sc.heat)   # separate heat levels
 
         return output.Demand(electricity, heat, hydrogen)
 
@@ -184,6 +200,9 @@ class Product:
             return self._amount_per_gdp
         elif self._use_per_capita and self._use_gdp_as_x:
             return self._amount_per_capita_per_gdp
+
+    def get_specific_consumption(self) -> SpecificConsumptionData:
+        return self._specific_consumption
 
 
 class ProductPrimSec:

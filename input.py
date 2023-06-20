@@ -21,6 +21,9 @@ Interval = namedtuple("Interval", ["start", "end"])
 
 
 class Input:
+    """
+    The Input class connects all types of input data, that is in the form of excel/csv sheets.
+    """
     super_path = Path(os.path.abspath(''))
     input_path = super_path / 'input'
     output_path = super_path / 'output'
@@ -52,47 +55,71 @@ class Input:
 
 
 class GeneralInput:
+    """
+    General Input denoted input that is read from the "input/general" folder.
+    """
+    class PopulationData:
+        country_population: dict[str, HisProg]  # country_name -> historical: [(float, float)], prognosis: [(float, float)]
+        nuts2_population: dict[str, HisProg]    # country_name -> (code -> (historical: [(,)], prognosis: [interval, data]))
+
+        def __init__(self, ctrl, df_country_pop_his, df_country_pop_prog, df_nuts2_pop_his, df_nuts2_pop_prog):
+            self.country_population = dict[str, HisProg]()
+            self.nuts2_population = dict[str, HisProg]()
+
+            # preprocess population historical data
+            dict_pop_his = dict()
+            pop_it = pd.DataFrame(df_country_pop_his).itertuples()
+            for row in pop_it:
+                country_name = row[1]
+                zipped = list(zip(list(df_country_pop_his)[1:], row[2:]))
+                his_data = uty.filter_out_nan_and_inf(zipped)
+                dict_pop_his[country_name] = his_data
+
+            # preprocess population prognosis
+            dict_pop_prog = dict()
+            pop_it = df_country_pop_prog.itertuples()
+            for row in pop_it:
+                country_name = row[1]
+                zipped = list(zip(list(df_country_pop_prog)[1:], row[2:]))
+                prog_data = uty.filter_out_nan_and_inf(zipped)
+                dict_pop_prog[country_name] = prog_data
+
+            for country_name in ctrl.general_settings.active_countries:
+                # fill population
+                self.country_population[country_name] = HisProg(uty.filter_out_nan_and_inf(dict_pop_his[country_name]),
+                                                                uty.filter_out_nan_and_inf(dict_pop_prog[country_name]))
+
+                # get nuts2 regions data and fill historical as well as prognosis like gdp
+
     abbreviations: dict[str, CA]
-    population: dict[str, HisProg]
+    population: PopulationData
     gdp: dict[str, HisProg[[(float, float)], [Interval, float]]]
     efficiency: dict[str, prd.BAT]
 
     def __init__(self, ctrl: cp.ControlParameters, path: Path):
         self.abbreviations = dict[str, CA]()
-        self.population = dict[str, HisProg]()
         self.gdp = dict[str, HisProg[[(float, float)], [Interval, float]]]()
         self.efficiency = dict[str, prd.BAT]()
 
         df_abbr = pd.read_excel(path / "Abbreviations.xlsx")
-        df_pop_his = pd.read_excel(path / "Population_historical_world.xls")
-        df_pop_prog = pd.read_excel(path / "Population_projection_world.xlsx")
+        df_world_pop_his = pd.read_excel(path / "Population_historical_world.xls")
+        df_world_pop_prog = pd.read_excel(path / "Population_projection_world.xlsx")
+        df_nuts2_pop_his = pd.read_csv(path / "Population_historical_NUTS2.csv")
+        df_nuts2_pop_prog = pd.read_excel(path / "Population_projection_NUTS2.xlsx")
         df_gdp_his = pd.read_excel(path / "GDP_per_capita_historical.xlsx", sheet_name="constant 2015 USD")
         df_gdp_prog_europa = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data")
         df_gdp_prog_world = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data_world")
         df_efficiency = pd.read_excel(path / "Efficiency_Combustion.xlsx")
 
+        # create PopulationData object
+        self.population = self.PopulationData(ctrl,
+                                              df_world_pop_his, df_world_pop_prog,
+                                              df_nuts2_pop_his, df_nuts2_pop_prog)
+
         # fill efficiency
         for _, row in df_efficiency.iterrows():
             self.efficiency[row["Energy carrier"]] = \
                 prd.BAT(row["Electricity production [-]"], row["Heat production [-]"])
-
-        # preprocess population historical data
-        dict_pop_his = dict()
-        pop_it = pd.DataFrame(df_pop_his).itertuples()
-        for row in pop_it:
-            country_name = row[1]
-            zipped = list(zip(list(df_pop_his)[1:], row[2:]))
-            his_data = uty.filter_out_nan_and_inf(zipped)
-            dict_pop_his[country_name] = his_data
-
-        # preprocess population prognosis
-        dict_pop_prog = dict()
-        pop_it = df_pop_prog.itertuples()
-        for row in pop_it:
-            country_name = row[1]
-            zipped = list(zip(list(df_pop_prog)[1:], row[2:]))
-            prog_data = uty.filter_out_nan_and_inf(zipped)
-            dict_pop_prog[country_name] = prog_data
 
         for country_name in ctrl.general_settings.active_countries:
             # fill abbreviations
@@ -100,10 +127,6 @@ class GeneralInput:
                 CA(df_abbr[df_abbr["Country_en"] == country_name].get("alpha-2").iloc[0],
                    df_abbr[df_abbr["Country_en"] == country_name].get("alpha-3").iloc[0],
                    df_abbr[df_abbr["Country_en"] == country_name].get("Country_de").iloc[0])
-
-            # fill population
-            self.population[country_name] = HisProg(uty.filter_out_nan_and_inf(dict_pop_his[country_name]),
-                                                    uty.filter_out_nan_and_inf(dict_pop_prog[country_name]))
 
             # read gdp historical
             years = df_gdp_his.columns[3:]
@@ -133,7 +156,15 @@ class GeneralInput:
 
 
 class IndustryInput:
+    """
+        Industry Input denoted input that is read from the "input/industry" folder.
+    """
     class ProductInput:
+        """
+        The Product Input summarizes all input data, that is specific to a certain product type, but holds the
+        information for all countries.
+        Example product type: steel_prim
+        """
         specific_consumption_default: dict[str, prd.SC]
         specific_consumption_historical: dict[str, (float, float)]
         bat: dict[str, prd.BAT]
@@ -153,7 +184,7 @@ class IndustryInput:
             self.heat_levels = heat_levels
             self.manual_exp_change_rate = manual_exp_change_rate
 
-            self.perc_used = float(perc_used) if not math.isnan(float(perc_used)) else 100
+            self.perc_used = float(perc_used) if not math.isnan(float(perc_used)) else 1
 
         def __str__(self):
             return "\n\tSpecific Consumption: " + uty.str_dict(self.specific_consumption_default) + \
@@ -227,6 +258,9 @@ class IndustryInput:
 
             production_it = pd.DataFrame(ex_product_his).itertuples()
             for row in production_it:
+                print("country name: " + str(row.Country))
+                if str(row.Country) == 'nan':
+                    continue
                 years = ex_product_his.columns[1:]
                 data = ex_product_his[ex_product_his["Country"] == row.Country].iloc[0][1:]
                 if uty.is_zero(data):
@@ -235,8 +269,8 @@ class IndustryInput:
                     continue
                 zipped = list(zip(years, data))
                 his_data = uty.filter_out_nan_and_inf(zipped)
+                his_data = uty.cut_after_x(his_data, industry_settings.last_available_year)
                 dict_prod_his[row.Country] = his_data
-
 
             # read specific consumption default data
             prod_sc = pd.read_excel(ex_spec, sheet_name=product_name)
@@ -269,6 +303,7 @@ class IndustryInput:
                             # data exists -> fill into dictionary
                             zipped = list(zip(years, data))
                             his_data = uty.filter_out_nan_and_inf(zipped)
+                            his_data = uty.cut_after_x(his_data, industry_settings.last_available_year)
 
                             if country_name not in dict_sc_his.keys():
                                 dict_sc_his[country_name] = dict()

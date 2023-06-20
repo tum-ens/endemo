@@ -8,6 +8,9 @@ import sector
 
 
 class Country:
+    """
+    The Country connects all sectors and data from a single country. It is a completely self-contained unit.
+    """
     _name: str
     _abbreviations: [str]  # not implemented yet
     _population: prediction_models.PredictedTimeseries
@@ -24,8 +27,8 @@ class Country:
         # create population timeseries
         self._population = \
             prediction_models.PredictedTimeseries(
-                historical_data=input_manager.general_input.population[self._name].historical,
-                prediction_data=input_manager.general_input.population[self._name].prognosis)
+                historical_data=input_manager.general_input.population.country_population[self._name].historical,
+                prediction_data=input_manager.general_input.population.country_population[self._name].prognosis)
 
         # create gdp timeseries
         self._gdp = prediction_models.TimeStepSequence(

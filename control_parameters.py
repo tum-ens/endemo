@@ -10,12 +10,19 @@ ProductSettings = namedtuple("ProductSettings", ("active", "manual_exp_change_ra
 
 
 class ForecastMethod(Enum):
+    """
+    The ForecastMethod indicates the preferred way to extrapolate historical data.
+    """
     LINEAR = 0
     QUADRATIC = 1
     EXPONENTIAL = 2
 
 
 class ControlParameters:
+    """
+    The ControlParameter class holds the data given by the Set_and_Control_Parameters.xlsx file.
+    It is split in general settings, and settings for each sector, indicating non-overlapping parameters for our model.
+    """
     general_settings: GeneralSettings
     industry_settings: IndustrySettings
 
@@ -25,6 +32,10 @@ class ControlParameters:
 
 
 class IndustrySettings:
+    """
+    The IndustrySettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
+    IND_general and IND_subsectors sheets.
+    """
     forecast_map = dict({"Trend": ForecastMethod.LINEAR, "U-shape": ForecastMethod.QUADRATIC,
                          "Exponential": ForecastMethod.EXPONENTIAL})
 
@@ -88,6 +99,10 @@ class IndustrySettings:
 
 
 class GeneralSettings:
+    """
+    The GeneralSettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
+    GeneralSettings and Countries sheets.
+    """
     _sectors_active_values: dict
     _parameter_values: dict
 
