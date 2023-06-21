@@ -22,7 +22,7 @@ Interval = namedtuple("Interval", ["start", "end"])
 
 class Input:
     """
-    The Input class connects all types of input data, that is in the form of excel/csv sheets.
+    The Input class connects all types of input data, that is in the form of excel/csv sheets in the 'input' folder.
     """
     super_path = Path(os.path.abspath(''))
     input_path = super_path / 'input'
@@ -33,6 +33,7 @@ class Input:
     ctrl: cp.ControlParameters
     general_input: GeneralInput
     industry_input: IndustryInput
+    # Future: add other sector inputs
 
     def __init__(self):
         ctrl_ex = pd.ExcelFile(self.input_path / 'Set_and_Control_Parameters.xlsx')
@@ -54,42 +55,79 @@ class Input:
         self.industry_input = IndustryInput(self.industry_path, industry_settings)
 
 
+
 class GeneralInput:
     """
     General Input denoted input that is read from the "input/general" folder.
     """
     class PopulationData:
+        """
+        Holds all data on population. That includes historical data, prognosis data for each country and nuts2 region.
+        """
+
+        class Nuts2Region:
+            """
+            Represents one NUTS2 Region according to individual codes.
+            It is build as a tree structure to include sub-regions as child nodes.
+            """
+            region_name: str
+            sub_regions = dict()    # str -> Nuts2Region (python doesn't allow to indicate the type directly)
+            historical_data: [(float, float)]
+            
+            def __init__(self, region_name, historical_data: [(float, float)]):
+                self.region_name = region_name
+                self.historical_data = historical_data
+
+            def add_child_region(self, region_name: str, nuts2region_obj):
+                if len(self.region_name) + 1 is len(region_name):
+                    # region is direct subregion
+                    self.sub_regions[region_name] = nuts2region_obj
+                    return
+                elif len(self.region_name) + 1 < len(region_name):
+                    # region is a subregion of a subregion, search for right one to insert
+                    for key, value in self.sub_regions.items():
+                        if region_name.startswith(key):
+                            # found parent region
+                            self.sub_regions[key].add_child_region(region_name, nuts2region_obj)
+                            return
+                warnings.warn("Something went wrong when trying to insert the nuts2 subregion " + region_name)
+
+            def get_prog(self, year: int):
+                """ Recursively calculate the prognosis for all leaf regions"""
+                pass
+
+
+
+
+
+
         country_population: dict[str, HisProg]  # country_name -> historical: [(float, float)], prognosis: [(float, float)]
-        nuts2_population: dict[str, HisProg]    # country_name -> (code -> (historical: [(,)], prognosis: [interval, data]))
+        nuts2_population: dict[str, Nuts2Region]    # country_name -> (code -> (historical: [(,)], prognosis: [interval, data]))
 
         def __init__(self, ctrl, df_country_pop_his, df_country_pop_prog, df_nuts2_pop_his, df_nuts2_pop_prog):
             self.country_population = dict[str, HisProg]()
             self.nuts2_population = dict[str, HisProg]()
 
-            # preprocess population historical data
-            dict_pop_his = dict()
-            pop_it = pd.DataFrame(df_country_pop_his).itertuples()
-            for row in pop_it:
-                country_name = row[1]
-                zipped = list(zip(list(df_country_pop_his)[1:], row[2:]))
-                his_data = uty.filter_out_nan_and_inf(zipped)
-                dict_pop_his[country_name] = his_data
+            # preprocess country population historical data
+            dict_c_pop_his = uty.convert_table_to_filtered_data_series_per_country(df_country_pop_his)
 
-            # preprocess population prognosis
-            dict_pop_prog = dict()
-            pop_it = df_country_pop_prog.itertuples()
-            for row in pop_it:
-                country_name = row[1]
-                zipped = list(zip(list(df_country_pop_prog)[1:], row[2:]))
-                prog_data = uty.filter_out_nan_and_inf(zipped)
-                dict_pop_prog[country_name] = prog_data
+            # preprocess country population prognosis
+            dict_c_pop_prog = uty.convert_table_to_filtered_data_series_per_country(df_country_pop_prog)
+
+            # preprocess nuts2 population historical data
+            df_nuts2_pop_his = df_nuts2_pop_his.drop('GEO/TIME', axis=1)
+            dict_nuts2_pop_code_his = uty.convert_table_to_filtered_data_series_per_country(df_nuts2_pop_his)
+
 
             for country_name in ctrl.general_settings.active_countries:
                 # fill population
-                self.country_population[country_name] = HisProg(uty.filter_out_nan_and_inf(dict_pop_his[country_name]),
-                                                                uty.filter_out_nan_and_inf(dict_pop_prog[country_name]))
+                self.country_population[country_name] = HisProg(uty.filter_out_nan_and_inf(dict_c_pop_his[country_name]),
+                                                                uty.filter_out_nan_and_inf(dict_c_pop_prog[country_name]))
 
                 # get nuts2 regions data and fill historical as well as prognosis like gdp
+
+
+
 
     abbreviations: dict[str, CA]
     population: PopulationData
@@ -258,7 +296,6 @@ class IndustryInput:
 
             production_it = pd.DataFrame(ex_product_his).itertuples()
             for row in production_it:
-                print("country name: " + str(row.Country))
                 if str(row.Country) == 'nan':
                     continue
                 years = ex_product_his.columns[1:]

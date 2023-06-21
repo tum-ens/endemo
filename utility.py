@@ -5,6 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+import pandas as pd
+
 from prediction_models import Timeseries
 
 
@@ -182,4 +184,15 @@ def cut_after_x(data: [(float, float)], last_x: float):
         if x < last_x:
             return data[:-counter]
         counter += 1
+
+
+def convert_table_to_filtered_data_series_per_country(df: pd.DataFrame) -> dict:
+    dict_out = dict()
+    pop_it = pd.DataFrame(df).itertuples()
+    for row in pop_it:
+        country_name = row[1]
+        zipped = list(zip(list(df)[1:], row[2:]))
+        his_data = filter_out_nan_and_inf(zipped)
+        dict_out[country_name] = his_data
+    return dict_out
 
