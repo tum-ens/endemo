@@ -33,7 +33,7 @@ class Input:
     ctrl: cp.ControlParameters
     general_input: GeneralInput
     industry_input: IndustryInput
-    # Future: add other sector inputs
+    # Future TODO: add other sector inputs
 
     def __init__(self):
         ctrl_ex = pd.ExcelFile(self.input_path / 'Set_and_Control_Parameters.xlsx')
@@ -58,53 +58,17 @@ class Input:
 
 class GeneralInput:
     """
-    General Input denoted input that is read from the "input/general" folder.
+    General Input denotes input that is read from the "input/general" folder.
     """
     class PopulationData:
         """
         Holds all data on population. That includes historical data, prognosis data for each country and nuts2 region.
         """
 
-        class Nuts2Region:
-            """
-            Represents one NUTS2 Region according to individual codes.
-            It is build as a tree structure to include sub-regions as child nodes.
-            """
-            region_name: str
-            sub_regions = dict()    # str -> Nuts2Region (python doesn't allow to indicate the type directly)
-            historical_data: [(float, float)]
-            
-            def __init__(self, region_name, historical_data: [(float, float)]):
-                self.region_name = region_name
-                self.historical_data = historical_data
-
-            def add_child_region(self, region_name: str, nuts2region_obj):
-                if len(self.region_name) + 1 is len(region_name):
-                    # region is direct subregion
-                    self.sub_regions[region_name] = nuts2region_obj
-                    return
-                elif len(self.region_name) + 1 < len(region_name):
-                    # region is a subregion of a subregion, search for right one to insert
-                    for key, value in self.sub_regions.items():
-                        if region_name.startswith(key):
-                            # found parent region
-                            self.sub_regions[key].add_child_region(region_name, nuts2region_obj)
-                            return
-                warnings.warn("Something went wrong when trying to insert the nuts2 subregion " + region_name)
-
-            def get_prog(self, year: int):
-                """ Recursively calculate the prognosis for all leaf regions"""
-                pass
-
-
-
-
-
-
         country_population: dict[str, HisProg]  # country_name -> historical: [(float, float)], prognosis: [(float, float)]
-        nuts2_population: dict[str, Nuts2Region]    # country_name -> (code -> (historical: [(,)], prognosis: [interval, data]))
+        nuts2_population: dict[str, [(str, [float, float])]]    # country_code -> (code -> (historical: [(,)], prognosis: [interval, data]))
 
-        def __init__(self, ctrl, df_country_pop_his, df_country_pop_prog, df_nuts2_pop_his, df_nuts2_pop_prog):
+        def __init__(self, ctrl: cp.ControlParameters, general_input: GeneralInput, df_country_pop_his: pd.DataFrame, df_country_pop_prog: pd.DataFrame, df_nuts2_pop_his: pd.DataFrame, df_nuts2_pop_prog: pd.DataFrame):
             self.country_population = dict[str, HisProg]()
             self.nuts2_population = dict[str, HisProg]()
 
@@ -116,18 +80,60 @@ class GeneralInput:
 
             # preprocess nuts2 population historical data
             df_nuts2_pop_his = df_nuts2_pop_his.drop('GEO/TIME', axis=1)
-            dict_nuts2_pop_code_his = uty.convert_table_to_filtered_data_series_per_country(df_nuts2_pop_his)
+            dict_nuts2_pop_his = dict[str, [(str, [float, float])]]()
+            it = df_nuts2_pop_his.itertuples()
+            for row in it:
+                region_name = str(row[1]).rstrip("0")   # read region code and remove trailing 0s
+                if region_name.endswith("-"):
+                    region_name = region_name[:-2]
+                if region_name in dict_nuts2_pop_his.keys():
+                    continue
+                zipped = list(zip(list(df_nuts2_pop_his)[1:], row[2:]))
+                his_data = uty.filter_out_nan_and_inf(zipped)
+                if len(region_name) == 2:
+                    dict_nuts2_pop_his[region_name] = [(region_name, his_data)]
+                else:
+                    abbrev = region_name[-2:]
+                    if abbrev in dict_nuts2_pop_his.keys():
+                        # add to existing abbreviation
+                        dict_nuts2_pop_his[abbrev].append((region_name, his_data))
+                    else:
+                        # no parent found, but code is longer than 2 letters
+                        dict_nuts2_pop_his[region_name] = [(region_name, his_data)]
+                        # warnings.warn("NUTS region " + region_name + " might not be read correctly. No parent
+                        # region was read, but the region code is longer than 2 letters")
 
+            # preprocess nuts2 population prognosis: interval 2015-2050
+            df_nuts2_pop_prog = df_nuts2_pop_prog.drop(["Region name", "for 35 years"], axis=1)\
+                                                 .rename(columns={'per year': '2015-2050'})
+            interval_conv = lambda xs: [Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
+            intervals = interval_conv(df_nuts2_pop_prog.columns[1:])
+
+            dict_nuts2_pop_prog = dict[str, dict[str, list[Interval, float]]]()
+            it = df_nuts2_pop_prog.itertuples()
+            for row in it:
+                region_name_raw = row[1]
+                region_name_clean = str(row[1]).rstrip("0")
+                alpha2 = region_name_clean[-2:]
+
+                values = df_nuts2_pop_prog[df_nuts2_pop_prog["Code"] == region_name_raw].iloc[0][1:]
+                zipped_prog = list(zip(intervals, values))
+
+                if alpha2 not in dict_nuts2_pop_prog.keys():
+                    dict_nuts2_pop_prog[alpha2] = dict()
+
+                dict_nuts2_pop_prog[alpha2][region_name_clean] = zipped_prog
 
             for country_name in ctrl.general_settings.active_countries:
-                # fill population
-                self.country_population[country_name] = HisProg(uty.filter_out_nan_and_inf(dict_c_pop_his[country_name]),
-                                                                uty.filter_out_nan_and_inf(dict_c_pop_prog[country_name]))
+                # fill country population
+                self.country_population[country_name] = HisProg(dict_c_pop_his[country_name], dict_c_pop_prog[country_name])
 
-                # get nuts2 regions data and fill historical as well as prognosis like gdp
+                # fill nuts2 population
+                abbrev = general_input.abbreviations[country_name].alpha2
+                self.nuts2_population[country_name] = HisProg(dict_nuts2_pop_his[abbrev], dict_nuts2_pop_prog[abbrev])
 
-
-
+            #TODO: test if nuts2 population historical data and prognosis was read correctly
+            #TODO: fill data into country and create nuts tree
 
     abbreviations: dict[str, CA]
     population: PopulationData
@@ -150,9 +156,7 @@ class GeneralInput:
         df_efficiency = pd.read_excel(path / "Efficiency_Combustion.xlsx")
 
         # create PopulationData object
-        self.population = self.PopulationData(ctrl,
-                                              df_world_pop_his, df_world_pop_prog,
-                                              df_nuts2_pop_his, df_nuts2_pop_prog)
+        self.population = self.PopulationData(ctrl, df_world_pop_his, df_world_pop_prog, df_nuts2_pop_his, df_nuts2_pop_prog)
 
         # fill efficiency
         for _, row in df_efficiency.iterrows():
@@ -291,6 +295,11 @@ class IndustryInput:
                 self.product_data_access[product_name].sheet_transform(
                     pd.read_excel(industry_path / retrieve_prod.file_name, retrieve_prod.sheet_name,
                                   skiprows=retrieve_prod.skip_rows))
+
+            # skip years
+            for skip_year in industry_settings.skip_years:
+                if str(skip_year) in ex_product_his.columns:
+                    ex_product_his.drop(str(skip_year), axis=1, inplace=True)
 
             dict_prod_his = dict()
 

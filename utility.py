@@ -188,8 +188,8 @@ def cut_after_x(data: [(float, float)], last_x: float):
 
 def convert_table_to_filtered_data_series_per_country(df: pd.DataFrame) -> dict:
     dict_out = dict()
-    pop_it = pd.DataFrame(df).itertuples()
-    for row in pop_it:
+    it = pd.DataFrame(df).itertuples()
+    for row in it:
         country_name = row[1]
         zipped = list(zip(list(df)[1:], row[2:]))
         his_data = filter_out_nan_and_inf(zipped)
