@@ -1,10 +1,16 @@
-import warnings
+from __future__ import annotations
 
+import warnings
+from collections import namedtuple
+
+import control_parameters
 import industry_sector
 import input
 import output
 import prediction_models as pm
 import sector
+import population as pop
+import utility as uty
 
 
 class Country:
@@ -13,7 +19,7 @@ class Country:
     """
     _name: str
     _abbreviations: [str]  # not implemented yet
-    _population: pm.PredictedTimeseries
+    _population: pop.Population[pm.PredictedTimeseries, pop.NutsRegion]
     _gdp: pm.TimeStepSequence
     _sectors: dict[sector.SectorIdentifier, sector.Sector]
 
@@ -25,10 +31,37 @@ class Country:
         self._abbreviations = input_manager.general_input.abbreviations[self._name]
 
         # create population timeseries
-        self._population = \
+        country_population = \
             pm.PredictedTimeseries(
                 historical_data=input_manager.general_input.population.country_population[self._name].historical,
                 prediction_data=input_manager.general_input.population.country_population[self._name].prognosis)
+
+        # create nuts2 tree
+        nuts2_data = input_manager.general_input.population.nuts2_population[self._name]
+        nuts2_root: pop.NutsRegion
+        if self._abbreviations.alpha2 in nuts2_data.prognosis.keys():
+            nuts2_root = pop.NutsRegion(self._abbreviations.alpha2, nuts2_data.historical[self._abbreviations.alpha2],
+                                    nuts2_data.prognosis[self._abbreviations.alpha2])
+        else:
+            nuts2_root = pop.NutsRegion(self._abbreviations.alpha2, nuts2_data.historical[self._abbreviations.alpha2])
+
+        for region_name, region_data in nuts2_data.historical.items():
+            if region_name == self._abbreviations.alpha2:
+                continue
+            # create and add subregion to root
+            subregion: pop.NutsRegion
+            if region_name in nuts2_data.prognosis.keys():
+                subregion = pop.NutsRegion(region_name, region_data, nuts2_data.prognosis[region_name])
+            else:
+                subregion = pop.NutsRegion(region_name, region_data)
+            nuts2_root.add_child_region(subregion)
+
+
+        print(nuts2_root)
+
+        # fill population member variable
+        self._population = \
+            pop.Population(country_population, nuts2_root, input_manager.ctrl.industry_settings.nuts2_used_for_calculation)
 
         # create gdp timeseries
         self._gdp = pm.TimeStepSequence(
@@ -47,9 +80,9 @@ class Country:
         # create warnings
         if not self._abbreviations:
             warnings.warn("Country " + self._name + " has an empty list of Abbreviations.")
-        if not self._population.get_data():
+        if not self._population.country_level_population.get_data():
             warnings.warn("Country " + self._name + " has an empty list of historical Population.")
-        if not self._population.get_prediction_raw():
+        if not self._population.country_level_population.get_prediction_raw():
             warnings.warn("Country " + self._name + " has an empty list of prediction for Population.")
         if not self._gdp.get_historical_data_raw():
             warnings.warn("Country " + self._name + " has an empty list of historical gdp.")
@@ -75,46 +108,3 @@ class Country:
 
     def get_sector(self, sector_id: sector.SectorIdentifier):
         return self._sectors[sector_id]
-
-class NutsRegion:
-    """
-    Represents one NUTS2 Region according to individual codes.
-    It is build as a tree structure to include sub-regions as child nodes.
-    """
-    region_name: str
-    _sub_regions = dict()    # str -> NutsRegion (python doesn't allow to indicate the type directly)
-    _population: pm.TimeStepSequence
-
-    def __init__(self, region_name, historical_data: [(float, float)], prediction_data: (pm.Interval, float)):
-        self.region_name = region_name
-        self.historical_data = historical_data
-
-        self._population = pm.TimeStepSequence(historical_data, [prediction_data])
-
-    def add_child_region(self, region_name: str, nuts2region_obj):
-        """ Traverses the NUTS Tree recursively to insert region node. """
-        if len(self.region_name) + 1 is len(region_name):
-            # region is direct subregion
-            self._sub_regions[region_name] = nuts2region_obj
-            return
-        elif len(self.region_name) + 1 < len(region_name):
-            # region is a subregion of a subregion, search for right one to insert
-            for key, value in self._sub_regions.items():
-                if region_name.startswith(key):
-                    # found parent region
-                    self._sub_regions[key].add_child_region(region_name, nuts2region_obj)
-                    return
-        warnings.warn("Something went wrong when trying to insert the nuts2 subregion " + region_name)
-
-    def get_pop_prog(self, year: int) -> float:
-        """ Recursively calculate and sum up the prognosis for all leaf regions"""
-        result = 0
-        if len(self._sub_regions) is not 0:
-            for subregion in self._sub_regions.values():
-                result += subregion.get_pop_prog(year)
-            return result
-        else:
-            return self._population.get_prog(year)
-
-
-

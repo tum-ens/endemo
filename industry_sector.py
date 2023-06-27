@@ -5,6 +5,7 @@ import pandas as pd
 import country as cty
 import input
 import output
+import population as pop
 import prediction_models as pm
 import products as prd
 import sector
@@ -17,14 +18,14 @@ class Industry(sector.Sector):
     """
     _products: dict[str, prd.Product]
 
-    def __init__(self, country_name: str, country_population: pm.PredictedTimeseries, country_gdp: pm.TimeStepSequence,
+    def __init__(self, country_name: str, population: pop.Population, country_gdp: pm.TimeStepSequence,
                  input_manager: input.Input):
         self._products = dict()
         active_products = input_manager.industry_input.active_products
 
         for (product_name, product_input) in active_products.items():
             self._products[product_name] = prd.Product(product_name, product_input, input_manager,
-                                                       country_name, country_population, country_gdp)
+                                                       country_name, population, country_gdp)
 
         # create warnings
         if not self._products:

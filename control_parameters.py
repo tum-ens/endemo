@@ -44,6 +44,7 @@ class IndustrySettings:
     production_quantity_calc_per_capita: bool
     trend_calc_for_spec: bool
     h2_subst_of_heat: float
+    nuts2_used_for_calculation: bool
     skip_years: [int]
     last_available_year: int
     product_settings: dict[str, ProductSettings]
@@ -67,6 +68,10 @@ class IndustrySettings:
 
         self.h2_subst_of_heat = \
             ex_general[ex_general["Parameter"] == "H2 substitution of heat"].get("Value").iloc[0]
+
+        self.nuts2_used_for_calculation = \
+            ex_general[ex_general["Parameter"] == "NUTS2 distribution based on installed industrial capacity"].get(
+                "Value").iloc[0]
 
         skip_years_string = str(ex_general[ex_general["Parameter"] == "Skip years"].get("Value").iloc[0])
         self.skip_years = [int(i) for i in skip_years_string.split(",")]

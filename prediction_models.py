@@ -100,7 +100,7 @@ class Timeseries:
 
     def get_last_data_entry(self) -> (float, float):
         if len(self._data) <= 0:
-            return (np.NaN, np.NaN)
+            return np.NaN, np.NaN
         else:
             return self._data[-1]
 

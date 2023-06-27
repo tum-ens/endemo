@@ -8,12 +8,16 @@ import input
 import output
 import prediction_models as pm
 import control_parameters as cp
+import population as pop
 
 SC = namedtuple("SC", ["electricity", "heat", "hydrogen", "max_subst_h2"])
 BAT = namedtuple("BAT", ["electricity", "heat"])
 
 
 class SpecificConsumptionData:
+    """
+    Holds all consumption data for one product within an industry of a country.
+    """
     default_specific_consumption: SC
     historical_specific_consumption: dict[str, pm.Timeseries]
     efficiency: dict[str, BAT]
@@ -50,6 +54,7 @@ class SpecificConsumptionData:
             self._calculate_sc = False
 
     def get(self, year) -> SC:
+        """ Returns the specific consumption """
         if self._calculate_sc and self.historical_specific_consumption:
             electricity = 0
             heat = 0.0
@@ -63,6 +68,9 @@ class SpecificConsumptionData:
 
 
 class Product:
+    """
+    Holds all information and objects belonging to a product in the industry of a country.
+    """
     _name: str
     _country_name: str
     _specific_consumption: SpecificConsumptionData
@@ -81,7 +89,7 @@ class Product:
     _empty_product: bool
 
     def __init__(self, product_name: str, product_input: input.IndustryInput.ProductInput, input_manager: input.Input,
-                 country_name: str, population: pm.PredictedTimeseries, gdp: pm.TimeStepSequence):
+                 country_name: str, population: pop.Population, gdp: pm.TimeStepSequence):
 
         self._country_name = country_name
         self._name = product_name

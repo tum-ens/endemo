@@ -33,6 +33,7 @@ class Input:
     ctrl: cp.ControlParameters
     general_input: GeneralInput
     industry_input: IndustryInput
+
     # Future TODO: add other sector inputs
 
     def __init__(self):
@@ -55,20 +56,24 @@ class Input:
         self.industry_input = IndustryInput(self.industry_path, industry_settings)
 
 
-
 class GeneralInput:
     """
     General Input denotes input that is read from the "input/general" folder.
     """
+
     class PopulationData:
         """
         Holds all data on population. That includes historical data, prognosis data for each country and nuts2 region.
         """
 
-        country_population: dict[str, HisProg]  # country_name -> historical: [(float, float)], prognosis: [(float, float)]
-        nuts2_population: dict[str, [(str, [float, float])]]    # country_code -> (code -> (historical: [(,)], prognosis: [interval, data]))
+        country_population: dict[
+            str, HisProg]  # country_name -> historical: [(float, float)], prognosis: [(float, float)]
+        nuts2_population: dict[
+            str, [(str, [float, float])]]  # country_name -> (code -> (historical: [(,)], prognosis: [interval, data]))
 
-        def __init__(self, ctrl: cp.ControlParameters, general_input: GeneralInput, df_country_pop_his: pd.DataFrame, df_country_pop_prog: pd.DataFrame, df_nuts2_pop_his: pd.DataFrame, df_nuts2_pop_prog: pd.DataFrame):
+        def __init__(self, ctrl: cp.ControlParameters, abbreviations: dict,
+                     df_country_pop_his: pd.DataFrame, df_country_pop_prog: pd.DataFrame,
+                     df_nuts2_pop_his: pd.DataFrame, df_nuts2_pop_prog: pd.DataFrame):
             self.country_population = dict[str, HisProg]()
             self.nuts2_population = dict[str, HisProg]()
 
@@ -80,43 +85,46 @@ class GeneralInput:
 
             # preprocess nuts2 population historical data
             df_nuts2_pop_his = df_nuts2_pop_his.drop('GEO/TIME', axis=1)
-            dict_nuts2_pop_his = dict[str, [(str, [float, float])]]()
+            dict_nuts2_pop_his = dict[str, dict[str, [(float, float)]]]()
             it = df_nuts2_pop_his.itertuples()
             for row in it:
-                region_name = str(row[1]).rstrip("0")   # read region code and remove trailing 0s
+                region_name = str(row[1]).strip()  # read region code from rows
                 if region_name.endswith("-"):
                     region_name = region_name[:-2]
                 if region_name in dict_nuts2_pop_his.keys():
                     continue
+                if region_name[-1] == "X":
+                    # its a non-region
+                    continue
                 zipped = list(zip(list(df_nuts2_pop_his)[1:], row[2:]))
                 his_data = uty.filter_out_nan_and_inf(zipped)
-                if len(region_name) == 2:
-                    dict_nuts2_pop_his[region_name] = [(region_name, his_data)]
+                abbrev = region_name[:2]
+                if abbrev in dict_nuts2_pop_his.keys():
+                    # add to existing abbreviation
+                    dict_nuts2_pop_his[abbrev][region_name] = his_data
                 else:
-                    abbrev = region_name[-2:]
-                    if abbrev in dict_nuts2_pop_his.keys():
-                        # add to existing abbreviation
-                        dict_nuts2_pop_his[abbrev].append((region_name, his_data))
-                    else:
-                        # no parent found, but code is longer than 2 letters
-                        dict_nuts2_pop_his[region_name] = [(region_name, his_data)]
-                        # warnings.warn("NUTS region " + region_name + " might not be read correctly. No parent
-                        # region was read, but the region code is longer than 2 letters")
+                    # no parent found, but code is longer than 2 letters
+                    dict_nuts2_pop_his[abbrev] = dict()
+                    dict_nuts2_pop_his[abbrev][region_name] = his_data
+                    if len(region_name) > 2:
+                        warnings.warn("NUTS region " + region_name + " might not be read correctly. No parent region "
+                                                                     "was read, but the region code is longer than 2 "
+                                                                     "letters")
 
             # preprocess nuts2 population prognosis: interval 2015-2050
-            df_nuts2_pop_prog = df_nuts2_pop_prog.drop(["Region name", "for 35 years"], axis=1)\
-                                                 .rename(columns={'per year': '2015-2050'})
+            df_nuts2_pop_prog = df_nuts2_pop_prog.drop(["Region name", "for 35 years"], axis=1) \
+                .rename(columns={'per year': '2015-2050'})
             interval_conv = lambda xs: [Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
             intervals = interval_conv(df_nuts2_pop_prog.columns[1:])
 
-            dict_nuts2_pop_prog = dict[str, dict[str, list[Interval, float]]]()
+            dict_nuts2_pop_prog = dict[str, dict[str, [(Interval, float)]]]()
             it = df_nuts2_pop_prog.itertuples()
             for row in it:
                 region_name_raw = row[1]
-                region_name_clean = str(row[1]).rstrip("0")
-                alpha2 = region_name_clean[-2:]
+                region_name_clean = str(region_name_raw).strip()
+                alpha2 = region_name_clean[:2]
 
-                values = df_nuts2_pop_prog[df_nuts2_pop_prog["Code"] == region_name_raw].iloc[0][1:]
+                values = df_nuts2_pop_prog[df_nuts2_pop_prog["Code"] == region_name_clean].iloc[0][1:]
                 zipped_prog = list(zip(intervals, values))
 
                 if alpha2 not in dict_nuts2_pop_prog.keys():
@@ -126,14 +134,15 @@ class GeneralInput:
 
             for country_name in ctrl.general_settings.active_countries:
                 # fill country population
-                self.country_population[country_name] = HisProg(dict_c_pop_his[country_name], dict_c_pop_prog[country_name])
+                self.country_population[country_name] = \
+                    HisProg(dict_c_pop_his[country_name], dict_c_pop_prog[country_name])
 
                 # fill nuts2 population
-                abbrev = general_input.abbreviations[country_name].alpha2
-                self.nuts2_population[country_name] = HisProg(dict_nuts2_pop_his[abbrev], dict_nuts2_pop_prog[abbrev])
-
-            #TODO: test if nuts2 population historical data and prognosis was read correctly
-            #TODO: fill data into country and create nuts tree
+                if country_name not in self.nuts2_population.keys():
+                    self.nuts2_population[country_name] = dict()
+                abbrev = abbreviations[country_name].alpha2
+                self.nuts2_population[country_name] = \
+                    HisProg(dict_nuts2_pop_his[abbrev], dict_nuts2_pop_prog[abbrev])
 
     abbreviations: dict[str, CA]
     population: PopulationData
@@ -154,9 +163,6 @@ class GeneralInput:
         df_gdp_prog_europa = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data")
         df_gdp_prog_world = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data_world")
         df_efficiency = pd.read_excel(path / "Efficiency_Combustion.xlsx")
-
-        # create PopulationData object
-        self.population = self.PopulationData(ctrl, df_world_pop_his, df_world_pop_prog, df_nuts2_pop_his, df_nuts2_pop_prog)
 
         # fill efficiency
         for _, row in df_efficiency.iterrows():
@@ -196,11 +202,17 @@ class GeneralInput:
 
             self.gdp[country_name] = HisProg(gdp_his, zipped_gdp_prog)
 
+        # create PopulationData object
+        self.population = self.PopulationData(ctrl, self.abbreviations,
+                                              df_world_pop_his, df_world_pop_prog, df_nuts2_pop_his,
+                                              df_nuts2_pop_prog)
+
 
 class IndustryInput:
     """
         Industry Input denoted input that is read from the "input/industry" folder.
     """
+
     class ProductInput:
         """
         The Product Input summarizes all input data, that is specific to a certain product type, but holds the
