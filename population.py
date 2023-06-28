@@ -5,6 +5,9 @@ import control_parameters as ctrl
 
 
 class Population:
+    """
+    Holds information about a countries' population. Contains per-country data, as well as nuts2 data
+    """
     country_level_population: pm.PredictedTimeseries
     nuts2: NutsRegion
     nuts2_used: bool
@@ -14,17 +17,26 @@ class Population:
         self.nuts2 = nuts2
         self.nuts2_used = nuts2_used
 
-    def get_data(self):
+    def get_data(self) -> [(float, float)]:
         if self.nuts2_used and self.nuts2:
             return self.nuts2.historical_data
         else:
             return self.country_level_population.get_data()
 
-    def get_prog(self, year: int):
+    def get_prog(self, year: int) -> float:
         if self.nuts2_used and self.nuts2:
             return self.nuts2.get_pop_prog(year)
         else:
             return self.country_level_population.get_prog(year)
+
+    def get_country_prog(self, year: int) -> float:
+        return self.country_level_population.get_prog(year)
+
+    def get_nuts2_prog(self, year: int) -> float:
+        return self.nuts2.get_pop_prog(year)
+
+    def get_nuts2_root(self) -> NutsRegion:
+        return self.nuts2
 
 
 class NutsRegion:
@@ -41,7 +53,7 @@ class NutsRegion:
         self._sub_regions = dict()
         self.historical_data = historical_data
 
-        if prediction_data is None:
+        if prediction_data is None or len(historical_data) == 0:
             self._population = pm.Timeseries(historical_data, ctrl.ForecastMethod.LINEAR)
         else:
             self._population = pm.TimeStepSequence(historical_data, prediction_data)
@@ -82,6 +94,18 @@ class NutsRegion:
             return result
         else:
             return self._population.get_prog(year)
+
+    def get_nodes_dfs(self) -> [NutsRegion]:
+        """ Get a list of all nodes in Depth-First-Search order. """
+        if len(self._sub_regions) == 0:
+            # leaf node, return only self
+            return [self]
+        else:
+            # recursively return this node and all children
+            nodes = [self]
+            for subregion in self._sub_regions.values():
+                nodes += subregion.get_nodes_dfs()
+            return nodes
 
 
 

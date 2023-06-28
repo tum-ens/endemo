@@ -1,7 +1,7 @@
 from enum import Enum
 from pathlib import Path
 
-from output import Demand
+from containers import Demand
 
 
 class SectorIdentifier(Enum):

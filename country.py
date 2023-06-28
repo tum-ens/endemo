@@ -3,6 +3,7 @@ from __future__ import annotations
 import warnings
 from collections import namedtuple
 
+import containers
 import control_parameters
 import industry_sector
 import input
@@ -56,9 +57,6 @@ class Country:
                 subregion = pop.NutsRegion(region_name, region_data)
             nuts2_root.add_child_region(subregion)
 
-
-        print(nuts2_root)
-
         # fill population member variable
         self._population = \
             pop.Population(country_population, nuts2_root, input_manager.ctrl.industry_settings.nuts2_used_for_calculation)
@@ -89,8 +87,8 @@ class Country:
         if not self._gdp.get_interval_change_rate_raw():
             warnings.warn("Country " + self._name + " has an empty list of interval_changeRate for gdp.")
 
-    def calculate_total_demand(self, year: int) -> output.Demand:
-        total_demand = output.Demand()
+    def calculate_total_demand(self, year: int) -> containers.Demand:
+        total_demand = containers.Demand()
 
         for sector_name, obj_sector in self._sectors.items():
             total_demand.add(obj_sector.calculate_total_demand(year))

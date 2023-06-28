@@ -5,19 +5,14 @@ import os
 import warnings
 from collections import namedtuple
 from pathlib import Path
-from typing import Tuple, Any
 
-import output
+import containers
 import utility as uty
 
 import pandas as pd
 
 import control_parameters as cp
-import products as prd
-
-CA = namedtuple("CA", ["alpha2", "alpha3", "german_name"])
-HisProg = namedtuple("HisProg", ["historical", "prognosis"])
-Interval = namedtuple("Interval", ["start", "end"])
+from containers import CA, HisProg, Interval
 
 
 class Input:
@@ -88,6 +83,7 @@ class GeneralInput:
             dict_nuts2_pop_his = dict[str, dict[str, [(float, float)]]]()
             it = df_nuts2_pop_his.itertuples()
             for row in it:
+
                 region_name = str(row[1]).strip()  # read region code from rows
                 if region_name.endswith("-"):
                     region_name = region_name[:-2]
@@ -147,12 +143,12 @@ class GeneralInput:
     abbreviations: dict[str, CA]
     population: PopulationData
     gdp: dict[str, HisProg[[(float, float)], [Interval, float]]]
-    efficiency: dict[str, prd.BAT]
+    efficiency: dict[str, containers.BAT]
 
     def __init__(self, ctrl: cp.ControlParameters, path: Path):
         self.abbreviations = dict[str, CA]()
         self.gdp = dict[str, HisProg[[(float, float)], [Interval, float]]]()
-        self.efficiency = dict[str, prd.BAT]()
+        self.efficiency = dict[str, containers.BAT]()
 
         df_abbr = pd.read_excel(path / "Abbreviations.xlsx")
         df_world_pop_his = pd.read_excel(path / "Population_historical_world.xls")
@@ -167,7 +163,7 @@ class GeneralInput:
         # fill efficiency
         for _, row in df_efficiency.iterrows():
             self.efficiency[row["Energy carrier"]] = \
-                prd.BAT(row["Electricity production [-]"], row["Heat production [-]"])
+                containers.BAT(row["Electricity production [-]"], row["Heat production [-]"])
 
         for country_name in ctrl.general_settings.active_countries:
             # fill abbreviations
@@ -219,11 +215,11 @@ class IndustryInput:
         information for all countries.
         Example product type: steel_prim
         """
-        specific_consumption_default: dict[str, prd.SC]
+        specific_consumption_default: dict[str, containers.SC]
         specific_consumption_historical: dict[str, (float, float)]
-        bat: dict[str, prd.BAT]
+        bat: dict[str, containers.BAT]
         production: dict[str, (float, float)]
-        heat_levels: output.Heat
+        heat_levels: containers.Heat
         manual_exp_change_rate: float
         perc_used: float
 
@@ -294,7 +290,7 @@ class IndustryInput:
         dict_heat_levels = dict()
 
         for _, row in df_heat_levels.iterrows():
-            dict_heat_levels[row["Industry"]] = output.Heat(row["Q1"], row["Q2"], row["Q3"], row["Q4"])
+            dict_heat_levels[row["Industry"]] = containers.Heat(row["Q1"], row["Q2"], row["Q3"], row["Q4"])
 
         # read the active sectors sheets
         for product_name in self.settings.active_product_names:
@@ -336,10 +332,10 @@ class IndustryInput:
 
             for _, row in pd.DataFrame(prod_sc).iterrows():
                 dict_prod_sc_country[row.Country] = \
-                    prd.SC(row["Spec electricity consumption [GJ/t]"],
-                           row["Spec heat consumption [GJ/t]"],
-                           row["Spec hydrogen consumption [GJ/t]"],
-                           row["max. subst. of heat with H2 [%]"])
+                    containers.SC(row["Spec electricity consumption [GJ/t]"],
+                                  row["Spec heat consumption [GJ/t]"],
+                                  row["Spec hydrogen consumption [GJ/t]"],
+                                  row["max. subst. of heat with H2 [%]"])
 
             # read specific demand historical data
             dict_sc_his = dict()
@@ -374,8 +370,8 @@ class IndustryInput:
 
             for _, row in df_prod_bat.iterrows():
                 dict_prod_bat_country[row.Country] = \
-                    prd.BAT(row["Spec electricity consumption [GJ/t]"],
-                            row["Spec heat consumption [GJ/t]"])
+                    containers.BAT(row["Spec electricity consumption [GJ/t]"],
+                                   row["Spec heat consumption [GJ/t]"])
 
             self.active_products[product_name] = \
                 self.ProductInput(dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his, sc_his_calc,

@@ -2,14 +2,12 @@ import warnings
 
 import pandas as pd
 
-import country as cty
-import input
-import output
 import population as pop
 import prediction_models as pm
 import products as prd
 import sector
 import input
+from containers import Demand
 
 
 class Industry(sector.Sector):
@@ -35,23 +33,23 @@ class Industry(sector.Sector):
         """ Returns product object with the matching name. Example name: steel_prim"""
         return self._products[name]
 
-    def calculate_total_demand(self, year: int) -> output.Demand:
+    def calculate_total_demand(self, year: int) -> Demand:
         """ Returns the sum of demand over all products in this industry. """
         # calculate industry sector for country by summing up all products
-        result = output.Demand()
+        result = Demand()
 
         for (name, obj) in self._products.items():
             result.add(obj.calculate_demand(year))
 
         return result
 
-    def calculate_product_demand(self, product_name: str, year: int) -> output.Demand:
+    def calculate_product_demand(self, product_name: str, year: int) -> Demand:
         """ Returns the named products demand for the specified year. Handles non-existent products."""
         if product_name in self._products.keys():
             return self._products[product_name].calculate_demand(year)
         else:
             # if product not in industry, there is no demand -> return 0ed demand
-            return output.Demand()
+            return Demand()
 
     def prog_product_amount(self, product_name: str, year: int) -> float:
         """ Returns the prognosis for named products amount in year. Handles non-existent products."""
