@@ -49,6 +49,7 @@ class IndustrySettings:
     last_available_year: int
     product_settings: dict[str, ProductSettings]
     active_product_names: []
+    rest_sector_growth_rate: float
 
     def __init__(self, ex_general: pd.DataFrame, ex_subsectors: pd.DataFrame):
         self.product_settings = dict()
@@ -78,6 +79,10 @@ class IndustrySettings:
 
         self.last_available_year = \
             ex_general[ex_general["Parameter"] == "Last available year"].get("Value").iloc[0]
+
+        self.rest_sector_growth_rate = \
+            ex_subsectors[ex_subsectors["Subsectors"] == "unspecified industry"].get(
+                "Parameter: production quantity change in %/year").iloc[0]
 
         product_list = ex_subsectors.get("Subsectors")
 
@@ -115,12 +120,15 @@ class GeneralSettings:
     recognized_countries: [str]
     active_countries: [str]
 
+    nuts2_version: int
+
     def __init__(self, ex_general: pd.DataFrame, ex_country: pd.DataFrame):
         self._sectors_active_values = dict()
         self._parameter_values = dict()
         self.target_year = int(ex_general[ex_general["Parameter"] == "Forecast year"].get("Value").iloc[0])
         self.recognized_countries = ex_country.get("Country")
         self.active_countries = ex_country[ex_country["Active"] == 1].get("Country")
+        self.nuts2_version = int(ex_general[ex_general["Parameter"] == "NUTS2 classification"].get("Value").iloc[0])
 
         rows_it = pd.DataFrame(ex_general).itertuples()
         for row in rows_it:

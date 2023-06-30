@@ -65,7 +65,6 @@ class FileGenerator(object):
         self.current_out_dict[column_name].append(value)
 
     def save_file(self):
-        print(self.current_out_dict)
         if self.current_sheet_name != "":
             self.end_sheet()
         self.excel_writer.close()

@@ -66,7 +66,7 @@ class GeneralInput:
         nuts2_population: dict[
             str, [(str, [float, float])]]  # country_name -> (code -> (historical: [(,)], prognosis: [interval, data]))
 
-        def __init__(self, ctrl: cp.ControlParameters, abbreviations: dict,
+        def __init__(self, ctrl: cp.ControlParameters, nuts2_valid_regions: set, abbreviations: dict,
                      df_country_pop_his: pd.DataFrame, df_country_pop_prog: pd.DataFrame,
                      df_nuts2_pop_his: pd.DataFrame, df_nuts2_pop_prog: pd.DataFrame):
             self.country_population = dict[str, HisProg]()
@@ -118,6 +118,9 @@ class GeneralInput:
             for row in it:
                 region_name_raw = row[1]
                 region_name_clean = str(region_name_raw).strip()
+                if region_name_clean not in nuts2_valid_regions:
+                    continue
+
                 alpha2 = region_name_clean[:2]
 
                 values = df_nuts2_pop_prog[df_nuts2_pop_prog["Code"] == region_name_clean].iloc[0][1:]
@@ -144,6 +147,7 @@ class GeneralInput:
     population: PopulationData
     gdp: dict[str, HisProg[[(float, float)], [Interval, float]]]
     efficiency: dict[str, containers.BAT]
+    nuts2_valid_regions: set
 
     def __init__(self, ctrl: cp.ControlParameters, path: Path):
         self.abbreviations = dict[str, CA]()
@@ -159,6 +163,12 @@ class GeneralInput:
         df_gdp_prog_europa = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data")
         df_gdp_prog_world = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data_world")
         df_efficiency = pd.read_excel(path / "Efficiency_Combustion.xlsx")
+        df_nuts2_labels = pd.read_excel(path / "NUTS2_from_Model.xlsx")
+
+        # fill nuts2 valid regions
+        column_name = "Code " + str(ctrl.general_settings.nuts2_version)
+        self.nuts2_valid_regions = set([x.strip() for x in df_nuts2_labels[column_name] if len(x.strip()) == 4])
+        print(self.nuts2_valid_regions)
 
         # fill efficiency
         for _, row in df_efficiency.iterrows():

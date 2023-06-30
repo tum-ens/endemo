@@ -48,12 +48,12 @@ class NutsRegion:
     _sub_regions: dict[str, NutsRegion]
     _population: pm.Timeseries
 
-    def __init__(self, region_name, historical_data: [(float, float)], prediction_data: (pm.Interval, float) = None):
+    def __init__(self, region_name, historical_data: [(float, float)] = None, prediction_data: (pm.Interval, float) = None):
         self.region_name = region_name
         self._sub_regions = dict()
         self.historical_data = historical_data
 
-        if prediction_data is None or len(historical_data) == 0:
+        if prediction_data is None or historical_data is None or len(historical_data) == 0:
             self._population = pm.Timeseries(historical_data, ctrl.ForecastMethod.LINEAR)
         else:
             self._population = pm.TimeStepSequence(historical_data, prediction_data)
@@ -83,6 +83,11 @@ class NutsRegion:
                     # found parent region
                     self._sub_regions[key].add_child_region(nuts2region_obj)
                     return
+            # found no region, create in-between
+            # TODO: does this work? adding in-between nodes, becuase only leafs will be inserted
+            new_inbetween_region_name = nuts2region_obj.region_name[:self.region_name + 1]
+            self._sub_regions[new_inbetween_region_name] = NutsRegion(new_inbetween_region_name)
+            self._sub_regions[new_inbetween_region_name].add_child_region(nuts2region_obj)
         warnings.warn("Something went wrong when trying to insert the nuts2 subregion " + nuts2region_obj.region_name)
 
     def get_pop_prog(self, year: int) -> float:
