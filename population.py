@@ -24,6 +24,9 @@ class Population:
         else:
             return self.country_level_population.get_data()
 
+    def get_country_historical_data(self) -> [(float, float)]:
+        return self.country_level_population.get_data()
+
     def get_prog(self, year: int) -> float:
         if self.nuts2_used and self.nuts2:
             return self.nuts2.get_pop_prog(year)
@@ -96,9 +99,7 @@ class NutsRegion:
         if self._population_historical is None:
             subregion_objs = list(self._sub_regions.values())
             result = subregion_objs[0].get_historical_data()
-            print("y"+str(result))
             for subregion_obj in subregion_objs[1:]:
-                print("his" + str(subregion_obj.get_historical_data()))
                 result = list(uty.zip_on_x(result, subregion_obj.get_historical_data()))
                 result = [(x1, y1 + y2) for ((x1, y1), (x2, y2)) in result]
             self._population_historical = result

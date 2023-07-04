@@ -49,13 +49,10 @@ class Timeseries:
         else:
             self._calculation_type = calculation_type
 
-        match self._calculation_type:
-            case cp.ForecastMethod.EXPONENTIAL:
-                self._set_coef_exp(rate_of_change, StartPoint.LAST_AVAILABLE)
-            case cp.ForecastMethod.LINEAR:
-                self._calc_coef_lin()
-            case cp.ForecastMethod.QUADRATIC:
-                self._calc_coef_quadr()
+        # calculate all coefficients
+        self._set_coef_exp(rate_of_change, StartPoint.LAST_AVAILABLE)
+        self._calc_coef_lin()
+        self._calc_coef_quadr()
 
     def get_prog(self, x) -> float:
         match self._calculation_type:
@@ -85,10 +82,22 @@ class Timeseries:
         self._coef.exp = Exp(start_x, start_y, rate_of_change)
 
     def _calc_coef_lin(self):
+        if len(self._data) < 2:
+            if len(self._data) == 0:
+                self._coef.lin = Lin(0, 0)
+            else:
+                self._coef.lin = Lin(self._data[0][1], 0)
+            return
         lin_coef = uty.linear_regression(self._data)
         self._coef.lin = Lin(lin_coef[0], lin_coef[1])
 
     def _calc_coef_quadr(self):
+        if len(self._data) < 3:
+            if len(self._data) == 0:
+                self._coef.lin = Quadr(0, 0, 0)
+            else:
+                self._coef.lin = Quadr(self._data[0][1], 0, 0)
+            return
         quadr_coef = uty.quadratic_regression(self._data)
         self._coef.quadr = Quadr(quadr_coef[0], quadr_coef[1], quadr_coef[2])
 

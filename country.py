@@ -8,6 +8,7 @@ import control_parameters
 import industry_sector
 import input
 import output
+import population
 import prediction_models as pm
 import sector
 import population as pop
@@ -99,7 +100,7 @@ class Country:
     def get_name(self):
         return self._name
 
-    def get_population(self):
+    def get_population(self) -> population.Population:
         return self._population
 
     def get_gdp(self):

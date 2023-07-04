@@ -29,6 +29,9 @@ class Endemo:
         output.generate_coefficient_output(self)
         output.generate_population_prognosis_output(self)
         output.generate_gdp_prognosis_output(self)
+        output.generate_amount_prognosis_output(self)
+        output.generate_specific_consumption_output(self)
+        output.generate_demand_output(self)
 
     def write_output(self):
         # TODO

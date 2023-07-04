@@ -44,6 +44,7 @@ class Product:
         industry_settings = input_manager.industry_input.settings
         self._use_per_capita = industry_settings.production_quantity_calc_per_capita
         self._use_gdp_as_x = True if industry_settings.forecast_method == cp.ForecastMethod.QUADRATIC else False
+        forecast_method = input_manager.ctrl.industry_settings.forecast_method
 
         # read bat consumption for product in countries industry
         if country_name in product_input.bat.keys():
@@ -56,7 +57,7 @@ class Product:
                 and not uty.is_tuple_list_zero(product_input.production[country_name]):
             self._empty = False
             self._amount_per_year = \
-                pm.Timeseries(product_input.production[country_name], cp.ForecastMethod.LINEAR,
+                pm.Timeseries(product_input.production[country_name], forecast_method,
                               rate_of_change=self._exp_change_rate)
         else:
             # warnings.warn("Country " + country_name + " has no production data for " + product_name)
@@ -65,22 +66,28 @@ class Product:
             return
 
         # calculate rest of member variables
-        zipped_data = list(uty.zip_on_x(self._amount_per_year.get_data(), population.get_data()))
+        zipped_data = list(uty.zip_on_x(self._amount_per_year.get_data(), population.get_country_historical_data()))
         self._amount_per_capita_per_year = \
             pm.Timeseries(list(map(lambda arg: (arg[0][0], arg[0][1] / arg[1][1]), zipped_data)),
-                          cp.ForecastMethod.LINEAR, rate_of_change=self._exp_change_rate)
+                          forecast_method, rate_of_change=self._exp_change_rate)
         self._amount_per_gdp = \
             pm.Timeseries(uty.combine_data_on_x(gdp.get_data(), self._amount_per_year.get_data(), ascending_x=True),
-                          cp.ForecastMethod.QUADRATIC, rate_of_change=self._exp_change_rate)
-        zipped_data = list(uty.zip_on_x(gdp.get_data(), population.get_data()))
+                          forecast_method, rate_of_change=self._exp_change_rate)
+        zipped_data = list(uty.zip_on_x(gdp.get_data(), population.get_country_historical_data()))
         self._amount_per_capita_per_gdp = \
             pm.Timeseries(list(map(lambda arg: (arg[0][0], arg[0][1] / arg[1][1]), zipped_data)),
-                          cp.ForecastMethod.QUADRATIC, rate_of_change=self._exp_change_rate)
+                          forecast_method, rate_of_change=self._exp_change_rate)
 
         # read specific consumption data
         self._specific_consumption = SpecificConsumptionData(product_amount_per_year=self._amount_per_year,
                                                              country_name=country_name, product_input=product_input,
                                                              input_manager=input_manager)
+
+        if product_name == "cement":
+            if country_name in ["Spain", "Italy"]:
+                print(country_name)
+                print(self._amount_per_capita_per_year.get_data())
+                uty.plot_timeseries(self._amount_per_capita_per_year)
 
     def is_empty(self) -> bool:
         return self._empty
@@ -119,27 +126,37 @@ class Product:
         if self._empty:
             return Demand()
 
-        sc = self._specific_consumption.get(year)
+        print("This should not be zero:")
+
+        sc = self._specific_consumption.get_scale(year, 1/3600000)    # get SC and convert from GJ/T to TWH/T
         perc = self._perc_used
 
+        print("Sc: " + str(sc))
+        print("Perc: " + str(perc))
+
         # choose which type of amount based on settings
-        amount = self.get_amount_prog(year)
+        amount = self.get_amount_prog(year) * 1000      # convert kT to T
+
+        print("amount: " + str(amount))
 
         # calculate demand after all variables are available
         cached_perc_amount = perc * amount
         electricity = cached_perc_amount * sc.electricity
         hydrogen = cached_perc_amount * sc.hydrogen
 
-        heat = self._heat_levels
-        heat.mutable_multiply_scalar(cached_perc_amount * sc.heat)   # separate heat levels
+        print("electricity: " + str(electricity))
+        print("hydrogen: " + str(hydrogen))
 
+        heat = self._heat_levels.copy_multiply_scalar(cached_perc_amount * sc.heat)     # separate heat levels
+
+        print("heat: " + str(heat))
         return Demand(electricity, heat, hydrogen)
 
     def get_amount_prog(self, year: int) -> float:
         if self._empty:
             return 0.0
         active_timeseries = self.get_active_timeseries()
-        prog_amount = min(0.0, active_timeseries.get_prog(year))
+        prog_amount = max(0.0, active_timeseries.get_prog(year))
         return prog_amount
 
     def get_coef(self) -> pm.Coef:
@@ -217,6 +234,10 @@ class SpecificConsumptionData:
         else:
             self._calculate_sc = False
 
+    def get_scale(self, year, scalar) -> SC:
+        sc = self.get(year)
+        return SC(sc.electricity * scalar, sc.heat * scalar, sc.hydrogen * scalar, sc.max_subst_h2)
+
     def get(self, year) -> SC:
         """ Returns the specific consumption """
         if self._calculate_sc and self.historical_specific_consumption:
@@ -228,4 +249,5 @@ class SpecificConsumptionData:
                 heat += prog_amount * self.efficiency[key].heat
             return SC(electricity, heat, 0, 0)
         else:
+            # future TODO: add efficiency to default specific consumption
             return self.default_specific_consumption

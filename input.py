@@ -159,7 +159,6 @@ class GeneralInput:
         # fill nuts2 valid regions
         column_name = "Code " + str(ctrl.general_settings.nuts2_version)
         self.nuts2_valid_regions = set([x.strip() for x in df_nuts2_labels[column_name] if len(x.strip()) == 4])
-        print(self.nuts2_valid_regions)
 
         # fill efficiency
         for _, row in df_efficiency.iterrows():
@@ -291,7 +290,7 @@ class IndustryInput:
         dict_heat_levels = dict()
 
         for _, row in df_heat_levels.iterrows():
-            dict_heat_levels[row["Industry"]] = containers.Heat(row["Q1"], row["Q2"], row["Q3"], row["Q4"])
+            dict_heat_levels[row["Industry"]] = containers.Heat(row["Q1"]/100, row["Q2"]/100, row["Q3"]/100, row["Q4"]/100)
 
         # read the active sectors sheets
         for product_name in self.settings.active_product_names:

@@ -63,3 +63,8 @@ class Demand:
         self.electricity += other.electricity
         self.heat.mutable_add(other.heat)
         self.hydrogen += other.hydrogen
+
+    def scale(self, scalar: float):
+        self.electricity *= scalar
+        self.hydrogen *= scalar
+        self.heat.mutable_multiply_scalar(scalar)
