@@ -42,9 +42,9 @@ class Country:
         nuts2_root: pop.NutsRegion
         if self._abbreviations.alpha2 in nuts2_data.prognosis.keys():
             nuts2_root = pop.NutsRegion(self._abbreviations.alpha2, nuts2_data.historical[self._abbreviations.alpha2],
-                                    nuts2_data.prognosis[self._abbreviations.alpha2])
+                                        nuts2_data.prognosis[self._abbreviations.alpha2])
         else:
-            nuts2_root = pop.NutsRegion(self._abbreviations.alpha2, nuts2_data.historical[self._abbreviations.alpha2])
+            nuts2_root = pop.NutsRegion(self._abbreviations.alpha2)
 
         for region_name, region_data in nuts2_data.historical.items():
             if region_name == self._abbreviations.alpha2:
@@ -52,14 +52,15 @@ class Country:
             # create and add subregion to root
             subregion: pop.NutsRegion
             if region_name in nuts2_data.prognosis.keys():
-                subregion = pop.NutsRegion(region_name, region_data, nuts2_data.prognosis[region_name])
+                subregion = pop.NutsRegion(region_name, historical_data=region_data,
+                                           prediction_data=nuts2_data.prognosis[region_name])
             else:
-                subregion = pop.NutsRegion(region_name, region_data)
+                subregion = pop.NutsRegion(region_name, historical_data=region_data)
             nuts2_root.add_child_region(subregion)
 
         # fill population member variable
-        self._population = \
-            pop.Population(country_population, nuts2_root, input_manager.ctrl.industry_settings.nuts2_used_for_calculation)
+        self._population = pop.Population(country_population, nuts2_root,
+                                          input_manager.ctrl.industry_settings.nuts2_used_for_calculation)
 
         # create gdp timeseries
         self._gdp = pm.TimeStepSequence(

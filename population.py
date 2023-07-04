@@ -2,6 +2,7 @@ from __future__ import annotations
 import warnings
 import prediction_models as pm
 import control_parameters as ctrl
+import utility as uty
 
 
 class Population:
@@ -19,7 +20,7 @@ class Population:
 
     def get_data(self) -> [(float, float)]:
         if self.nuts2_used and self.nuts2:
-            return self.nuts2.historical_data
+            return self.nuts2.get_historical_data()
         else:
             return self.country_level_population.get_data()
 
@@ -46,17 +47,20 @@ class NutsRegion:
     """
     region_name: str
     _sub_regions: dict[str, NutsRegion]
-    _population: pm.Timeseries
+    _ts_population: pm.Timeseries
+    _population_historical: [float, float]
 
     def __init__(self, region_name, historical_data: [(float, float)] = None, prediction_data: (pm.Interval, float) = None):
         self.region_name = region_name
         self._sub_regions = dict()
-        self.historical_data = historical_data
+        self._population_historical = historical_data
 
-        if prediction_data is None or historical_data is None or len(historical_data) == 0:
-            self._population = pm.Timeseries(historical_data, ctrl.ForecastMethod.LINEAR)
-        else:
-            self._population = pm.TimeStepSequence(historical_data, prediction_data)
+        if prediction_data is not None and historical_data is not None:
+            self._ts_population = pm.TimeStepSequence(historical_data, prediction_data)
+        elif historical_data is not None and prediction_data is None:
+            warnings.warn("For region " + self.region_name + "there was no prediction data. Using Linear Regression "
+                                                             "instead.")
+            self._ts_population = pm.Timeseries(historical_data, prediction_data)
 
     def __str__(self):
         if len(self._sub_regions.items()) < 1:
@@ -75,7 +79,6 @@ class NutsRegion:
         if len(self.region_name) + 1 is len(nuts2region_obj.region_name):
             # region is direct subregion
             self._sub_regions[nuts2region_obj.region_name] = nuts2region_obj
-            return
         elif len(self.region_name) + 1 < len(nuts2region_obj.region_name):
             # region is a subregion of a subregion, search for right one to insert
             for key, value in self._sub_regions.items():
@@ -84,11 +87,22 @@ class NutsRegion:
                     self._sub_regions[key].add_child_region(nuts2region_obj)
                     return
             # found no region, create in-between
-            # TODO: does this work? adding in-between nodes, becuase only leafs will be inserted
-            new_inbetween_region_name = nuts2region_obj.region_name[:self.region_name + 1]
+            new_inbetween_region_name = nuts2region_obj.region_name[:len(self.region_name)+1]
             self._sub_regions[new_inbetween_region_name] = NutsRegion(new_inbetween_region_name)
             self._sub_regions[new_inbetween_region_name].add_child_region(nuts2region_obj)
-        warnings.warn("Something went wrong when trying to insert the nuts2 subregion " + nuts2region_obj.region_name)
+
+    def get_historical_data(self) -> [float, float]:
+        """ Get historical data or sum over subregions if not available"""
+        if self._population_historical is None:
+            subregion_objs = list(self._sub_regions.values())
+            result = subregion_objs[0].get_historical_data()
+            print("y"+str(result))
+            for subregion_obj in subregion_objs[1:]:
+                print("his" + str(subregion_obj.get_historical_data()))
+                result = list(uty.zip_on_x(result, subregion_obj.get_historical_data()))
+                result = [(x1, y1 + y2) for ((x1, y1), (x2, y2)) in result]
+            self._population_historical = result
+        return self._population_historical
 
     def get_pop_prog(self, year: int) -> float:
         """ Recursively calculate and sum up the prognosis for all leaf regions"""
@@ -98,7 +112,7 @@ class NutsRegion:
                 result += subregion.get_pop_prog(year)
             return result
         else:
-            return self._population.get_prog(year)
+            return self._ts_population.get_prog(year)
 
     def get_nodes_dfs(self) -> [NutsRegion]:
         """ Get a list of all nodes in Depth-First-Search order. """

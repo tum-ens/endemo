@@ -83,11 +83,10 @@ class GeneralInput:
             dict_nuts2_pop_his = dict[str, dict[str, [(float, float)]]]()
             it = df_nuts2_pop_his.itertuples()
             for row in it:
-
                 region_name = str(row[1]).strip()  # read region code from rows
                 if region_name.endswith("-"):
                     region_name = region_name[:-2]
-                if region_name in dict_nuts2_pop_his.keys():
+                if region_name not in nuts2_valid_regions:
                     continue
                 if region_name[-1] == "X":
                     # its a non-region
@@ -95,17 +94,9 @@ class GeneralInput:
                 zipped = list(zip(list(df_nuts2_pop_his)[1:], row[2:]))
                 his_data = uty.filter_out_nan_and_inf(zipped)
                 abbrev = region_name[:2]
-                if abbrev in dict_nuts2_pop_his.keys():
-                    # add to existing abbreviation
-                    dict_nuts2_pop_his[abbrev][region_name] = his_data
-                else:
-                    # no parent found, but code is longer than 2 letters
+                if abbrev not in dict_nuts2_pop_his.keys():
                     dict_nuts2_pop_his[abbrev] = dict()
-                    dict_nuts2_pop_his[abbrev][region_name] = his_data
-                    if len(region_name) > 2:
-                        warnings.warn("NUTS region " + region_name + " might not be read correctly. No parent region "
-                                                                     "was read, but the region code is longer than 2 "
-                                                                     "letters")
+                dict_nuts2_pop_his[abbrev][region_name] = his_data
 
             # preprocess nuts2 population prognosis: interval 2015-2050
             df_nuts2_pop_prog = df_nuts2_pop_prog.drop(["Region name", "for 35 years"], axis=1) \
@@ -116,20 +107,18 @@ class GeneralInput:
             dict_nuts2_pop_prog = dict[str, dict[str, [(Interval, float)]]]()
             it = df_nuts2_pop_prog.itertuples()
             for row in it:
-                region_name_raw = row[1]
-                region_name_clean = str(region_name_raw).strip()
-                if region_name_clean not in nuts2_valid_regions:
+                region_name = str(row[1]).strip()
+                if region_name not in nuts2_valid_regions:
                     continue
+                alpha2 = region_name[:2]
 
-                alpha2 = region_name_clean[:2]
-
-                values = df_nuts2_pop_prog[df_nuts2_pop_prog["Code"] == region_name_clean].iloc[0][1:]
+                values = df_nuts2_pop_prog[df_nuts2_pop_prog["Code"] == region_name].iloc[0][1:]
                 zipped_prog = list(zip(intervals, values))
 
                 if alpha2 not in dict_nuts2_pop_prog.keys():
                     dict_nuts2_pop_prog[alpha2] = dict()
 
-                dict_nuts2_pop_prog[alpha2][region_name_clean] = zipped_prog
+                dict_nuts2_pop_prog[alpha2][region_name] = zipped_prog
 
             for country_name in ctrl.general_settings.active_countries:
                 # fill country population
@@ -158,7 +147,9 @@ class GeneralInput:
         df_world_pop_his = pd.read_excel(path / "Population_historical_world.xls")
         df_world_pop_prog = pd.read_excel(path / "Population_projection_world.xlsx")
         df_nuts2_pop_his = pd.read_csv(path / "Population_historical_NUTS2.csv")
-        df_nuts2_pop_prog = pd.read_excel(path / "Population_projection_NUTS2.xlsx")
+        df_nuts2_pop_prog = \
+            pd.read_excel(path / "Population_projection_NUTS2.xlsx",
+                          sheet_name="Populationprojection_NUTS2_" + str(ctrl.general_settings.nuts2_version))
         df_gdp_his = pd.read_excel(path / "GDP_per_capita_historical.xlsx", sheet_name="constant 2015 USD")
         df_gdp_prog_europa = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data")
         df_gdp_prog_world = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data_world")
@@ -209,7 +200,7 @@ class GeneralInput:
             self.gdp[country_name] = HisProg(gdp_his, zipped_gdp_prog)
 
         # create PopulationData object
-        self.population = self.PopulationData(ctrl, self.abbreviations,
+        self.population = self.PopulationData(ctrl, self.nuts2_valid_regions, self.abbreviations,
                                               df_world_pop_his, df_world_pop_prog, df_nuts2_pop_his,
                                               df_nuts2_pop_prog)
 
@@ -333,7 +324,7 @@ class IndustryInput:
                     continue
                 zipped = list(zip(years, data))
                 his_data = uty.filter_out_nan_and_inf(zipped)
-                his_data = uty.cut_after_x(his_data, industry_settings.last_available_year)
+                his_data = uty.cut_after_x(his_data, industry_settings.last_available_year - 1)
                 dict_prod_his[row.Country] = his_data
 
             # read specific consumption default data
