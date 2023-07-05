@@ -18,7 +18,18 @@ from containers import CA, HisProg, Interval
 class Input:
     """
     The Input class connects all types of input data, that is in the form of excel/csv sheets in the 'input' folder.
+
+    :ivar str super_path: Path of project folder
+    :ivar str input_path: Path of input files
+    :ivar str output_path: Path for output files
+    :ivar str general_path: Path for input files in "general" folder
+    :ivar str industry_path: Path for input files in "industry" folder
+
+    :ivar ControlParameters ctrl: Holds all information received from Set_and_Control_Parameters.xlsx
+    :ivar GeneralInput general_input: Holds all information of the input files from the "input/general" folder.
+    :ivar IndustryInput industry_input: Holds all information of the input files from the "input/industry" folder.
     """
+
     super_path = Path(os.path.abspath(''))
     input_path = super_path / 'input'
     output_path = super_path / 'output'
@@ -51,97 +62,111 @@ class Input:
         self.industry_input = IndustryInput(self.industry_path, industry_settings)
 
 
+class PopulationData:
+    """
+    Holds all data on population. That includes historical data, prognosis data for each country and nuts2 region.
+
+    :param ControlParameters ctrl: The parsed Set_and_Control_Parameters.xlsx file.
+    :param set nuts2_valid_regions: The set of nuts2 regions that are recognized.
+        They are used to filter the input data.
+    :param dict abbreviations: The countries abbreviations, used to access nuts2 data.
+    :param pd.DataFrame df_country_pop_his: The sheet containing data of population history per country.
+    :param pd.DataFrame df_country_pop_prog: The sheet containing the manual prognosis of population amount per country.
+    :param pd.DataFrame df_nuts2_pop_his: The sheet containing data of population history per NUTS2 region.
+    :param pd.DataFrame df_nuts2_pop_prog:
+        The sheet containing the prognosis intervals and growth rate for nuts2 regions.
+
+    :ivar dict[str, HisProg] country_population: Data for the population of whole countries.
+        It is of the form {country_name -> historical: [(float, float)], prognosis: [(float, float)]}
+    :ivar dict[str, [(str, [float, float])]] nuts2_population: Data for the population of NUTS2 regions.
+        It is of the form {country_name -> (code -> (historical: [(float,float)], prognosis: [interval, growth rate]))}
+    """
+
+    def __init__(self, ctrl: cp.ControlParameters, nuts2_valid_regions: set, abbreviations: dict,
+                 df_country_pop_his: pd.DataFrame, df_country_pop_prog: pd.DataFrame,
+                 df_nuts2_pop_his: pd.DataFrame, df_nuts2_pop_prog: pd.DataFrame):
+        self.country_population = dict[str, HisProg]()
+        self.nuts2_population = dict[str, [(str, [float, float])]]()
+
+        # preprocess country population historical data
+        dict_c_pop_his = uty.convert_table_to_filtered_data_series_per_country(df_country_pop_his)
+
+        # preprocess country population prognosis
+        dict_c_pop_prog = uty.convert_table_to_filtered_data_series_per_country(df_country_pop_prog)
+
+        # preprocess nuts2 population historical data
+        df_nuts2_pop_his = df_nuts2_pop_his.drop('GEO/TIME', axis=1)
+        dict_nuts2_pop_his = dict[str, dict[str, [(float, float)]]]()
+        it = df_nuts2_pop_his.itertuples()
+        for row in it:
+            region_name = str(row[1]).strip()  # read region code from rows
+            if region_name.endswith("-"):
+                region_name = region_name[:-2]
+            if region_name not in nuts2_valid_regions:
+                continue
+            if region_name[-1] == "X":
+                # its a non-region
+                continue
+            zipped = list(zip(list(df_nuts2_pop_his)[1:], row[2:]))
+            his_data = uty.filter_out_nan_and_inf(zipped)
+            abbrev = region_name[:2]
+            if abbrev not in dict_nuts2_pop_his.keys():
+                dict_nuts2_pop_his[abbrev] = dict()
+            dict_nuts2_pop_his[abbrev][region_name] = his_data
+
+        # preprocess nuts2 population prognosis: interval 2015-2050
+        df_nuts2_pop_prog = df_nuts2_pop_prog.drop(["Region name", "for 35 years"], axis=1) \
+            .rename(columns={'per year': '2015-2050'})
+        interval_conv = lambda xs: [Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
+        intervals = interval_conv(df_nuts2_pop_prog.columns[1:])
+
+        dict_nuts2_pop_prog = dict[str, dict[str, [(Interval, float)]]]()
+        it = df_nuts2_pop_prog.itertuples()
+        for row in it:
+            region_name = str(row[1]).strip()
+            if region_name not in nuts2_valid_regions:
+                continue
+            alpha2 = region_name[:2]
+
+            values = df_nuts2_pop_prog[df_nuts2_pop_prog["Code"] == region_name].iloc[0][1:]
+            zipped_prog = list(zip(intervals, values))
+
+            if alpha2 not in dict_nuts2_pop_prog.keys():
+                dict_nuts2_pop_prog[alpha2] = dict()
+
+            dict_nuts2_pop_prog[alpha2][region_name] = zipped_prog
+
+        for country_name in ctrl.general_settings.active_countries:
+            # fill country population
+            self.country_population[country_name] = \
+                HisProg(dict_c_pop_his[country_name], dict_c_pop_prog[country_name])
+
+            # fill nuts2 population
+            if country_name not in self.nuts2_population.keys():
+                self.nuts2_population[country_name] = dict()
+            abbrev = abbreviations[country_name].alpha2
+            self.nuts2_population[country_name] = \
+                HisProg(dict_nuts2_pop_his[abbrev], dict_nuts2_pop_prog[abbrev])
+
+
 class GeneralInput:
     """
-    General Input denotes input that is read from the "input/general" folder.
+    General Input contains all input that is read from the "input/general" folder.
+
+    :param ControlParameters ctrl: The parsed Set_and_Control_Parameters.xlsx
+    :param Path path: The path to the input/general folder
+
+    :ivar dict[str, ("alpha2", "alpha3", "german_name")] abbreviations: The abbreviations for each country.
+    :ivar PopulationData population: All data from the population input.
+    :ivar dict[str, HisProg[[(float, float)], [Interval, float]]] gdp: The gdp for each country.
+    :ivar dict[str, ("electricity", "heat")] efficiency: The efficiency for each energy carrier.
+    :ivar set nuts2_valid_regions: The set of valid nuts2 regions within the selected NUTS2 code.
     """
-
-    class PopulationData:
-        """
-        Holds all data on population. That includes historical data, prognosis data for each country and nuts2 region.
-        """
-
-        country_population: dict[
-            str, HisProg]  # country_name -> historical: [(float, float)], prognosis: [(float, float)]
-        nuts2_population: dict[
-            str, [(str, [float, float])]]  # country_name -> (code -> (historical: [(,)], prognosis: [interval, data]))
-
-        def __init__(self, ctrl: cp.ControlParameters, nuts2_valid_regions: set, abbreviations: dict,
-                     df_country_pop_his: pd.DataFrame, df_country_pop_prog: pd.DataFrame,
-                     df_nuts2_pop_his: pd.DataFrame, df_nuts2_pop_prog: pd.DataFrame):
-            self.country_population = dict[str, HisProg]()
-            self.nuts2_population = dict[str, HisProg]()
-
-            # preprocess country population historical data
-            dict_c_pop_his = uty.convert_table_to_filtered_data_series_per_country(df_country_pop_his)
-
-            # preprocess country population prognosis
-            dict_c_pop_prog = uty.convert_table_to_filtered_data_series_per_country(df_country_pop_prog)
-
-            # preprocess nuts2 population historical data
-            df_nuts2_pop_his = df_nuts2_pop_his.drop('GEO/TIME', axis=1)
-            dict_nuts2_pop_his = dict[str, dict[str, [(float, float)]]]()
-            it = df_nuts2_pop_his.itertuples()
-            for row in it:
-                region_name = str(row[1]).strip()  # read region code from rows
-                if region_name.endswith("-"):
-                    region_name = region_name[:-2]
-                if region_name not in nuts2_valid_regions:
-                    continue
-                if region_name[-1] == "X":
-                    # its a non-region
-                    continue
-                zipped = list(zip(list(df_nuts2_pop_his)[1:], row[2:]))
-                his_data = uty.filter_out_nan_and_inf(zipped)
-                abbrev = region_name[:2]
-                if abbrev not in dict_nuts2_pop_his.keys():
-                    dict_nuts2_pop_his[abbrev] = dict()
-                dict_nuts2_pop_his[abbrev][region_name] = his_data
-
-            # preprocess nuts2 population prognosis: interval 2015-2050
-            df_nuts2_pop_prog = df_nuts2_pop_prog.drop(["Region name", "for 35 years"], axis=1) \
-                .rename(columns={'per year': '2015-2050'})
-            interval_conv = lambda xs: [Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
-            intervals = interval_conv(df_nuts2_pop_prog.columns[1:])
-
-            dict_nuts2_pop_prog = dict[str, dict[str, [(Interval, float)]]]()
-            it = df_nuts2_pop_prog.itertuples()
-            for row in it:
-                region_name = str(row[1]).strip()
-                if region_name not in nuts2_valid_regions:
-                    continue
-                alpha2 = region_name[:2]
-
-                values = df_nuts2_pop_prog[df_nuts2_pop_prog["Code"] == region_name].iloc[0][1:]
-                zipped_prog = list(zip(intervals, values))
-
-                if alpha2 not in dict_nuts2_pop_prog.keys():
-                    dict_nuts2_pop_prog[alpha2] = dict()
-
-                dict_nuts2_pop_prog[alpha2][region_name] = zipped_prog
-
-            for country_name in ctrl.general_settings.active_countries:
-                # fill country population
-                self.country_population[country_name] = \
-                    HisProg(dict_c_pop_his[country_name], dict_c_pop_prog[country_name])
-
-                # fill nuts2 population
-                if country_name not in self.nuts2_population.keys():
-                    self.nuts2_population[country_name] = dict()
-                abbrev = abbreviations[country_name].alpha2
-                self.nuts2_population[country_name] = \
-                    HisProg(dict_nuts2_pop_his[abbrev], dict_nuts2_pop_prog[abbrev])
-
-    abbreviations: dict[str, CA]
-    population: PopulationData
-    gdp: dict[str, HisProg[[(float, float)], [Interval, float]]]
-    efficiency: dict[str, containers.BAT]
-    nuts2_valid_regions: set
 
     def __init__(self, ctrl: cp.ControlParameters, path: Path):
         self.abbreviations = dict[str, CA]()
         self.gdp = dict[str, HisProg[[(float, float)], [Interval, float]]]()
-        self.efficiency = dict[str, containers.BAT]()
+        self.efficiency = dict[str, containers.EH]()
 
         df_abbr = pd.read_excel(path / "Abbreviations.xlsx")
         df_world_pop_his = pd.read_excel(path / "Population_historical_world.xls")
@@ -163,7 +188,7 @@ class GeneralInput:
         # fill efficiency
         for _, row in df_efficiency.iterrows():
             self.efficiency[row["Energy carrier"]] = \
-                containers.BAT(row["Electricity production [-]"], row["Heat production [-]"])
+                containers.EH(row["Electricity production [-]"], row["Heat production [-]"])
 
         for country_name in ctrl.general_settings.active_countries:
             # fill abbreviations
@@ -199,24 +224,37 @@ class GeneralInput:
             self.gdp[country_name] = HisProg(gdp_his, zipped_gdp_prog)
 
         # create PopulationData object
-        self.population = self.PopulationData(ctrl, self.nuts2_valid_regions, self.abbreviations,
-                                              df_world_pop_his, df_world_pop_prog, df_nuts2_pop_his,
-                                              df_nuts2_pop_prog)
+        self.population = PopulationData(ctrl, self.nuts2_valid_regions, self.abbreviations,
+                                         df_world_pop_his, df_world_pop_prog, df_nuts2_pop_his,
+                                         df_nuts2_pop_prog)
 
 
 class ProductInput:
     """
     The Product Input summarizes all input data, that is specific to a certain product type, but holds the
-    information for all countries.
-    Example product type: steel_prim
+    information for all countries. Example product type: steel_prim
+
+    :param sc: specific_consumption_default
+    :param bat: bat
+    :param prod: production
+    :param sc_h: specific_consumption_historical
+    :param sc_h_active: Indicates whether specific consumption should be calculated from historical data.
+    :param heat_levels: heat_levels
+    :param manual_exp_change_rate: manual_exp_change_rate
+    :param perc_used: perc_used
+
+    :ivar dict[str, containers.SC] specific_consumption_default: Default specific consumption value for this product.
+    :ivar dict[str, (float, float)] specific_consumption_historical: Historical specific consumption data
+        for this product. Accessible per country.
+    :ivar dict[str, containers.EH] bat: The best-available-technology consumption for this product.
+        Accessible per country.
+    :ivar dict[str, (float, float)] production: The historical amount data for this product. Accessible per country.
+    :ivar Heat heat_levels: How heat demand should be distributed across heat levels for this product.
+    :ivar float manual_exp_change_rate: If product amount projection will be calculated exponentially,
+        this will be the change rate.
+    :ivar float perc_used: A scalar for the amount of a product.
+        This is used to model modern technologies replacing old ones.
     """
-    specific_consumption_default: dict[str, containers.SC]
-    specific_consumption_historical: dict[str, (float, float)]
-    bat: dict[str, containers.BAT]
-    production: dict[str, (float, float)]
-    heat_levels: containers.Heat
-    manual_exp_change_rate: float
-    perc_used: float
 
     def __init__(self, sc, bat, prod, sc_h, sc_h_active, heat_levels, manual_exp_change_rate, perc_used):
         self.specific_consumption_default = sc
@@ -237,40 +275,104 @@ class ProductInput:
             "\n\t Historical: " + uty.str_dict(self.production) + "\n"
 
 
+class FileReadingHelper:
+    """
+    A helper class to read products historical data. It provides some fixed transformation operations.
+
+    :ivar str file_name: The files name, relative to the path variable.
+    :ivar str sheet_name: The name of the sheet that is to be read from the file.
+    :ivar [int] skip_rows: These rows(!) will be skipped when reading the dataframe. Done by numerical index.
+    :ivar lambda[pd.Dataframe -> pd.Dataframe] sheet_transform: A transformation operation on the dataframe
+    :ivar pd.Dataframe: The current dataframe.
+    :ivar Path path: The path to the folder, where the file is.
+        It can to be set after constructing the FileReadingHelper Object.
+    """
+
+    def __init__(self, file_name: str, sheet_name: str, skip_rows: [int], sheet_transform):
+        self.file_name = file_name
+        self.sheet_name = sheet_name
+        self.skip_rows = skip_rows
+        self.sheet_transform = sheet_transform
+        self.df = None
+        self.path = None
+
+    def set_path_and_read(self, path: Path) -> None:
+        """
+        Sets the path variable and reads the file with name self.file_name in the path folder.
+        
+        :param path: The path, where the file lies.
+        """
+        self.path = path
+        self.df = self.sheet_transform(pd.read_excel(self.path / self.file_name, self.sheet_name,
+                                                     skiprows=self.skip_rows))
+
+    def skip_years(self, skip_years: [int]) -> None:
+        """
+        Filters the skip years from the current dataframe.
+
+        :param skip_years: The list of years to skip.
+        """
+        if self.df is None:
+            warnings.warn("Trying to skip years in products historical data without having called set_path_and_read"
+                          " on the Retrieve object.")
+        # skip years
+        for skip_year in skip_years:
+            if str(skip_year) in self.df.columns:
+                self.df.drop(str(skip_year), axis=1, inplace=True)
+
+    def get(self) -> pd.DataFrame:
+        """
+        Getter for the dataframe.
+
+        :return: The current dataframe, which is filtered depending on previous function calls on this class.
+        """
+        if self.df is None:
+            warnings.warn("Trying to retrieve products historical data without having called set_path_and_read on "
+                          "the Retrieve object.")
+        return self.df
+
+
 class IndustryInput:
     """
     Industry Input denoted input that is read from the "input/industry" folder.
-    """
-    settings: cp.IndustrySettings
-    active_products = dict[str, ProductInput]()
 
-    # specify how to access files
-    Retrieve = namedtuple("Retrieve", ["file_name", "sheet_name", "skip_rows", "sheet_transform"])
+    :param industry_path: The path to the industry folder.
+    :param industry_settings: The parsed sector-specific settings for the industry sector.
+
+    :ivar dict[str, ProductInput] active_products: Stores the product specific input for all active products.
+    :ivar IndustrySettings settings: Stores the sector-specific settings for industry.
+    :ivar dict[str, Retrieve] product_data_access: Specify how data sheets for each product should be accessed
+    :ivar dict[str, str] sc_historical_data_file_names: The file names of the files used for certain products to read
+        historical information on specific consumption.
+    :ivar [str] sc_historical_sheet_names: The sheet names for the files used to read
+        historical information on specific consumption for certain products.
+    """
+
     product_data_access = {
-        "steel": Retrieve("Steel_Production.xlsx", "Data_total", [], lambda x: x),
-        "steel_prim": Retrieve("Steel_Production.xlsx", "Steel_prim", [], lambda x: x),
-        "steel_sec": Retrieve("Steel_Production.xlsx", "Steel_sec", [], lambda x: x),
-        "steel_direct": Retrieve("Steel_Production.xlsx", "Data_total", [], lambda x: x),
-        "alu_prim": Retrieve("Aluminium_Production.xlsx", "Prim_Data", [], lambda x: x),
-        "alu_sec": Retrieve("Aluminium_Production.xlsx", "Sec_Data", [], lambda x: x),
-        "copper_prim": Retrieve("Copper_Production.xlsx", "Copper_WSP", [0, 1],
-                                lambda x: x.loc[x["Type"] == "Primary"].drop("Type", axis=1)),
-        "copper_sec": Retrieve("Copper_Production.xlsx", "Copper_WSP", [0, 1],
-                               lambda x: x.loc[x["Type"] == "Secondary"].drop("Type", axis=1)),
-        "chlorine": Retrieve("Chlorine_Production.xlsx", "Data", [], lambda x: x),
-        "ammonia": Retrieve("Ammonia_Production.xlsx", "Data", [], lambda x: x),
-        "methanol": Retrieve("Methanol_Production.xlsx", "Data", [], lambda x: x),
-        "ethylene": Retrieve("Ethylene_Production.xlsx", "Data", [], lambda x: x),
-        "propylene": Retrieve("Propylene_Production.xlsx", "Data", [], lambda x: x),
-        "aromate": Retrieve("Aromate_Production.xlsx", "Data", [], lambda x: x),
-        "ammonia_classic": Retrieve("Ammonia_Production.xlsx", "Data", [], lambda x: x),
-        "methanol_classic": Retrieve("Methanol_Production.xlsx", "Data", [], lambda x: x),
-        "ethylene_classic": Retrieve("Ethylene_Production.xlsx", "Data", [], lambda x: x),
-        "propylene_classic": Retrieve("Propylene_Production.xlsx", "Data", [], lambda x: x),
-        "aromate_classic": Retrieve("Aromate_Production.xlsx", "Data", [], lambda x: x),
-        "paper": Retrieve("Paper_Production.xlsx", "Data", [], lambda x: x),
-        "cement": Retrieve("Cement_Production.xlsx", "Data", [], lambda x: x),
-        "glass": Retrieve("Glass_Production.xlsx", "Data", [], lambda x: x),
+        "steel":                FileReadingHelper("Steel_Production.xlsx", "Data_total", [], lambda x: x),
+        "steel_prim":           FileReadingHelper("Steel_Production.xlsx", "Steel_prim", [], lambda x: x),
+        "steel_sec":            FileReadingHelper("Steel_Production.xlsx", "Steel_sec", [], lambda x: x),
+        "steel_direct":         FileReadingHelper("Steel_Production.xlsx", "Data_total", [], lambda x: x),
+        "alu_prim":             FileReadingHelper("Aluminium_Production.xlsx", "Prim_Data", [], lambda x: x),
+        "alu_sec":              FileReadingHelper("Aluminium_Production.xlsx", "Sec_Data", [], lambda x: x),
+        "copper_prim":          FileReadingHelper("Copper_Production.xlsx", "Copper_WSP", [0, 1],
+                                                  lambda x: x.loc[x["Type"] == "Primary"].drop("Type", axis=1)),
+        "copper_sec":           FileReadingHelper("Copper_Production.xlsx", "Copper_WSP", [0, 1],
+                                                  lambda x: x.loc[x["Type"] == "Secondary"].drop("Type", axis=1)),
+        "chlorine":             FileReadingHelper("Chlorine_Production.xlsx", "Data", [], lambda x: x),
+        "ammonia":              FileReadingHelper("Ammonia_Production.xlsx", "Data", [], lambda x: x),
+        "methanol":             FileReadingHelper("Methanol_Production.xlsx", "Data", [], lambda x: x),
+        "ethylene":             FileReadingHelper("Ethylene_Production.xlsx", "Data", [], lambda x: x),
+        "propylene":            FileReadingHelper("Propylene_Production.xlsx", "Data", [], lambda x: x),
+        "aromate":              FileReadingHelper("Aromate_Production.xlsx", "Data", [], lambda x: x),
+        "ammonia_classic":      FileReadingHelper("Ammonia_Production.xlsx", "Data", [], lambda x: x),
+        "methanol_classic":     FileReadingHelper("Methanol_Production.xlsx", "Data", [], lambda x: x),
+        "ethylene_classic":     FileReadingHelper("Ethylene_Production.xlsx", "Data", [], lambda x: x),
+        "propylene_classic":    FileReadingHelper("Propylene_Production.xlsx", "Data", [], lambda x: x),
+        "aromate_classic":      FileReadingHelper("Aromate_Production.xlsx", "Data", [], lambda x: x),
+        "paper":                FileReadingHelper("Paper_Production.xlsx", "Data", [], lambda x: x),
+        "cement":               FileReadingHelper("Cement_Production.xlsx", "Data", [], lambda x: x),
+        "glass":                FileReadingHelper("Glass_Production.xlsx", "Data", [], lambda x: x),
     }
     sc_historical_data_file_names = {
         "steel": "nrg_bal_s_steel.xls",
@@ -281,6 +383,7 @@ class IndustryInput:
 
     def __init__(self, industry_path: Path, industry_settings: cp.IndustrySettings):
         self.settings = industry_settings
+        self.active_products = dict[str, ProductInput]()
 
         ex_spec = pd.ExcelFile(industry_path / "Specific_Consumption.xlsx")
         ex_bat = pd.ExcelFile(industry_path / "BAT_Consumption.xlsx")
@@ -300,24 +403,18 @@ class IndustryInput:
 
             # read production data
             retrieve_prod = self.product_data_access[product_name]
-            ex_product_his = \
-                self.product_data_access[product_name].sheet_transform(
-                    pd.read_excel(industry_path / retrieve_prod.file_name, retrieve_prod.sheet_name,
-                                  skiprows=retrieve_prod.skip_rows))
-
-            # skip years
-            for skip_year in industry_settings.skip_years:
-                if str(skip_year) in ex_product_his.columns:
-                    ex_product_his.drop(str(skip_year), axis=1, inplace=True)
+            retrieve_prod.set_path_and_read(industry_path)
+            retrieve_prod.skip_years(industry_settings.skip_years)
+            df_product_his = retrieve_prod.get()
 
             dict_prod_his = dict()
 
-            production_it = pd.DataFrame(ex_product_his).itertuples()
+            production_it = pd.DataFrame(df_product_his).itertuples()
             for row in production_it:
                 if str(row.Country) == 'nan':
                     continue
-                years = ex_product_his.columns[1:]
-                data = ex_product_his[ex_product_his["Country"] == row.Country].iloc[0][1:]
+                years = df_product_his.columns[1:]
+                data = df_product_his[df_product_his["Country"] == row.Country].iloc[0][1:]
                 if uty.is_zero(data):
                     # country did not product this product at all => skip product for this country
                     # print("skipped " + product_name + " for country " + row.Country)
@@ -371,8 +468,8 @@ class IndustryInput:
 
             for _, row in df_prod_bat.iterrows():
                 dict_prod_bat_country[row.Country] = \
-                    containers.BAT(row["Spec electricity consumption [GJ/t]"],
-                                   row["Spec heat consumption [GJ/t]"])
+                    containers.EH(row["Spec electricity consumption [GJ/t]"],
+                                  row["Spec heat consumption [GJ/t]"])
 
             self.active_products[product_name] = \
                 ProductInput(dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his, sc_his_calc,

@@ -1,7 +1,5 @@
 import warnings
 
-import pandas as pd
-
 import population as pop
 import prediction_models as pm
 import products as prd

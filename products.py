@@ -7,7 +7,7 @@ import input
 import prediction_models as pm
 import control_parameters as cp
 import population as pop
-from containers import BAT, Heat, Demand, SC
+from containers import EH, Heat, Demand, SC
 
 
 class Product:
@@ -17,7 +17,7 @@ class Product:
     _name: str
     _country_name: str
     _specific_consumption: SpecificConsumptionData
-    _bat: BAT
+    _bat: EH
     _perc_used: float
     _exp_change_rate: float
     _heat_levels: Heat
@@ -185,7 +185,7 @@ class SpecificConsumptionData:
     """
     default_specific_consumption: SC
     historical_specific_consumption: dict[str, pm.Timeseries]
-    efficiency: dict[str, BAT]
+    efficiency: dict[str, EH]
     _product_amount_per_year: pm.Timeseries
     _calculate_sc: bool
 

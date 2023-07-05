@@ -4,7 +4,7 @@ import collections as coll
 
 
 SC = coll.namedtuple("SC", ["electricity", "heat", "hydrogen", "max_subst_h2"])
-BAT = coll.namedtuple("BAT", ["electricity", "heat"])
+EH = coll.namedtuple("EH", ["electricity", "heat"])
 
 CA = coll.namedtuple("CA", ["alpha2", "alpha3", "german_name"])
 HisProg = coll.namedtuple("HisProg", ["historical", "prognosis"])
