@@ -136,7 +136,7 @@ class GeneralSettings:
 
     :ivar int target_year: This is the year, the model makes predictions for.
     :ivar [str] recognized_countries:
-        This is a list of countries that are in the "Countries"-sheet of Set_and_Control_Parameters.xlsx
+        This is the list of countries that are in the "Countries"-sheet of Set_and_Control_Parameters.xlsx
     :ivar [str] active_countries: This is the list of active countries.
         Only for these countries, calculations are performed.
     :ivar int nuts2_version: The version of NUTS2 used for reading the files that hold information per NUTS2 Region.

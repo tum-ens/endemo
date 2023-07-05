@@ -14,8 +14,15 @@ import industry_sector as ind
 class FileGenerator(object):
     """
     A tool to more easily generate output files.
+
+    :ivar Input input_manager: A reference to the input_manager that holds all input.
+    :ivar pd.ExcelWriter excel_writer: The excel writer used for writing the file.
+    :ivar str current_sheet_name: Keeps track of the current sheet name that new entries (add_entry) will be written to.
+    :ivar dict current_out_dict: Keeps the entries that are added.
+        When writing the file, these are converted to a table.
     """
-    # Example:
+
+    # Example usage:
     #    fg = FileGenerator(input_manager, out.xlsx)
     #    with fg
     #        fg.start_sheet("Data")
@@ -24,12 +31,6 @@ class FileGenerator(object):
     #        fg.start_sheet("Info")
     #        fg.add_entry("Sources", "[1] ...")
     #        ...
-
-    input_manager: input.Input
-    excel_writer: pd.ExcelWriter
-
-    current_sheet_name: str
-    current_out_dict: dict
 
     def __init__(self, input_manager, filename):
         if not os.path.exists(input_manager.output_path):
@@ -70,13 +71,14 @@ class FileGenerator(object):
         self.excel_writer.close()
 
 
+def generate_coefficient_output(model: endemo.Endemo) -> None:
+    """
+    Generates the output that displays debug information related to the coefficients of the predictions within the
+    model.
 
+    :param model: The model instance which provides the information that is written to the files.
+    """
 
-def generate_output(model: endemo.Endemo):
-    pass
-
-
-def generate_coefficient_output(model: endemo.Endemo):
     input_manager = model.input_manager
     countries = model.countries
 
@@ -153,6 +155,12 @@ def generate_coefficient_output(model: endemo.Endemo):
 
 
 def generate_population_prognosis_output(model: endemo.Endemo):
+    """
+    Generates the output that displays debug information related to the population.
+
+    :param model: The model instance which provides the information that is written to the files.
+    """
+
     input_manager = model.input_manager
     countries = model.countries
     target_year = input_manager.ctrl.general_settings.target_year
@@ -182,6 +190,12 @@ def generate_population_prognosis_output(model: endemo.Endemo):
 
 
 def generate_gdp_prognosis_output(model: endemo.Endemo):
+    """
+    Generates the output that displays debug information related to the gdp.
+
+    :param model: The model instance which provides the information that is written to the files.
+    """
+
     input_manager = model.input_manager
     countries = model.countries
     target_year = input_manager.ctrl.general_settings.target_year
@@ -196,6 +210,12 @@ def generate_gdp_prognosis_output(model: endemo.Endemo):
 
 
 def generate_amount_prognosis_output(model: endemo.Endemo):
+    """
+    Generates the output that displays debug information related to the production amount.
+
+    :param model: The model instance which provides the information that is written to the files.
+    """
+
     input_manager = model.input_manager
     countries = model.countries
     target_year = input_manager.ctrl.general_settings.target_year
@@ -240,6 +260,12 @@ def generate_amount_prognosis_output(model: endemo.Endemo):
 
 
 def generate_specific_consumption_output(model: endemo.Endemo):
+    """
+    Generates the output that displays debug information related to the specific consumption of products.
+
+    :param model: The model instance which provides the information that is written to the files.
+    """
+
     input_manager = model.input_manager
     countries = model.countries
     target_year = input_manager.ctrl.general_settings.target_year
@@ -260,6 +286,12 @@ def generate_specific_consumption_output(model: endemo.Endemo):
 
 
 def generate_demand_output(model: endemo.Endemo):
+    """
+    Generates the output that displays debug information related to the demand of products.
+
+    :param model: The model instance which provides the information that is written to the files.
+    """
+
     input_manager = model.input_manager
     countries = model.countries
     target_year = input_manager.ctrl.general_settings.target_year
