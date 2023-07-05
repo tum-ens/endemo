@@ -2,30 +2,28 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-
 import pandas as pd
 
 import containers
 import input
 import sector
 import endemo
-from industry_sector import Industry
+import industry_sector as ind
 
 
 class FileGenerator(object):
     """
     A tool to more easily generate output files.
-
-    Example:
-        fg = FileGenerator(input_manager, out.xlsx)
-        with fg
-            fg.start_sheet("Data")
-            fg.add_entry("Country", "Belgium")
-            fg.add_entry("Value", 0.5)
-            fg.start_sheet("Info")
-            fg.add_entry("Sources", "[1] ...")
-            ...
     """
+    # Example:
+    #    fg = FileGenerator(input_manager, out.xlsx)
+    #    with fg
+    #        fg.start_sheet("Data")
+    #        fg.add_entry("Country", "Belgium")
+    #        fg.add_entry("Value", 0.5)
+    #        fg.start_sheet("Info")
+    #        fg.add_entry("Sources", "[1] ...")
+    #        ...
 
     input_manager: input.Input
     excel_writer: pd.ExcelWriter
@@ -210,7 +208,7 @@ def generate_amount_prognosis_output(model: endemo.Endemo):
             for country in countries.values():
                 fg.add_entry("Country", country.get_name())
 
-                industry_sector: Industry = country.get_sector(sector.SectorIdentifier.INDUSTRY)
+                industry_sector: ind.Industry = country.get_sector(sector.SectorIdentifier.INDUSTRY)
                 product = industry_sector.get_product(product_name)
 
                 amount_per_year_proj = \

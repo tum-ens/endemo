@@ -1,14 +1,15 @@
-from collections import namedtuple
-from enum import Enum
-
+import collections as coll
+import enum
 import numpy as np
-import utility as uty
-from statistics import mean
-import control_parameters as cp
+import statistics as st
 
-Exp = namedtuple("Exp", ["x0", "y0", "r"])  # y(x) = y0 * (1+r)^(x - x0)
-Lin = namedtuple("Lin", ["k0", "k1"])
-Quadr = namedtuple("Quadr", ["k0", "k1", "k2"])
+import utility as uty
+import control_parameters as cp
+import containers as ctn
+
+Exp = coll.namedtuple("Exp", ["x0", "y0", "r"])  # y(x) = y0 * (1+r)^(x - x0)
+Lin = coll.namedtuple("Lin", ["k0", "k1"])
+Quadr = coll.namedtuple("Quadr", ["k0", "k1", "k2"])
 
 
 class Coef:
@@ -22,10 +23,7 @@ class Coef:
         self.quadr = Quadr(0, 0, 0)
 
 
-Interval = namedtuple("Interval", ["start", "end"])
-
-
-class StartPoint(Enum):
+class StartPoint(enum.Enum):
     LAST_AVAILABLE = 0
     AVERAGE_VALUE = 1
     MANUAL = 2
@@ -74,8 +72,8 @@ class Timeseries:
                     (start_x, start_y) = self._data[-1]
             case StartPoint.AVERAGE_VALUE:
                 (split_x, split_y) = zip(*self._data)
-                start_x = mean(split_x)
-                start_y = mean(split_y)
+                start_x = st.mean(split_x)
+                start_y = st.mean(split_y)
             case StartPoint.MANUAL:
                 (start_x, start_y) = manual
 
@@ -143,7 +141,7 @@ class PredictedTimeseries(Timeseries):
 
 class TimeStepSequence(Timeseries):
     _his_end_value: (float, float)
-    _interval_changeRate: list[(Interval, float)]
+    _interval_changeRate: list[(ctn.Interval, float)]
 
     def __init__(self, historical_data, progression_data,
                  calculation_type: cp.ForecastMethod = cp.ForecastMethod.LINEAR,

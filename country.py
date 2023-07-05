@@ -1,18 +1,13 @@
 from __future__ import annotations
-
 import warnings
-from collections import namedtuple
 
 import containers
-import control_parameters
 import industry_sector
 import input
-import output
 import population
 import prediction_models as pm
 import sector
 import population as pop
-import utility as uty
 
 
 class Country:
@@ -61,7 +56,7 @@ class Country:
 
         # fill population member variable
         self._population = pop.Population(country_population, nuts2_root,
-                                          input_manager.ctrl.industry_settings.nuts2_used_for_calculation)
+                                          input_manager.ctrl.industry_settings.nuts2_distribution_based_on_installed_ind_capacity)
 
         # create gdp timeseries
         self._gdp = pm.TimeStepSequence(

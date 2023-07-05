@@ -204,43 +204,43 @@ class GeneralInput:
                                               df_nuts2_pop_prog)
 
 
+class ProductInput:
+    """
+    The Product Input summarizes all input data, that is specific to a certain product type, but holds the
+    information for all countries.
+    Example product type: steel_prim
+    """
+    specific_consumption_default: dict[str, containers.SC]
+    specific_consumption_historical: dict[str, (float, float)]
+    bat: dict[str, containers.BAT]
+    production: dict[str, (float, float)]
+    heat_levels: containers.Heat
+    manual_exp_change_rate: float
+    perc_used: float
+
+    def __init__(self, sc, bat, prod, sc_h, sc_h_active, heat_levels, manual_exp_change_rate, perc_used):
+        self.specific_consumption_default = sc
+        self.bat = bat
+        self.production = prod
+        if sc_h_active:
+            self.specific_consumption_historical = sc_h
+        else:
+            self.specific_consumption_historical = dict()
+        self.heat_levels = heat_levels
+        self.manual_exp_change_rate = manual_exp_change_rate
+
+        self.perc_used = float(perc_used) if not math.isnan(float(perc_used)) else 1
+
+    def __str__(self):
+        return "\n\tSpecific Consumption: " + uty.str_dict(self.specific_consumption_default) + \
+            "\n\t BAT: " + uty.str_dict(self.bat) + \
+            "\n\t Historical: " + uty.str_dict(self.production) + "\n"
+
+
 class IndustryInput:
     """
-        Industry Input denoted input that is read from the "input/industry" folder.
+    Industry Input denoted input that is read from the "input/industry" folder.
     """
-
-    class ProductInput:
-        """
-        The Product Input summarizes all input data, that is specific to a certain product type, but holds the
-        information for all countries.
-        Example product type: steel_prim
-        """
-        specific_consumption_default: dict[str, containers.SC]
-        specific_consumption_historical: dict[str, (float, float)]
-        bat: dict[str, containers.BAT]
-        production: dict[str, (float, float)]
-        heat_levels: containers.Heat
-        manual_exp_change_rate: float
-        perc_used: float
-
-        def __init__(self, sc, bat, prod, sc_h, sc_h_active, heat_levels, manual_exp_change_rate, perc_used):
-            self.specific_consumption_default = sc
-            self.bat = bat
-            self.production = prod
-            if sc_h_active:
-                self.specific_consumption_historical = sc_h
-            else:
-                self.specific_consumption_historical = dict()
-            self.heat_levels = heat_levels
-            self.manual_exp_change_rate = manual_exp_change_rate
-
-            self.perc_used = float(perc_used) if not math.isnan(float(perc_used)) else 1
-
-        def __str__(self):
-            return "\n\tSpecific Consumption: " + uty.str_dict(self.specific_consumption_default) + \
-                "\n\t BAT: " + uty.str_dict(self.bat) + \
-                "\n\t Historical: " + uty.str_dict(self.production) + "\n"
-
     settings: cp.IndustrySettings
     active_products = dict[str, ProductInput]()
 
@@ -290,7 +290,8 @@ class IndustryInput:
         dict_heat_levels = dict()
 
         for _, row in df_heat_levels.iterrows():
-            dict_heat_levels[row["Industry"]] = containers.Heat(row["Q1"]/100, row["Q2"]/100, row["Q3"]/100, row["Q4"]/100)
+            dict_heat_levels[row["Industry"]] = containers.Heat(row["Q1"] / 100, row["Q2"] / 100, row["Q3"] / 100,
+                                                                row["Q4"] / 100)
 
         # read the active sectors sheets
         for product_name in self.settings.active_product_names:
@@ -374,9 +375,9 @@ class IndustryInput:
                                    row["Spec heat consumption [GJ/t]"])
 
             self.active_products[product_name] = \
-                self.ProductInput(dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his, sc_his_calc,
-                                  dict_heat_levels[product_name],
-                                  industry_settings.product_settings[product_name].manual_exp_change_rate,
-                                  industry_settings.product_settings[product_name].perc_used)
+                ProductInput(dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his, sc_his_calc,
+                             dict_heat_levels[product_name],
+                             industry_settings.product_settings[product_name].manual_exp_change_rate,
+                             industry_settings.product_settings[product_name].perc_used)
 
         print("Input was successfully read.")

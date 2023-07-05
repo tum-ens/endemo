@@ -83,11 +83,6 @@ class Product:
                                                              country_name=country_name, product_input=product_input,
                                                              input_manager=input_manager)
 
-        if product_name == "cement":
-            if country_name in ["Spain", "Italy"]:
-                print(country_name)
-                print(self._amount_per_capita_per_year.get_data())
-                uty.plot_timeseries(self._amount_per_capita_per_year)
 
     def is_empty(self) -> bool:
         return self._empty
@@ -126,30 +121,19 @@ class Product:
         if self._empty:
             return Demand()
 
-        print("This should not be zero:")
-
         sc = self._specific_consumption.get_scale(year, 1/3600000)    # get SC and convert from GJ/T to TWH/T
         perc = self._perc_used
 
-        print("Sc: " + str(sc))
-        print("Perc: " + str(perc))
-
         # choose which type of amount based on settings
         amount = self.get_amount_prog(year) * 1000      # convert kT to T
-
-        print("amount: " + str(amount))
 
         # calculate demand after all variables are available
         cached_perc_amount = perc * amount
         electricity = cached_perc_amount * sc.electricity
         hydrogen = cached_perc_amount * sc.hydrogen
 
-        print("electricity: " + str(electricity))
-        print("hydrogen: " + str(hydrogen))
-
         heat = self._heat_levels.copy_multiply_scalar(cached_perc_amount * sc.heat)     # separate heat levels
 
-        print("heat: " + str(heat))
         return Demand(electricity, heat, hydrogen)
 
     def get_amount_prog(self, year: int) -> float:
