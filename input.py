@@ -299,7 +299,7 @@ class FileReadingHelper:
     def set_path_and_read(self, path: Path) -> None:
         """
         Sets the path variable and reads the file with name self.file_name in the path folder.
-        
+
         :param path: The path, where the file lies.
         """
         self.path = path

@@ -6,11 +6,14 @@
 Welcome to Endemo2's documentation!
 ===================================
 
+Whenever you change something in the code and/or the doc strings, please update the documentation using "make html" in a
+command line within the docs folder!
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   modules
+   endemo2
 
 
 Indices and tables
