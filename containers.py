@@ -15,14 +15,10 @@ class Heat:
     """
     A container for heat split into heat levels. Offers arithmetic operations.
 
-    :ivar q1: Amount for heat level Q1
-    :vartype q1: float
-    :ivar q2: Amount for heat level Q2
-    :vartype q2: float
-    :ivar q3: Amount for heat level Q3
-    :vartype q3: float
-    :ivar q4: Amount for heat level Q4
-    :vartype q4: float
+    :ivar float q1: Amount for heat level Q1
+    :ivar float q2: Amount for heat level Q2
+    :ivar float q3: Amount for heat level Q3
+    :ivar float q4: Amount for heat level Q4
     """
     def __init__(self, q1: float = 0, q2: float = 0, q3: float = 0, q4: float = 0):
         self.q1 = float(q1)
@@ -56,12 +52,9 @@ class Demand:
     """
     A container for the amount of demand split into different categories. Provides arithmetic operations.
 
-    :ivar electricity: Amount of electricity demand.
-    :vartype electricity: float
-    :ivar heat: Amount of heat demand.
-    :vartype heat: Heat
-    :ivar hydrogen: Amount of hydrogen demand.
-    :vartype hydrogen: float
+    :ivar float electricity: Amount of electricity demand.
+    :ivar Heat heat: Amount of heat demand.
+    :ivar float hydrogen: Amount of hydrogen demand.
     """
     def __init__(self, electricity: float = 0, heat: Heat = Heat(), hydrogen: float = 0):
         self.electricity = electricity

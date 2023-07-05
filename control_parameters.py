@@ -41,36 +41,25 @@ class IndustrySettings:
     The IndustrySettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
     IND_general and IND_subsectors sheets.
 
-    :ivar forecast_map: Maps the forecast method string, used in the setting tables, to the internal enum
-                        representation.
-    :vartype forecast_map: dict[str, ForecastMethod]
-    :ivar forecast_method: Contains the currently selected forecast method.
-    :vartype forecast_method: ForecastMethod
-    :ivar time_trend_model_activation_quadratic:
+    :ivar dict[str, ForecastMethod] forecast_map: Maps the forecast method string, used in the setting tables,
+        to the internal enum representation.
+    :ivar ForecastMethod forecast_method: Contains the currently selected forecast method.
+    :ivar bool time_trend_model_activation_quadratic:
         "If the time trend model is deactivated, the traditional approach is selected"
-    :vartype time_trend_model_activation_quadratic: bool
-    :ivar production_quantity_calc_per_capita:
-        Decides, whether the production quantity prognosis should use per-capita projection
-    :vartype production_quantity_calc_per_capita: bool
-    :ivar trend_calc_for_spec:
-        Decides, whether specific consumption should be predicted from historical data, when available
-    :vartype trend_calc_for_spec: bool
-    :ivar h2_subst_of_heat:
+    :ivar bool production_quantity_calc_per_capita:
+        Decides, whether the production quantity prognosis should use per-capita projection.
+    :ivar bool trend_calc_for_spec:
+        Decides, whether specific consumption should be predicted from historical data, when available.
+    :ivar float h2_subst_of_heat:
         "Values from 0 to 1. For max. possible substitution of heat with hydrogen in industrial processes set 1."
-    :vartype h2_subst_of_heat: float
-    :ivar nuts2_distribution_based_on_installed_ind_capacity: "If false, distribution per population density."
-    :vartype nuts2_distribution_based_on_installed_ind_capacity: bool
-    :ivar skip_years: Years that are skipped while reading files, to remove outliers.
-    :vartype skip_years: [int]
-    :ivar last_available_year: Last year that's read from historical production files (exclusive).
-    :vartype last_available_year: int
-    :ivar product_settings: Contains settings for each product. Of the form {product_name -> product_settings_obj}
-    :vartype product_settings: dict[str, ProductSettings]
-    :ivar active_product_names: A list of the names of active products.
+    :ivar bool nuts2_distribution_based_on_installed_ind_capacity: "If false, distribution per population density."
+    :ivar [int] skip_years: Years that are skipped while reading files, to remove outliers.
+    :ivar int last_available_year: Last year that's read from historical production files (exclusive).
+    :ivar dict[str, ProductSettings] product_settings: Contains settings for each product.
+        Of the form {product_name -> product_settings_obj}
+    :ivar [str] active_product_names: A list of the names of active products.
         Only for these products, calculations are performed.
-    :vartype active_product_names: [str]
-    :ivar rest_sector_growth_rate:
-    :vartype rest_sector_growth_rate: float
+    :ivar float rest_sector_growth_rate:
     """
     forecast_map = dict({"Trend": ForecastMethod.LINEAR, "U-shape": ForecastMethod.QUADRATIC,
                          "Exponential": ForecastMethod.EXPONENTIAL})
@@ -137,21 +126,21 @@ class GeneralSettings:
     The GeneralSettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
     GeneralSettings and Countries sheets.
 
-    :ivar _sectors_active_values: Contains information, whether a sector is activ, as indicated by the settings.
-    :vartype _sectors_active_values: dict[str, bool]
-    :ivar _parameter_values: Holds the values from the GeneralSettings table in a dictionary {Parameter_string -> bool}
-    :vartype _parameter_values: dict[str, bool]
+    :param pd.DataFrame ex_general: The dataframe of the "GeneralSettings"-sheet in Set_and_Control_Parameters.xlsx
+    :param pd.DataFrame ex_country: The dataframe of the "Countries"-sheet in Set_and_Control_Parameters.xlsx
 
-    :ivar target_year: This is the year, the model makes predictions for.
-    :vartype target_year: int
-    :ivar recognized_countries:
+    :ivar dict[str, bool] _sectors_active_values: Contains information, whether a sector is activ,
+        as indicated by the settings.
+    :ivar dict[str, bool] _parameter_values: Holds the values from the GeneralSettings
+        table in a dictionary {Parameter_string -> bool}
+
+    :ivar int target_year: This is the year, the model makes predictions for.
+    :ivar [str] recognized_countries:
         This is a list of countries that are in the "Countries"-sheet of Set_and_Control_Parameters.xlsx
-    :vartype recognized_countries: [str]
-    :ivar active_countries: This is the list of active countries. Only for these countries, calculations are performed.
-    :vartype active_countries: [str]
-    :ivar nuts2_version: The version of NUTS2 used for reading the files that hold information per NUTS2 Region.
+    :ivar [str] active_countries: This is the list of active countries.
+        Only for these countries, calculations are performed.
+    :ivar int nuts2_version: The version of NUTS2 used for reading the files that hold information per NUTS2 Region.
         Currently, it should be either 2016 or 2021.
-    :vartype nuts2_version: int
     """
 
     def __init__(self, ex_general: pd.DataFrame, ex_country: pd.DataFrame):
