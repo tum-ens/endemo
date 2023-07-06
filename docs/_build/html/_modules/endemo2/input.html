@@ -1,0 +1,557 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>endemo2.input &#8212; Endemo2 2.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Endemo2 2.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">endemo2.input</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for endemo2.input</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">containers</span> <span class="k">as</span> <span class="n">ctn</span>
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">utility</span> <span class="k">as</span> <span class="n">uty</span>
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">control_parameters</span> <span class="k">as</span> <span class="n">cp</span>
+
+
+<div class="viewcode-block" id="Input"><a class="viewcode-back" href="../../endemo2.html#endemo2.input.Input">[docs]</a><span class="k">class</span> <span class="nc">Input</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Input class connects all types of input data, that is in the form of excel/csv sheets in the &#39;input&#39; folder.</span>
+
+<span class="sd">    :ivar str super_path: Path of project folder</span>
+<span class="sd">    :ivar str input_path: Path of input files</span>
+<span class="sd">    :ivar str output_path: Path for output files</span>
+<span class="sd">    :ivar str general_path: Path for input files in &quot;general&quot; folder</span>
+<span class="sd">    :ivar str industry_path: Path for input files in &quot;industry&quot; folder</span>
+
+<span class="sd">    :ivar ControlParameters ctrl: Holds all information received from Set_and_Control_Parameters.xlsx</span>
+<span class="sd">    :ivar GeneralInput general_input: Holds all information of the input files from the &quot;input/general&quot; folder.</span>
+<span class="sd">    :ivar IndustryInput industry_input: Holds all information of the input files from the &quot;input/industry&quot; folder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">super_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+    <span class="n">input_path</span> <span class="o">=</span> <span class="n">super_path</span> <span class="o">/</span> <span class="s1">&#39;input&#39;</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">super_path</span> <span class="o">/</span> <span class="s1">&#39;output&#39;</span>
+    <span class="n">general_path</span> <span class="o">=</span> <span class="n">input_path</span> <span class="o">/</span> <span class="s1">&#39;general&#39;</span>
+    <span class="n">industry_path</span> <span class="o">=</span> <span class="n">input_path</span> <span class="o">/</span> <span class="s1">&#39;industry&#39;</span>
+
+    <span class="n">ctrl</span><span class="p">:</span> <span class="n">cp</span><span class="o">.</span><span class="n">ControlParameters</span>
+    <span class="n">general_input</span><span class="p">:</span> <span class="n">GeneralInput</span>
+    <span class="n">industry_input</span><span class="p">:</span> <span class="n">IndustryInput</span>
+
+    <span class="c1"># Future TODO: add other sector inputs</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctrl_ex</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_path</span> <span class="o">/</span> <span class="s1">&#39;Set_and_Control_Parameters.xlsx&#39;</span><span class="p">)</span>
+
+        <span class="c1"># read control parameters</span>
+        <span class="n">general_settings</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">GeneralSettings</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ctrl_ex</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;GeneralSettings&quot;</span><span class="p">),</span>
+                                              <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ctrl_ex</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;Countries&quot;</span><span class="p">))</span>
+        <span class="n">industry_settings</span> <span class="o">=</span> \
+            <span class="n">cp</span><span class="o">.</span><span class="n">IndustrySettings</span><span class="p">(</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ctrl_ex</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;IND_general&quot;</span><span class="p">),</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ctrl_ex</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;IND_subsectors&quot;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">ControlParameters</span><span class="p">(</span><span class="n">general_settings</span><span class="p">,</span> <span class="n">industry_settings</span><span class="p">)</span>
+
+        <span class="c1"># read general</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">general_input</span> <span class="o">=</span> <span class="n">GeneralInput</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">general_path</span><span class="p">)</span>
+
+        <span class="c1"># read industry</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">industry_input</span> <span class="o">=</span> <span class="n">IndustryInput</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">industry_path</span><span class="p">,</span> <span class="n">industry_settings</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PopulationData"><a class="viewcode-back" href="../../endemo2.html#endemo2.input.PopulationData">[docs]</a><span class="k">class</span> <span class="nc">PopulationData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Holds all data on population. That includes historical data, prognosis data for each country and nuts2 region.</span>
+
+<span class="sd">    :param ControlParameters ctrl: The parsed Set_and_Control_Parameters.xlsx file.</span>
+<span class="sd">    :param set nuts2_valid_regions: The set of nuts2 regions that are recognized.</span>
+<span class="sd">        They are used to filter the input data.</span>
+<span class="sd">    :param dict abbreviations: The countries abbreviations, used to access nuts2 data.</span>
+<span class="sd">    :param pd.DataFrame df_country_pop_his: The sheet containing data of population history per country.</span>
+<span class="sd">    :param pd.DataFrame df_country_pop_prog: The sheet containing the manual prognosis of population amount per country.</span>
+<span class="sd">    :param pd.DataFrame df_nuts2_pop_his: The sheet containing data of population history per NUTS2 region.</span>
+<span class="sd">    :param pd.DataFrame df_nuts2_pop_prog:</span>
+<span class="sd">        The sheet containing the prognosis intervals and growth rate for nuts2 regions.</span>
+
+<span class="sd">    :ivar dict[str, HisProg] country_population: Data for the population of whole countries.</span>
+<span class="sd">        It is of the form {country_name -&gt; historical: [(float, float)], prognosis: [(float, float)]}</span>
+<span class="sd">    :ivar dict[str, [(str, [float, float])]] nuts2_population: Data for the population of NUTS2 regions.</span>
+<span class="sd">        It is of the form {country_name -&gt; (code -&gt; (historical: [(float,float)], prognosis: [interval, growth rate]))}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">cp</span><span class="o">.</span><span class="n">ControlParameters</span><span class="p">,</span> <span class="n">nuts2_valid_regions</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span> <span class="n">abbreviations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+                 <span class="n">df_country_pop_his</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">df_country_pop_prog</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+                 <span class="n">df_nuts2_pop_his</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">df_nuts2_pop_prog</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">country_population</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ctn</span><span class="o">.</span><span class="n">HisProg</span><span class="p">]()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_population</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[(</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])]]()</span>
+
+        <span class="c1"># preprocess country population historical data</span>
+        <span class="n">dict_c_pop_his</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">convert_table_to_filtered_data_series_per_country</span><span class="p">(</span><span class="n">df_country_pop_his</span><span class="p">)</span>
+
+        <span class="c1"># preprocess country population prognosis</span>
+        <span class="n">dict_c_pop_prog</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">convert_table_to_filtered_data_series_per_country</span><span class="p">(</span><span class="n">df_country_pop_prog</span><span class="p">)</span>
+
+        <span class="c1"># preprocess nuts2 population historical data</span>
+        <span class="n">df_nuts2_pop_his</span> <span class="o">=</span> <span class="n">df_nuts2_pop_his</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;GEO/TIME&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">dict_nuts2_pop_his</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]]]()</span>
+        <span class="n">it</span> <span class="o">=</span> <span class="n">df_nuts2_pop_his</span><span class="o">.</span><span class="n">itertuples</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+            <span class="n">region_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># read region code from rows</span>
+            <span class="k">if</span> <span class="n">region_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">):</span>
+                <span class="n">region_name</span> <span class="o">=</span> <span class="n">region_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">region_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nuts2_valid_regions</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">region_name</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span>
+                <span class="c1"># its a non-region</span>
+                <span class="k">continue</span>
+            <span class="n">zipped</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df_nuts2_pop_his</span><span class="p">)[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">:]))</span>
+            <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">filter_out_nan_and_inf</span><span class="p">(</span><span class="n">zipped</span><span class="p">)</span>
+            <span class="n">abbrev</span> <span class="o">=</span> <span class="n">region_name</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">abbrev</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_nuts2_pop_his</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">dict_nuts2_pop_his</span><span class="p">[</span><span class="n">abbrev</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">dict_nuts2_pop_his</span><span class="p">[</span><span class="n">abbrev</span><span class="p">][</span><span class="n">region_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">his_data</span>
+
+        <span class="c1"># preprocess nuts2 population prognosis: interval 2015-2050</span>
+        <span class="n">df_nuts2_pop_prog</span> <span class="o">=</span> <span class="n">df_nuts2_pop_prog</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;Region name&quot;</span><span class="p">,</span> <span class="s2">&quot;for 35 years&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> \
+            <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;per year&#39;</span><span class="p">:</span> <span class="s1">&#39;2015-2050&#39;</span><span class="p">})</span>
+        <span class="n">interval_conv</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xs</span><span class="p">:</span> <span class="p">[</span><span class="n">ctn</span><span class="o">.</span><span class="n">Interval</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">]</span>
+        <span class="n">intervals</span> <span class="o">=</span> <span class="n">interval_conv</span><span class="p">(</span><span class="n">df_nuts2_pop_prog</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+
+        <span class="n">dict_nuts2_pop_prog</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[(</span><span class="n">ctn</span><span class="o">.</span><span class="n">Interval</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]]]()</span>
+        <span class="n">it</span> <span class="o">=</span> <span class="n">df_nuts2_pop_prog</span><span class="o">.</span><span class="n">itertuples</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+            <span class="n">region_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">region_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nuts2_valid_regions</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">alpha2</span> <span class="o">=</span> <span class="n">region_name</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+            <span class="n">values</span> <span class="o">=</span> <span class="n">df_nuts2_pop_prog</span><span class="p">[</span><span class="n">df_nuts2_pop_prog</span><span class="p">[</span><span class="s2">&quot;Code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">region_name</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">zipped_prog</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">intervals</span><span class="p">,</span> <span class="n">values</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">alpha2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_nuts2_pop_prog</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">dict_nuts2_pop_prog</span><span class="p">[</span><span class="n">alpha2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+            <span class="n">dict_nuts2_pop_prog</span><span class="p">[</span><span class="n">alpha2</span><span class="p">][</span><span class="n">region_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">zipped_prog</span>
+
+        <span class="k">for</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">active_countries</span><span class="p">:</span>
+            <span class="c1"># fill country population</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">country_population</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">ctn</span><span class="o">.</span><span class="n">HisProg</span><span class="p">(</span><span class="n">dict_c_pop_his</span><span class="p">[</span><span class="n">country_name</span><span class="p">],</span> <span class="n">dict_c_pop_prog</span><span class="p">[</span><span class="n">country_name</span><span class="p">])</span>
+
+            <span class="c1"># fill nuts2 population</span>
+            <span class="k">if</span> <span class="n">country_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_population</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_population</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">abbrev</span> <span class="o">=</span> <span class="n">abbreviations</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">alpha2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_population</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">ctn</span><span class="o">.</span><span class="n">HisProg</span><span class="p">(</span><span class="n">dict_nuts2_pop_his</span><span class="p">[</span><span class="n">abbrev</span><span class="p">],</span> <span class="n">dict_nuts2_pop_prog</span><span class="p">[</span><span class="n">abbrev</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="GeneralInput"><a class="viewcode-back" href="../../endemo2.html#endemo2.input.GeneralInput">[docs]</a><span class="k">class</span> <span class="nc">GeneralInput</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    General Input contains all input that is read from the &quot;input/general&quot; folder.</span>
+
+<span class="sd">    :param ControlParameters ctrl: The parsed Set_and_Control_Parameters.xlsx</span>
+<span class="sd">    :param Path path: The path to the input/general folder</span>
+
+<span class="sd">    :ivar dict[str, (&quot;alpha2&quot;, &quot;alpha3&quot;, &quot;german_name&quot;)] abbreviations: The abbreviations for each country.</span>
+<span class="sd">    :ivar PopulationData population: All data from the population input.</span>
+<span class="sd">    :ivar dict[str, HisProg[[(float, float)], [Interval, float]]] gdp: The gdp for each country.</span>
+<span class="sd">    :ivar dict[str, (&quot;electricity&quot;, &quot;heat&quot;)] efficiency: The efficiency for each energy carrier.</span>
+<span class="sd">    :ivar set nuts2_valid_regions: The set of valid nuts2 regions within the selected NUTS2 code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">cp</span><span class="o">.</span><span class="n">ControlParameters</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abbreviations</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ctn</span><span class="o">.</span><span class="n">CA</span><span class="p">]()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gdp</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ctn</span><span class="o">.</span><span class="n">HisProg</span><span class="p">[[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="p">[</span><span class="n">ctn</span><span class="o">.</span><span class="n">Interval</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">efficiency</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ctn</span><span class="o">.</span><span class="n">EH</span><span class="p">]()</span>
+
+        <span class="n">df_abbr</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="s2">&quot;Abbreviations.xlsx&quot;</span><span class="p">)</span>
+        <span class="n">df_world_pop_his</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="s2">&quot;Population_historical_world.xls&quot;</span><span class="p">)</span>
+        <span class="n">df_world_pop_prog</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="s2">&quot;Population_projection_world.xlsx&quot;</span><span class="p">)</span>
+        <span class="n">df_nuts2_pop_his</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="s2">&quot;Population_historical_NUTS2.csv&quot;</span><span class="p">)</span>
+        <span class="n">df_nuts2_pop_prog</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="s2">&quot;Population_projection_NUTS2.xlsx&quot;</span><span class="p">,</span>
+                          <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;Populationprojection_NUTS2_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">nuts2_version</span><span class="p">))</span>
+        <span class="n">df_gdp_his</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="s2">&quot;GDP_per_capita_historical.xlsx&quot;</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;constant 2015 USD&quot;</span><span class="p">)</span>
+        <span class="n">df_gdp_prog_europa</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="s2">&quot;GDP_per_capita_change_rate_projection.xlsx&quot;</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;Data&quot;</span><span class="p">)</span>
+        <span class="n">df_gdp_prog_world</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="s2">&quot;GDP_per_capita_change_rate_projection.xlsx&quot;</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;Data_world&quot;</span><span class="p">)</span>
+        <span class="n">df_efficiency</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="s2">&quot;Efficiency_Combustion.xlsx&quot;</span><span class="p">)</span>
+        <span class="n">df_nuts2_labels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="s2">&quot;NUTS2_from_Model.xlsx&quot;</span><span class="p">)</span>
+
+        <span class="c1"># fill nuts2 valid regions</span>
+        <span class="n">column_name</span> <span class="o">=</span> <span class="s2">&quot;Code &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">nuts2_version</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_valid_regions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">df_nuts2_labels</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">4</span><span class="p">])</span>
+
+        <span class="c1"># fill efficiency</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_efficiency</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Energy carrier&quot;</span><span class="p">]]</span> <span class="o">=</span> \
+                <span class="n">ctn</span><span class="o">.</span><span class="n">EH</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Electricity production [-]&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Heat production [-]&quot;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">active_countries</span><span class="p">:</span>
+            <span class="c1"># fill abbreviations</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">abbreviations</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">ctn</span><span class="o">.</span><span class="n">CA</span><span class="p">(</span><span class="n">df_abbr</span><span class="p">[</span><span class="n">df_abbr</span><span class="p">[</span><span class="s2">&quot;Country_en&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alpha-2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                       <span class="n">df_abbr</span><span class="p">[</span><span class="n">df_abbr</span><span class="p">[</span><span class="s2">&quot;Country_en&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alpha-3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                       <span class="n">df_abbr</span><span class="p">[</span><span class="n">df_abbr</span><span class="p">[</span><span class="s2">&quot;Country_en&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Country_de&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="c1"># read gdp historical</span>
+            <span class="n">years</span> <span class="o">=</span> <span class="n">df_gdp_his</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
+            <span class="n">gdp_data</span> <span class="o">=</span> <span class="n">df_gdp_his</span><span class="p">[</span><span class="n">df_gdp_his</span><span class="p">[</span><span class="s2">&quot;Country Code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">abbreviations</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">alpha3</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">:]</span>
+            <span class="n">zipped</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">gdp_data</span><span class="p">))</span>
+            <span class="n">gdp_his</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">filter_out_nan_and_inf</span><span class="p">(</span><span class="n">zipped</span><span class="p">)</span>
+
+            <span class="c1"># read gdp prognosis</span>
+            <span class="n">interval_conv</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xs</span><span class="p">:</span> <span class="p">[</span><span class="n">ctn</span><span class="o">.</span><span class="n">Interval</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">]</span>
+            <span class="n">intervals_europa</span> <span class="o">=</span> <span class="n">interval_conv</span><span class="p">(</span><span class="n">df_gdp_prog_europa</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">intervals_world</span> <span class="o">=</span> <span class="n">interval_conv</span><span class="p">(</span><span class="n">df_gdp_prog_world</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="n">zipped_gdp_prog</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ctn</span><span class="o">.</span><span class="n">Interval</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_gdp_prog_europa</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]):</span>
+                <span class="n">gdp_prog</span> <span class="o">=</span> <span class="n">df_gdp_prog_europa</span><span class="p">[</span><span class="n">df_gdp_prog_europa</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">zipped_gdp_prog</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">intervals_europa</span><span class="p">,</span> <span class="n">gdp_prog</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_gdp_prog_world</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]):</span>
+                <span class="n">gdp_prog</span> <span class="o">=</span> <span class="n">df_gdp_prog_world</span><span class="p">[</span><span class="n">df_gdp_prog_world</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">zipped_gdp_prog</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">intervals_world</span><span class="p">,</span> <span class="n">gdp_prog</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Attention! For country </span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">country_name</span>
+                              <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2"> no gdp prognosis data was found. Data from </span><span class="se">\&quot;</span><span class="s2">all</span><span class="se">\&quot;</span><span class="s2"> is used instead now.&quot;</span><span class="p">)</span>
+                <span class="n">gdp_prog</span> <span class="o">=</span> <span class="n">df_gdp_prog_europa</span><span class="p">[</span><span class="n">df_gdp_prog_europa</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">zipped_gdp_prog</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">intervals_europa</span><span class="p">,</span> <span class="n">gdp_prog</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">gdp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctn</span><span class="o">.</span><span class="n">HisProg</span><span class="p">(</span><span class="n">gdp_his</span><span class="p">,</span> <span class="n">zipped_gdp_prog</span><span class="p">)</span>
+
+        <span class="c1"># create PopulationData object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="n">PopulationData</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_valid_regions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">abbreviations</span><span class="p">,</span>
+                                         <span class="n">df_world_pop_his</span><span class="p">,</span> <span class="n">df_world_pop_prog</span><span class="p">,</span> <span class="n">df_nuts2_pop_his</span><span class="p">,</span>
+                                         <span class="n">df_nuts2_pop_prog</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ProductInput"><a class="viewcode-back" href="../../endemo2.html#endemo2.input.ProductInput">[docs]</a><span class="k">class</span> <span class="nc">ProductInput</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Product Input summarizes all input data, that is specific to a certain product type, but holds the</span>
+<span class="sd">    information for all countries. Example product type: steel_prim</span>
+
+<span class="sd">    :param sc: specific_consumption_default</span>
+<span class="sd">    :param bat: bat</span>
+<span class="sd">    :param prod: production</span>
+<span class="sd">    :param sc_h: specific_consumption_historical</span>
+<span class="sd">    :param sc_h_active: Indicates whether specific consumption should be calculated from historical data.</span>
+<span class="sd">    :param heat_levels: heat_levels</span>
+<span class="sd">    :param manual_exp_change_rate: manual_exp_change_rate</span>
+<span class="sd">    :param perc_used: perc_used</span>
+
+<span class="sd">    :ivar dict[str, containers.SC] specific_consumption_default: Default specific consumption value for this product.</span>
+<span class="sd">    :ivar dict[str, (float, float)] specific_consumption_historical: Historical specific consumption data</span>
+<span class="sd">        for this product. Accessible per country.</span>
+<span class="sd">    :ivar dict[str, containers.EH] bat: The best-available-technology consumption for this product.</span>
+<span class="sd">        Accessible per country.</span>
+<span class="sd">    :ivar dict[str, (float, float)] production: The historical amount data for this product. Accessible per country.</span>
+<span class="sd">    :ivar Heat heat_levels: How heat demand should be distributed across heat levels for this product.</span>
+<span class="sd">    :ivar float manual_exp_change_rate: If product amount projection will be calculated exponentially,</span>
+<span class="sd">        this will be the change rate.</span>
+<span class="sd">    :ivar float perc_used: A scalar for the amount of a product.</span>
+<span class="sd">        This is used to model modern technologies replacing old ones.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="n">bat</span><span class="p">,</span> <span class="n">prod</span><span class="p">,</span> <span class="n">sc_h</span><span class="p">,</span> <span class="n">sc_h_active</span><span class="p">,</span> <span class="n">heat_levels</span><span class="p">,</span> <span class="n">manual_exp_change_rate</span><span class="p">,</span> <span class="n">perc_used</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption_default</span> <span class="o">=</span> <span class="n">sc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bat</span> <span class="o">=</span> <span class="n">bat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">production</span> <span class="o">=</span> <span class="n">prod</span>
+        <span class="k">if</span> <span class="n">sc_h_active</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption_historical</span> <span class="o">=</span> <span class="n">sc_h</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption_historical</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heat_levels</span> <span class="o">=</span> <span class="n">heat_levels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manual_exp_change_rate</span> <span class="o">=</span> <span class="n">manual_exp_change_rate</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">perc_used</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">perc_used</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">perc_used</span><span class="p">))</span> <span class="k">else</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Specific Consumption: &quot;</span> <span class="o">+</span> <span class="n">uty</span><span class="o">.</span><span class="n">str_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption_default</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2"> BAT: &quot;</span> <span class="o">+</span> <span class="n">uty</span><span class="o">.</span><span class="n">str_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bat</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2"> Historical: &quot;</span> <span class="o">+</span> <span class="n">uty</span><span class="o">.</span><span class="n">str_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">production</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="FileReadingHelper"><a class="viewcode-back" href="../../endemo2.html#endemo2.input.FileReadingHelper">[docs]</a><span class="k">class</span> <span class="nc">FileReadingHelper</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A helper class to read products historical data. It provides some fixed transformation operations.</span>
+
+<span class="sd">    :ivar str file_name: The files name, relative to the path variable.</span>
+<span class="sd">    :ivar str sheet_name: The name of the sheet that is to be read from the file.</span>
+<span class="sd">    :ivar [int] skip_rows: These rows(!) will be skipped when reading the dataframe. Done by numerical index.</span>
+<span class="sd">    :ivar lambda[pd.Dataframe -&gt; pd.Dataframe] sheet_transform: A transformation operation on the dataframe</span>
+<span class="sd">    :ivar pd.Dataframe df: The current dataframe.</span>
+<span class="sd">    :ivar Path path: The path to the folder, where the file is.</span>
+<span class="sd">        It can to be set after constructing the FileReadingHelper Object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">skip_rows</span><span class="p">:</span> <span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">sheet_transform</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sheet_name</span> <span class="o">=</span> <span class="n">sheet_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skip_rows</span> <span class="o">=</span> <span class="n">skip_rows</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sheet_transform</span> <span class="o">=</span> <span class="n">sheet_transform</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="FileReadingHelper.set_path_and_read"><a class="viewcode-back" href="../../endemo2.html#endemo2.input.FileReadingHelper.set_path_and_read">[docs]</a>    <span class="k">def</span> <span class="nf">set_path_and_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the path variable and reads the file with name self.file_name in the path folder.</span>
+
+<span class="sd">        :param path: The path, where the file lies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet_transform</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet_name</span><span class="p">,</span>
+                                                     <span class="n">skiprows</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_rows</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FileReadingHelper.skip_years"><a class="viewcode-back" href="../../endemo2.html#endemo2.input.FileReadingHelper.skip_years">[docs]</a>    <span class="k">def</span> <span class="nf">skip_years</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_years</span><span class="p">:</span> <span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filters the skip years from the current dataframe.</span>
+
+<span class="sd">        :param skip_years: The list of years to skip.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Trying to skip years in products historical data without having called set_path_and_read&quot;</span>
+                          <span class="s2">&quot; on the Retrieve object.&quot;</span><span class="p">)</span>
+        <span class="c1"># skip years</span>
+        <span class="k">for</span> <span class="n">skip_year</span> <span class="ow">in</span> <span class="n">skip_years</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">skip_year</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">skip_year</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FileReadingHelper.get"><a class="viewcode-back" href="../../endemo2.html#endemo2.input.FileReadingHelper.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the dataframe.</span>
+
+<span class="sd">        :return: The current dataframe, which is filtered depending on previous function calls on this class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Trying to retrieve products historical data without having called set_path_and_read on &quot;</span>
+                          <span class="s2">&quot;the Retrieve object.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span></div></div>
+
+
+<div class="viewcode-block" id="IndustryInput"><a class="viewcode-back" href="../../endemo2.html#endemo2.input.IndustryInput">[docs]</a><span class="k">class</span> <span class="nc">IndustryInput</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Industry Input denoted input that is read from the &quot;input/industry&quot; folder.</span>
+
+<span class="sd">    :param industry_path: The path to the industry folder.</span>
+<span class="sd">    :param industry_settings: The parsed sector-specific settings for the industry sector.</span>
+
+<span class="sd">    :ivar dict[str, ProductInput] active_products: Stores the product specific input for all active products.</span>
+<span class="sd">    :ivar IndustrySettings settings: Stores the sector-specific settings for industry.</span>
+<span class="sd">    :ivar dict[str, Retrieve] product_data_access: Specify how data sheets for each product should be accessed</span>
+<span class="sd">    :ivar dict[str, str] sc_historical_data_file_names: The file names of the files used for certain products to read</span>
+<span class="sd">        historical information on specific consumption.</span>
+<span class="sd">    :ivar [str] sc_historical_sheet_names: The sheet names for the files used to read</span>
+<span class="sd">        historical information on specific consumption for certain products.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">product_data_access</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;steel&quot;</span><span class="p">:</span>                <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Steel_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data_total&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;steel_prim&quot;</span><span class="p">:</span>           <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Steel_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Steel_prim&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;steel_sec&quot;</span><span class="p">:</span>            <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Steel_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Steel_sec&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;steel_direct&quot;</span><span class="p">:</span>         <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Steel_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data_total&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;alu_prim&quot;</span><span class="p">:</span>             <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Aluminium_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Prim_Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;alu_sec&quot;</span><span class="p">:</span>              <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Aluminium_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Sec_Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;copper_prim&quot;</span><span class="p">:</span>          <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Copper_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Copper_WSP&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                                                  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;Type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Primary&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;Type&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)),</span>
+        <span class="s2">&quot;copper_sec&quot;</span><span class="p">:</span>           <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Copper_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Copper_WSP&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                                                  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;Type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Secondary&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;Type&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)),</span>
+        <span class="s2">&quot;chlorine&quot;</span><span class="p">:</span>             <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Chlorine_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;ammonia&quot;</span><span class="p">:</span>              <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Ammonia_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;methanol&quot;</span><span class="p">:</span>             <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Methanol_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;ethylene&quot;</span><span class="p">:</span>             <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Ethylene_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;propylene&quot;</span><span class="p">:</span>            <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Propylene_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;aromate&quot;</span><span class="p">:</span>              <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Aromate_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;ammonia_classic&quot;</span><span class="p">:</span>      <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Ammonia_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;methanol_classic&quot;</span><span class="p">:</span>     <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Methanol_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;ethylene_classic&quot;</span><span class="p">:</span>     <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Ethylene_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;propylene_classic&quot;</span><span class="p">:</span>    <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Propylene_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;aromate_classic&quot;</span><span class="p">:</span>      <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Aromate_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;paper&quot;</span><span class="p">:</span>                <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Paper_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;cement&quot;</span><span class="p">:</span>               <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Cement_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+        <span class="s2">&quot;glass&quot;</span><span class="p">:</span>                <span class="n">FileReadingHelper</span><span class="p">(</span><span class="s2">&quot;Glass_Production.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="p">[],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="n">sc_historical_data_file_names</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;steel&quot;</span><span class="p">:</span> <span class="s2">&quot;nrg_bal_s_steel.xls&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;paper&quot;</span><span class="p">:</span> <span class="s2">&quot;nrg_bal_s_paper.xls&quot;</span>
+    <span class="p">}</span>
+    <span class="n">sc_historical_sheet_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Feste fossile Brennstoffe&quot;</span><span class="p">,</span> <span class="s2">&quot;Synthetische Gase&quot;</span><span class="p">,</span> <span class="s2">&quot;Erdgas&quot;</span><span class="p">,</span> <span class="s2">&quot;Oel&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;Erneuerbare Energien&quot;</span><span class="p">,</span> <span class="s2">&quot;Abfaelle&quot;</span><span class="p">,</span> <span class="s2">&quot;Elektrizitaet&quot;</span><span class="p">,</span> <span class="s2">&quot;Waerme&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">industry_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">industry_settings</span><span class="p">:</span> <span class="n">cp</span><span class="o">.</span><span class="n">IndustrySettings</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">industry_settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_products</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ProductInput</span><span class="p">]()</span>
+
+        <span class="n">ex_spec</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">industry_path</span> <span class="o">/</span> <span class="s2">&quot;Specific_Consumption.xlsx&quot;</span><span class="p">)</span>
+        <span class="n">ex_bat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">industry_path</span> <span class="o">/</span> <span class="s2">&quot;BAT_Consumption.xlsx&quot;</span><span class="p">)</span>
+
+        <span class="c1"># read heat levels</span>
+        <span class="n">df_heat_levels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">industry_path</span> <span class="o">/</span> <span class="s2">&quot;Heat_levels.xlsx&quot;</span><span class="p">)</span>
+        <span class="n">dict_heat_levels</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_heat_levels</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">dict_heat_levels</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Industry&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ctn</span><span class="o">.</span><span class="n">Heat</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Q1&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Q2&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Q3&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+                                                                <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Q4&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="c1"># read the active sectors sheets</span>
+        <span class="k">for</span> <span class="n">product_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">active_product_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">product_name</span> <span class="o">==</span> <span class="s1">&#39;unspecified industry&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># read production data</span>
+            <span class="n">retrieve_prod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_data_access</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span>
+            <span class="n">retrieve_prod</span><span class="o">.</span><span class="n">set_path_and_read</span><span class="p">(</span><span class="n">industry_path</span><span class="p">)</span>
+            <span class="n">retrieve_prod</span><span class="o">.</span><span class="n">skip_years</span><span class="p">(</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">skip_years</span><span class="p">)</span>
+            <span class="n">df_product_his</span> <span class="o">=</span> <span class="n">retrieve_prod</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+            <span class="n">dict_prod_his</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+            <span class="n">production_it</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df_product_his</span><span class="p">)</span><span class="o">.</span><span class="n">itertuples</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">production_it</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">Country</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;nan&#39;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">years</span> <span class="o">=</span> <span class="n">df_product_his</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">df_product_his</span><span class="p">[</span><span class="n">df_product_his</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">row</span><span class="o">.</span><span class="n">Country</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="k">if</span> <span class="n">uty</span><span class="o">.</span><span class="n">is_zero</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                    <span class="c1"># country did not product this product at all =&gt; skip product for this country</span>
+                    <span class="c1"># print(&quot;skipped &quot; + product_name + &quot; for country &quot; + row.Country)</span>
+                    <span class="k">continue</span>
+                <span class="n">zipped</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
+                <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">filter_out_nan_and_inf</span><span class="p">(</span><span class="n">zipped</span><span class="p">)</span>
+                <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">cut_after_x</span><span class="p">(</span><span class="n">his_data</span><span class="p">,</span> <span class="n">industry_settings</span><span class="o">.</span><span class="n">last_available_year</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">dict_prod_his</span><span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">Country</span><span class="p">]</span> <span class="o">=</span> <span class="n">his_data</span>
+
+            <span class="c1"># read specific consumption default data</span>
+            <span class="n">prod_sc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_spec</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">product_name</span><span class="p">)</span>
+            <span class="n">dict_prod_sc_country</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">prod_sc</span><span class="p">)</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">dict_prod_sc_country</span><span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">Country</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="n">ctn</span><span class="o">.</span><span class="n">SC</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Spec electricity consumption [GJ/t]&quot;</span><span class="p">],</span>
+                                  <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Spec heat consumption [GJ/t]&quot;</span><span class="p">],</span>
+                                  <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Spec hydrogen consumption [GJ/t]&quot;</span><span class="p">],</span>
+                                  <span class="n">row</span><span class="p">[</span><span class="s2">&quot;max. subst. of heat with H2 [%]&quot;</span><span class="p">])</span>
+
+            <span class="c1"># read specific demand historical data</span>
+            <span class="n">dict_sc_his</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">sc_his_calc</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">product_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sc_historical_data_file_names</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">sc_his_calc</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="n">sc_his_file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sc_historical_data_file_names</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span>
+                <span class="n">ex_sc_his</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">industry_path</span> <span class="o">/</span> <span class="n">sc_his_file_name</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">sheet_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sc_historical_sheet_names</span><span class="p">:</span>
+                    <span class="n">df_sc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_sc_his</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_sc</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                        <span class="n">country_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;GEO/TIME&quot;</span><span class="p">]</span>
+                        <span class="n">years</span> <span class="o">=</span> <span class="n">df_sc</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="n">df_sc</span><span class="p">[</span><span class="n">df_sc</span><span class="p">[</span><span class="s2">&quot;GEO/TIME&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">uty</span><span class="o">.</span><span class="n">is_zero</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                            <span class="c1"># data exists -&gt; fill into dictionary</span>
+                            <span class="n">zipped</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
+                            <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">filter_out_nan_and_inf</span><span class="p">(</span><span class="n">zipped</span><span class="p">)</span>
+                            <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">cut_after_x</span><span class="p">(</span><span class="n">his_data</span><span class="p">,</span> <span class="n">industry_settings</span><span class="o">.</span><span class="n">last_available_year</span><span class="p">)</span>
+
+                            <span class="k">if</span> <span class="n">country_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_sc_his</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                                <span class="n">dict_sc_his</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+                            <span class="n">dict_sc_his</span><span class="p">[</span><span class="n">country_name</span><span class="p">][</span><span class="n">sheet_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">his_data</span>
+
+            <span class="c1"># read bat consumption data</span>
+            <span class="n">df_prod_bat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_bat</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">product_name</span><span class="p">)</span>
+            <span class="n">dict_prod_bat_country</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_prod_bat</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">dict_prod_bat_country</span><span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">Country</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="n">ctn</span><span class="o">.</span><span class="n">EH</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Spec electricity consumption [GJ/t]&quot;</span><span class="p">],</span>
+                                  <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Spec heat consumption [GJ/t]&quot;</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">active_products</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">ProductInput</span><span class="p">(</span><span class="n">dict_prod_sc_country</span><span class="p">,</span> <span class="n">dict_prod_bat_country</span><span class="p">,</span> <span class="n">dict_prod_his</span><span class="p">,</span> <span class="n">dict_sc_his</span><span class="p">,</span> <span class="n">sc_his_calc</span><span class="p">,</span>
+                             <span class="n">dict_heat_levels</span><span class="p">[</span><span class="n">product_name</span><span class="p">],</span>
+                             <span class="n">industry_settings</span><span class="o">.</span><span class="n">product_settings</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span><span class="o">.</span><span class="n">manual_exp_change_rate</span><span class="p">,</span>
+                             <span class="n">industry_settings</span><span class="o">.</span><span class="n">product_settings</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span><span class="o">.</span><span class="n">perc_used</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Input was successfully read.&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Endemo2 2.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">endemo2.input</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Christiane Kobalt.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.2.1.
+    </div>
+  </body>
+</html>

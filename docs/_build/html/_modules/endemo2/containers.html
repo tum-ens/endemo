@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.containers &mdash; Endemo2 2.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Endemo2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Endemo2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.containers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.containers</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">collections</span> <span class="k">as</span> <span class="nn">coll</span>
+
+
+<span class="n">SC</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;SC&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;electricity&quot;</span><span class="p">,</span> <span class="s2">&quot;heat&quot;</span><span class="p">,</span> <span class="s2">&quot;hydrogen&quot;</span><span class="p">,</span> <span class="s2">&quot;max_subst_h2&quot;</span><span class="p">])</span>
+<span class="n">EH</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;EH&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;electricity&quot;</span><span class="p">,</span> <span class="s2">&quot;heat&quot;</span><span class="p">])</span>
+
+<span class="n">CA</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;CA&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;alpha2&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha3&quot;</span><span class="p">,</span> <span class="s2">&quot;german_name&quot;</span><span class="p">])</span>
+<span class="n">HisProg</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;HisProg&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;historical&quot;</span><span class="p">,</span> <span class="s2">&quot;prognosis&quot;</span><span class="p">])</span>
+<span class="n">Interval</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Interval&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="Heat"><a class="viewcode-back" href="../../endemo2.html#endemo2.containers.Heat">[docs]</a><span class="k">class</span> <span class="nc">Heat</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A container for heat split into heat levels. Offers arithmetic operations.</span>
+
+<span class="sd">    :ivar float q1: Amount for heat level Q1</span>
+<span class="sd">    :ivar float q2: Amount for heat level Q2</span>
+<span class="sd">    :ivar float q3: Amount for heat level Q3</span>
+<span class="sd">    :ivar float q4: Amount for heat level Q4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">q2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">q3</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">q4</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">q1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">q2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q3</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">q3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q4</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">q4</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Heat:[&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q2</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q3</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q4</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+
+<div class="viewcode-block" id="Heat.mutable_add"><a class="viewcode-back" href="../../endemo2.html#endemo2.containers.Heat.mutable_add">[docs]</a>    <span class="k">def</span> <span class="nf">mutable_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">heat</span><span class="p">:</span> <span class="n">Heat</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q1</span> <span class="o">+=</span> <span class="n">heat</span><span class="o">.</span><span class="n">q1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q2</span> <span class="o">+=</span> <span class="n">heat</span><span class="o">.</span><span class="n">q2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q3</span> <span class="o">+=</span> <span class="n">heat</span><span class="o">.</span><span class="n">q3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q4</span> <span class="o">+=</span> <span class="n">heat</span><span class="o">.</span><span class="n">q4</span></div>
+
+<div class="viewcode-block" id="Heat.copy_add"><a class="viewcode-back" href="../../endemo2.html#endemo2.containers.Heat.copy_add">[docs]</a>    <span class="k">def</span> <span class="nf">copy_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">heat</span><span class="p">:</span> <span class="n">Heat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Heat</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Heat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q1</span> <span class="o">+</span> <span class="n">heat</span><span class="o">.</span><span class="n">q1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q2</span> <span class="o">+</span> <span class="n">heat</span><span class="o">.</span><span class="n">q2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q3</span> <span class="o">+</span> <span class="n">heat</span><span class="o">.</span><span class="n">q3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q4</span> <span class="o">+</span> <span class="n">heat</span><span class="o">.</span><span class="n">q4</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Heat.mutable_multiply_scalar"><a class="viewcode-back" href="../../endemo2.html#endemo2.containers.Heat.mutable_multiply_scalar">[docs]</a>    <span class="k">def</span> <span class="nf">mutable_multiply_scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scalar</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q1</span> <span class="o">*=</span> <span class="n">scalar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q2</span> <span class="o">*=</span> <span class="n">scalar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q3</span> <span class="o">*=</span> <span class="n">scalar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q4</span> <span class="o">*=</span> <span class="n">scalar</span></div>
+
+<div class="viewcode-block" id="Heat.copy_multiply_scalar"><a class="viewcode-back" href="../../endemo2.html#endemo2.containers.Heat.copy_multiply_scalar">[docs]</a>    <span class="k">def</span> <span class="nf">copy_multiply_scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scalar</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Heat</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Heat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q1</span> <span class="o">*</span> <span class="n">scalar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q2</span> <span class="o">*</span> <span class="n">scalar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q3</span> <span class="o">*</span> <span class="n">scalar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q4</span> <span class="o">*</span> <span class="n">scalar</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Demand"><a class="viewcode-back" href="../../endemo2.html#endemo2.containers.Demand">[docs]</a><span class="k">class</span> <span class="nc">Demand</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A container for the amount of demand split into different categories. Provides arithmetic operations.</span>
+
+<span class="sd">    :ivar float electricity: Amount of electricity demand.</span>
+<span class="sd">    :ivar Heat heat: Amount of heat demand.</span>
+<span class="sd">    :ivar float hydrogen: Amount of hydrogen demand.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">electricity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">heat</span><span class="p">:</span> <span class="n">Heat</span> <span class="o">=</span> <span class="n">Heat</span><span class="p">(),</span> <span class="n">hydrogen</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electricity</span> <span class="o">=</span> <span class="n">electricity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heat</span> <span class="o">=</span> <span class="n">heat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hydrogen</span> <span class="o">=</span> <span class="n">hydrogen</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;Demand: &quot;</span> <span class="o">+</span> <span class="s2">&quot;electricity: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">electricity</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, heat: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">heat</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, hydrogen: &quot;</span> <span class="o">+</span> \
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hydrogen</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&gt;&quot;</span>
+
+<div class="viewcode-block" id="Demand.add"><a class="viewcode-back" href="../../endemo2.html#endemo2.containers.Demand.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Demand</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Add the values of &quot;other&quot; demand component-wise to own member variables. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electricity</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">electricity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heat</span><span class="o">.</span><span class="n">mutable_add</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">heat</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hydrogen</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">hydrogen</span></div>
+
+<div class="viewcode-block" id="Demand.scale"><a class="viewcode-back" href="../../endemo2.html#endemo2.containers.Demand.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scalar</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Scale member variables component-wise with scalar. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electricity</span> <span class="o">*=</span> <span class="n">scalar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hydrogen</span> <span class="o">*=</span> <span class="n">scalar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heat</span><span class="o">.</span><span class="n">mutable_multiply_scalar</span><span class="p">(</span><span class="n">scalar</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

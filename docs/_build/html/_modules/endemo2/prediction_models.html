@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.prediction_models &mdash; Endemo2 2.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Endemo2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Endemo2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.prediction_models</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.prediction_models</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">collections</span> <span class="k">as</span> <span class="nn">coll</span>
+<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">statistics</span> <span class="k">as</span> <span class="nn">st</span>
+
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">utility</span> <span class="k">as</span> <span class="n">uty</span>
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">control_parameters</span> <span class="k">as</span> <span class="n">cp</span>
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">containers</span> <span class="k">as</span> <span class="n">ctn</span>
+
+<span class="n">Exp</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Exp&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;x0&quot;</span><span class="p">,</span> <span class="s2">&quot;y0&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">])</span>  <span class="c1"># y(x) = y0 * (1+r)^(x - x0)</span>
+<span class="n">Lin</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Lin&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;k0&quot;</span><span class="p">,</span> <span class="s2">&quot;k1&quot;</span><span class="p">])</span>
+<span class="n">Quadr</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Quadr&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;k0&quot;</span><span class="p">,</span> <span class="s2">&quot;k1&quot;</span><span class="p">,</span> <span class="s2">&quot;k2&quot;</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="Coef"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Coef">[docs]</a><span class="k">class</span> <span class="nc">Coef</span><span class="p">:</span>
+    <span class="n">exp</span><span class="p">:</span> <span class="n">Exp</span>
+    <span class="n">lin</span><span class="p">:</span> <span class="n">Lin</span>
+    <span class="n">quadr</span><span class="p">:</span> <span class="n">Quadr</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp</span> <span class="o">=</span> <span class="n">Exp</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lin</span> <span class="o">=</span> <span class="n">Lin</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quadr</span> <span class="o">=</span> <span class="n">Quadr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StartPoint"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.StartPoint">[docs]</a><span class="k">class</span> <span class="nc">StartPoint</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">LAST_AVAILABLE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">AVERAGE_VALUE</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">MANUAL</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="Timeseries"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries">[docs]</a><span class="k">class</span> <span class="nc">Timeseries</span><span class="p">:</span>
+    <span class="n">_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]</span>
+    <span class="n">_coef</span><span class="p">:</span> <span class="n">Coef</span>
+    <span class="n">_calculation_type</span><span class="p">:</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">calculation_type</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span> <span class="o">=</span> <span class="n">Coef</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># with only one value available, no regression possible</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculation_type</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">EXPONENTIAL</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">calculation_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">EXPONENTIAL</span><span class="p">:</span>
+            <span class="c1"># quadratic regression only possible with &gt; 2 data points</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculation_type</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculation_type</span> <span class="o">=</span> <span class="n">calculation_type</span>
+
+        <span class="c1"># calculate all coefficients</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_coef_exp</span><span class="p">(</span><span class="n">rate_of_change</span><span class="p">,</span> <span class="n">StartPoint</span><span class="o">.</span><span class="n">LAST_AVAILABLE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calc_coef_lin</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calc_coef_quadr</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Timeseries.get_prog"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_prog">[docs]</a>    <span class="k">def</span> <span class="nf">get_prog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculation_type</span><span class="p">:</span>
+            <span class="k">case</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">EXPONENTIAL</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_prog_exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">case</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_prog_lin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">case</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">QUADRATIC</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_prog_quadr</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_set_coef_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="p">,</span> <span class="n">start_point</span><span class="p">:</span> <span class="n">StartPoint</span><span class="p">,</span> <span class="n">manual</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
+        <span class="c1"># TODO: implement manual startpoint in excel sheets</span>
+        <span class="p">(</span><span class="n">start_x</span><span class="p">,</span> <span class="n">start_y</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">match</span> <span class="n">start_point</span><span class="p">:</span>
+            <span class="k">case</span> <span class="n">StartPoint</span><span class="o">.</span><span class="n">LAST_AVAILABLE</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="p">(</span><span class="n">start_x</span><span class="p">,</span> <span class="n">start_y</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="p">(</span><span class="n">start_x</span><span class="p">,</span> <span class="n">start_y</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">case</span> <span class="n">StartPoint</span><span class="o">.</span><span class="n">AVERAGE_VALUE</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">split_x</span><span class="p">,</span> <span class="n">split_y</span><span class="p">)</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+                <span class="n">start_x</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">split_x</span><span class="p">)</span>
+                <span class="n">start_y</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">split_y</span><span class="p">)</span>
+            <span class="k">case</span> <span class="n">StartPoint</span><span class="o">.</span><span class="n">MANUAL</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">start_x</span><span class="p">,</span> <span class="n">start_y</span><span class="p">)</span> <span class="o">=</span> <span class="n">manual</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">exp</span> <span class="o">=</span> <span class="n">Exp</span><span class="p">(</span><span class="n">start_x</span><span class="p">,</span> <span class="n">start_y</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_calc_coef_lin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">lin</span> <span class="o">=</span> <span class="n">Lin</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">lin</span> <span class="o">=</span> <span class="n">Lin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">lin_coef</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">linear_regression</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">lin</span> <span class="o">=</span> <span class="n">Lin</span><span class="p">(</span><span class="n">lin_coef</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lin_coef</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_calc_coef_quadr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">lin</span> <span class="o">=</span> <span class="n">Quadr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">lin</span> <span class="o">=</span> <span class="n">Quadr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">quadr_coef</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">quadratic_regression</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">quadr</span> <span class="o">=</span> <span class="n">Quadr</span><span class="p">(</span><span class="n">quadr_coef</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">quadr_coef</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">quadr_coef</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+<div class="viewcode-block" id="Timeseries.get_coef"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_coef">[docs]</a>    <span class="k">def</span> <span class="nf">get_coef</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span></div>
+
+<div class="viewcode-block" id="Timeseries.get_data"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span></div>
+
+<div class="viewcode-block" id="Timeseries.get_last_data_entry"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_last_data_entry">[docs]</a>    <span class="k">def</span> <span class="nf">get_last_data_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Timeseries.get_prog_exp"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_prog_exp">[docs]</a>    <span class="k">def</span> <span class="nf">get_prog_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">uty</span><span class="o">.</span><span class="n">exp_change</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">exp</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">exp</span><span class="o">.</span><span class="n">y0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">exp</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Timeseries.get_prog_lin"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_prog_lin">[docs]</a>    <span class="k">def</span> <span class="nf">get_prog_lin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">uty</span><span class="o">.</span><span class="n">lin_prediction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">lin</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Timeseries.get_prog_quadr"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_prog_quadr">[docs]</a>    <span class="k">def</span> <span class="nf">get_prog_quadr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">uty</span><span class="o">.</span><span class="n">quadr_prediction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">lin</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="PredictedTimeseries"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.PredictedTimeseries">[docs]</a><span class="k">class</span> <span class="nc">PredictedTimeseries</span><span class="p">(</span><span class="n">Timeseries</span><span class="p">):</span>
+    <span class="n">_prediction</span><span class="p">:</span> <span class="nb">list</span><span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">historical_data</span><span class="p">,</span> <span class="n">prediction_data</span><span class="p">,</span> <span class="n">calculation_type</span><span class="p">:</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">,</span>
+                 <span class="n">rate_of_change</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">historical_data</span><span class="p">,</span> <span class="n">calculation_type</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prediction</span> <span class="o">=</span> <span class="n">prediction_data</span>
+
+<div class="viewcode-block" id="PredictedTimeseries.get_prog"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_prog">[docs]</a>    <span class="k">def</span> <span class="nf">get_prog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_manual_prog</span><span class="p">(</span><span class="n">target_x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PredictedTimeseries.get_manual_prog"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_manual_prog">[docs]</a>    <span class="k">def</span> <span class="nf">get_manual_prog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prediction</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">target_x</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="PredictedTimeseries.get_prediction_raw"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_prediction_raw">[docs]</a>    <span class="k">def</span> <span class="nf">get_prediction_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prediction</span></div></div>
+
+
+<div class="viewcode-block" id="TimeStepSequence"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.TimeStepSequence">[docs]</a><span class="k">class</span> <span class="nc">TimeStepSequence</span><span class="p">(</span><span class="n">Timeseries</span><span class="p">):</span>
+    <span class="n">_his_end_value</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="n">_interval_changeRate</span><span class="p">:</span> <span class="nb">list</span><span class="p">[(</span><span class="n">ctn</span><span class="o">.</span><span class="n">Interval</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">historical_data</span><span class="p">,</span> <span class="n">progression_data</span><span class="p">,</span>
+                 <span class="n">calculation_type</span><span class="p">:</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">,</span>
+                 <span class="n">rate_of_change</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">historical_data</span><span class="p">,</span> <span class="n">calculation_type</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="p">)</span>
+
+        <span class="c1"># determine start value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_his_end_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># cut out unnecessary progression</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interval_changeRate</span> <span class="o">=</span> <span class="p">[</span><span class="n">progression_point</span> <span class="k">for</span> <span class="n">progression_point</span> <span class="ow">in</span> <span class="n">progression_data</span>
+                                     <span class="k">if</span> <span class="n">progression_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_his_end_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="c1"># map percentage to its hundredth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interval_changeRate</span> <span class="o">=</span> <span class="p">[(</span><span class="n">prog</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">prog</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">prog</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval_changeRate</span><span class="p">]</span>
+
+<div class="viewcode-block" id="TimeStepSequence.get_prog"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.TimeStepSequence.get_prog">[docs]</a>    <span class="k">def</span> <span class="nf">get_prog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_manual_prog</span><span class="p">(</span><span class="n">target_x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeStepSequence.get_manual_prog"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.TimeStepSequence.get_manual_prog">[docs]</a>    <span class="k">def</span> <span class="nf">get_manual_prog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">target_x</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_his_end_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="c1"># take gdp from historical data</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">),</span> <span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+                <span class="k">if</span> <span class="n">a1</span> <span class="o">==</span> <span class="n">target_x</span> <span class="ow">or</span> <span class="n">target_x</span> <span class="o">&lt;</span> <span class="n">a1</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">a2</span>
+                <span class="k">elif</span> <span class="n">b1</span> <span class="o">==</span> <span class="n">target_x</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">b2</span>
+                <span class="k">elif</span> <span class="n">a1</span> <span class="o">&lt;</span> <span class="n">target_x</span> <span class="o">&lt;</span> <span class="n">b1</span><span class="p">:</span>
+                    <span class="c1"># a gap in historical data =&gt; use the closest year</span>
+                    <span class="k">if</span> <span class="n">target_x</span> <span class="o">-</span> <span class="n">a1</span> <span class="o">&lt;=</span> <span class="n">b1</span> <span class="o">-</span> <span class="n">target_x</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">a2</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">b2</span>
+
+        <span class="c1"># calculate resulting gdp in future</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_his_end_value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">interval_change</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval_changeRate</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_his_end_value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">interval_change</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>  <span class="c1"># cut off protruding years at start</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">target_x</span><span class="p">,</span> <span class="n">interval_change</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>  <span class="c1"># cut off protruding years at end</span>
+            <span class="n">exp</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>  <span class="c1"># clamp to 0, to ignore certain intervals</span>
+            <span class="n">result</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">interval_change</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="n">exp</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="TimeStepSequence.get_historical_data_raw"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.TimeStepSequence.get_historical_data_raw">[docs]</a>    <span class="k">def</span> <span class="nf">get_historical_data_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_his_end_value</span></div>
+
+<div class="viewcode-block" id="TimeStepSequence.get_interval_change_rate_raw"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.TimeStepSequence.get_interval_change_rate_raw">[docs]</a>    <span class="k">def</span> <span class="nf">get_interval_change_rate_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval_changeRate</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
