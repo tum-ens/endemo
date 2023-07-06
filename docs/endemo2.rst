@@ -68,14 +68,6 @@ endemo2.input module
    :undoc-members:
    :show-inheritance:
 
-endemo2.main module
--------------------
-
-.. automodule:: endemo2.main
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 endemo2.output module
 ---------------------
 

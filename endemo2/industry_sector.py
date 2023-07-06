@@ -1,11 +1,10 @@
 import warnings
 
-import population as pop
-import prediction_models as pm
-import products as prd
-import sector
-import input
-from containers import Demand
+from endemo2 import population as pop
+from endemo2 import prediction_models as pm
+from endemo2 import products as prd
+from endemo2 import sector, input
+from endemo2 import containers as ctn
 
 
 class Industry(sector.Sector):
@@ -42,21 +41,21 @@ class Industry(sector.Sector):
         """
         return self._products[name]
 
-    def calculate_total_demand(self, year: int) -> Demand:
+    def calculate_total_demand(self, year: int) -> ctn.Demand:
         """
         Sums over the demand of each product.
 
         :param year: Target year the demand should be calculated for.
         :return: The demand summed over all products in this industry.
         """
-        result = Demand()
+        result = ctn.Demand()
 
         for (name, obj) in self._products.items():
             result.add(obj.calculate_demand(year))
 
         return result
 
-    def calculate_product_demand(self, product_name: str, year: int) -> Demand:
+    def calculate_product_demand(self, product_name: str, year: int) -> ctn.Demand:
         """
         Getter for a products demand by product name and for the year.
         If the product is not in the industry, a Demand object indicating zero demand is returned.
@@ -69,7 +68,7 @@ class Industry(sector.Sector):
             return self._products[product_name].calculate_demand(year)
         else:
             # if product not in industry, there is no demand -> return 0ed demand
-            return Demand()
+            return ctn.Demand()
 
     def prog_product_amount(self, product_name: str, year: int) -> float:
         """

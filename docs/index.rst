@@ -9,6 +9,9 @@ Welcome to Endemo2's documentation!
 Whenever you change something in the code and/or the doc strings, please update the documentation using "make html" in a
 command line within the docs folder!
 
+When structural things (like package name) change, please use "sphinx-apidoc -o .. ." before calling  "make html" to
+update this documentation properly.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

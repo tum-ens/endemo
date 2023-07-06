@@ -3,9 +3,9 @@ import enum
 import numpy as np
 import statistics as st
 
-import utility as uty
-import control_parameters as cp
-import containers as ctn
+from endemo2 import utility as uty
+from endemo2 import control_parameters as cp
+from endemo2 import containers as ctn
 
 Exp = coll.namedtuple("Exp", ["x0", "y0", "r"])  # y(x) = y0 * (1+r)^(x - x0)
 Lin = coll.namedtuple("Lin", ["k0", "k1"])

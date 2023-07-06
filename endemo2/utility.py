@@ -1,15 +1,12 @@
 from __future__ import annotations
 
 import warnings
-from collections import namedtuple
-from typing import Tuple, List
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-
 import pandas as pd
 
-from prediction_models import Timeseries
+from endemo2 import prediction_models as pm
 
 
 def str_dict(dict):
@@ -38,7 +35,7 @@ def is_tuple_list_zero(xys: [(float, float)]):
         return is_zero(list(zip(*xys))[1])
 
 
-def plot_timeseries(ts: Timeseries):
+def plot_timeseries(ts: pm.Timeseries):
     x, y = zip(*ts.get_data())
 
     coef = ts.get_coef()

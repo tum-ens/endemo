@@ -3,16 +3,12 @@ from __future__ import annotations
 import math
 import os
 import warnings
-from collections import namedtuple
 from pathlib import Path
-
-import containers
-import utility as uty
-
 import pandas as pd
 
-import control_parameters as cp
-from containers import CA, HisProg, Interval
+from endemo2 import containers as ctn
+from endemo2 import utility as uty
+from endemo2 import control_parameters as cp
 
 
 class Input:
@@ -85,7 +81,7 @@ class PopulationData:
     def __init__(self, ctrl: cp.ControlParameters, nuts2_valid_regions: set, abbreviations: dict,
                  df_country_pop_his: pd.DataFrame, df_country_pop_prog: pd.DataFrame,
                  df_nuts2_pop_his: pd.DataFrame, df_nuts2_pop_prog: pd.DataFrame):
-        self.country_population = dict[str, HisProg]()
+        self.country_population = dict[str, ctn.HisProg]()
         self.nuts2_population = dict[str, [(str, [float, float])]]()
 
         # preprocess country population historical data
@@ -117,10 +113,10 @@ class PopulationData:
         # preprocess nuts2 population prognosis: interval 2015-2050
         df_nuts2_pop_prog = df_nuts2_pop_prog.drop(["Region name", "for 35 years"], axis=1) \
             .rename(columns={'per year': '2015-2050'})
-        interval_conv = lambda xs: [Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
+        interval_conv = lambda xs: [ctn.Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
         intervals = interval_conv(df_nuts2_pop_prog.columns[1:])
 
-        dict_nuts2_pop_prog = dict[str, dict[str, [(Interval, float)]]]()
+        dict_nuts2_pop_prog = dict[str, dict[str, [(ctn.Interval, float)]]]()
         it = df_nuts2_pop_prog.itertuples()
         for row in it:
             region_name = str(row[1]).strip()
@@ -139,14 +135,14 @@ class PopulationData:
         for country_name in ctrl.general_settings.active_countries:
             # fill country population
             self.country_population[country_name] = \
-                HisProg(dict_c_pop_his[country_name], dict_c_pop_prog[country_name])
+                ctn.HisProg(dict_c_pop_his[country_name], dict_c_pop_prog[country_name])
 
             # fill nuts2 population
             if country_name not in self.nuts2_population.keys():
                 self.nuts2_population[country_name] = dict()
             abbrev = abbreviations[country_name].alpha2
             self.nuts2_population[country_name] = \
-                HisProg(dict_nuts2_pop_his[abbrev], dict_nuts2_pop_prog[abbrev])
+                ctn.HisProg(dict_nuts2_pop_his[abbrev], dict_nuts2_pop_prog[abbrev])
 
 
 class GeneralInput:
@@ -164,9 +160,9 @@ class GeneralInput:
     """
 
     def __init__(self, ctrl: cp.ControlParameters, path: Path):
-        self.abbreviations = dict[str, CA]()
-        self.gdp = dict[str, HisProg[[(float, float)], [Interval, float]]]()
-        self.efficiency = dict[str, containers.EH]()
+        self.abbreviations = dict[str, ctn.CA]()
+        self.gdp = dict[str, ctn.HisProg[[(float, float)], [ctn.Interval, float]]]()
+        self.efficiency = dict[str, ctn.EH]()
 
         df_abbr = pd.read_excel(path / "Abbreviations.xlsx")
         df_world_pop_his = pd.read_excel(path / "Population_historical_world.xls")
@@ -188,14 +184,14 @@ class GeneralInput:
         # fill efficiency
         for _, row in df_efficiency.iterrows():
             self.efficiency[row["Energy carrier"]] = \
-                containers.EH(row["Electricity production [-]"], row["Heat production [-]"])
+                ctn.EH(row["Electricity production [-]"], row["Heat production [-]"])
 
         for country_name in ctrl.general_settings.active_countries:
             # fill abbreviations
             self.abbreviations[country_name] = \
-                CA(df_abbr[df_abbr["Country_en"] == country_name].get("alpha-2").iloc[0],
-                   df_abbr[df_abbr["Country_en"] == country_name].get("alpha-3").iloc[0],
-                   df_abbr[df_abbr["Country_en"] == country_name].get("Country_de").iloc[0])
+                ctn.CA(df_abbr[df_abbr["Country_en"] == country_name].get("alpha-2").iloc[0],
+                       df_abbr[df_abbr["Country_en"] == country_name].get("alpha-3").iloc[0],
+                       df_abbr[df_abbr["Country_en"] == country_name].get("Country_de").iloc[0])
 
             # read gdp historical
             years = df_gdp_his.columns[3:]
@@ -204,11 +200,11 @@ class GeneralInput:
             gdp_his = uty.filter_out_nan_and_inf(zipped)
 
             # read gdp prognosis
-            interval_conv = lambda xs: [Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
+            interval_conv = lambda xs: [ctn.Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
             intervals_europa = interval_conv(df_gdp_prog_europa.columns[1:-1])
             intervals_world = interval_conv(df_gdp_prog_world.columns[1:-1])
 
-            zipped_gdp_prog: list[Interval, float]
+            zipped_gdp_prog: list[ctn.Interval, float]
             if country_name in list(df_gdp_prog_europa["Country"]):
                 gdp_prog = df_gdp_prog_europa[df_gdp_prog_europa["Country"] == country_name].iloc[0][1:-1]
                 zipped_gdp_prog = list(zip(intervals_europa, gdp_prog))
@@ -221,7 +217,7 @@ class GeneralInput:
                 gdp_prog = df_gdp_prog_europa[df_gdp_prog_europa["Country"] == "all"].iloc[0][1:-1]
                 zipped_gdp_prog = list(zip(intervals_europa, gdp_prog))
 
-            self.gdp[country_name] = HisProg(gdp_his, zipped_gdp_prog)
+            self.gdp[country_name] = ctn.HisProg(gdp_his, zipped_gdp_prog)
 
         # create PopulationData object
         self.population = PopulationData(ctrl, self.nuts2_valid_regions, self.abbreviations,
@@ -283,7 +279,7 @@ class FileReadingHelper:
     :ivar str sheet_name: The name of the sheet that is to be read from the file.
     :ivar [int] skip_rows: These rows(!) will be skipped when reading the dataframe. Done by numerical index.
     :ivar lambda[pd.Dataframe -> pd.Dataframe] sheet_transform: A transformation operation on the dataframe
-    :ivar pd.Dataframe: The current dataframe.
+    :ivar pd.Dataframe df: The current dataframe.
     :ivar Path path: The path to the folder, where the file is.
         It can to be set after constructing the FileReadingHelper Object.
     """
@@ -393,7 +389,7 @@ class IndustryInput:
         dict_heat_levels = dict()
 
         for _, row in df_heat_levels.iterrows():
-            dict_heat_levels[row["Industry"]] = containers.Heat(row["Q1"] / 100, row["Q2"] / 100, row["Q3"] / 100,
+            dict_heat_levels[row["Industry"]] = ctn.Heat(row["Q1"] / 100, row["Q2"] / 100, row["Q3"] / 100,
                                                                 row["Q4"] / 100)
 
         # read the active sectors sheets
@@ -430,7 +426,7 @@ class IndustryInput:
 
             for _, row in pd.DataFrame(prod_sc).iterrows():
                 dict_prod_sc_country[row.Country] = \
-                    containers.SC(row["Spec electricity consumption [GJ/t]"],
+                    ctn.SC(row["Spec electricity consumption [GJ/t]"],
                                   row["Spec heat consumption [GJ/t]"],
                                   row["Spec hydrogen consumption [GJ/t]"],
                                   row["max. subst. of heat with H2 [%]"])
@@ -468,7 +464,7 @@ class IndustryInput:
 
             for _, row in df_prod_bat.iterrows():
                 dict_prod_bat_country[row.Country] = \
-                    containers.EH(row["Spec electricity consumption [GJ/t]"],
+                    ctn.EH(row["Spec electricity consumption [GJ/t]"],
                                   row["Spec heat consumption [GJ/t]"])
 
             self.active_products[product_name] = \

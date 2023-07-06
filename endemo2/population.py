@@ -1,8 +1,8 @@
 from __future__ import annotations
 import warnings
-import prediction_models as pm
-import control_parameters as ctrl
-import utility as uty
+
+from endemo2 import prediction_models as pm
+from endemo2 import utility as uty
 
 
 class Population:

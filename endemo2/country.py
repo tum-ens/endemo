@@ -1,13 +1,9 @@
 from __future__ import annotations
 import warnings
 
-import containers
-import industry_sector
-import input
-import population
-import prediction_models as pm
-import sector
-import population as pop
+from endemo2 import containers, industry_sector, input, population, sector
+from endemo2 import prediction_models as pm
+from endemo2 import population as pop
 
 
 class Country:
@@ -20,9 +16,11 @@ class Country:
 
     :ivar str _name: The name of the country (en).
     :ivar [str] _abbreviations: Possible abbreviations for this country.
-    :ivar Population[PredictedTimeseries, NutsRegion] _population: Population object, containing important data and timeseries of the countries' population.
-    :ivar TimeStepSequence _gdp: The Timeseries for the GDP of this country.    :vartype _gdp: TimeStepSequence
-    :ivar dict[SectorIdentifier, Sector] _sectors: The sector objects for this country, accessible by the sector identifier.    :vartype _sectors: dict[SectorIdentifier, Sector]
+    :ivar Population[PredictedTimeseries, NutsRegion] _population: Population object, containing important data and
+        timeseries of the countries' population.
+    :ivar TimeStepSequence _gdp: The Timeseries for the GDP of this country.
+    :ivar dict[SectorIdentifier, Sector] _sectors: The sector objects for this country, accessible by the sector
+        identifier.
     """
 
     def __init__(self, name: str, input_manager: input.Input):
@@ -91,6 +89,7 @@ class Country:
     def calculate_total_demand(self, year: int) -> containers.Demand:
         """
         Sum the demand over all sectors of the country.
+
         :param year: Target year for which the prediction should be calculated.
         :return: The demand for a country summed over all sectors.
         """
@@ -104,6 +103,7 @@ class Country:
     def get_name(self) -> str:
         """
         Getter for the country name.
+
         :return: The country name (en).
         """
         return self._name
@@ -111,6 +111,7 @@ class Country:
     def get_population(self) -> population.Population:
         """
         Getter for the population container object.
+
         :return: The countries' population container object.
         """
         return self._population
@@ -118,13 +119,15 @@ class Country:
     def get_gdp(self) -> pm.TimeStepSequence:
         """
         Getter for the countries' GDP Timeseries
+
         :return: The GDP Timeseries for this country.
         """
         return self._gdp
 
-    def get_sector(self, sector_id: sector.SectorIdentifier):
+    def get_sector(self, sector_id: sector.SectorIdentifier) -> sector.Sector:
         """
         Getter for the sectors of a country. Accessed by the sectors' identifier.
+
         :param sector_id: Identifies Sector by enum value from SectorIdentifier.
         :return: The countries sector corresponding to the sector id.
         """

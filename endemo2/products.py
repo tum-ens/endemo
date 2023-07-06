@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import numpy as np
-
-import utility as uty
-import input
-import prediction_models as pm
-import control_parameters as cp
-import population as pop
-from containers import EH, Heat, Demand, SC
+from endemo2 import utility as uty
+from endemo2 import input
+from endemo2 import prediction_models as pm
+from endemo2 import control_parameters as cp
+from endemo2 import population as pop
+from endemo2 import containers as ctn
 
 
 class Product:
@@ -17,10 +15,10 @@ class Product:
     _name: str
     _country_name: str
     _specific_consumption: SpecificConsumptionData
-    _bat: EH
+    _bat: ctn.EH
     _perc_used: float
     _exp_change_rate: float
-    _heat_levels: Heat
+    _heat_levels: ctn.Heat
     _amount_per_year: pm.Timeseries
     _amount_per_gdp: pm.Timeseries
     _amount_per_capita_per_year: pm.Timeseries
@@ -31,7 +29,7 @@ class Product:
 
     _empty: bool
 
-    def __init__(self, product_name: str, product_input: input.IndustryInput.ProductInput, input_manager: input.Input,
+    def __init__(self, product_name: str, product_input: input.ProductInput, input_manager: input.Input,
                  country_name: str, population: pop.Population, gdp: pm.TimeStepSequence):
 
         self._country_name = country_name
@@ -117,9 +115,9 @@ class Product:
         heat = self._heat_levels
         heat.mutable_multiply_scalar(x)
 
-    def calculate_demand(self, year: int) -> Demand:
+    def calculate_demand(self, year: int) -> ctn.Demand:
         if self._empty:
-            return Demand()
+            return ctn.Demand()
 
         sc = self._specific_consumption.get_scale(year, 1/3600000)    # get SC and convert from GJ/T to TWH/T
         perc = self._perc_used
@@ -134,7 +132,7 @@ class Product:
 
         heat = self._heat_levels.copy_multiply_scalar(cached_perc_amount * sc.heat)     # separate heat levels
 
-        return Demand(electricity, heat, hydrogen)
+        return ctn.Demand(electricity, heat, hydrogen)
 
     def get_amount_prog(self, year: int) -> float:
         if self._empty:
@@ -175,7 +173,7 @@ class ProductPrimSec:
         self._secondary = sec
         self._total = total
 
-    def calculate_demand(self, year: int) -> Demand:
+    def calculate_demand(self, year: int) -> ctn.Demand:
         raise NotImplementedError
 
 
@@ -183,13 +181,13 @@ class SpecificConsumptionData:
     """
     Holds all consumption data for one product within an industry of a country.
     """
-    default_specific_consumption: SC
+    default_specific_consumption: ctn.SC
     historical_specific_consumption: dict[str, pm.Timeseries]
-    efficiency: dict[str, EH]
+    efficiency: dict[str, ctn.EH]
     _product_amount_per_year: pm.Timeseries
     _calculate_sc: bool
 
-    def __init__(self, product_input: input.IndustryInput.ProductInput, product_amount_per_year: pm.Timeseries = None,
+    def __init__(self, product_input: input.ProductInput, product_amount_per_year: pm.Timeseries = None,
                  country_name: str = "",
                  input_manager: input.Input = None):
         if product_amount_per_year is None:
@@ -218,11 +216,11 @@ class SpecificConsumptionData:
         else:
             self._calculate_sc = False
 
-    def get_scale(self, year, scalar) -> SC:
+    def get_scale(self, year, scalar) -> ctn.SC:
         sc = self.get(year)
-        return SC(sc.electricity * scalar, sc.heat * scalar, sc.hydrogen * scalar, sc.max_subst_h2)
+        return ctn.SC(sc.electricity * scalar, sc.heat * scalar, sc.hydrogen * scalar, sc.max_subst_h2)
 
-    def get(self, year) -> SC:
+    def get(self, year) -> ctn.SC:
         """ Returns the specific consumption """
         if self._calculate_sc and self.historical_specific_consumption:
             electricity = 0
@@ -231,7 +229,7 @@ class SpecificConsumptionData:
                 prog_amount = value.get_prog(year) / self._product_amount_per_year.get_prog(year)
                 electricity += prog_amount * self.efficiency[key].electricity
                 heat += prog_amount * self.efficiency[key].heat
-            return SC(electricity, heat, 0, 0)
+            return ctn.SC(electricity, heat, 0, 0)
         else:
             # future TODO: add efficiency to default specific consumption
             return self.default_specific_consumption

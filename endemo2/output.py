@@ -1,14 +1,10 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path
 import pandas as pd
 
-import containers
-import input
-import sector
-import endemo
-import industry_sector as ind
+from endemo2 import containers, sector, endemo
+from endemo2 import industry_sector as ind
 
 
 class FileGenerator(object):

@@ -1,6 +1,4 @@
-import output
-import country
-import input
+from endemo2 import input, output, country
 
 
 class Endemo:

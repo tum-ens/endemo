@@ -1,7 +1,7 @@
 from enum import Enum
 from pathlib import Path
 
-from containers import Demand
+from endemo2 import containers as ctn
 
 
 class SectorIdentifier(Enum):
@@ -11,7 +11,7 @@ class SectorIdentifier(Enum):
 class Sector:
     save_path: Path
 
-    def calculate_total_demand(self, year: int) -> Demand:
+    def calculate_total_demand(self, year: int) -> ctn.Demand:
         # calculate useful energy demand of sector
         # has to be overwritten by child class
         raise NotImplementedError
