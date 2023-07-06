@@ -13,6 +13,7 @@ class Endemo:
     countries: dict[country.Country]
 
     def read_input(self):
+        """ Reads all the input files from the input folder and stores it in the input_manager member variable. """
         self.input_manager = input.Input()
 
         self.countries = dict()
