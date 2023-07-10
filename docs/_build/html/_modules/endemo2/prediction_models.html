@@ -84,6 +84,14 @@
 
 
 <div class="viewcode-block" id="Coef"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Coef">[docs]</a><span class="k">class</span> <span class="nc">Coef</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The container for the coefficients of different forecast methods.</span>
+
+<span class="sd">    :ivar (x0, y0, r) exp:</span>
+<span class="sd">        (x0, y0) is the start point for the exponential calculation and r is the growth rate.</span>
+<span class="sd">    :ivar (k0, k1) lin: Used for the calculation f(x) = k0 + k1 * x</span>
+<span class="sd">    :ivar (k0, k1, k2) quadr: Used for the calculation f(x) = k0 + k1 * x + k2 * x^2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">exp</span><span class="p">:</span> <span class="n">Exp</span>
     <span class="n">lin</span><span class="p">:</span> <span class="n">Lin</span>
     <span class="n">quadr</span><span class="p">:</span> <span class="n">Quadr</span>
@@ -95,17 +103,26 @@
 
 
 <div class="viewcode-block" id="StartPoint"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.StartPoint">[docs]</a><span class="k">class</span> <span class="nc">StartPoint</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Denotes the type of start points used for the exponential forecast method. &quot;&quot;&quot;</span>
     <span class="n">LAST_AVAILABLE</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">AVERAGE_VALUE</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">MANUAL</span> <span class="o">=</span> <span class="mi">2</span></div>
 
 
 <div class="viewcode-block" id="Timeseries"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries">[docs]</a><span class="k">class</span> <span class="nc">Timeseries</span><span class="p">:</span>
-    <span class="n">_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]</span>
-    <span class="n">_coef</span><span class="p">:</span> <span class="n">Coef</span>
-    <span class="n">_calculation_type</span><span class="p">:</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Timeseries holds information about a process&#39; values from the past and provides projections into the future.</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">calculation_type</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="sd">    :param data: The historical data given for this timeseries.</span>
+<span class="sd">    :param calculation_type: The forecast method, that should be used.</span>
+<span class="sd">    :param rate_of_change: The manually given rate of change for the exponential forecast method.</span>
+
+<span class="sd">    :ivar [(float, float)] _data: The historical data for this timeseries.</span>
+<span class="sd">    :ivar Coef _coef: All the coefficients for different forecast methods.</span>
+<span class="sd">    :ivar ForecastMethod _calculation_type: The currently selected forecast method that should be used for projections.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">calculation_type</span><span class="p">:</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span> <span class="o">=</span> <span class="n">Coef</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
 
@@ -124,6 +141,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_calc_coef_quadr</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Timeseries.get_prog"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_prog">[docs]</a>    <span class="k">def</span> <span class="nf">get_prog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the prognosis of this timeseries.</span>
+
+<span class="sd">        :param x: The x-axis value. Example: target year for projection into the future.</span>
+<span class="sd">        :return: The estimated y-axis value for the target x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculation_type</span><span class="p">:</span>
             <span class="k">case</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">EXPONENTIAL</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_prog_exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -132,8 +155,15 @@
             <span class="k">case</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">QUADRATIC</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_prog_quadr</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_set_coef_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="p">,</span> <span class="n">start_point</span><span class="p">:</span> <span class="n">StartPoint</span><span class="p">,</span> <span class="n">manual</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
-        <span class="c1"># TODO: implement manual startpoint in excel sheets</span>
+    <span class="k">def</span> <span class="nf">_set_coef_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">start_point</span><span class="p">:</span> <span class="n">StartPoint</span><span class="p">,</span> <span class="n">manual</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates and sets the coefficient for the exponential forecast method f(x) = y0 * (1 + r)^(x - x0).</span>
+
+<span class="sd">        :param float rate_of_change: The rate of change r.</span>
+<span class="sd">        :param StartPoint start_point: The type of start point that should be used.</span>
+<span class="sd">        :param (float, float) manual: Optional: A manual startpoint (x0, y0).</span>
+<span class="sd">        :todo: implement manual startpoint in excel sheets</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="p">(</span><span class="n">start_x</span><span class="p">,</span> <span class="n">start_y</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="k">match</span> <span class="n">start_point</span><span class="p">:</span>
             <span class="k">case</span> <span class="n">StartPoint</span><span class="o">.</span><span class="n">LAST_AVAILABLE</span><span class="p">:</span>
@@ -151,6 +181,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">exp</span> <span class="o">=</span> <span class="n">Exp</span><span class="p">(</span><span class="n">start_x</span><span class="p">,</span> <span class="n">start_y</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_calc_coef_lin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Calculates and sets the coefficient for the linear forecast method. &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">lin</span> <span class="o">=</span> <span class="n">Lin</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -161,6 +192,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">lin</span> <span class="o">=</span> <span class="n">Lin</span><span class="p">(</span><span class="n">lin_coef</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lin_coef</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">_calc_coef_quadr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Calculates and sets the coefficient for the quadratic forecast method. &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">lin</span> <span class="o">=</span> <span class="n">Quadr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -170,53 +202,113 @@
         <span class="n">quadr_coef</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">quadratic_regression</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">quadr</span> <span class="o">=</span> <span class="n">Quadr</span><span class="p">(</span><span class="n">quadr_coef</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">quadr_coef</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">quadr_coef</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
-<div class="viewcode-block" id="Timeseries.get_coef"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_coef">[docs]</a>    <span class="k">def</span> <span class="nf">get_coef</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Timeseries.get_coef"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_coef">[docs]</a>    <span class="k">def</span> <span class="nf">get_coef</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coef</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the coefficient container. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span></div>
 
 <div class="viewcode-block" id="Timeseries.get_data"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the historical data. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span></div>
 
 <div class="viewcode-block" id="Timeseries.get_last_data_entry"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_last_data_entry">[docs]</a>    <span class="k">def</span> <span class="nf">get_last_data_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the last available entry in historical data. &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Timeseries.get_prog_exp"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_prog_exp">[docs]</a>    <span class="k">def</span> <span class="nf">get_prog_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the prognosis of the y-axis value for a target x-axis value with the exponential forecast method.</span>
+
+<span class="sd">        :param x: The target x-axis value.</span>
+<span class="sd">        :return: The predicted y value at x-axis value x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">uty</span><span class="o">.</span><span class="n">exp_change</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">exp</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">exp</span><span class="o">.</span><span class="n">y0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">exp</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Timeseries.get_prog_lin"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_prog_lin">[docs]</a>    <span class="k">def</span> <span class="nf">get_prog_lin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the prognosis of the y-axis value for a target x-axis value with the linear forecast method.</span>
+
+<span class="sd">        :param x: The target x-axis value.</span>
+<span class="sd">        :return: The predicted y value at x-axis value x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">uty</span><span class="o">.</span><span class="n">lin_prediction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">lin</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Timeseries.get_prog_quadr"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_prog_quadr">[docs]</a>    <span class="k">def</span> <span class="nf">get_prog_quadr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the prognosis of the y-axis value for a target x-axis value with the quadratic forecast method.</span>
+
+<span class="sd">        :param x: The target x-axis value.</span>
+<span class="sd">        :return: The predicted y value at x-axis value x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">uty</span><span class="o">.</span><span class="n">quadr_prediction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">lin</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="PredictedTimeseries"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.PredictedTimeseries">[docs]</a><span class="k">class</span> <span class="nc">PredictedTimeseries</span><span class="p">(</span><span class="n">Timeseries</span><span class="p">):</span>
-    <span class="n">_prediction</span><span class="p">:</span> <span class="nb">list</span><span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A variant of the timeseries class, where there is a manual forecast available that is read from the input and used</span>
+<span class="sd">    for the forecast.</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">historical_data</span><span class="p">,</span> <span class="n">prediction_data</span><span class="p">,</span> <span class="n">calculation_type</span><span class="p">:</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">,</span>
-                 <span class="n">rate_of_change</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="sd">    :param [(float, float)] historical_data: The historical data. Passed onto parent class.</span>
+<span class="sd">    :param [(float, float)] prediction_data: The manual prediction data. This is saved and used for the forecast.</span>
+<span class="sd">    :param ForecastMethod calculation_type: The forecast type, should the parent class be used instead. Is passed on to</span>
+<span class="sd">        the parent class.</span>
+<span class="sd">    :param float rate_of_change: The rate of change for the exponential forecast method, should this one be selected</span>
+<span class="sd">        for use in the parent class.</span>
+
+<span class="sd">    :ivar [(float, float)] _prediction: The manual prediction, which is used for the forecast.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">historical_data</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">prediction_data</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span>
+                 <span class="n">calculation_type</span><span class="p">:</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">historical_data</span><span class="p">,</span> <span class="n">calculation_type</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prediction</span> <span class="o">=</span> <span class="n">prediction_data</span>
 
 <div class="viewcode-block" id="PredictedTimeseries.get_prog"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_prog">[docs]</a>    <span class="k">def</span> <span class="nf">get_prog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the prognosis of the y-axis value by the standard method for this class.</span>
+
+<span class="sd">        :param target_x: The target x-axis value.</span>
+<span class="sd">        :return: The predicted y value at x-axis value x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_manual_prog</span><span class="p">(</span><span class="n">target_x</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PredictedTimeseries.get_manual_prog"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_manual_prog">[docs]</a>    <span class="k">def</span> <span class="nf">get_manual_prog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the prognosis of the y-axis value for a target x-axis value from the manual forecast.</span>
+
+<span class="sd">        :param target_x: The target x-axis value.</span>
+<span class="sd">        :return: The predicted y value at x-axis value x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prediction</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">target_x</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="PredictedTimeseries.get_prediction_raw"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_prediction_raw">[docs]</a>    <span class="k">def</span> <span class="nf">get_prediction_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PredictedTimeseries.get_prediction_raw"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_prediction_raw">[docs]</a>    <span class="k">def</span> <span class="nf">get_prediction_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the manual prediction data. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prediction</span></div></div>
 
 
 <div class="viewcode-block" id="TimeStepSequence"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.TimeStepSequence">[docs]</a><span class="k">class</span> <span class="nc">TimeStepSequence</span><span class="p">(</span><span class="n">Timeseries</span><span class="p">):</span>
-    <span class="n">_his_end_value</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
-    <span class="n">_interval_changeRate</span><span class="p">:</span> <span class="nb">list</span><span class="p">[(</span><span class="n">ctn</span><span class="o">.</span><span class="n">Interval</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A variant of the timeseries class, where there is a forecast given in the shape of intervals with an exponential</span>
+<span class="sd">    growth rate.</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">historical_data</span><span class="p">,</span> <span class="n">progression_data</span><span class="p">,</span>
+<span class="sd">    :param [(float, float)] historical_data: The historical data. Passed onto parent class.</span>
+<span class="sd">    :param [(Interval, float)] progression_data: The manual progression data in form of an interval in combination with</span>
+<span class="sd">        the exponential growth rate.</span>
+<span class="sd">    :param ForecastMethod calculation_type: The forecast type, should the parent class be used instead. Is passed on to</span>
+<span class="sd">        the parent class.</span>
+<span class="sd">    :param float rate_of_change: The rate of change for the exponential forecast method of the parent class, should</span>
+<span class="sd">        the parent class be used for calculation and this method be selected.</span>
+
+<span class="sd">    :ivar (float, float) _his_end_value: The last value of historical data used as a starting point for the exponential</span>
+<span class="sd">        interval calculation.</span>
+<span class="sd">    :ivar [(Interval, float)] _interval_changeRate: The Interval-Change-Rate pairings that are used by the forecast</span>
+<span class="sd">        calculation for this class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">historical_data</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">progression_data</span><span class="p">:</span> <span class="p">[(</span><span class="n">ctn</span><span class="o">.</span><span class="n">Interval</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span>
                  <span class="n">calculation_type</span><span class="p">:</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">,</span>
-                 <span class="n">rate_of_change</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+                 <span class="n">rate_of_change</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">historical_data</span><span class="p">,</span> <span class="n">calculation_type</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="p">)</span>
 
         <span class="c1"># determine start value</span>
@@ -230,10 +322,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_interval_changeRate</span> <span class="o">=</span> <span class="p">[(</span><span class="n">prog</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">prog</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">prog</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval_changeRate</span><span class="p">]</span>
 
 <div class="viewcode-block" id="TimeStepSequence.get_prog"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.TimeStepSequence.get_prog">[docs]</a>    <span class="k">def</span> <span class="nf">get_prog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the prognosis of the y-axis value by the standard method for this class.</span>
+
+<span class="sd">        :param target_x: The target x-axis value.</span>
+<span class="sd">        :return: The predicted y value at x-axis value x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_manual_prog</span><span class="p">(</span><span class="n">target_x</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TimeStepSequence.get_manual_prog"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.TimeStepSequence.get_manual_prog">[docs]</a>    <span class="k">def</span> <span class="nf">get_manual_prog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the prognosis of the y-axis value for a target x-axis value from the manual exponential</span>
+<span class="sd">        interval-growth-rate forecast.</span>
 
+<span class="sd">        :param target_x: The target x-axis value.</span>
+<span class="sd">        :return: The predicted y value at x-axis value x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">target_x</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_his_end_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
             <span class="c1"># take gdp from historical data</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">),</span> <span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
@@ -258,10 +362,12 @@
 
         <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="TimeStepSequence.get_historical_data_raw"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.TimeStepSequence.get_historical_data_raw">[docs]</a>    <span class="k">def</span> <span class="nf">get_historical_data_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TimeStepSequence.get_historical_data_raw"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.TimeStepSequence.get_historical_data_raw">[docs]</a>    <span class="k">def</span> <span class="nf">get_historical_data_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the last value of the historical data. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_his_end_value</span></div>
 
-<div class="viewcode-block" id="TimeStepSequence.get_interval_change_rate_raw"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.TimeStepSequence.get_interval_change_rate_raw">[docs]</a>    <span class="k">def</span> <span class="nf">get_interval_change_rate_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TimeStepSequence.get_interval_change_rate_raw"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.TimeStepSequence.get_interval_change_rate_raw">[docs]</a>    <span class="k">def</span> <span class="nf">get_interval_change_rate_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="n">ctn</span><span class="o">.</span><span class="n">Interval</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the list of interval-change-rate combinations used for the forecast. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval_changeRate</span></div></div>
 </pre></div>
 

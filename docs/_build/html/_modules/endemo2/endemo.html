@@ -80,13 +80,14 @@
 <span class="sd">    :ivar dict[str, Country] countries: holds all the country objects, accessible by the countries english name.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">input_manager</span><span class="p">:</span> <span class="nb">input</span><span class="o">.</span><span class="n">Input</span>
-    <span class="n">countries</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">country</span><span class="o">.</span><span class="n">Country</span><span class="p">]</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">countries</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Endemo.read_input"><a class="viewcode-back" href="../../endemo2.html#endemo2.endemo.Endemo.read_input">[docs]</a>    <span class="k">def</span> <span class="nf">read_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Reads all the input files from the input folder and stores it in the input_manager member variable. &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">Input</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">countries</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">active_countries</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">countries</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="n">Country</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span><span class="p">)</span></div>
 
