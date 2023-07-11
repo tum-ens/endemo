@@ -265,7 +265,7 @@ def combine_data_on_x(x: list[(float, float)], y: list[(float, float)], ascendin
     :param x: List to zip nr1 [(a,b)]
     :param y: List to zip nr2 [(c, d)]
     :param ascending_x: Indicates that the first tuple entry is ascending in the lists.
-                        If true, a more efficient algorithm can be used
+                        If true, a more efficient algorithm can be used.
     :return: The zipped list in format [(b, d)] for where a == c
     """
     res = []

@@ -27,9 +27,10 @@ class ControlParameters:
     """
     The ControlParameter class holds the data given by the Set_and_Control_Parameters.xlsx file.
     It is split in general settings, and settings for each sector, indicating non-overlapping parameters for our model.
+
+    :ivar GeneralSettings general_settings: The settings contained in the "GeneralSettings"-sheet.
+    :ivar IndustrySettings industry_settings: The settings contained in the "IND_*"-sheets.
     """
-    general_settings: GeneralSettings
-    industry_settings: IndustrySettings
 
     def __init__(self, general_settings: GeneralSettings, industry_settings: IndustrySettings):
         self.general_settings = general_settings
@@ -59,7 +60,7 @@ class IndustrySettings:
         Of the form {product_name -> product_settings_obj}
     :ivar [str] active_product_names: A list of the names of active products.
         Only for these products, calculations are performed.
-    :ivar float rest_sector_growth_rate:
+    :ivar float rest_sector_growth_rate: The growth rate of the rest sector.
     """
     forecast_map = dict({"Trend": ForecastMethod.LINEAR, "U-shape": ForecastMethod.QUADRATIC,
                          "Exponential": ForecastMethod.EXPONENTIAL})

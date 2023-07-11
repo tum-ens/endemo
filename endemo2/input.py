@@ -32,10 +32,6 @@ class Input:
     general_path = input_path / 'general'
     industry_path = input_path / 'industry'
 
-    ctrl: cp.ControlParameters
-    general_input: GeneralInput
-    industry_input: IndustryInput
-
     # Future TODO: add other sector inputs
 
     def __init__(self):

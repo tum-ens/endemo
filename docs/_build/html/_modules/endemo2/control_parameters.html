@@ -98,9 +98,10 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The ControlParameter class holds the data given by the Set_and_Control_Parameters.xlsx file.</span>
 <span class="sd">    It is split in general settings, and settings for each sector, indicating non-overlapping parameters for our model.</span>
+
+<span class="sd">    :ivar GeneralSettings general_settings: The settings contained in the &quot;GeneralSettings&quot;-sheet.</span>
+<span class="sd">    :ivar IndustrySettings industry_settings: The settings contained in the &quot;IND_*&quot;-sheets.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">general_settings</span><span class="p">:</span> <span class="n">GeneralSettings</span>
-    <span class="n">industry_settings</span><span class="p">:</span> <span class="n">IndustrySettings</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">general_settings</span><span class="p">:</span> <span class="n">GeneralSettings</span><span class="p">,</span> <span class="n">industry_settings</span><span class="p">:</span> <span class="n">IndustrySettings</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">general_settings</span> <span class="o">=</span> <span class="n">general_settings</span>
