@@ -5,11 +5,18 @@ from endemo2 import containers as ctn
 
 
 class SectorIdentifier(Enum):
+    """
+    The enum class to quickly discern sectors.
+    :todo: Add more sectors later
+    """
     INDUSTRY = 0
 
 
 class Sector:
-    save_path: Path
+    """
+    The parent class for all sectors.
+    Contains what different sectors have in common.
+    """
 
     def calculate_total_demand(self, year: int) -> ctn.Demand:
         # calculate useful energy demand of sector

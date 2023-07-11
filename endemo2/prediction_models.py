@@ -264,6 +264,10 @@ class TimeStepSequence(Timeseries):
         Get the prognosis of the y-axis value for a target x-axis value from the manual exponential
         interval-growth-rate forecast.
 
+        .. math::
+            y=s_x*(1+r_{1})^{(intvl^{(1)}_{b}-s_y)}*(1+r_{2})^{(intvl^{(2)}_{b}-intvl^{(2)}_{a})}*\\text{...}*(1+r_{3})^
+            {(x-intvl^{(3)}_{a})}
+
         :param target_x: The target x-axis value.
         :return: The predicted y value at x-axis value x.
         """

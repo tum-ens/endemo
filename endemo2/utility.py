@@ -10,6 +10,19 @@ from endemo2 import prediction_models as pm
 
 
 def str_dict(dict):
+    """
+    Used to convert a dictionary to a string in a more readable form than if we would use the regular python
+    implementation.
+
+    Dictionary: {
+    key : value,
+    key : value,
+    ...
+    }
+
+    :param dict: The dictionary to convert to string.
+    :return: The string representation of the dictionary.
+    """
     res = "\n"
     res += "Dictionary: {"
     for (a, b) in dict.items():
@@ -21,14 +34,27 @@ def str_dict(dict):
     return res
 
 
-def is_zero(xs: [float]):
+def is_zero(xs: [float]) -> bool:
+    """
+    Checks for a list of floats if there are only zeroes present in it. Returns also true for empty list.
+
+    :param xs: The list to check
+    :return: True if contains only zeros, False otherwise.
+    """
     for x in xs:
         if float(x) != 0 and float(x) != np.nan:
             return False
     return True
 
 
-def is_tuple_list_zero(xys: [(float, float)]):
+def is_tuple_list_zero(xys: [(float, float)]) -> bool:
+    """
+    A wrapper for the is_zero function that applies it on a list of tuples, where only the second entries in a tuple
+    are checked for being zero.
+
+    :param xys: The tuple list which should be checked for zeroes.
+    :return: True if the left column/entries of the list of tuples only contains zeros.
+    """
     if not xys or len(xys) == 0:
         return True
     else:
@@ -36,6 +62,7 @@ def is_tuple_list_zero(xys: [(float, float)]):
 
 
 def plot_timeseries(ts: pm.Timeseries):
+    """ Quickly plots all forecast methods of a timeseries, without using labels. """
     x, y = zip(*ts.get_data())
 
     coef = ts.get_coef()
@@ -56,6 +83,13 @@ def plot_timeseries(ts: pm.Timeseries):
 
 
 def linear_regression(data: list[(float, float)], visualize: bool = False) -> (float, float):
+    """
+    Apply linear regression on data and return the coefficients.
+
+    :param data: The data on which linear regression is applied.
+    :param visualize: Indicate, whether the result should be immediately plotted.
+    :return: The calculated coefficients (k0, k1)
+    """
     # Unzip data List
     x, y = zip(*data)
 
@@ -76,6 +110,13 @@ def linear_regression(data: list[(float, float)], visualize: bool = False) -> (f
 
 
 def quadratic_regression(data: list[(float, float)], visualize: bool = False) -> (float, float, float):
+    """
+    Apply quadratic regression on data and return the coefficients.
+
+    :param data: The data on which linear regression is applied.
+    :param visualize: Indicate, whether the result should be immediately plotted.
+    :return: The calculated coefficients (k0, k1, k3)
+    """
     # Unzip data List
     x, y = zip(*data)
 
@@ -97,6 +138,13 @@ def quadratic_regression(data: list[(float, float)], visualize: bool = False) ->
 
 def quadratic_regression_delta(data: list[(float, float)], visualize: bool = False) \
         -> ((float, float, float), dict[str, float]):
+    """
+    :todo: implement later
+
+    :param data: The data on which linear regression is applied.
+    :param visualize: Indicate, whether the result should be immediately plotted.
+    :return: The calculated coefficients (k0, k1)
+    """
     N = len(data)
 
     e_1 = a_1 = b_1 = c_1 = 0
@@ -109,18 +157,49 @@ def quadratic_regression_delta(data: list[(float, float)], visualize: bool = Fal
 
 
 def exp_change(start_point: (float, float), change_rate: float, target_x: float) -> float:
+    """
+    Calculates the result of exponential growth on a start point.
+
+    .. math::
+        y_{new} = y_{start} * (1+r)^{x_{new}-x_{start}}
+
+    :param start_point: (x_start, y_start)
+    :param change_rate: r
+    :param target_x: x_new
+    :return: y_new
+    """
     (start_x, start_y) = start_point
     result = start_y * (1 + change_rate) ** (target_x - start_x)
     return result
 
 
 def lin_prediction(coef: (float, float), target_x: float):
+    """
+    Calculates the result of a linear function according to given coefficients.
+
+    .. math::
+        f(x)=k_0+k_1*x
+
+    :param coef: (k_0, k_1)
+    :param target_x: x
+    :return: f(x)
+    """
     k0 = coef[0]
     k1 = coef[1]
     return k0 + k1 * target_x
 
 
 def quadr_prediction(coef: (float, float, float), target_x: float):
+    """
+    Calculates the result of a quadratic function according to given coefficients.
+
+    .. math::
+        f(x)=k_0+k_1*x+k_2*x^2
+
+    :param coef: (k_0, k_1, k_2)
+    :param target_x: x
+    :return: f(x)
+    """
     k0 = coef[0]
     k1 = coef[1]
     k2 = coef[2]
@@ -207,7 +286,7 @@ def combine_data_on_x(x: list[(float, float)], y: list[(float, float)], ascendin
 
 def cut_after_x(data: [(float, float)], last_x: float) -> [(float, float)]:
     """
-    Cuts the tail of a list, according to last
+    Cuts the tail of a list, according to first entry of tuple being larger than last_x.
 
     :param data: The data list, whose tail will be cut off.
     :param last_x: The x-axis value indicating where to cut the list. (inclusive)

@@ -81,6 +81,19 @@
 
 
 <div class="viewcode-block" id="str_dict"><a class="viewcode-back" href="../../endemo2.html#endemo2.utility.str_dict">[docs]</a><span class="k">def</span> <span class="nf">str_dict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Used to convert a dictionary to a string in a more readable form than if we would use the regular python</span>
+<span class="sd">    implementation.</span>
+
+<span class="sd">    Dictionary: {</span>
+<span class="sd">    key : value,</span>
+<span class="sd">    key : value,</span>
+<span class="sd">    ...</span>
+<span class="sd">    }</span>
+
+<span class="sd">    :param dict: The dictionary to convert to string.</span>
+<span class="sd">    :return: The string representation of the dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;Dictionary: {&quot;</span>
     <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -92,14 +105,27 @@
     <span class="k">return</span> <span class="n">res</span></div>
 
 
-<div class="viewcode-block" id="is_zero"><a class="viewcode-back" href="../../endemo2.html#endemo2.utility.is_zero">[docs]</a><span class="k">def</span> <span class="nf">is_zero</span><span class="p">(</span><span class="n">xs</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+<div class="viewcode-block" id="is_zero"><a class="viewcode-back" href="../../endemo2.html#endemo2.utility.is_zero">[docs]</a><span class="k">def</span> <span class="nf">is_zero</span><span class="p">(</span><span class="n">xs</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks for a list of floats if there are only zeroes present in it. Returns also true for empty list.</span>
+
+<span class="sd">    :param xs: The list to check</span>
+<span class="sd">    :return: True if contains only zeros, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="is_tuple_list_zero"><a class="viewcode-back" href="../../endemo2.html#endemo2.utility.is_tuple_list_zero">[docs]</a><span class="k">def</span> <span class="nf">is_tuple_list_zero</span><span class="p">(</span><span class="n">xys</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]):</span>
+<div class="viewcode-block" id="is_tuple_list_zero"><a class="viewcode-back" href="../../endemo2.html#endemo2.utility.is_tuple_list_zero">[docs]</a><span class="k">def</span> <span class="nf">is_tuple_list_zero</span><span class="p">(</span><span class="n">xys</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A wrapper for the is_zero function that applies it on a list of tuples, where only the second entries in a tuple</span>
+<span class="sd">    are checked for being zero.</span>
+
+<span class="sd">    :param xys: The tuple list which should be checked for zeroes.</span>
+<span class="sd">    :return: True if the left column/entries of the list of tuples only contains zeros.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">xys</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">xys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
@@ -107,6 +133,7 @@
 
 
 <div class="viewcode-block" id="plot_timeseries"><a class="viewcode-back" href="../../endemo2.html#endemo2.utility.plot_timeseries">[docs]</a><span class="k">def</span> <span class="nf">plot_timeseries</span><span class="p">(</span><span class="n">ts</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Quickly plots all forecast methods of a timeseries, without using labels. &quot;&quot;&quot;</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">ts</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
 
     <span class="n">coef</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span>
@@ -127,6 +154,13 @@
 
 
 <div class="viewcode-block" id="linear_regression"><a class="viewcode-back" href="../../endemo2.html#endemo2.utility.linear_regression">[docs]</a><span class="k">def</span> <span class="nf">linear_regression</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">visualize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply linear regression on data and return the coefficients.</span>
+
+<span class="sd">    :param data: The data on which linear regression is applied.</span>
+<span class="sd">    :param visualize: Indicate, whether the result should be immediately plotted.</span>
+<span class="sd">    :return: The calculated coefficients (k0, k1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Unzip data List</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
 
@@ -147,6 +181,13 @@
 
 
 <div class="viewcode-block" id="quadratic_regression"><a class="viewcode-back" href="../../endemo2.html#endemo2.utility.quadratic_regression">[docs]</a><span class="k">def</span> <span class="nf">quadratic_regression</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">visualize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply quadratic regression on data and return the coefficients.</span>
+
+<span class="sd">    :param data: The data on which linear regression is applied.</span>
+<span class="sd">    :param visualize: Indicate, whether the result should be immediately plotted.</span>
+<span class="sd">    :return: The calculated coefficients (k0, k1, k3)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Unzip data List</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
 
@@ -168,6 +209,13 @@
 
 <div class="viewcode-block" id="quadratic_regression_delta"><a class="viewcode-back" href="../../endemo2.html#endemo2.utility.quadratic_regression_delta">[docs]</a><span class="k">def</span> <span class="nf">quadratic_regression_delta</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">visualize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> \
         <span class="o">-&gt;</span> <span class="p">((</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :todo: implement later</span>
+
+<span class="sd">    :param data: The data on which linear regression is applied.</span>
+<span class="sd">    :param visualize: Indicate, whether the result should be immediately plotted.</span>
+<span class="sd">    :return: The calculated coefficients (k0, k1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="n">e_1</span> <span class="o">=</span> <span class="n">a_1</span> <span class="o">=</span> <span class="n">b_1</span> <span class="o">=</span> <span class="n">c_1</span> <span class="o">=</span> <span class="mi">0</span>
@@ -180,18 +228,49 @@
 
 
 <div class="viewcode-block" id="exp_change"><a class="viewcode-back" href="../../endemo2.html#endemo2.utility.exp_change">[docs]</a><span class="k">def</span> <span class="nf">exp_change</span><span class="p">(</span><span class="n">start_point</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="n">change_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">target_x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the result of exponential growth on a start point.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        y_{new} = y_{start} * (1+r)^{x_{new}-x_{start}}</span>
+
+<span class="sd">    :param start_point: (x_start, y_start)</span>
+<span class="sd">    :param change_rate: r</span>
+<span class="sd">    :param target_x: x_new</span>
+<span class="sd">    :return: y_new</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="p">(</span><span class="n">start_x</span><span class="p">,</span> <span class="n">start_y</span><span class="p">)</span> <span class="o">=</span> <span class="n">start_point</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">start_y</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">change_rate</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">target_x</span> <span class="o">-</span> <span class="n">start_x</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span></div>
 
 
 <div class="viewcode-block" id="lin_prediction"><a class="viewcode-back" href="../../endemo2.html#endemo2.utility.lin_prediction">[docs]</a><span class="k">def</span> <span class="nf">lin_prediction</span><span class="p">(</span><span class="n">coef</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="n">target_x</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the result of a linear function according to given coefficients.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        f(x)=k_0+k_1*x</span>
+
+<span class="sd">    :param coef: (k_0, k_1)</span>
+<span class="sd">    :param target_x: x</span>
+<span class="sd">    :return: f(x)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">k0</span> <span class="o">=</span> <span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">k1</span> <span class="o">=</span> <span class="n">coef</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">k0</span> <span class="o">+</span> <span class="n">k1</span> <span class="o">*</span> <span class="n">target_x</span></div>
 
 
 <div class="viewcode-block" id="quadr_prediction"><a class="viewcode-back" href="../../endemo2.html#endemo2.utility.quadr_prediction">[docs]</a><span class="k">def</span> <span class="nf">quadr_prediction</span><span class="p">(</span><span class="n">coef</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="n">target_x</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the result of a quadratic function according to given coefficients.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        f(x)=k_0+k_1*x+k_2*x^2</span>
+
+<span class="sd">    :param coef: (k_0, k_1, k_2)</span>
+<span class="sd">    :param target_x: x</span>
+<span class="sd">    :return: f(x)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">k0</span> <span class="o">=</span> <span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">k1</span> <span class="o">=</span> <span class="n">coef</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">k2</span> <span class="o">=</span> <span class="n">coef</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
@@ -278,7 +357,7 @@
 
 <div class="viewcode-block" id="cut_after_x"><a class="viewcode-back" href="../../endemo2.html#endemo2.utility.cut_after_x">[docs]</a><span class="k">def</span> <span class="nf">cut_after_x</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">last_x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Cuts the tail of a list, according to last</span>
+<span class="sd">    Cuts the tail of a list, according to first entry of tuple being larger than last_x.</span>
 
 <span class="sd">    :param data: The data list, whose tail will be cut off.</span>
 <span class="sd">    :param last_x: The x-axis value indicating where to cut the list. (inclusive)</span>
