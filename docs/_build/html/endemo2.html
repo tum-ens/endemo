@@ -16,6 +16,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -304,11 +305,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.products.SpecificConsumptionData"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#endemo2.products.SpecificConsumptionData.default_specific_consumption"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData.default_specific_consumption</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#endemo2.products.SpecificConsumptionData.efficiency"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData.efficiency</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.products.SpecificConsumptionData.get"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData.get()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.products.SpecificConsumptionData.get_scale"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData.get_scale()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#endemo2.products.SpecificConsumptionData.historical_specific_consumption"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData.historical_specific_consumption</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1814,70 +1812,151 @@ interval-growth-rate forecast.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">endemo2.products.</span></span><span class="sig-name descname"><span class="pre">Product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#endemo2.input.ProductInput" title="endemo2.input.ProductInput"><span class="pre">ProductInput</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#endemo2.input.Input" title="endemo2.input.Input"><span class="pre">Input</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#endemo2.population.Population" title="endemo2.population.Population"><span class="pre">Population</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gdp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#endemo2.prediction_models.TimeStepSequence" title="endemo2.prediction_models.TimeStepSequence"><span class="pre">TimeStepSequence</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/products.html#Product"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.Product" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Holds all information and objects belonging to a product in the industry of a country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_name</strong> – The name of the product type. For example “steel_prim”.</p></li>
+<li><p><strong>product_input</strong> – The product types input from the input manager. (Redundant)</p></li>
+<li><p><strong>input_manager</strong> – The input manager, which holds all input data used to create this product.</p></li>
+<li><p><strong>country_name</strong> – The name of the country to whose industry this product belongs to.</p></li>
+<li><p><strong>population</strong> – The countries population amount used to create timeseries per capita.</p></li>
+<li><p><strong>gdp</strong> – The countries gdp used to create timeseries per gdp.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>_name</strong> (<em>str</em>) – The name of the product. For example “steel_prim”.</p></li>
+<li><p><strong>_country_name</strong> (<em>str</em>) – The name of the country to whose industry this product belongs to.</p></li>
+<li><p><strong>_specific_consumption</strong> (<a class="reference internal" href="#endemo2.products.SpecificConsumptionData" title="endemo2.products.SpecificConsumptionData"><em>SpecificConsumptionData</em></a>) – The object used to optionally calculate and get the specific
+consumption amounts for this product type.</p></li>
+<li><p><strong>_bat</strong> (<a class="reference internal" href="#endemo2.containers.EH" title="endemo2.containers.EH"><em>EH</em></a>) – The specific consumption of the best available technology.</p></li>
+<li><p><strong>_perc_used</strong> (<em>float</em>) – The percentage of the predicted amount used of this product. Can be configured to model new
+technology replacing old ones.</p></li>
+<li><p><strong>_exp_change_rate</strong> (<em>float</em>) – The manual change rate for the exponential forecast method.</p></li>
+<li><p><strong>_heat_levels</strong> (<a class="reference internal" href="#endemo2.containers.Heat" title="endemo2.containers.Heat"><em>Heat</em></a>) – The heat levels, that splits the forecasted heat demand into demand at different heat
+levels, by using fixed percentages.</p></li>
+<li><p><strong>_amount_per_year</strong> (<a class="reference internal" href="#endemo2.prediction_models.Timeseries" title="endemo2.prediction_models.Timeseries"><em>Timeseries</em></a>) – Used to predict the product amount. The x-axis is time in years.</p></li>
+<li><p><strong>_amount_per_gdp</strong> (<a class="reference internal" href="#endemo2.prediction_models.Timeseries" title="endemo2.prediction_models.Timeseries"><em>Timeseries</em></a>) – Used to predict the product amount. The x-axis is the countries’ gdp.</p></li>
+<li><p><strong>_amount_per_capita_per_year</strong> (<a class="reference internal" href="#endemo2.prediction_models.Timeseries" title="endemo2.prediction_models.Timeseries"><em>Timeseries</em></a>) – Used to predict the product amount per capita.
+The x-axis is time in years.</p></li>
+<li><p><strong>_amount_per_capita_per_gdp</strong> (<a class="reference internal" href="#endemo2.prediction_models.Timeseries" title="endemo2.prediction_models.Timeseries"><em>Timeseries</em></a>) – Used to predict the product amount per capita.
+The x-axis is time in years.</p></li>
+<li><p><strong>_use_per_capita</strong> (<em>bool</em>) – Indicates whether the timeseries that predict amount per capita should be used for the
+forecast.</p></li>
+<li><p><strong>_use_gdp_as_x</strong> (<em>bool</em>) – Indicated whether the timeseries that use the gdp as x-axis should be used for the
+forecast.</p></li>
+<li><p><strong>_empty</strong> (<em>bool</em>) – Indicates that the product historical data is empty. This is true, if the country is being
+present in the input table but filters causing the list to be empty.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.Product.calculate_demand">
 <span class="sig-name descname"><span class="pre">calculate_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">Demand</span></a></span></span><a class="reference internal" href="_modules/endemo2/products.html#Product.calculate_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.Product.calculate_demand" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Calculates the demand for this product. Returns zero demand when the _empty attribute is true.</p>
+<div class="math notranslate nohighlight">
+\[D(y)[TWh/T] = p*A(y)[T]*(c_{electricity}, c_{heat_{split}}, c_{hydrogen})[TWh/T]\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> – The target year, the demand should be calculated for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The calculated demand.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.Product.get_active_timeseries">
 <span class="sig-name descname"><span class="pre">get_active_timeseries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.prediction_models.Timeseries" title="endemo2.prediction_models.Timeseries"><span class="pre">Timeseries</span></a></span></span><a class="reference internal" href="_modules/endemo2/products.html#Product.get_active_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.Product.get_active_timeseries" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Getter for the current timeseries according to current settings regarding gdp
+and per_capita calculation.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.Product.get_amount_prog">
 <span class="sig-name descname"><span class="pre">get_amount_prog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/endemo2/products.html#Product.get_amount_prog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.Product.get_amount_prog" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><dl class="simple">
+<dt>Get the prognosis for the amount of this product in a certain year according to current settings regarding gdp</dt><dd><p>and per_capita calculation.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> – </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The estimated product amount for given year.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.Product.get_coef">
 <span class="sig-name descname"><span class="pre">get_coef</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.prediction_models.Coef" title="endemo2.prediction_models.Coef"><span class="pre">Coef</span></a></span></span><a class="reference internal" href="_modules/endemo2/products.html#Product.get_coef"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.Product.get_coef" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Getter for the coefficients of the currently used timeseries according to settings.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.Product.get_specific_consumption">
 <span class="sig-name descname"><span class="pre">get_specific_consumption</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.products.SpecificConsumptionData" title="endemo2.products.SpecificConsumptionData"><span class="pre">SpecificConsumptionData</span></a></span></span><a class="reference internal" href="_modules/endemo2/products.html#Product.get_specific_consumption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.Product.get_specific_consumption" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Getter for the specific consumption object.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.Product.get_timeseries_amount_per_capita_per_gdp">
 <span class="sig-name descname"><span class="pre">get_timeseries_amount_per_capita_per_gdp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/products.html#Product.get_timeseries_amount_per_capita_per_gdp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.Product.get_timeseries_amount_per_capita_per_gdp" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Getter for the _amount_per_capita_per_gdp timeseries.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.Product.get_timeseries_amount_per_capita_per_year">
 <span class="sig-name descname"><span class="pre">get_timeseries_amount_per_capita_per_year</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/products.html#Product.get_timeseries_amount_per_capita_per_year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.Product.get_timeseries_amount_per_capita_per_year" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Getter for the _amount_per_capita_per_year timeseries.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.Product.get_timeseries_amount_per_gdp">
 <span class="sig-name descname"><span class="pre">get_timeseries_amount_per_gdp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/products.html#Product.get_timeseries_amount_per_gdp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.Product.get_timeseries_amount_per_gdp" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Getter for the _amount_per_gdp timeseries.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.Product.get_timeseries_amount_per_year">
 <span class="sig-name descname"><span class="pre">get_timeseries_amount_per_year</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/products.html#Product.get_timeseries_amount_per_year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.Product.get_timeseries_amount_per_year" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Getter for the _amount_per_year timeseries.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.Product.is_empty">
 <span class="sig-name descname"><span class="pre">is_empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/endemo2/products.html#Product.is_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.Product.is_empty" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Getter for the _empty attribute.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.Product.is_per_capita">
 <span class="sig-name descname"><span class="pre">is_per_capita</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/endemo2/products.html#Product.is_per_capita"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.Product.is_per_capita" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Getter for the _use_per_capita attribute.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.Product.is_per_gdp">
 <span class="sig-name descname"><span class="pre">is_per_gdp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/endemo2/products.html#Product.is_per_gdp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.Product.is_per_gdp" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Getter for the _use_gdp_as_x attribute.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.Product.split_heat_levels">
 <span class="sig-name descname"><span class="pre">split_heat_levels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/products.html#Product.split_heat_levels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.Product.split_heat_levels" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Takes amount of heat as input and splits it into different heat levels, according to the _heat_levels attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>float</em>) – The amount of heat to be split into different heat levels.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The amount of heat in different heat levels as a tuple: (Q1, Q2, Q3, Q4)</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -1885,6 +1964,19 @@ interval-growth-rate forecast.</p>
 <dt class="sig sig-object py" id="endemo2.products.ProductPrimSec">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">endemo2.products.</span></span><span class="sig-name descname"><span class="pre">ProductPrimSec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#endemo2.products.Product" title="endemo2.products.Product"><span class="pre">Product</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#endemo2.products.Product" title="endemo2.products.Product"><span class="pre">Product</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">total</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#endemo2.products.Product" title="endemo2.products.Product"><span class="pre">Product</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/products.html#ProductPrimSec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.ProductPrimSec" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A container for products that are split into primary and secondary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_primary</strong> (<a class="reference internal" href="#endemo2.products.Product" title="endemo2.products.Product"><em>Product</em></a>) – The primary product.</p></li>
+<li><p><strong>_secondary</strong> (<a class="reference internal" href="#endemo2.products.Product" title="endemo2.products.Product"><em>Product</em></a>) – The secondary product.</p></li>
+<li><p><strong>_total</strong> (<a class="reference internal" href="#endemo2.products.Product" title="endemo2.products.Product"><em>Product</em></a>) – A product merging the primary and secondary products.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Todo<span class="colon">:</span></dt>
+<dd class="field-even"><p>Actually use this somewhere.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.ProductPrimSec.calculate_demand">
 <span class="sig-name descname"><span class="pre">calculate_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">Demand</span></a></span></span><a class="reference internal" href="_modules/endemo2/products.html#ProductPrimSec.calculate_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.ProductPrimSec.calculate_demand" title="Permalink to this definition"></a></dt>
@@ -1897,31 +1989,60 @@ interval-growth-rate forecast.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">endemo2.products.</span></span><span class="sig-name descname"><span class="pre">SpecificConsumptionData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#endemo2.input.ProductInput" title="endemo2.input.ProductInput"><span class="pre">ProductInput</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_amount_per_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#endemo2.prediction_models.Timeseries" title="endemo2.prediction_models.Timeseries"><span class="pre">Timeseries</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#endemo2.input.Input" title="endemo2.input.Input"><span class="pre">Input</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/products.html#SpecificConsumptionData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.SpecificConsumptionData" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Holds all consumption data for one product within an industry of a country.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="endemo2.products.SpecificConsumptionData.default_specific_consumption">
-<span class="sig-name descname"><span class="pre">default_specific_consumption</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#endemo2.containers.SC" title="endemo2.containers.SC"><span class="pre">SC</span></a></em><a class="headerlink" href="#endemo2.products.SpecificConsumptionData.default_specific_consumption" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="endemo2.products.SpecificConsumptionData.efficiency">
-<span class="sig-name descname"><span class="pre">efficiency</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#endemo2.containers.EH" title="endemo2.containers.EH"><span class="pre">endemo2.containers.EH</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#endemo2.products.SpecificConsumptionData.efficiency" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="#endemo2.input.Input" title="endemo2.input.Input"><em>Input</em></a>) – The input manager, containing information needed to create this object.</p></li>
+<li><p><strong>product_input</strong> (<a class="reference internal" href="#endemo2.input.ProductInput" title="endemo2.input.ProductInput"><em>ProductInput</em></a>) – The input for this specific product type, needed to create it. (Redundant)</p></li>
+<li><p><strong>product_amount_per_year</strong> (<a class="reference internal" href="#endemo2.prediction_models.Timeseries" title="endemo2.prediction_models.Timeseries"><em>Timeseries</em></a>) – The timeseries object from the product to get the predicted product
+amount, used in calculations. (Redundant, but used to prevent circular dependencies)</p></li>
+<li><p><strong>country_name</strong> (<em>str</em>) – Name of the country, this product belongs to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>default_specific_consumption</strong> (<a class="reference internal" href="#endemo2.containers.SC" title="endemo2.containers.SC"><em>SC</em></a>) – The specific consumption for a product type, that is used as default if
+there is no historical data to predict the specific consumption.</p></li>
+<li><p><strong>historical_specific_consumption</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#endemo2.prediction_models.Timeseries" title="endemo2.prediction_models.Timeseries"><em>Timeseries</em></a><em>]</em>) – The historical data for specific consumption according
+to energy carrier.</p></li>
+<li><p><strong>efficiency</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#endemo2.containers.EH" title="endemo2.containers.EH"><em>EH</em></a><em>]</em>) – Efficiency of each energy carrier in percent in [0,1].</p></li>
+<li><p><strong>_product_amount_per_year</strong> (<a class="reference internal" href="#endemo2.prediction_models.Timeseries" title="endemo2.prediction_models.Timeseries"><em>Timeseries</em></a>) – A reference to the timeseries of the product_amount_per_year taken from
+the product object.</p></li>
+<li><p><strong>_calculate_sc</strong> (<em>bool</em>) – Indicates whether the specific consumption should be calculated or default value should
+be used.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.SpecificConsumptionData.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.SC" title="endemo2.containers.SC"><span class="pre">SC</span></a></span></span><a class="reference internal" href="_modules/endemo2/products.html#SpecificConsumptionData.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.SpecificConsumptionData.get" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the specific consumption</p>
+<dd><p>Getter for the specific consumption</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> – Target year, for which we want to know the specific consumption amount.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The calculated specific consumption amounts.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.products.SpecificConsumptionData.get_scale">
 <span class="sig-name descname"><span class="pre">get_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalar</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.SC" title="endemo2.containers.SC"><span class="pre">SC</span></a></span></span><a class="reference internal" href="_modules/endemo2/products.html#SpecificConsumptionData.get_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.SpecificConsumptionData.get_scale" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="endemo2.products.SpecificConsumptionData.historical_specific_consumption">
-<span class="sig-name descname"><span class="pre">historical_specific_consumption</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#endemo2.prediction_models.Timeseries" title="endemo2.prediction_models.Timeseries"><span class="pre">endemo2.prediction_models.Timeseries</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#endemo2.products.SpecificConsumptionData.historical_specific_consumption" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Get the specific consumption value, while also applying a scaling operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year</strong> – Target year, for which we want to know the specific consumption amount.</p></li>
+<li><p><strong>scalar</strong> – The scalar, scaling the specific consumption.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The scaled specific consumption.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

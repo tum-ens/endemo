@@ -451,7 +451,7 @@ class IndustryInput:
                             # data exists -> fill into dictionary
                             zipped = list(zip(years, data))
                             his_data = uty.filter_out_nan_and_inf(zipped)
-                            his_data = uty.cut_after_x(his_data, industry_settings.last_available_year)
+                            # his_data = uty.cut_after_x(his_data, industry_settings.last_available_year)
 
                             if country_name not in dict_sc_his.keys():
                                 dict_sc_his[country_name] = dict()

@@ -82,27 +82,43 @@
 <div class="viewcode-block" id="Product"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product">[docs]</a><span class="k">class</span> <span class="nc">Product</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Holds all information and objects belonging to a product in the industry of a country.</span>
+
+<span class="sd">    :param product_name: The name of the product type. For example &quot;steel_prim&quot;.</span>
+<span class="sd">    :param product_input: The product types input from the input manager. (Redundant)</span>
+<span class="sd">    :param input_manager: The input manager, which holds all input data used to create this product.</span>
+<span class="sd">    :param country_name: The name of the country to whose industry this product belongs to.</span>
+<span class="sd">    :param population: The countries population amount used to create timeseries per capita.</span>
+<span class="sd">    :param gdp: The countries gdp used to create timeseries per gdp.</span>
+
+<span class="sd">    :ivar str _name: The name of the product. For example &quot;steel_prim&quot;.</span>
+<span class="sd">    :ivar str _country_name: The name of the country to whose industry this product belongs to.</span>
+
+<span class="sd">    :ivar SpecificConsumptionData _specific_consumption: The object used to optionally calculate and get the specific</span>
+<span class="sd">        consumption amounts for this product type.</span>
+<span class="sd">    :ivar EH _bat: The specific consumption of the best available technology.</span>
+<span class="sd">    :ivar float _perc_used: The percentage of the predicted amount used of this product. Can be configured to model new</span>
+<span class="sd">        technology replacing old ones.</span>
+<span class="sd">    :ivar float _exp_change_rate: The manual change rate for the exponential forecast method.</span>
+<span class="sd">    :ivar Heat _heat_levels: The heat levels, that splits the forecasted heat demand into demand at different heat</span>
+<span class="sd">        levels, by using fixed percentages.</span>
+
+<span class="sd">    :ivar Timeseries _amount_per_year: Used to predict the product amount. The x-axis is time in years.</span>
+<span class="sd">    :ivar Timeseries _amount_per_gdp: Used to predict the product amount. The x-axis is the countries&#39; gdp.</span>
+<span class="sd">    :ivar Timeseries _amount_per_capita_per_year: Used to predict the product amount per capita.</span>
+<span class="sd">        The x-axis is time in years.</span>
+<span class="sd">    :ivar Timeseries _amount_per_capita_per_gdp: Used to predict the product amount per capita.</span>
+<span class="sd">        The x-axis is time in years.</span>
+
+<span class="sd">    :ivar bool _use_per_capita: Indicates whether the timeseries that predict amount per capita should be used for the</span>
+<span class="sd">        forecast.</span>
+<span class="sd">    :ivar bool _use_gdp_as_x: Indicated whether the timeseries that use the gdp as x-axis should be used for the</span>
+<span class="sd">        forecast.</span>
+<span class="sd">    :ivar bool _empty: Indicates that the product historical data is empty. This is true, if the country is being</span>
+<span class="sd">        present in the input table but filters causing the list to be empty.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_name</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">_country_name</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">_specific_consumption</span><span class="p">:</span> <span class="n">SpecificConsumptionData</span>
-    <span class="n">_bat</span><span class="p">:</span> <span class="n">ctn</span><span class="o">.</span><span class="n">EH</span>
-    <span class="n">_perc_used</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">_exp_change_rate</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">_heat_levels</span><span class="p">:</span> <span class="n">ctn</span><span class="o">.</span><span class="n">Heat</span>
-    <span class="n">_amount_per_year</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span>
-    <span class="n">_amount_per_gdp</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span>
-    <span class="n">_amount_per_capita_per_year</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span>
-    <span class="n">_amount_per_capita_per_gdp</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span>
-
-    <span class="n">_use_per_capita</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="n">_use_gdp_as_x</span><span class="p">:</span> <span class="nb">bool</span>
-
-    <span class="n">_empty</span><span class="p">:</span> <span class="nb">bool</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">product_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">product_input</span><span class="p">:</span> <span class="nb">input</span><span class="o">.</span><span class="n">ProductInput</span><span class="p">,</span> <span class="n">input_manager</span><span class="p">:</span> <span class="nb">input</span><span class="o">.</span><span class="n">Input</span><span class="p">,</span>
                  <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">population</span><span class="p">:</span> <span class="n">pop</span><span class="o">.</span><span class="n">Population</span><span class="p">,</span> <span class="n">gdp</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">TimeStepSequence</span><span class="p">):</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_country_name</span> <span class="o">=</span> <span class="n">country_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">product_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_heat_levels</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">heat_levels</span>
@@ -132,6 +148,10 @@
             <span class="c1"># warnings.warn(&quot;Country &quot; + country_name + &quot; has no production data for &quot; + product_name)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_empty</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_specific_consumption</span> <span class="o">=</span> <span class="n">SpecificConsumptionData</span><span class="p">(</span><span class="n">product_input</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_amount_per_year</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">([],</span> <span class="n">forecast_method</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_amount_per_capita_per_year</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">([],</span> <span class="n">forecast_method</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_amount_per_gdp</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">([],</span> <span class="n">forecast_method</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_amount_per_capita_per_gdp</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">([],</span> <span class="n">forecast_method</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="c1"># calculate rest of member variables</span>
@@ -152,41 +172,54 @@
                                                              <span class="n">country_name</span><span class="o">=</span><span class="n">country_name</span><span class="p">,</span> <span class="n">product_input</span><span class="o">=</span><span class="n">product_input</span><span class="p">,</span>
                                                              <span class="n">input_manager</span><span class="o">=</span><span class="n">input_manager</span><span class="p">)</span>
 
-
 <div class="viewcode-block" id="Product.is_empty"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.is_empty">[docs]</a>    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the _empty attribute. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty</span></div>
 
 <div class="viewcode-block" id="Product.is_per_capita"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.is_per_capita">[docs]</a>    <span class="k">def</span> <span class="nf">is_per_capita</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the _use_per_capita attribute. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_per_capita</span></div>
 
 <div class="viewcode-block" id="Product.is_per_gdp"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.is_per_gdp">[docs]</a>    <span class="k">def</span> <span class="nf">is_per_gdp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the _use_gdp_as_x attribute. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_gdp_as_x</span></div>
 
 <div class="viewcode-block" id="Product.get_timeseries_amount_per_year"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.get_timeseries_amount_per_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_timeseries_amount_per_year</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">([],</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the _amount_per_year timeseries. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_amount_per_year</span></div>
 
 <div class="viewcode-block" id="Product.get_timeseries_amount_per_gdp"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.get_timeseries_amount_per_gdp">[docs]</a>    <span class="k">def</span> <span class="nf">get_timeseries_amount_per_gdp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">([],</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the _amount_per_gdp timeseries. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_amount_per_gdp</span></div>
 
 <div class="viewcode-block" id="Product.get_timeseries_amount_per_capita_per_year"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.get_timeseries_amount_per_capita_per_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_timeseries_amount_per_capita_per_year</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">([],</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the _amount_per_capita_per_year timeseries. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_amount_per_capita_per_year</span></div>
 
 <div class="viewcode-block" id="Product.get_timeseries_amount_per_capita_per_gdp"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.get_timeseries_amount_per_capita_per_gdp">[docs]</a>    <span class="k">def</span> <span class="nf">get_timeseries_amount_per_capita_per_gdp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">([],</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the _amount_per_capita_per_gdp timeseries. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_amount_per_capita_per_gdp</span></div>
 
 <div class="viewcode-block" id="Product.split_heat_levels"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.split_heat_levels">[docs]</a>    <span class="k">def</span> <span class="nf">split_heat_levels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Takes amount of heat as input and splits it into different heat levels, according to the _heat_levels attribute.</span>
+
+<span class="sd">        :param float x: The amount of heat to be split into different heat levels.</span>
+<span class="sd">        :return: The amount of heat in different heat levels as a tuple: (Q1, Q2, Q3, Q4)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">heat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_heat_levels</span>
         <span class="n">heat</span><span class="o">.</span><span class="n">mutable_multiply_scalar</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Product.calculate_demand"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.calculate_demand">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ctn</span><span class="o">.</span><span class="n">Demand</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the demand for this product. Returns zero demand when the _empty attribute is true.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            D(y)[TWh/T] = p*A(y)[T]*(c_{electricity}, c_{heat_{split}}, c_{hydrogen})[TWh/T]</span>
+
+<span class="sd">        :param year: The target year, the demand should be calculated for.</span>
+<span class="sd">        :return: The calculated demand.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ctn</span><span class="o">.</span><span class="n">Demand</span><span class="p">()</span>
 
@@ -206,6 +239,12 @@
         <span class="k">return</span> <span class="n">ctn</span><span class="o">.</span><span class="n">Demand</span><span class="p">(</span><span class="n">electricity</span><span class="p">,</span> <span class="n">heat</span><span class="p">,</span> <span class="n">hydrogen</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Product.get_amount_prog"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.get_amount_prog">[docs]</a>    <span class="k">def</span> <span class="nf">get_amount_prog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the prognosis for the amount of this product in a certain year according to current settings regarding gdp</span>
+<span class="sd">            and per_capita calculation.</span>
+<span class="sd">        :param year:</span>
+<span class="sd">        :return: The estimated product amount for given year.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">0.0</span>
         <span class="n">active_timeseries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_active_timeseries</span><span class="p">()</span>
@@ -213,12 +252,15 @@
         <span class="k">return</span> <span class="n">prog_amount</span></div>
 
 <div class="viewcode-block" id="Product.get_coef"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.get_coef">[docs]</a>    <span class="k">def</span> <span class="nf">get_coef</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pm</span><span class="o">.</span><span class="n">Coef</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pm</span><span class="o">.</span><span class="n">Coef</span><span class="p">()</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the coefficients of the currently used timeseries according to settings. &quot;&quot;&quot;</span>
         <span class="n">active_timeseries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_active_timeseries</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">active_timeseries</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Product.get_active_timeseries"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.get_active_timeseries">[docs]</a>    <span class="k">def</span> <span class="nf">get_active_timeseries</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the current timeseries according to current settings regarding gdp</span>
+<span class="sd">        and per_capita calculation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">([],</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_per_capita</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_gdp_as_x</span><span class="p">:</span>
@@ -231,13 +273,19 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_amount_per_capita_per_gdp</span></div>
 
 <div class="viewcode-block" id="Product.get_specific_consumption"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.get_specific_consumption">[docs]</a>    <span class="k">def</span> <span class="nf">get_specific_consumption</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SpecificConsumptionData</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the specific consumption object. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specific_consumption</span></div></div>
 
 
 <div class="viewcode-block" id="ProductPrimSec"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.ProductPrimSec">[docs]</a><span class="k">class</span> <span class="nc">ProductPrimSec</span><span class="p">:</span>
-    <span class="n">_primary</span><span class="p">:</span> <span class="n">Product</span>
-    <span class="n">_secondary</span><span class="p">:</span> <span class="n">Product</span>
-    <span class="n">_total</span><span class="p">:</span> <span class="n">Product</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A container for products that are split into primary and secondary.</span>
+
+<span class="sd">    :ivar Product _primary: The primary product.</span>
+<span class="sd">    :ivar Product _secondary: The secondary product.</span>
+<span class="sd">    :ivar Product _total: A product merging the primary and secondary products.</span>
+<span class="sd">    :todo: Actually use this somewhere.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prim</span><span class="p">:</span> <span class="n">Product</span><span class="p">,</span> <span class="n">sec</span><span class="p">:</span> <span class="n">Product</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="n">Product</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_primary</span> <span class="o">=</span> <span class="n">prim</span>
@@ -251,12 +299,26 @@
 <div class="viewcode-block" id="SpecificConsumptionData"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.SpecificConsumptionData">[docs]</a><span class="k">class</span> <span class="nc">SpecificConsumptionData</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Holds all consumption data for one product within an industry of a country.</span>
+
+
+<span class="sd">    :param Input input_manager: The input manager, containing information needed to create this object.</span>
+<span class="sd">    :param ProductInput product_input: The input for this specific product type, needed to create it. (Redundant)</span>
+<span class="sd">    :param Timeseries product_amount_per_year: The timeseries object from the product to get the predicted product</span>
+<span class="sd">        amount, used in calculations. (Redundant, but used to prevent circular dependencies)</span>
+<span class="sd">    :param str country_name: Name of the country, this product belongs to.</span>
+
+<span class="sd">    :ivar SC default_specific_consumption: The specific consumption for a product type, that is used as default if</span>
+<span class="sd">        there is no historical data to predict the specific consumption.</span>
+<span class="sd">    :ivar dict[str, Timeseries] historical_specific_consumption: The historical data for specific consumption according</span>
+<span class="sd">        to energy carrier.</span>
+<span class="sd">    :ivar dict[str, EH] efficiency: Efficiency of each energy carrier in percent in [0,1].</span>
+<span class="sd">    :ivar Timeseries _product_amount_per_year: A reference to the timeseries of the product_amount_per_year taken from</span>
+<span class="sd">        the product object.</span>
+<span class="sd">    :ivar bool _calculate_sc: Indicates whether the specific consumption should be calculated or default value should</span>
+<span class="sd">        be used.</span>
+
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">default_specific_consumption</span><span class="p">:</span> <span class="n">ctn</span><span class="o">.</span><span class="n">SC</span>
-    <span class="n">historical_specific_consumption</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">]</span>
-    <span class="n">efficiency</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ctn</span><span class="o">.</span><span class="n">EH</span><span class="p">]</span>
-    <span class="n">_product_amount_per_year</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span>
-    <span class="n">_calculate_sc</span><span class="p">:</span> <span class="nb">bool</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">product_input</span><span class="p">:</span> <span class="nb">input</span><span class="o">.</span><span class="n">ProductInput</span><span class="p">,</span> <span class="n">product_amount_per_year</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -288,11 +350,23 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_sc</span> <span class="o">=</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="SpecificConsumptionData.get_scale"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.SpecificConsumptionData.get_scale">[docs]</a>    <span class="k">def</span> <span class="nf">get_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">scalar</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ctn</span><span class="o">.</span><span class="n">SC</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the specific consumption value, while also applying a scaling operation.</span>
+
+<span class="sd">        :param year: Target year, for which we want to know the specific consumption amount.</span>
+<span class="sd">        :param scalar: The scalar, scaling the specific consumption.</span>
+<span class="sd">        :return: The scaled specific consumption.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ctn</span><span class="o">.</span><span class="n">SC</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">electricity</span> <span class="o">*</span> <span class="n">scalar</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">heat</span> <span class="o">*</span> <span class="n">scalar</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">hydrogen</span> <span class="o">*</span> <span class="n">scalar</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">max_subst_h2</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SpecificConsumptionData.get"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.SpecificConsumptionData.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ctn</span><span class="o">.</span><span class="n">SC</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns the specific consumption &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the specific consumption</span>
+
+<span class="sd">        :param year: Target year, for which we want to know the specific consumption amount.</span>
+<span class="sd">        :return: The calculated specific consumption amounts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_sc</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">historical_specific_consumption</span><span class="p">:</span>
             <span class="n">electricity</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">heat</span> <span class="o">=</span> <span class="mf">0.0</span>
