@@ -289,7 +289,7 @@ def cut_after_x(data: [(float, float)], last_x: float) -> [(float, float)]:
     Cuts the tail of a list, according to first entry of tuple being larger than last_x.
 
     :param data: The data list, whose tail will be cut off.
-    :param last_x: The x-axis value indicating where to cut the list. (inclusive)
+    :param last_x: The x-axis value indicating where to cut the list. (last_x is kept)
     :return: The cut data list.
     """
     if last_x is np.NaN:
@@ -298,8 +298,9 @@ def cut_after_x(data: [(float, float)], last_x: float) -> [(float, float)]:
     counter = 0
     for x, y in reversed(data):
         if x <= last_x:
-            return data[:-counter]
+            return data[:len(data)-counter]
         counter += 1
+    return []
 
 
 def convert_table_to_filtered_data_series_per_country(df: pd.DataFrame) -> dict:

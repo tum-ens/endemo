@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import collections as coll
-
+import warnings
+from enum import Enum
+from typing import Any
 
 SC = coll.namedtuple("SC", ["electricity", "heat", "hydrogen", "max_subst_h2"])
 EH = coll.namedtuple("EH", ["electricity", "heat"])
@@ -9,6 +11,13 @@ EH = coll.namedtuple("EH", ["electricity", "heat"])
 CA = coll.namedtuple("CA", ["alpha2", "alpha3", "german_name"])
 HisProg = coll.namedtuple("HisProg", ["historical", "prognosis"])
 Interval = coll.namedtuple("Interval", ["start", "end"])
+
+
+class DemandType(Enum):
+    """ Enum to easily differentiate the type of demand. """
+    ELECTRICITY = 0
+    HEAT = 1
+    HYDROGEN = 2
 
 
 class Heat:
@@ -56,22 +65,57 @@ class Demand:
     :ivar Heat heat: Amount of heat demand.
     :ivar float hydrogen: Amount of hydrogen demand.
     """
-    def __init__(self, electricity: float = 0, heat: Heat = Heat(), hydrogen: float = 0):
+    def __init__(self, electricity: float = 0, heat: Heat = None, hydrogen: float = 0):
         self.electricity = electricity
-        self.heat = heat
+        if heat is None:
+            self.heat = Heat()
+        else:
+            self.heat = heat
         self.hydrogen = hydrogen
 
     def __str__(self):
         return "<Demand: " + "electricity: " + str(self.electricity) + ", heat: " + str(self.heat) + ", hydrogen: " + \
             str(self.hydrogen) + ">"
 
-    def add(self, other: Demand):
+    def set(self, dt: DemandType, value: Any) -> None:
+        """
+        Set the attribute value according to demand type.
+
+        :param dt: The type of demand that should be set.
+        :param value: The value the demand should be set to.
+        """
+        match dt:
+            case DemandType.ELECTRICITY:
+                assert(isinstance(value, float) or isinstance(value, int))
+                self.electricity = value
+            case DemandType.HEAT:
+                assert (isinstance(value, Heat))
+                self.heat = value
+            case DemandType.HYDROGEN:
+                assert (isinstance(value, float) or isinstance(value, int))
+                self.hydrogen = value
+
+    def get(self, dt: DemandType) -> Any:
+        """
+        Get the attribute value according to demand type.
+
+        :param dt: The type of demand that should be returned.
+        """
+        match dt:
+            case DemandType.ELECTRICITY:
+                return self.electricity
+            case DemandType.HEAT:
+                return self.heat
+            case DemandType.HYDROGEN:
+                return self.hydrogen
+
+    def add(self, other: Demand) -> None:
         """ Add the values of "other" demand component-wise to own member variables. """
         self.electricity += other.electricity
         self.heat.mutable_add(other.heat)
         self.hydrogen += other.hydrogen
 
-    def scale(self, scalar: float):
+    def scale(self, scalar: float) -> None:
         """ Scale member variables component-wise with scalar. """
         self.electricity *= scalar
         self.hydrogen *= scalar

@@ -11,22 +11,38 @@ class Industry(sector.Sector):
     """
     The Industry class represents the industry sector of one country. It holds all products produced by this industry.
 
-    :param str country_name: Name of the country this industry is located in.
     :param Population population: The population object of the country.
     :param TimeStepSequence country_gdp: The countries' GDP Timeseries
     :param Input input_manager: The models input data from the Excel files.
 
+
+    :ivar str country_name: Name of the country this industry is located in.
     :ivar dict[str, Product] _products: All products in this industry.
+    :ivar int rest_calc_basis_year: Year that is used as the starting point for the rest sector percentage prediction.
+    :ivar dict[DemandType, (float, float)] rest_calc_data: rest sector start-percentage and rest sector start-demand,
+        used to forecast the rest sector demand for a certain year.
+    :ivar float rest_growth_rate: Growth rate percentage of the rest sector as specified in
+        Set_and_Control_Parameters.xlsx in interval [0,1].
+    :ivar Population country_population: The population of the country, this industry belongs to.
     """
 
     def __init__(self, country_name: str, population: pop.Population, country_gdp: pm.TimeStepSequence,
                  input_manager: input.Input):
         self._products = dict()
+        self.country_name = country_name
+        self.country_population = population
         active_products = input_manager.industry_input.active_products
 
         for (product_name, product_input) in active_products.items():
             self._products[product_name] = prd.Product(product_name, product_input, input_manager,
                                                        country_name, population, country_gdp)
+
+        # store rest sector calculation parameters
+        rest_sector_input = input_manager.industry_input.rest_sector_input
+        self.rest_calc_basis_year = rest_sector_input.rest_calc_basis_year
+        self.rest_calc_data = rest_sector_input.rest_calc_data[country_name]
+        self.rest_heat_levels = rest_sector_input.rest_sector_heat_levels
+        self.rest_growth_rate = input_manager.ctrl.industry_settings.rest_sector_growth_rate
 
         # create warnings
         if not self._products:
@@ -41,6 +57,31 @@ class Industry(sector.Sector):
         """
         return self._products[name]
 
+    def calculate_rest_sector_demand(self, target_year: int) -> ctn.Demand:
+        """
+        Calculate the rest sector demand for a certain year.
+
+        .. math::
+            rest_{\text{start_year}}[TWh]=perc_{\text{start_year}}*demand_{\text{start_year}}[TWh]\\
+            rest(y)[TWh] = rest_{\text{start_year}}[TWh]*(1+r)^{y-\text{start_year}}
+
+
+        :param target_year: The year, the rest sector demand should be calculated for.
+        :return: The demand of the rest sector in given year rest(y).
+        """
+
+        result = ctn.Demand()
+
+        for dt, (perc_sy, demand_sy) in self.rest_calc_data.items():
+            rest_start_year = perc_sy * demand_sy
+            rest_target_year = \
+                rest_start_year * (1 + self.rest_growth_rate) ** (target_year - self.rest_calc_basis_year)
+            if dt == ctn.DemandType.HEAT:
+                rest_target_year = self.rest_heat_levels.copy_multiply_scalar(rest_start_year)
+            result.set(dt, rest_target_year)
+
+        return result
+
     def calculate_total_demand(self, year: int) -> ctn.Demand:
         """
         Sums over the demand of each product.
@@ -50,8 +91,8 @@ class Industry(sector.Sector):
         """
         result = ctn.Demand()
 
-        for (name, obj) in self._products.items():
-            result.add(obj.calculate_demand(year))
+        for (name, _) in self._products.items():
+            result.add(self.calculate_product_demand(name, year))
 
         return result
 
@@ -65,7 +106,11 @@ class Industry(sector.Sector):
         :return: The demand of the product in this industry.
         """
         if product_name in self._products.keys():
-            return self._products[product_name].calculate_demand(year)
+            product_obj = self._products[product_name]
+            product_demand = product_obj.calculate_demand(year)
+            if product_obj.is_per_capita():
+                product_demand.scale((self.country_population.get_country_prog(year)))
+            return product_demand
         else:
             # if product not in industry, there is no demand -> return 0ed demand
             return ctn.Demand()

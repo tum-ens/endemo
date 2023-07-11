@@ -267,6 +267,29 @@ class ProductInput:
             "\n\t Historical: " + uty.str_dict(self.production) + "\n"
 
 
+class RestSectorInput:
+    """
+    A container for the input data regarding the rest sectors.
+
+    :ivar dict[str, dict[DemandType, (float, float)]] rest_calc_data: Used for the calculation of the rest sector.
+        It has the following structure: {country_name -> {demand_type -> (rest_sector_percent, demand_2018)}}
+    :ivar int rest_calc_basis_year: Year used as a starting point for calculating the rest sector demand.
+    :ivar (float, float, float, float) rest_sector_heat_levels: The heat levels used to separate the heat demand in the
+        rest sector into the different heat levels.
+    """
+
+    def __init__(self, df_rest_calc: pd.DataFrame, dict_heat_levels: dict[str, ctn.Heat]):
+        self.rest_calc_basis_year = 2018  # change here, if another year should be used for rest sector (also path)
+        self.rest_sector_heat_levels = dict_heat_levels["rest"]
+        self.rest_calc_data = dict()
+        for _, row in df_rest_calc.iterrows():
+            self.rest_calc_data[row["Country"]] = dict()
+            self.rest_calc_data[row["Country"]][ctn.DemandType.ELECTRICITY] = \
+                (row["Rest el"] / 100, row["electricity " + str(self.rest_calc_basis_year)])
+            self.rest_calc_data[row["Country"]][ctn.DemandType.HEAT] = \
+                (row["Rest heat"] / 100, row["heat " + str(self.rest_calc_basis_year)])
+
+
 class FileReadingHelper:
     """
     A helper class to read products historical data. It provides some fixed transformation operations.
@@ -338,33 +361,34 @@ class IndustryInput:
         historical information on specific consumption.
     :ivar [str] sc_historical_sheet_names: The sheet names for the files used to read
         historical information on specific consumption for certain products.
+    :ivar RestSectorInput rest_sector_input: All input data relating to the rest sector.
     """
 
     product_data_access = {
-        "steel":                FileReadingHelper("Steel_Production.xlsx", "Data_total", [], lambda x: x),
-        "steel_prim":           FileReadingHelper("Steel_Production.xlsx", "Steel_prim", [], lambda x: x),
-        "steel_sec":            FileReadingHelper("Steel_Production.xlsx", "Steel_sec", [], lambda x: x),
-        "steel_direct":         FileReadingHelper("Steel_Production.xlsx", "Data_total", [], lambda x: x),
-        "alu_prim":             FileReadingHelper("Aluminium_Production.xlsx", "Prim_Data", [], lambda x: x),
-        "alu_sec":              FileReadingHelper("Aluminium_Production.xlsx", "Sec_Data", [], lambda x: x),
-        "copper_prim":          FileReadingHelper("Copper_Production.xlsx", "Copper_WSP", [0, 1],
-                                                  lambda x: x.loc[x["Type"] == "Primary"].drop("Type", axis=1)),
-        "copper_sec":           FileReadingHelper("Copper_Production.xlsx", "Copper_WSP", [0, 1],
-                                                  lambda x: x.loc[x["Type"] == "Secondary"].drop("Type", axis=1)),
-        "chlorine":             FileReadingHelper("Chlorine_Production.xlsx", "Data", [], lambda x: x),
-        "ammonia":              FileReadingHelper("Ammonia_Production.xlsx", "Data", [], lambda x: x),
-        "methanol":             FileReadingHelper("Methanol_Production.xlsx", "Data", [], lambda x: x),
-        "ethylene":             FileReadingHelper("Ethylene_Production.xlsx", "Data", [], lambda x: x),
-        "propylene":            FileReadingHelper("Propylene_Production.xlsx", "Data", [], lambda x: x),
-        "aromate":              FileReadingHelper("Aromate_Production.xlsx", "Data", [], lambda x: x),
-        "ammonia_classic":      FileReadingHelper("Ammonia_Production.xlsx", "Data", [], lambda x: x),
-        "methanol_classic":     FileReadingHelper("Methanol_Production.xlsx", "Data", [], lambda x: x),
-        "ethylene_classic":     FileReadingHelper("Ethylene_Production.xlsx", "Data", [], lambda x: x),
-        "propylene_classic":    FileReadingHelper("Propylene_Production.xlsx", "Data", [], lambda x: x),
-        "aromate_classic":      FileReadingHelper("Aromate_Production.xlsx", "Data", [], lambda x: x),
-        "paper":                FileReadingHelper("Paper_Production.xlsx", "Data", [], lambda x: x),
-        "cement":               FileReadingHelper("Cement_Production.xlsx", "Data", [], lambda x: x),
-        "glass":                FileReadingHelper("Glass_Production.xlsx", "Data", [], lambda x: x),
+        "steel": FileReadingHelper("Steel_Production.xlsx", "Data_total", [], lambda x: x),
+        "steel_prim": FileReadingHelper("Steel_Production.xlsx", "Steel_prim", [], lambda x: x),
+        "steel_sec": FileReadingHelper("Steel_Production.xlsx", "Steel_sec", [], lambda x: x),
+        "steel_direct": FileReadingHelper("Steel_Production.xlsx", "Data_total", [], lambda x: x),
+        "alu_prim": FileReadingHelper("Aluminium_Production.xlsx", "Prim_Data", [], lambda x: x),
+        "alu_sec": FileReadingHelper("Aluminium_Production.xlsx", "Sec_Data", [], lambda x: x),
+        "copper_prim": FileReadingHelper("Copper_Production.xlsx", "Copper_WSP", [0, 1],
+                                         lambda x: x.loc[x["Type"] == "Primary"].drop("Type", axis=1)),
+        "copper_sec": FileReadingHelper("Copper_Production.xlsx", "Copper_WSP", [0, 1],
+                                        lambda x: x.loc[x["Type"] == "Secondary"].drop("Type", axis=1)),
+        "chlorine": FileReadingHelper("Chlorine_Production.xlsx", "Data", [], lambda x: x),
+        "ammonia": FileReadingHelper("Ammonia_Production.xlsx", "Data", [], lambda x: x),
+        "methanol": FileReadingHelper("Methanol_Production.xlsx", "Data", [], lambda x: x),
+        "ethylene": FileReadingHelper("Ethylene_Production.xlsx", "Data", [], lambda x: x),
+        "propylene": FileReadingHelper("Propylene_Production.xlsx", "Data", [], lambda x: x),
+        "aromate": FileReadingHelper("Aromate_Production.xlsx", "Data", [], lambda x: x),
+        "ammonia_classic": FileReadingHelper("Ammonia_Production.xlsx", "Data", [], lambda x: x),
+        "methanol_classic": FileReadingHelper("Methanol_Production.xlsx", "Data", [], lambda x: x),
+        "ethylene_classic": FileReadingHelper("Ethylene_Production.xlsx", "Data", [], lambda x: x),
+        "propylene_classic": FileReadingHelper("Propylene_Production.xlsx", "Data", [], lambda x: x),
+        "aromate_classic": FileReadingHelper("Aromate_Production.xlsx", "Data", [], lambda x: x),
+        "paper": FileReadingHelper("Paper_Production.xlsx", "Data", [], lambda x: x),
+        "cement": FileReadingHelper("Cement_Production.xlsx", "Data", [], lambda x: x),
+        "glass": FileReadingHelper("Glass_Production.xlsx", "Data", [], lambda x: x),
     }
     sc_historical_data_file_names = {
         "steel": "nrg_bal_s_steel.xls",
@@ -386,7 +410,11 @@ class IndustryInput:
 
         for _, row in df_heat_levels.iterrows():
             dict_heat_levels[row["Industry"]] = ctn.Heat(row["Q1"] / 100, row["Q2"] / 100, row["Q3"] / 100,
-                                                                row["Q4"] / 100)
+                                                         row["Q4"] / 100)
+
+        # read rest sector calculation data
+        df_rest_calc = pd.read_excel(industry_path / "Ind_energy_demand_2018_Trend_Restcalcul.xlsx")
+        self.rest_sector_input = RestSectorInput(df_rest_calc, dict_heat_levels)
 
         # read the active sectors sheets
         for product_name in self.settings.active_product_names:
@@ -423,9 +451,9 @@ class IndustryInput:
             for _, row in pd.DataFrame(prod_sc).iterrows():
                 dict_prod_sc_country[row.Country] = \
                     ctn.SC(row["Spec electricity consumption [GJ/t]"],
-                                  row["Spec heat consumption [GJ/t]"],
-                                  row["Spec hydrogen consumption [GJ/t]"],
-                                  row["max. subst. of heat with H2 [%]"])
+                           row["Spec heat consumption [GJ/t]"],
+                           row["Spec hydrogen consumption [GJ/t]"],
+                           row["max. subst. of heat with H2 [%]"])
 
             # read specific demand historical data
             dict_sc_his = dict()
@@ -461,7 +489,7 @@ class IndustryInput:
             for _, row in df_prod_bat.iterrows():
                 dict_prod_bat_country[row.Country] = \
                     ctn.EH(row["Spec electricity consumption [GJ/t]"],
-                                  row["Spec heat consumption [GJ/t]"])
+                           row["Spec heat consumption [GJ/t]"])
 
             self.active_products[product_name] = \
                 ProductInput(dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his, sc_his_calc,
