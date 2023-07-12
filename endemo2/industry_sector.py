@@ -62,8 +62,8 @@ class Industry(sector.Sector):
         Calculate the rest sector demand for a certain year.
 
         .. math::
-            rest_{\text{start_year}}[TWh]=perc_{\text{start_year}}*demand_{\text{start_year}}[TWh]\\
-            rest(y)[TWh] = rest_{\text{start_year}}[TWh]*(1+r)^{y-\text{start_year}}
+            rest_{\\text{start_year}}[TWh]=perc_{\\text{start_year}}*demand_{\\text{start_year}}[TWh]\\\\
+            rest(y)[TWh] = rest_{\\text{start_year}}[TWh]*(1+r)^{y-\\text{start_year}}
 
 
         :param target_year: The year, the rest sector demand should be calculated for.

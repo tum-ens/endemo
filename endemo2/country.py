@@ -59,8 +59,9 @@ class Country:
             nuts2_root.add_child_region(subregion)
 
         # fill population member variable
-        self._population = pop.Population(country_population, nuts2_root,
-                                          input_manager.ctrl.industry_settings.nuts2_distribution_based_on_installed_ind_capacity)
+        self._population = \
+            pop.Population(country_population, nuts2_root,
+                           input_manager.ctrl.industry_settings.nuts2_distribution_based_on_installed_ind_capacity)
 
         # create gdp timeseries
         self._gdp = pm.TimeStepSequence(

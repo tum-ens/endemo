@@ -52,7 +52,7 @@ class FileGenerator(object):
 
     def end_sheet(self):
         df_out = pd.DataFrame(self.current_out_dict)
-        df_out.to_excel(self.excel_writer, index=False, sheet_name=self.current_sheet_name, float_format="%.2f")
+        df_out.to_excel(self.excel_writer, index=False, sheet_name=self.current_sheet_name, float_format="%.7f")
         self.current_sheet_name = ""
         self.current_out_dict = dict()
 
@@ -65,6 +65,21 @@ class FileGenerator(object):
         if self.current_sheet_name != "":
             self.end_sheet()
         self.excel_writer.close()
+
+
+def shortcut_coef_output(fg, exp_coef, lin_coef, quadr_coef):
+    fg.add_entry("EXP Start Point", "(" + str(exp_coef.exp.x0) + ", " + str(exp_coef.exp.y0) + ")")
+    fg.add_entry("EXP Change Rate", exp_coef.exp.r)
+    fg.add_entry("L0-per Time", lin_coef.lin.k0)
+    fg.add_entry("L1-per Time", lin_coef.lin.k1)
+    fg.add_entry("Q0-per Time", lin_coef.quadr.k0)
+    fg.add_entry("Q1-per Time", lin_coef.quadr.k1)
+    fg.add_entry("Q2-per Time", lin_coef.quadr.k2)
+    fg.add_entry("L0-per GDP", quadr_coef.lin.k0)
+    fg.add_entry("L1-per GDP", quadr_coef.lin.k1)
+    fg.add_entry("Q0-per GDP", quadr_coef.quadr.k0)
+    fg.add_entry("Q1-per GDP", quadr_coef.quadr.k1)
+    fg.add_entry("Q2-per GDP", quadr_coef.quadr.k2)
 
 
 def generate_coefficient_output(model: endemo.Endemo) -> None:
@@ -81,18 +96,7 @@ def generate_coefficient_output(model: endemo.Endemo) -> None:
     def shortcut_coef_table(fg, product, year_coef, gdp_coef):
         fg.add_entry("Production is empty", product.is_empty())
         fg.add_entry("Last Data Entry", product.get_active_timeseries().get_last_data_entry())
-        fg.add_entry("EXP Start Point", "(" + str(year_coef.exp.x0) + ", " + str(year_coef.exp.y0) + ")")
-        fg.add_entry("EXP Change Rate", year_coef.exp.r)
-        fg.add_entry("L0-per Time", year_coef.lin.k0)
-        fg.add_entry("L1-per Time", year_coef.lin.k1)
-        fg.add_entry("Q0-per Time", year_coef.quadr.k0)
-        fg.add_entry("Q1-per Time", year_coef.quadr.k1)
-        fg.add_entry("Q2-per Time", year_coef.quadr.k2)
-        fg.add_entry("L0-per GDP", gdp_coef.lin.k0)
-        fg.add_entry("L1-per GDP", gdp_coef.lin.k1)
-        fg.add_entry("Q0-per GDP", gdp_coef.quadr.k0)
-        fg.add_entry("Q1-per GDP", gdp_coef.quadr.k1)
-        fg.add_entry("Q2-per GDP", gdp_coef.quadr.k2)
+        shortcut_coef_output(fg, year_coef, year_coef, gdp_coef)
 
     filename = "endemo2_industry_coef_current_settings.xlsx"
     fg = FileGenerator(input_manager, filename)
@@ -263,6 +267,32 @@ def generate_specific_consumption_output(model: endemo.Endemo):
                 fg.add_entry("Hydrogen [GJ/t]", sc.hydrogen)
                 fg.add_entry("max. subst. of heat with H2 [%]", sc.max_subst_h2)
 
+    filename = "endemo2_specific_consumption_coef_electricity.xlsx"
+    fg = FileGenerator(input_manager, filename)
+    with fg:
+        for product_name, product_obj in input_manager.industry_input.active_products.items():
+            fg.start_sheet(product_name)
+            for country in countries.values():
+                fg.add_entry("Country", country.get_name())
+                sc_obj = country.get_sector(sector.SectorIdentifier.INDUSTRY).get_product(product_name) \
+                    .get_specific_consumption()
+                fg.add_entry("_calculate_sc", sc_obj.get__calculate_sc())
+                electricity_coef = sc_obj.get_coef(containers.DemandType.ELECTRICITY)
+                shortcut_coef_output(fg, electricity_coef, electricity_coef, electricity_coef)
+
+    filename = "endemo2_specific_consumption_coef_heat.xlsx"
+    fg = FileGenerator(input_manager, filename)
+    with fg:
+        for product_name, product_obj in input_manager.industry_input.active_products.items():
+            fg.start_sheet(product_name)
+            for country in countries.values():
+                fg.add_entry("Country", country.get_name())
+                sc_obj = country.get_sector(sector.SectorIdentifier.INDUSTRY).get_product(product_name) \
+                    .get_specific_consumption()
+                fg.add_entry("_calculate_sc", sc_obj.get__calculate_sc())
+                heat_coef = sc_obj.get_coef(containers.DemandType.HEAT)
+                shortcut_coef_output(fg, heat_coef, heat_coef, heat_coef)
+
 
 def generate_demand_output(model: endemo.Endemo):
     """
@@ -274,7 +304,6 @@ def generate_demand_output(model: endemo.Endemo):
     input_manager = model.input_manager
     countries = model.countries
     target_year = input_manager.ctrl.general_settings.target_year
-    per_capita = input_manager.ctrl.industry_settings.production_quantity_calc_per_capita
 
     def shortcut_demand_table(fg: FileGenerator, demand: containers.Demand):
         # scale per capita demand to be total amount

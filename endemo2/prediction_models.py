@@ -109,6 +109,14 @@ class Timeseries:
 
         self._coef.exp = Exp(start_x, start_y, rate_of_change)
 
+    def get_mean_y(self) -> float:
+        """
+        Get mean of all values on the y-axis of the data.
+        :return: The mean of all y values of the data.
+        """
+        only_y = [y for (x, y) in self._data]
+        return st.mean(only_y)
+
     def _calc_coef_lin(self):
         """ Calculates and sets the coefficient for the linear forecast method. """
         if len(self._data) < 2:

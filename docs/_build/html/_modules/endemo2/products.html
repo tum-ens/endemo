@@ -309,13 +309,15 @@
 
 <span class="sd">    :ivar SC default_specific_consumption: The specific consumption for a product type, that is used as default if</span>
 <span class="sd">        there is no historical data to predict the specific consumption.</span>
-<span class="sd">    :ivar dict[str, Timeseries] historical_specific_consumption: The historical data for specific consumption according</span>
-<span class="sd">        to energy carrier.</span>
+<span class="sd">    :ivar Timeseries ts_his_specific_consumption: The timeseries for specific consumption.</span>
+<span class="sd">        Includes different energy carriers with varying efficiencies and is given per product.</span>
 <span class="sd">    :ivar dict[str, EH] efficiency: Efficiency of each energy carrier in percent in [0,1].</span>
 <span class="sd">    :ivar Timeseries _product_amount_per_year: A reference to the timeseries of the product_amount_per_year taken from</span>
 <span class="sd">        the product object.</span>
 <span class="sd">    :ivar bool _calculate_sc: Indicates whether the specific consumption should be calculated or default value should</span>
 <span class="sd">        be used.</span>
+<span class="sd">    :ivar str county_name: Name of the country the product of this sc belongs to.</span>
+<span class="sd">    :ivar str product_name: Name of the product this sc belongs to.</span>
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -327,6 +329,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">default_specific_consumption</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">specific_consumption_default</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_sc</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">country_name</span> <span class="o">=</span> <span class="n">country_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">product_name</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">product_name</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">historical_specific_consumption</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">]()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_product_amount_per_year</span> <span class="o">=</span> <span class="n">product_amount_per_year</span>
@@ -346,8 +351,15 @@
             <span class="n">dict_sc_his</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">specific_consumption_historical</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dict_sc_his</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">historical_specific_consumption</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">)</span>
+                <span class="n">uty</span><span class="o">.</span><span class="n">plot_timeseries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">historical_specific_consumption</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">country_name</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;Time&quot;</span><span class="p">,</span> <span class="s2">&quot;SC&quot;</span><span class="p">)</span>
+
+
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_sc</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+    <span class="c1"># def get_coefs(self):</span>
+      <span class="c1">#  return self.historical_specific_consumption[key]</span>
 
 <div class="viewcode-block" id="SpecificConsumptionData.get_scale"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.SpecificConsumptionData.get_scale">[docs]</a>    <span class="k">def</span> <span class="nf">get_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">scalar</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ctn</span><span class="o">.</span><span class="n">SC</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -370,10 +382,19 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_sc</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">historical_specific_consumption</span><span class="p">:</span>
             <span class="n">electricity</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">heat</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">historical_specific_consumption</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">prog_amount</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get_prog</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_product_amount_per_year</span><span class="o">.</span><span class="n">get_prog</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
-                <span class="n">electricity</span> <span class="o">+=</span> <span class="n">prog_amount</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">electricity</span>
-                <span class="n">heat</span> <span class="o">+=</span> <span class="n">prog_amount</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">heat</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ts_sc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">historical_specific_consumption</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Country: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_name</span> <span class="o">+</span> <span class="s2">&quot;; Product: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_name</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ts_sc</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; ( &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">electricity</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">heat</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; )&quot;</span><span class="p">)</span>
+
+                <span class="n">prod_amount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_product_amount_per_year</span><span class="o">.</span><span class="n">get_prog</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>   <span class="c1"># convert kt -&gt; t</span>
+                <span class="n">spec_consum</span> <span class="o">=</span> <span class="n">ts_sc</span><span class="o">.</span><span class="n">get_prog</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">/</span> <span class="n">prod_amount</span>   <span class="c1"># convert TJ/t -&gt; GJ/t</span>
+                <span class="n">electricity</span> <span class="o">+=</span> <span class="n">spec_consum</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">electricity</span>
+                <span class="n">heat</span> <span class="o">+=</span> <span class="n">spec_consum</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">heat</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;product amount: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">prod_amount</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;spec amount: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">spec_consum</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;electricity: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">electricity</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;heat: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">heat</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">ctn</span><span class="o">.</span><span class="n">SC</span><span class="p">(</span><span class="n">electricity</span><span class="p">,</span> <span class="n">heat</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># future TODO: add efficiency to default specific consumption</span>

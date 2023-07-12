@@ -51,7 +51,7 @@ class Input:
         self.general_input = GeneralInput(self.ctrl, self.general_path)
 
         # read industry
-        self.industry_input = IndustryInput(self.industry_path, industry_settings)
+        self.industry_input = IndustryInput(self.industry_path, industry_settings, self.general_input.abbreviations)
 
 
 class PopulationData:
@@ -235,6 +235,7 @@ class ProductInput:
     :param manual_exp_change_rate: manual_exp_change_rate
     :param perc_used: perc_used
 
+    :ivar str product_name: The name of the product.
     :ivar dict[str, containers.SC] specific_consumption_default: Default specific consumption value for this product.
     :ivar dict[str, (float, float)] specific_consumption_historical: Historical specific consumption data
         for this product. Accessible per country.
@@ -248,7 +249,8 @@ class ProductInput:
         This is used to model modern technologies replacing old ones.
     """
 
-    def __init__(self, sc, bat, prod, sc_h, sc_h_active, heat_levels, manual_exp_change_rate, perc_used):
+    def __init__(self, name, sc, bat, prod, sc_h, sc_h_active, heat_levels, manual_exp_change_rate, perc_used):
+        self.product_name = name
         self.specific_consumption_default = sc
         self.bat = bat
         self.production = prod
@@ -397,7 +399,7 @@ class IndustryInput:
     sc_historical_sheet_names = ["Feste fossile Brennstoffe", "Synthetische Gase", "Erdgas", "Oel",
                                  "Erneuerbare Energien", "Abfaelle", "Elektrizitaet", "Waerme"]
 
-    def __init__(self, industry_path: Path, industry_settings: cp.IndustrySettings):
+    def __init__(self, industry_path: Path, industry_settings: cp.IndustrySettings, abbreviations: dict):
         self.settings = industry_settings
         self.active_products = dict[str, ProductInput]()
 
@@ -455,6 +457,11 @@ class IndustryInput:
                            row["Spec hydrogen consumption [GJ/t]"],
                            row["max. subst. of heat with H2 [%]"])
 
+            # create country_name_de -> country_name_en mapping
+            dict_de_en_map = dict()
+            for name_en, (alpha2, alpha3, name_de) in abbreviations.items():
+                dict_de_en_map[name_de] = name_en
+
             # read specific demand historical data
             dict_sc_his = dict()
             sc_his_calc = False
@@ -467,9 +474,15 @@ class IndustryInput:
                 for sheet_name in self.sc_historical_sheet_names:
                     df_sc = pd.read_excel(ex_sc_his, sheet_name)
                     for _, row in df_sc.iterrows():
-                        country_name = row["GEO/TIME"]
+                        country_name_de = row["GEO/TIME"]
                         years = df_sc.columns[1:]
-                        data = df_sc[df_sc["GEO/TIME"] == country_name].iloc[0][1:]
+                        data = df_sc[df_sc["GEO/TIME"] == country_name_de].iloc[0][1:]
+
+                        # convert country name to model-intern english representation
+                        if country_name_de in dict_de_en_map.keys():
+                            country_name_en = dict_de_en_map[country_name_de]
+                        else:
+                            continue
 
                         if not uty.is_zero(data):
                             # data exists -> fill into dictionary
@@ -477,10 +490,10 @@ class IndustryInput:
                             his_data = uty.filter_out_nan_and_inf(zipped)
                             # his_data = uty.cut_after_x(his_data, industry_settings.last_available_year)
 
-                            if country_name not in dict_sc_his.keys():
-                                dict_sc_his[country_name] = dict()
+                            if country_name_de not in dict_sc_his.keys():
+                                dict_sc_his[country_name_en] = dict()
 
-                            dict_sc_his[country_name][sheet_name] = his_data
+                            dict_sc_his[country_name_en][sheet_name] = his_data
 
             # read bat consumption data
             df_prod_bat = pd.read_excel(ex_bat, sheet_name=product_name)
@@ -492,8 +505,8 @@ class IndustryInput:
                            row["Spec heat consumption [GJ/t]"])
 
             self.active_products[product_name] = \
-                ProductInput(dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his, sc_his_calc,
-                             dict_heat_levels[product_name],
+                ProductInput(product_name, dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his,
+                             sc_his_calc, dict_heat_levels[product_name],
                              industry_settings.product_settings[product_name].manual_exp_change_rate,
                              industry_settings.product_settings[product_name].perc_used)
 
