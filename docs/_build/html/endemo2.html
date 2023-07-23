@@ -311,6 +311,8 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.products.SpecificConsumptionData"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.products.SpecificConsumptionData.get"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.products.SpecificConsumptionData.get__calculate_sc"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData.get__calculate_sc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.products.SpecificConsumptionData.get_coef"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData.get_coef()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.products.SpecificConsumptionData.get_scale"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData.get_scale()</span></code></a></li>
 </ul>
 </li>
@@ -345,11 +347,13 @@
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.is_zero"><code class="docutils literal notranslate"><span class="pre">is_zero()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.lin_prediction"><code class="docutils literal notranslate"><span class="pre">lin_prediction()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.linear_regression"><code class="docutils literal notranslate"><span class="pre">linear_regression()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.map_data_y"><code class="docutils literal notranslate"><span class="pre">map_data_y()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.plot_timeseries"><code class="docutils literal notranslate"><span class="pre">plot_timeseries()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.quadr_prediction"><code class="docutils literal notranslate"><span class="pre">quadr_prediction()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.quadratic_regression"><code class="docutils literal notranslate"><span class="pre">quadratic_regression()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.quadratic_regression_delta"><code class="docutils literal notranslate"><span class="pre">quadratic_regression_delta()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.str_dict"><code class="docutils literal notranslate"><span class="pre">str_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.zip_data_on_x_and_map"><code class="docutils literal notranslate"><span class="pre">zip_data_on_x_and_map()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.zip_on_x"><code class="docutils literal notranslate"><span class="pre">zip_on_x()</span></code></a></li>
 </ul>
 </li>
@@ -1835,12 +1839,9 @@ interval-growth-rate forecast.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.prediction_models.Timeseries.get_mean_y">
-<span class="sig-name descname"><span class="pre">get_mean_y</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/prediction_models.html#Timeseries.get_mean_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.prediction_models.Timeseries.get_mean_y" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Todo<span class="colon">:</span></dt>
-<dd class="field-odd"><p>split data to calc mean y value</p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">get_mean_y</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/endemo2/prediction_models.html#Timeseries.get_mean_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.prediction_models.Timeseries.get_mean_y" title="Permalink to this definition"></a></dt>
+<dd><p>Get mean of all values on the y-axis of the data.
+:return: The mean of all y values of the data.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2100,7 +2101,7 @@ amount, used in calculations. (Redundant, but used to prevent circular dependenc
 <dd class="field-even"><ul class="simple">
 <li><p><strong>default_specific_consumption</strong> (<a class="reference internal" href="#endemo2.containers.SC" title="endemo2.containers.SC"><em>SC</em></a>) – The specific consumption for a product type, that is used as default if
 there is no historical data to predict the specific consumption.</p></li>
-<li><p><strong>ts_his_specific_consumption</strong> (<a class="reference internal" href="#endemo2.prediction_models.Timeseries" title="endemo2.prediction_models.Timeseries"><em>Timeseries</em></a>) – The timeseries for specific consumption.
+<li><p><strong>ts_his_specific_consumption</strong> (<em>dict</em><em>[</em><a class="reference internal" href="#endemo2.containers.DemandType" title="endemo2.containers.DemandType"><em>DemandType</em></a><em>, </em><a class="reference internal" href="#endemo2.prediction_models.Timeseries" title="endemo2.prediction_models.Timeseries"><em>Timeseries</em></a><em>]</em>) – The timeseries for specific consumption.
 Includes different energy carriers with varying efficiencies and is given per product.</p></li>
 <li><p><strong>efficiency</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#endemo2.containers.EH" title="endemo2.containers.EH"><em>EH</em></a><em>]</em>) – Efficiency of each energy carrier in percent in [0,1].</p></li>
 <li><p><strong>_product_amount_per_year</strong> (<a class="reference internal" href="#endemo2.prediction_models.Timeseries" title="endemo2.prediction_models.Timeseries"><em>Timeseries</em></a>) – A reference to the timeseries of the product_amount_per_year taken from
@@ -2124,6 +2125,20 @@ be used.</p></li>
 <dd class="field-even"><p>The calculated specific consumption amounts.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.products.SpecificConsumptionData.get__calculate_sc">
+<span class="sig-name descname"><span class="pre">get__calculate_sc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/endemo2/products.html#SpecificConsumptionData.get__calculate_sc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.SpecificConsumptionData.get__calculate_sc" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for attribute __calculate_sc</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.products.SpecificConsumptionData.get_coef">
+<span class="sig-name descname"><span class="pre">get_coef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">demand_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#endemo2.containers.DemandType" title="endemo2.containers.DemandType"><span class="pre">DemandType</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.prediction_models.Coef" title="endemo2.prediction_models.Coef"><span class="pre">Coef</span></a></span></span><a class="reference internal" href="_modules/endemo2/products.html#SpecificConsumptionData.get_coef"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.products.SpecificConsumptionData.get_coef" title="Permalink to this definition"></a></dt>
+<dd><p>Get the coefficients of the specific consumption timeseries for a specified demand type.
+:param demand_type: The demand type to get coefficients for. Example: DemandType.ELECTRICITY.
+:return: The coefficients for the demand type.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2193,13 +2208,13 @@ Contains what different sectors have in common.</p>
 <span id="endemo2-utility-module"></span><h2>endemo2.utility module<a class="headerlink" href="#module-endemo2.utility" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="endemo2.utility.combine_data_on_x">
-<span class="sig-prename descclassname"><span class="pre">endemo2.utility.</span></span><span class="sig-name descname"><span class="pre">combine_data_on_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ascending_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/endemo2/utility.html#combine_data_on_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.combine_data_on_x" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">endemo2.utility.</span></span><span class="sig-name descname"><span class="pre">combine_data_on_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xys1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xys2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ascending_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/endemo2/utility.html#combine_data_on_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.combine_data_on_x" title="Permalink to this definition"></a></dt>
 <dd><p>Zip the two lists of tuples on the condition that the first tuple entry matches.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> – List to zip nr1 [(a,b)]</p></li>
-<li><p><strong>y</strong> – List to zip nr2 [(c, d)]</p></li>
+<li><p><strong>xys1</strong> – List to zip nr1 [(a,b)]</p></li>
+<li><p><strong>xys2</strong> – List to zip nr2 [(c, d)]</p></li>
 <li><p><strong>ascending_x</strong> – Indicates that the first tuple entry is ascending in the lists.
 If true, a more efficient algorithm can be used.</p></li>
 </ul>
@@ -2264,7 +2279,7 @@ A key is the first value in row. The corresponding value is a list [column_name,
 
 <dl class="py function">
 <dt class="sig sig-object py" id="endemo2.utility.filter_out_nan_and_inf">
-<span class="sig-prename descclassname"><span class="pre">endemo2.utility.</span></span><span class="sig-name descname"><span class="pre">filter_out_nan_and_inf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/endemo2/utility.html#filter_out_nan_and_inf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.filter_out_nan_and_inf" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">endemo2.utility.</span></span><span class="sig-name descname"><span class="pre">filter_out_nan_and_inf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/endemo2/utility.html#filter_out_nan_and_inf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.filter_out_nan_and_inf" title="Permalink to this definition"></a></dt>
 <dd><p>Filters out all entries in the list of tuples, where one of the values is either Inf or NaN.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2351,6 +2366,23 @@ are checked for being zero.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The calculated coefficients (k0, k1)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.map_data_y">
+<span class="sig-prename descclassname"><span class="pre">endemo2.utility.</span></span><span class="sig-name descname"><span class="pre">map_data_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/endemo2/utility.html#map_data_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.map_data_y" title="Permalink to this definition"></a></dt>
+<dd><p>Applies the given function component-wise on the y-axis of the given data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xys</strong> – The given data.</p></li>
+<li><p><strong>function</strong> – Function to apply to y-axis. Should be of form lambda x -&gt; …</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The mapped data.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2447,8 +2479,27 @@ key : value,
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.zip_data_on_x_and_map">
+<span class="sig-prename descclassname"><span class="pre">endemo2.utility.</span></span><span class="sig-name descname"><span class="pre">zip_data_on_x_and_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xys1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xys2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="_modules/endemo2/utility.html#zip_data_on_x_and_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.zip_data_on_x_and_map" title="Permalink to this definition"></a></dt>
+<dd><p>Combines two data lists and applies the given function to them.
+x-axis has to be ascending.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xys1</strong> (<em>[</em><em>(</em><em>float</em><em>, </em><em>float</em><em>)</em><em>]</em>) – Data list one.</p></li>
+<li><p><strong>xys2</strong> (<em>[</em><em>(</em><em>float</em><em>, </em><em>float</em><em>)</em><em>]</em>) – Data list two.</p></li>
+<li><p><strong>function</strong> – The function that is applied. Should be of form lambda x y1 y2 -&gt; …</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the applied function.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="endemo2.utility.zip_on_x">
-<span class="sig-prename descclassname"><span class="pre">endemo2.utility.</span></span><span class="sig-name descname"><span class="pre">zip_on_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#zip_on_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.zip_on_x" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">endemo2.utility.</span></span><span class="sig-name descname"><span class="pre">zip_on_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#zip_on_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.zip_on_x" title="Permalink to this definition"></a></dt>
 <dd><p>A helper function for combine_data_on_x. This is a generator, that returns one value after another.
 Can be cast to list to apply on whole input at once and create a list as output of form [(a, b), (a, d)]</p>
 <dl class="field-list simple">

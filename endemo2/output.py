@@ -293,6 +293,40 @@ def generate_specific_consumption_output(model: endemo.Endemo):
                 heat_coef = sc_obj.get_coef(containers.DemandType.HEAT)
                 shortcut_coef_output(fg, heat_coef, heat_coef, heat_coef)
 
+    def save_timeseries_print(fg, from_year, to_year, data: [(float, float)]):
+        """ To correctly print, when data does potentially not cover every year."""
+        i = from_year
+        for (year, value) in data:
+            while i < year:
+                fg.add_entry(i, "-")
+                i += 1
+            fg.add_entry(year, value)
+            i += 1
+
+        while i <= to_year:
+            fg.add_entry(i, "-")
+            i += 1
+
+    filename = "endemo2_specific_consumption_timelines.xlsx"
+    fg = FileGenerator(input_manager, filename)
+    with fg:
+        for product_name, product_obj in input_manager.industry_input.active_products.items():
+            fg.start_sheet(product_name + "_el")
+            for country in countries.values():
+                fg.add_entry("Country", country.get_name())
+                sc_obj = country.get_sector(sector.SectorIdentifier.INDUSTRY).get_product(product_name) \
+                    .get_specific_consumption()
+                data = sc_obj.get_historical_specific_demand(containers.DemandType.ELECTRICITY)
+                save_timeseries_print(fg, 1990, 2020, data)
+            fg.start_sheet(product_name + "_heat")
+            for country in countries.values():
+                fg.add_entry("Country", country.get_name())
+                sc_obj = country.get_sector(sector.SectorIdentifier.INDUSTRY).get_product(product_name) \
+                    .get_specific_consumption()
+                data = sc_obj.get_historical_specific_demand(containers.DemandType.HEAT)
+                save_timeseries_print(fg, 1990, 2020, data)
+
+
 
 def generate_demand_output(model: endemo.Endemo):
     """

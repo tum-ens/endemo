@@ -462,6 +462,9 @@ class IndustryInput:
             for name_en, (alpha2, alpha3, name_de) in abbreviations.items():
                 dict_de_en_map[name_de] = name_en
 
+            if product_name in ["paper"]:
+                print("break")
+
             # read specific demand historical data
             dict_sc_his = dict()
             sc_his_calc = False
@@ -490,7 +493,7 @@ class IndustryInput:
                             his_data = uty.filter_out_nan_and_inf(zipped)
                             # his_data = uty.cut_after_x(his_data, industry_settings.last_available_year)
 
-                            if country_name_de not in dict_sc_his.keys():
+                            if country_name_en not in dict_sc_his.keys():
                                 dict_sc_his[country_name_en] = dict()
 
                             dict_sc_his[country_name_en][sheet_name] = his_data

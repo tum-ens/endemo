@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import itertools
+import warnings
+
 from endemo2 import utility as uty
 from endemo2 import input
 from endemo2 import prediction_models as pm
@@ -229,7 +232,6 @@ class SpecificConsumptionData:
     """
     Holds all consumption data for one product within an industry of a country.
 
-
     :param Input input_manager: The input manager, containing information needed to create this object.
     :param ProductInput product_input: The input for this specific product type, needed to create it. (Redundant)
     :param Timeseries product_amount_per_year: The timeseries object from the product to get the predicted product
@@ -238,7 +240,8 @@ class SpecificConsumptionData:
 
     :ivar SC default_specific_consumption: The specific consumption for a product type, that is used as default if
         there is no historical data to predict the specific consumption.
-    :ivar dict[DemandType, Timeseries] ts_his_specific_consumption: The timeseries for specific consumption.
+    :ivar dict[DemandType, Timeseries] ts_his_specific_consumption: The dictionary holding timeseries of different
+        demand types for specific consumption.
         Includes different energy carriers with varying efficiencies and is given per product.
     :ivar dict[str, EH] efficiency: Efficiency of each energy carrier in percent in [0,1].
     :ivar Timeseries _product_amount_per_year: A reference to the timeseries of the product_amount_per_year taken from
@@ -282,9 +285,11 @@ class SpecificConsumptionData:
         # read historical specific consumption data
         if country_name in product_input.specific_consumption_historical:
             dict_sc_his = product_input.specific_consumption_historical[country_name]
+            first_year_for_data = int(list(dict_sc_his.values())[0][0][0])  # read year range from first entry
+            last_year_for_data = int(list(dict_sc_his.values())[0][-1][0])
 
-            electricity_demand_sum = []
-            heat_demand_sum = []
+            electricity_demand_sum = list(zip(range(first_year_for_data, last_year_for_data + 1), itertools.repeat(0)))
+            heat_demand_sum = list(zip(range(first_year_for_data, last_year_for_data + 1), itertools.repeat(0)))
 
             for energy_carrier_name, his_energy in dict_sc_his.items():
                 energy_carrier_efficiency_electricity = self.efficiency[energy_carrier_name].electricity
@@ -299,31 +304,28 @@ class SpecificConsumptionData:
                                    lambda x: x * energy_carrier_efficiency_heat * 1000)     # convert TJ->GJ
 
                 # sum total demand over all energy carriers
-                if len(electricity_demand_sum) == 0:
-                    electricity_demand_sum = energy_carrier_electricity
-                else:
-                    uty.zip_data_on_x_and_map(electricity_demand_sum, energy_carrier_electricity,
-                                              lambda x, y1, y2: (x, y1 + y2))
-                if len(heat_demand_sum) == 0:
-                    heat_demand_sum = energy_carrier_heat
-                else:
-                    uty.zip_data_on_x_and_map(heat_demand_sum, energy_carrier_heat,
-                                              lambda x, y1, y2: (x, y1 + y2))
+                electricity_demand_sum = uty.zip_data_on_x_and_map(electricity_demand_sum, energy_carrier_electricity,
+                                                                   lambda x, y1, y2: (x, y1 + y2))
+                heat_demand_sum = uty.zip_data_on_x_and_map(heat_demand_sum, energy_carrier_heat,
+                                                            lambda x, y1, y2: (x, y1 + y2))
 
             # divide by product amount to get per product consumption (sc)
-            product_amount_without_zeros = [(x, y) for (x, y) in product_amount_per_year.get_data() if y != 0.0]
+            product_amount_wo_zeros = [(x, y) for (x, y) in product_amount_per_year.get_data() if y != 0]
 
             sc_electricity_his = \
-                uty.zip_data_on_x_and_map(electricity_demand_sum, product_amount_without_zeros,
-                                          lambda x, y1, y2: (x, y1 / (y2 * 1000)))    # convert product amount: kt->t
+                uty.zip_data_on_x_and_map(electricity_demand_sum, product_amount_wo_zeros,
+                                          lambda x, y1, y2: (x, y1 / (y2 * 1000)))
             sc_heat_his = \
-                uty.zip_data_on_x_and_map(heat_demand_sum, product_amount_without_zeros,
-                                          lambda x, y1, y2: (x, y1 / (y2 * 1000)))    # convert product amount: kt->t
+                uty.zip_data_on_x_and_map(heat_demand_sum, product_amount_wo_zeros,
+                                          lambda x, y1, y2: (x, y1 / (y2 * 1000)))
 
             _, electricity_demand_sum_y = zip(*electricity_demand_sum)
             _, heat_demand_sum_y = zip(*heat_demand_sum)
             zero_electricity_demand = uty.is_zero(electricity_demand_sum_y)
             zero_heat_demand = uty.is_zero(heat_demand_sum_y)
+
+            if country_name in ["Germany"] and self.product_name in ["paper"]:
+                print("break")
 
             if not zero_electricity_demand:
                 self.ts_his_specific_consumption[ctn.DemandType.ELECTRICITY] = \
@@ -381,6 +383,9 @@ class SpecificConsumptionData:
         sc = self.get(year)
         return ctn.SC(sc.electricity * scalar, sc.heat * scalar, sc.hydrogen * scalar, sc.max_subst_h2)
 
+    def get_historical_specific_demand(self, demand_type: ctn.DemandType) -> [(float, float)]:
+        return self.ts_his_specific_consumption[demand_type].get_data()
+
     def get(self, year) -> ctn.SC:
         """
         Getter for the specific consumption
@@ -388,7 +393,6 @@ class SpecificConsumptionData:
         :param year: Target year, for which we want to know the specific consumption amount.
         :return: The calculated specific consumption amounts.
         """
-        print(self.product_name + str(self.ts_his_specific_consumption))
         electricity = self.ts_his_specific_consumption[ctn.DemandType.ELECTRICITY].get_prog(year)
         heat = self.ts_his_specific_consumption[ctn.DemandType.HEAT].get_prog(year)
         hydrogen = self.ts_his_specific_consumption[ctn.DemandType.HYDROGEN].get_prog(year)
