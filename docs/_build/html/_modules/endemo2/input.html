@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>endemo2.input &mdash; Endemo2 2.0 documentation</title>
+  <title>endemo2.input &mdash; Endemo 2.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -29,7 +29,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            Endemo2
+            Endemo
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -50,7 +50,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Endemo2</a>
+          <a href="../../index.html">Endemo</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -75,6 +75,8 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">containers</span> <span class="k">as</span> <span class="n">ctn</span>
@@ -125,7 +127,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">industry_input</span> <span class="o">=</span> <span class="n">IndustryInput</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">industry_path</span><span class="p">,</span> <span class="n">industry_settings</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">general_input</span><span class="o">.</span><span class="n">abbreviations</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="PopulationData"><a class="viewcode-back" href="../../endemo2.html#endemo2.input.PopulationData">[docs]</a><span class="k">class</span> <span class="nc">PopulationData</span><span class="p">:</span>
+<div class="viewcode-block" id="PopulationInput"><a class="viewcode-back" href="../../endemo2.html#endemo2.input.PopulationInput">[docs]</a><span class="k">class</span> <span class="nc">PopulationInput</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Holds all data on population. That includes historical data, prognosis data for each country and nuts2 region.</span>
 
@@ -287,9 +289,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">gdp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctn</span><span class="o">.</span><span class="n">HisProg</span><span class="p">(</span><span class="n">gdp_his</span><span class="p">,</span> <span class="n">zipped_gdp_prog</span><span class="p">)</span>
 
         <span class="c1"># create PopulationData object</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="n">PopulationData</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_valid_regions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">abbreviations</span><span class="p">,</span>
-                                         <span class="n">df_world_pop_his</span><span class="p">,</span> <span class="n">df_world_pop_prog</span><span class="p">,</span> <span class="n">df_nuts2_pop_his</span><span class="p">,</span>
-                                         <span class="n">df_nuts2_pop_prog</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="n">PopulationInput</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_valid_regions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">abbreviations</span><span class="p">,</span>
+                                          <span class="n">df_world_pop_his</span><span class="p">,</span> <span class="n">df_world_pop_prog</span><span class="p">,</span> <span class="n">df_nuts2_pop_his</span><span class="p">,</span>
+                                          <span class="n">df_nuts2_pop_prog</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ProductInput"><a class="viewcode-back" href="../../endemo2.html#endemo2.input.ProductInput">[docs]</a><span class="k">class</span> <span class="nc">ProductInput</span><span class="p">:</span>
@@ -318,9 +320,12 @@
 <span class="sd">        this will be the change rate.</span>
 <span class="sd">    :ivar float perc_used: A scalar for the amount of a product.</span>
 <span class="sd">        This is used to model modern technologies replacing old ones.</span>
+<span class="sd">    :ivar dict[str, dict[str, float]]: Installed capacity in %/100 for each NUTS2 Region.</span>
+<span class="sd">        Structure {country_name -&gt; {nuts2_region_name -&gt; capacity_value}}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="n">bat</span><span class="p">,</span> <span class="n">prod</span><span class="p">,</span> <span class="n">sc_h</span><span class="p">,</span> <span class="n">sc_h_active</span><span class="p">,</span> <span class="n">heat_levels</span><span class="p">,</span> <span class="n">manual_exp_change_rate</span><span class="p">,</span> <span class="n">perc_used</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="n">bat</span><span class="p">,</span> <span class="n">prod</span><span class="p">,</span> <span class="n">sc_h</span><span class="p">,</span> <span class="n">sc_h_active</span><span class="p">,</span> <span class="n">heat_levels</span><span class="p">,</span> <span class="n">manual_exp_change_rate</span><span class="p">,</span> <span class="n">perc_used</span><span class="p">,</span>
+                 <span class="n">nuts2_installed_capacity</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">product_name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption_default</span> <span class="o">=</span> <span class="n">sc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bat</span> <span class="o">=</span> <span class="n">bat</span>
@@ -333,6 +338,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">manual_exp_change_rate</span> <span class="o">=</span> <span class="n">manual_exp_change_rate</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">perc_used</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">perc_used</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">perc_used</span><span class="p">))</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_installed_capacity</span> <span class="o">=</span> <span class="n">nuts2_installed_capacity</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Specific Consumption: &quot;</span> <span class="o">+</span> <span class="n">uty</span><span class="o">.</span><span class="n">str_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption_default</span><span class="p">)</span> <span class="o">+</span> \
@@ -405,8 +411,8 @@
                           <span class="s2">&quot; on the Retrieve object.&quot;</span><span class="p">)</span>
         <span class="c1"># skip years</span>
         <span class="k">for</span> <span class="n">skip_year</span> <span class="ow">in</span> <span class="n">skip_years</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">skip_year</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">skip_year</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+            <span class="k">if</span> <span class="n">skip_year</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">skip_year</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FileReadingHelper.get"><a class="viewcode-back" href="../../endemo2.html#endemo2.input.FileReadingHelper.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -476,6 +482,7 @@
 
         <span class="n">ex_spec</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">industry_path</span> <span class="o">/</span> <span class="s2">&quot;Specific_Consumption.xlsx&quot;</span><span class="p">)</span>
         <span class="n">ex_bat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">industry_path</span> <span class="o">/</span> <span class="s2">&quot;BAT_Consumption.xlsx&quot;</span><span class="p">)</span>
+        <span class="n">ex_nuts2_ic</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">industry_path</span> <span class="o">/</span> <span class="s2">&quot;Installed_capacity_NUTS2.xlsx&quot;</span><span class="p">)</span>
 
         <span class="c1"># read heat levels</span>
         <span class="n">df_heat_levels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">industry_path</span> <span class="o">/</span> <span class="s2">&quot;Heat_levels.xlsx&quot;</span><span class="p">)</span>
@@ -561,7 +568,7 @@
                             <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">filter_out_nan_and_inf</span><span class="p">(</span><span class="n">zipped</span><span class="p">)</span>
                             <span class="c1"># his_data = uty.cut_after_x(his_data, industry_settings.last_available_year)</span>
 
-                            <span class="k">if</span> <span class="n">country_name_de</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_sc_his</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="k">if</span> <span class="n">country_name_en</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_sc_his</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                                 <span class="n">dict_sc_his</span><span class="p">[</span><span class="n">country_name_en</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
                             <span class="n">dict_sc_his</span><span class="p">[</span><span class="n">country_name_en</span><span class="p">][</span><span class="n">sheet_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">his_data</span>
@@ -575,13 +582,39 @@
                     <span class="n">ctn</span><span class="o">.</span><span class="n">EH</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Spec electricity consumption [GJ/t]&quot;</span><span class="p">],</span>
                            <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Spec heat consumption [GJ/t]&quot;</span><span class="p">])</span>
 
+            <span class="c1"># create alpha2 -&gt; country_name_en mapping</span>
+            <span class="n">dict_2_en_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">name_en</span><span class="p">,</span> <span class="p">(</span><span class="n">alpha2</span><span class="p">,</span> <span class="n">alpha3</span><span class="p">,</span> <span class="n">name_de</span><span class="p">)</span> <span class="ow">in</span> <span class="n">abbreviations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">dict_2_en_map</span><span class="p">[</span><span class="n">alpha2</span><span class="p">]</span> <span class="o">=</span> <span class="n">name_en</span>
+
+            <span class="c1"># read NUTS2 installed capacity</span>
+            <span class="n">dict_installed_capacity_nuts2</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]()</span>
+
+            <span class="n">product_name_general</span> <span class="o">=</span> <span class="n">product_name</span>
+            <span class="k">if</span> <span class="n">product_name_general</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_classic&quot;</span><span class="p">):</span>
+                <span class="n">product_name_general</span> <span class="o">=</span> <span class="n">product_name_general</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s2">&quot;_classic&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">product_name_general</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;steel_prim&quot;</span><span class="p">,</span> <span class="s2">&quot;steel_sec&quot;</span><span class="p">]:</span>
+                <span class="c1"># PLACEHOLDER until steel is finished in sheets. TODO: remove when steel is correct in sheet</span>
+                <span class="n">product_name_general</span> <span class="o">=</span> <span class="s2">&quot;steel&quot;</span>
+            <span class="n">df_nuts2_ic</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_nuts2_ic</span><span class="p">,</span> <span class="n">product_name_general</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_nuts2_ic</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">nuts2</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;NUTS2&quot;</span><span class="p">]</span>
+                <span class="n">alpha2</span> <span class="o">=</span> <span class="n">nuts2</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">alpha2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_2_en_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">continue</span>
+                <span class="n">country_name_en</span> <span class="o">=</span> <span class="n">dict_2_en_map</span><span class="p">[</span><span class="n">nuts2</span><span class="p">[:</span><span class="mi">2</span><span class="p">]]</span>
+                <span class="k">if</span> <span class="n">country_name_en</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_installed_capacity_nuts2</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">dict_installed_capacity_nuts2</span><span class="p">[</span><span class="n">country_name_en</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>
+                <span class="n">perc_value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">product_name_general</span> <span class="o">+</span> <span class="s2">&quot; %&quot;</span><span class="p">]</span>
+                <span class="n">dict_installed_capacity_nuts2</span><span class="p">[</span><span class="n">country_name_en</span><span class="p">][</span><span class="n">nuts2</span><span class="p">]</span> <span class="o">=</span> <span class="n">perc_value</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">perc_value</span><span class="p">)</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+            <span class="c1"># finally store in product data class</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">active_products</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span> <span class="o">=</span> \
                 <span class="n">ProductInput</span><span class="p">(</span><span class="n">product_name</span><span class="p">,</span> <span class="n">dict_prod_sc_country</span><span class="p">,</span> <span class="n">dict_prod_bat_country</span><span class="p">,</span> <span class="n">dict_prod_his</span><span class="p">,</span> <span class="n">dict_sc_his</span><span class="p">,</span>
                              <span class="n">sc_his_calc</span><span class="p">,</span> <span class="n">dict_heat_levels</span><span class="p">[</span><span class="n">product_name</span><span class="p">],</span>
                              <span class="n">industry_settings</span><span class="o">.</span><span class="n">product_settings</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span><span class="o">.</span><span class="n">manual_exp_change_rate</span><span class="p">,</span>
-                             <span class="n">industry_settings</span><span class="o">.</span><span class="n">product_settings</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span><span class="o">.</span><span class="n">perc_used</span><span class="p">)</span>
-
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Input was successfully read.&quot;</span><span class="p">)</span></div>
+                             <span class="n">industry_settings</span><span class="o">.</span><span class="n">product_settings</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span><span class="o">.</span><span class="n">perc_used</span><span class="p">,</span>
+                             <span class="n">dict_installed_capacity_nuts2</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

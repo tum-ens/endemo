@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>endemo2.products &mdash; Endemo2 2.0 documentation</title>
+  <title>endemo2.products &mdash; Endemo 2.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -29,7 +29,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            Endemo2
+            Endemo
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -50,7 +50,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Endemo2</a>
+          <a href="../../index.html">Endemo</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -71,11 +71,14 @@
   <h1>Source code for endemo2.products</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">endemo2.country</span>
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">utility</span> <span class="k">as</span> <span class="n">uty</span>
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="nb">input</span>
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">prediction_models</span> <span class="k">as</span> <span class="n">pm</span>
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">control_parameters</span> <span class="k">as</span> <span class="n">cp</span>
-<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">population</span> <span class="k">as</span> <span class="n">pop</span>
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">containers</span> <span class="k">as</span> <span class="n">ctn</span>
 
 
@@ -115,15 +118,18 @@
 <span class="sd">        forecast.</span>
 <span class="sd">    :ivar bool _empty: Indicates that the product historical data is empty. This is true, if the country is being</span>
 <span class="sd">        present in the input table but filters causing the list to be empty.</span>
+<span class="sd">    :ivar dict[str, float] _nuts2_installed_capacity: The installed capacity for this product in each NUTS2 region for</span>
+<span class="sd">        the country this product belongs to.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">product_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">product_input</span><span class="p">:</span> <span class="nb">input</span><span class="o">.</span><span class="n">ProductInput</span><span class="p">,</span> <span class="n">input_manager</span><span class="p">:</span> <span class="nb">input</span><span class="o">.</span><span class="n">Input</span><span class="p">,</span>
-                 <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">population</span><span class="p">:</span> <span class="n">pop</span><span class="o">.</span><span class="n">Population</span><span class="p">,</span> <span class="n">gdp</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">TimeStepSequence</span><span class="p">):</span>
+                 <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">population</span><span class="p">:</span> <span class="n">endemo2</span><span class="o">.</span><span class="n">country</span><span class="o">.</span><span class="n">Population</span><span class="p">,</span> <span class="n">gdp</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">TimeStepSequence</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_country_name</span> <span class="o">=</span> <span class="n">country_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">product_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_heat_levels</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">heat_levels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_perc_used</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">perc_used</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_exp_change_rate</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">manual_exp_change_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nuts2_installed_capacity</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">nuts2_installed_capacity</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
 
         <span class="c1"># get information from industry settings</span>
         <span class="n">industry_settings</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">settings</span>
@@ -274,7 +280,11 @@
 
 <div class="viewcode-block" id="Product.get_specific_consumption"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.get_specific_consumption">[docs]</a>    <span class="k">def</span> <span class="nf">get_specific_consumption</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SpecificConsumptionData</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the specific consumption object. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specific_consumption</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specific_consumption</span></div>
+
+<div class="viewcode-block" id="Product.get_nuts2_installed_capacities"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.get_nuts2_installed_capacities">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuts2_installed_capacities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the nuts2 installed capacity dictionary. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuts2_installed_capacity</span></div></div>
 
 
 <div class="viewcode-block" id="ProductPrimSec"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.ProductPrimSec">[docs]</a><span class="k">class</span> <span class="nc">ProductPrimSec</span><span class="p">:</span>
@@ -308,7 +318,8 @@
 
 <span class="sd">    :ivar SC default_specific_consumption: The specific consumption for a product type, that is used as default if</span>
 <span class="sd">        there is no historical data to predict the specific consumption.</span>
-<span class="sd">    :ivar dict[DemandType, Timeseries] ts_his_specific_consumption: The timeseries for specific consumption.</span>
+<span class="sd">    :ivar dict[DemandType, Timeseries] ts_his_specific_consumption: The dictionary holding timeseries of different</span>
+<span class="sd">        demand types for specific consumption.</span>
 <span class="sd">        Includes different energy carriers with varying efficiencies and is given per product.</span>
 <span class="sd">    :ivar dict[str, EH] efficiency: Efficiency of each energy carrier in percent in [0,1].</span>
 <span class="sd">    :ivar Timeseries _product_amount_per_year: A reference to the timeseries of the product_amount_per_year taken from</span>
@@ -352,9 +363,11 @@
         <span class="c1"># read historical specific consumption data</span>
         <span class="k">if</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">product_input</span><span class="o">.</span><span class="n">specific_consumption_historical</span><span class="p">:</span>
             <span class="n">dict_sc_his</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">specific_consumption_historical</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+            <span class="n">first_year_for_data</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">dict_sc_his</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># read year range from first entry</span>
+            <span class="n">last_year_for_data</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">dict_sc_his</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 
-            <span class="n">electricity_demand_sum</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">heat_demand_sum</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">electricity_demand_sum</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">first_year_for_data</span><span class="p">,</span> <span class="n">last_year_for_data</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">itertools</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+            <span class="n">heat_demand_sum</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">first_year_for_data</span><span class="p">,</span> <span class="n">last_year_for_data</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">itertools</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
 
             <span class="k">for</span> <span class="n">energy_carrier_name</span><span class="p">,</span> <span class="n">his_energy</span> <span class="ow">in</span> <span class="n">dict_sc_his</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">energy_carrier_efficiency_electricity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="n">energy_carrier_name</span><span class="p">]</span><span class="o">.</span><span class="n">electricity</span>
@@ -369,26 +382,20 @@
                                    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">energy_carrier_efficiency_heat</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>     <span class="c1"># convert TJ-&gt;GJ</span>
 
                 <span class="c1"># sum total demand over all energy carriers</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">electricity_demand_sum</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">electricity_demand_sum</span> <span class="o">=</span> <span class="n">energy_carrier_electricity</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">uty</span><span class="o">.</span><span class="n">zip_data_on_x_and_map</span><span class="p">(</span><span class="n">electricity_demand_sum</span><span class="p">,</span> <span class="n">energy_carrier_electricity</span><span class="p">,</span>
-                                              <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1</span> <span class="o">+</span> <span class="n">y2</span><span class="p">))</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">heat_demand_sum</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">heat_demand_sum</span> <span class="o">=</span> <span class="n">energy_carrier_heat</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">uty</span><span class="o">.</span><span class="n">zip_data_on_x_and_map</span><span class="p">(</span><span class="n">heat_demand_sum</span><span class="p">,</span> <span class="n">energy_carrier_heat</span><span class="p">,</span>
-                                              <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1</span> <span class="o">+</span> <span class="n">y2</span><span class="p">))</span>
+                <span class="n">electricity_demand_sum</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">zip_data_on_x_and_map</span><span class="p">(</span><span class="n">electricity_demand_sum</span><span class="p">,</span> <span class="n">energy_carrier_electricity</span><span class="p">,</span>
+                                                                   <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1</span> <span class="o">+</span> <span class="n">y2</span><span class="p">))</span>
+                <span class="n">heat_demand_sum</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">zip_data_on_x_and_map</span><span class="p">(</span><span class="n">heat_demand_sum</span><span class="p">,</span> <span class="n">energy_carrier_heat</span><span class="p">,</span>
+                                                            <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1</span> <span class="o">+</span> <span class="n">y2</span><span class="p">))</span>
 
             <span class="c1"># divide by product amount to get per product consumption (sc)</span>
-            <span class="n">product_amount_without_zeros</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="n">product_amount_per_year</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span> <span class="k">if</span> <span class="n">y</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">]</span>
+            <span class="n">product_amount_wo_zeros</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="n">product_amount_per_year</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span> <span class="k">if</span> <span class="n">y</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
 
             <span class="n">sc_electricity_his</span> <span class="o">=</span> \
-                <span class="n">uty</span><span class="o">.</span><span class="n">zip_data_on_x_and_map</span><span class="p">(</span><span class="n">electricity_demand_sum</span><span class="p">,</span> <span class="n">product_amount_without_zeros</span><span class="p">,</span>
-                                          <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1</span> <span class="o">/</span> <span class="p">(</span><span class="n">y2</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)))</span>    <span class="c1"># convert product amount: kt-&gt;t</span>
+                <span class="n">uty</span><span class="o">.</span><span class="n">zip_data_on_x_and_map</span><span class="p">(</span><span class="n">electricity_demand_sum</span><span class="p">,</span> <span class="n">product_amount_wo_zeros</span><span class="p">,</span>
+                                          <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1</span> <span class="o">/</span> <span class="p">(</span><span class="n">y2</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)))</span>
             <span class="n">sc_heat_his</span> <span class="o">=</span> \
-                <span class="n">uty</span><span class="o">.</span><span class="n">zip_data_on_x_and_map</span><span class="p">(</span><span class="n">heat_demand_sum</span><span class="p">,</span> <span class="n">product_amount_without_zeros</span><span class="p">,</span>
-                                          <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1</span> <span class="o">/</span> <span class="p">(</span><span class="n">y2</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)))</span>    <span class="c1"># convert product amount: kt-&gt;t</span>
+                <span class="n">uty</span><span class="o">.</span><span class="n">zip_data_on_x_and_map</span><span class="p">(</span><span class="n">heat_demand_sum</span><span class="p">,</span> <span class="n">product_amount_wo_zeros</span><span class="p">,</span>
+                                          <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1</span> <span class="o">/</span> <span class="p">(</span><span class="n">y2</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)))</span>
 
             <span class="n">_</span><span class="p">,</span> <span class="n">electricity_demand_sum_y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">electricity_demand_sum</span><span class="p">)</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">heat_demand_sum_y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">heat_demand_sum</span><span class="p">)</span>
@@ -451,6 +458,9 @@
         <span class="n">sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ctn</span><span class="o">.</span><span class="n">SC</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">electricity</span> <span class="o">*</span> <span class="n">scalar</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">heat</span> <span class="o">*</span> <span class="n">scalar</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">hydrogen</span> <span class="o">*</span> <span class="n">scalar</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">max_subst_h2</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="SpecificConsumptionData.get_historical_specific_demand"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.SpecificConsumptionData.get_historical_specific_demand">[docs]</a>    <span class="k">def</span> <span class="nf">get_historical_specific_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">demand_type</span><span class="p">:</span> <span class="n">ctn</span><span class="o">.</span><span class="n">DemandType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts_his_specific_consumption</span><span class="p">[</span><span class="n">demand_type</span><span class="p">]</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span></div>
+
 <div class="viewcode-block" id="SpecificConsumptionData.get"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.SpecificConsumptionData.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ctn</span><span class="o">.</span><span class="n">SC</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Getter for the specific consumption</span>
@@ -458,11 +468,10 @@
 <span class="sd">        :param year: Target year, for which we want to know the specific consumption amount.</span>
 <span class="sd">        :return: The calculated specific consumption amounts.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">product_name</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ts_his_specific_consumption</span><span class="p">))</span>
         <span class="n">electricity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts_his_specific_consumption</span><span class="p">[</span><span class="n">ctn</span><span class="o">.</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span><span class="o">.</span><span class="n">get_prog</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
         <span class="n">heat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts_his_specific_consumption</span><span class="p">[</span><span class="n">ctn</span><span class="o">.</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">]</span><span class="o">.</span><span class="n">get_prog</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
         <span class="n">hydrogen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts_his_specific_consumption</span><span class="p">[</span><span class="n">ctn</span><span class="o">.</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span><span class="o">.</span><span class="n">get_prog</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ctn</span><span class="o">.</span><span class="n">SC</span><span class="p">(</span><span class="n">electricity</span><span class="p">,</span> <span class="n">heat</span><span class="p">,</span> <span class="n">hydrogen</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">ctn</span><span class="o">.</span><span class="n">SC</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">electricity</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">heat</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">hydrogen</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

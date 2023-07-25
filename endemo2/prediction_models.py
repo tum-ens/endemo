@@ -21,10 +21,6 @@ class Coef:
     :ivar (k0, k1) lin: Used for the calculation f(x) = k0 + k1 * x
     :ivar (k0, k1, k2) quadr: Used for the calculation f(x) = k0 + k1 * x + k2 * x^2
     """
-    exp: Exp
-    lin: Lin
-    quadr: Quadr
-
     def __init__(self):
         self.exp = Exp(0, 0, 0)
         self.lin = Lin(0, 0)

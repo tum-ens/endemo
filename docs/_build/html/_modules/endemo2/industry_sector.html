@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>endemo2.industry_sector &mdash; Endemo2 2.0 documentation</title>
+  <title>endemo2.industry_sector &mdash; Endemo 2.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -29,7 +29,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            Endemo2
+            Endemo
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -50,7 +50,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Endemo2</a>
+          <a href="../../index.html">Endemo</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -71,7 +71,7 @@
   <h1>Source code for endemo2.industry_sector</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">population</span> <span class="k">as</span> <span class="n">pop</span>
+<span class="kn">import</span> <span class="nn">endemo2.country</span>
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">prediction_models</span> <span class="k">as</span> <span class="n">pm</span>
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">products</span> <span class="k">as</span> <span class="n">prd</span>
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">sector</span><span class="p">,</span> <span class="nb">input</span>
@@ -97,7 +97,7 @@
 <span class="sd">    :ivar Population country_population: The population of the country, this industry belongs to.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">population</span><span class="p">:</span> <span class="n">pop</span><span class="o">.</span><span class="n">Population</span><span class="p">,</span> <span class="n">country_gdp</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">TimeStepSequence</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">population</span><span class="p">:</span> <span class="n">endemo2</span><span class="o">.</span><span class="n">country</span><span class="o">.</span><span class="n">Population</span><span class="p">,</span> <span class="n">country_gdp</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">TimeStepSequence</span><span class="p">,</span>
                  <span class="n">input_manager</span><span class="p">:</span> <span class="nb">input</span><span class="o">.</span><span class="n">Input</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_products</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">country_name</span> <span class="o">=</span> <span class="n">country_name</span>
@@ -185,6 +185,26 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># if product not in industry, there is no demand -&gt; return 0ed demand</span>
             <span class="k">return</span> <span class="n">ctn</span><span class="o">.</span><span class="n">Demand</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Industry.calculate_demand_split_by_nuts2"><a class="viewcode-back" href="../../endemo2.html#endemo2.industry_sector.Industry.calculate_demand_split_by_nuts2">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_demand_split_by_nuts2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">product_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ctn</span><span class="o">.</span><span class="n">Demand</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the calculate_demand function and splits the result according to capacity for each NUTS2 region.</span>
+
+<span class="sd">        :param year: The target year, the demand should be calculated for.</span>
+<span class="sd">        :return: The dictionary of nuts2_region -&gt; demand.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">country_demand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_product_demand</span><span class="p">(</span><span class="n">product_name</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span>
+        <span class="n">product_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_products</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span>
+        <span class="n">nuts2_installed_capacity</span> <span class="o">=</span> <span class="n">product_obj</span><span class="o">.</span><span class="n">get_nuts2_installed_capacities</span><span class="p">()</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ctn</span><span class="o">.</span><span class="n">Demand</span><span class="p">]()</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">nuts2_region_name</span><span class="p">,</span> <span class="n">perc</span><span class="p">)</span> <span class="ow">in</span> <span class="n">nuts2_installed_capacity</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">region_demand</span> <span class="o">=</span> <span class="n">country_demand</span><span class="o">.</span><span class="n">copy_scale</span><span class="p">(</span><span class="n">perc</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">nuts2_region_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">region_demand</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
 
 <div class="viewcode-block" id="Industry.prog_product_amount"><a class="viewcode-back" href="../../endemo2.html#endemo2.industry_sector.Industry.prog_product_amount">[docs]</a>    <span class="k">def</span> <span class="nf">prog_product_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">product_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

@@ -20,6 +20,8 @@ class Endemo:
         for country_name in self.input_manager.ctrl.general_settings.active_countries:
             self.countries[country_name] = country.Country(country_name, self.input_manager)
 
+        print("Input was successfully read.")
+
     def load_model(self):
         """ Future todo """
         pass
@@ -37,7 +39,11 @@ class Endemo:
         output.generate_specific_consumption_output(self)
         output.generate_demand_output(self)
 
+        print("Debug output was successfully written.")
+
     def write_output(self):
         """ Writes the models' output to the output folder. """
         # TODO
         pass
+
+

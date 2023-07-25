@@ -120,3 +120,7 @@ class Demand:
         self.electricity *= scalar
         self.hydrogen *= scalar
         self.heat.mutable_multiply_scalar(scalar)
+
+    def copy_scale(self, scalar: float) -> Demand:
+        """ Create a new Demand object, that is the scaled version of self. """
+        return Demand(self.electricity * scalar, self.heat.copy_multiply_scalar(scalar), self.hydrogen * scalar)

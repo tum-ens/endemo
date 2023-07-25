@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>endemo2.containers &mdash; Endemo2 2.0 documentation</title>
+  <title>endemo2.containers &mdash; Endemo 2.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -29,7 +29,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            Endemo2
+            Endemo
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -50,7 +50,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Endemo2</a>
+          <a href="../../index.html">Endemo</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -190,7 +190,11 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Scale member variables component-wise with scalar. &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">electricity</span> <span class="o">*=</span> <span class="n">scalar</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hydrogen</span> <span class="o">*=</span> <span class="n">scalar</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">heat</span><span class="o">.</span><span class="n">mutable_multiply_scalar</span><span class="p">(</span><span class="n">scalar</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heat</span><span class="o">.</span><span class="n">mutable_multiply_scalar</span><span class="p">(</span><span class="n">scalar</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Demand.copy_scale"><a class="viewcode-back" href="../../endemo2.html#endemo2.containers.Demand.copy_scale">[docs]</a>    <span class="k">def</span> <span class="nf">copy_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scalar</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Demand</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Create a new Demand object, that is the scaled version of self. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Demand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">electricity</span> <span class="o">*</span> <span class="n">scalar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">heat</span><span class="o">.</span><span class="n">copy_multiply_scalar</span><span class="p">(</span><span class="n">scalar</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydrogen</span> <span class="o">*</span> <span class="n">scalar</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

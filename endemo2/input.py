@@ -4,6 +4,8 @@ import math
 import os
 import warnings
 from pathlib import Path
+
+import numpy as np
 import pandas as pd
 
 from endemo2 import containers as ctn
@@ -54,7 +56,7 @@ class Input:
         self.industry_input = IndustryInput(self.industry_path, industry_settings, self.general_input.abbreviations)
 
 
-class PopulationData:
+class PopulationInput:
     """
     Holds all data on population. That includes historical data, prognosis data for each country and nuts2 region.
 
@@ -216,9 +218,9 @@ class GeneralInput:
             self.gdp[country_name] = ctn.HisProg(gdp_his, zipped_gdp_prog)
 
         # create PopulationData object
-        self.population = PopulationData(ctrl, self.nuts2_valid_regions, self.abbreviations,
-                                         df_world_pop_his, df_world_pop_prog, df_nuts2_pop_his,
-                                         df_nuts2_pop_prog)
+        self.population = PopulationInput(ctrl, self.nuts2_valid_regions, self.abbreviations,
+                                          df_world_pop_his, df_world_pop_prog, df_nuts2_pop_his,
+                                          df_nuts2_pop_prog)
 
 
 class ProductInput:
@@ -247,9 +249,12 @@ class ProductInput:
         this will be the change rate.
     :ivar float perc_used: A scalar for the amount of a product.
         This is used to model modern technologies replacing old ones.
+    :ivar dict[str, dict[str, float]]: Installed capacity in %/100 for each NUTS2 Region.
+        Structure {country_name -> {nuts2_region_name -> capacity_value}}
     """
 
-    def __init__(self, name, sc, bat, prod, sc_h, sc_h_active, heat_levels, manual_exp_change_rate, perc_used):
+    def __init__(self, name, sc, bat, prod, sc_h, sc_h_active, heat_levels, manual_exp_change_rate, perc_used,
+                 nuts2_installed_capacity):
         self.product_name = name
         self.specific_consumption_default = sc
         self.bat = bat
@@ -262,6 +267,7 @@ class ProductInput:
         self.manual_exp_change_rate = manual_exp_change_rate
 
         self.perc_used = float(perc_used) if not math.isnan(float(perc_used)) else 1
+        self.nuts2_installed_capacity = nuts2_installed_capacity
 
     def __str__(self):
         return "\n\tSpecific Consumption: " + uty.str_dict(self.specific_consumption_default) + \
@@ -334,8 +340,8 @@ class FileReadingHelper:
                           " on the Retrieve object.")
         # skip years
         for skip_year in skip_years:
-            if str(skip_year) in self.df.columns:
-                self.df.drop(str(skip_year), axis=1, inplace=True)
+            if skip_year in self.df.columns:
+                self.df.drop(skip_year, axis=1, inplace=True)
 
     def get(self) -> pd.DataFrame:
         """
@@ -405,6 +411,7 @@ class IndustryInput:
 
         ex_spec = pd.ExcelFile(industry_path / "Specific_Consumption.xlsx")
         ex_bat = pd.ExcelFile(industry_path / "BAT_Consumption.xlsx")
+        ex_nuts2_ic = pd.ExcelFile(industry_path / "Installed_capacity_NUTS2.xlsx")
 
         # read heat levels
         df_heat_levels = pd.read_excel(industry_path / "Heat_levels.xlsx")
@@ -462,9 +469,6 @@ class IndustryInput:
             for name_en, (alpha2, alpha3, name_de) in abbreviations.items():
                 dict_de_en_map[name_de] = name_en
 
-            if product_name in ["paper"]:
-                print("break")
-
             # read specific demand historical data
             dict_sc_his = dict()
             sc_his_calc = False
@@ -507,10 +511,36 @@ class IndustryInput:
                     ctn.EH(row["Spec electricity consumption [GJ/t]"],
                            row["Spec heat consumption [GJ/t]"])
 
+            # create alpha2 -> country_name_en mapping
+            dict_2_en_map = dict()
+            for name_en, (alpha2, alpha3, name_de) in abbreviations.items():
+                dict_2_en_map[alpha2] = name_en
+
+            # read NUTS2 installed capacity
+            dict_installed_capacity_nuts2 = dict[str, dict[str, float]]()
+
+            product_name_general = product_name
+            if product_name_general.endswith("_classic"):
+                product_name_general = product_name_general.removesuffix("_classic")
+            if product_name_general in ["steel_prim", "steel_sec"]:
+                # PLACEHOLDER until steel is finished in sheets. TODO: remove when steel is correct in sheet
+                product_name_general = "steel"
+            df_nuts2_ic = pd.read_excel(ex_nuts2_ic, product_name_general)
+            for _, row in df_nuts2_ic.iterrows():
+                nuts2 = row["NUTS2"]
+                alpha2 = nuts2[:2]
+                if alpha2 not in dict_2_en_map.keys():
+                    continue
+                country_name_en = dict_2_en_map[nuts2[:2]]
+                if country_name_en not in dict_installed_capacity_nuts2.keys():
+                    dict_installed_capacity_nuts2[country_name_en] = dict[str, float]()
+                perc_value = row[product_name_general + " %"]
+                dict_installed_capacity_nuts2[country_name_en][nuts2] = perc_value if not np.isnan(perc_value) else 0.0
+
+            # finally store in product data class
             self.active_products[product_name] = \
                 ProductInput(product_name, dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his,
                              sc_his_calc, dict_heat_levels[product_name],
                              industry_settings.product_settings[product_name].manual_exp_change_rate,
-                             industry_settings.product_settings[product_name].perc_used)
-
-        print("Input was successfully read.")
+                             industry_settings.product_settings[product_name].perc_used,
+                             dict_installed_capacity_nuts2)

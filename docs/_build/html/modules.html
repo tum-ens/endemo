@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>endemo2 &mdash; Endemo2 2.0 documentation</title>
+  <title>endemo2 &mdash; Endemo 2.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            Endemo2
+            Endemo
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -51,7 +51,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Endemo2</a>
+          <a href="index.html">Endemo</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -91,6 +91,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.containers.Demand"><code class="docutils literal notranslate"><span class="pre">Demand</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.containers.Demand.add"><code class="docutils literal notranslate"><span class="pre">Demand.add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.containers.Demand.copy_scale"><code class="docutils literal notranslate"><span class="pre">Demand.copy_scale()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.containers.Demand.get"><code class="docutils literal notranslate"><span class="pre">Demand.get()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.containers.Demand.scale"><code class="docutils literal notranslate"><span class="pre">Demand.scale()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.containers.Demand.set"><code class="docutils literal notranslate"><span class="pre">Demand.set()</span></code></a></li>
@@ -158,17 +159,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.country">endemo2.country module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.country.Country"><code class="docutils literal notranslate"><span class="pre">Country</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.country.Country.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Country.calculate_total_demand()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.country.Country.get_gdp"><code class="docutils literal notranslate"><span class="pre">Country.get_gdp()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.country.Country.get_name"><code class="docutils literal notranslate"><span class="pre">Country.get_name()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.country.Country.get_population"><code class="docutils literal notranslate"><span class="pre">Country.get_population()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.country.Country.get_sector"><code class="docutils literal notranslate"><span class="pre">Country.get_sector()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#endemo2-country-module">endemo2.country module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.endemo">endemo2.endemo module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.endemo.Endemo"><code class="docutils literal notranslate"><span class="pre">Endemo</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.endemo.Endemo.load_model"><code class="docutils literal notranslate"><span class="pre">Endemo.load_model()</span></code></a></li>
@@ -189,6 +180,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.industry_sector">endemo2.industry_sector module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry"><code class="docutils literal notranslate"><span class="pre">Industry</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry.calculate_demand_split_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_demand_split_by_nuts2()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry.calculate_product_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_product_demand()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry.calculate_rest_sector_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_rest_sector_demand()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_total_demand()</span></code></a></li>
@@ -220,7 +212,7 @@
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.input.Input.super_path"><code class="docutils literal notranslate"><span class="pre">Input.super_path</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.input.PopulationData"><code class="docutils literal notranslate"><span class="pre">PopulationData</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.input.PopulationInput"><code class="docutils literal notranslate"><span class="pre">PopulationInput</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.input.ProductInput"><code class="docutils literal notranslate"><span class="pre">ProductInput</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.input.RestSectorInput"><code class="docutils literal notranslate"><span class="pre">RestSectorInput</span></code></a></li>
 </ul>
@@ -242,32 +234,9 @@
 <li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.output.shortcut_coef_output"><code class="docutils literal notranslate"><span class="pre">shortcut_coef_output()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.population">endemo2.population module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.population.NutsRegion"><code class="docutils literal notranslate"><span class="pre">NutsRegion</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.population.NutsRegion.add_child_region"><code class="docutils literal notranslate"><span class="pre">NutsRegion.add_child_region()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.population.NutsRegion.get_historical_data"><code class="docutils literal notranslate"><span class="pre">NutsRegion.get_historical_data()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.population.NutsRegion.get_nodes_dfs"><code class="docutils literal notranslate"><span class="pre">NutsRegion.get_nodes_dfs()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.population.NutsRegion.get_pop_prog"><code class="docutils literal notranslate"><span class="pre">NutsRegion.get_pop_prog()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.population.Population"><code class="docutils literal notranslate"><span class="pre">Population</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.population.Population.get_country_historical_data"><code class="docutils literal notranslate"><span class="pre">Population.get_country_historical_data()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.population.Population.get_country_prog"><code class="docutils literal notranslate"><span class="pre">Population.get_country_prog()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.population.Population.get_data"><code class="docutils literal notranslate"><span class="pre">Population.get_data()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.population.Population.get_nuts2_prog"><code class="docutils literal notranslate"><span class="pre">Population.get_nuts2_prog()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.population.Population.get_nuts2_root"><code class="docutils literal notranslate"><span class="pre">Population.get_nuts2_root()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.population.Population.get_prog"><code class="docutils literal notranslate"><span class="pre">Population.get_prog()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#endemo2-population-module">endemo2.population module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.prediction_models">endemo2.prediction_models module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.Coef"><code class="docutils literal notranslate"><span class="pre">Coef</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.Coef.exp"><code class="docutils literal notranslate"><span class="pre">Coef.exp</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.Coef.lin"><code class="docutils literal notranslate"><span class="pre">Coef.lin</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.Coef.quadr"><code class="docutils literal notranslate"><span class="pre">Coef.quadr</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.Coef"><code class="docutils literal notranslate"><span class="pre">Coef</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.Exp"><code class="docutils literal notranslate"><span class="pre">Exp</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.Exp.r"><code class="docutils literal notranslate"><span class="pre">Exp.r</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.Exp.x0"><code class="docutils literal notranslate"><span class="pre">Exp.x0</span></code></a></li>
@@ -323,6 +292,7 @@
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.products.Product.get_active_timeseries"><code class="docutils literal notranslate"><span class="pre">Product.get_active_timeseries()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.products.Product.get_amount_prog"><code class="docutils literal notranslate"><span class="pre">Product.get_amount_prog()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.products.Product.get_coef"><code class="docutils literal notranslate"><span class="pre">Product.get_coef()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.products.Product.get_nuts2_installed_capacities"><code class="docutils literal notranslate"><span class="pre">Product.get_nuts2_installed_capacities()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.products.Product.get_specific_consumption"><code class="docutils literal notranslate"><span class="pre">Product.get_specific_consumption()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.products.Product.get_timeseries_amount_per_capita_per_gdp"><code class="docutils literal notranslate"><span class="pre">Product.get_timeseries_amount_per_capita_per_gdp()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.products.Product.get_timeseries_amount_per_capita_per_year"><code class="docutils literal notranslate"><span class="pre">Product.get_timeseries_amount_per_capita_per_year()</span></code></a></li>
@@ -342,6 +312,7 @@
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.products.SpecificConsumptionData.get"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData.get()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.products.SpecificConsumptionData.get__calculate_sc"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData.get__calculate_sc()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.products.SpecificConsumptionData.get_coef"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData.get_coef()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.products.SpecificConsumptionData.get_historical_specific_demand"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData.get_historical_specific_demand()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.products.SpecificConsumptionData.get_scale"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData.get_scale()</span></code></a></li>
 </ul>
 </li>

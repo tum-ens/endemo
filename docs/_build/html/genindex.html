@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; Endemo2 2.0 documentation</title>
+  <title>Index &mdash; Endemo 2.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -29,7 +29,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            Endemo2
+            Endemo
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -50,7 +50,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Endemo2</a>
+          <a href="index.html">Endemo</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -82,7 +82,6 @@
  | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
- | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#Q"><strong>Q</strong></a>
@@ -102,12 +101,10 @@
 </li>
       <li><a href="endemo2.html#endemo2.containers.Demand.add">add() (endemo2.containers.Demand method)</a>
 </li>
-      <li><a href="endemo2.html#endemo2.population.NutsRegion.add_child_region">add_child_region() (endemo2.population.NutsRegion method)</a>
+      <li><a href="endemo2.html#endemo2.output.FileGenerator.add_entry">add_entry() (endemo2.output.FileGenerator method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="endemo2.html#endemo2.output.FileGenerator.add_entry">add_entry() (endemo2.output.FileGenerator method)</a>
-</li>
       <li><a href="endemo2.html#endemo2.containers.CA.alpha2">alpha2 (endemo2.containers.CA attribute)</a>
 </li>
       <li><a href="endemo2.html#endemo2.containers.CA.alpha3">alpha3 (endemo2.containers.CA attribute)</a>
@@ -128,6 +125,8 @@
         <li><a href="endemo2.html#endemo2.products.ProductPrimSec.calculate_demand">(endemo2.products.ProductPrimSec method)</a>
 </li>
       </ul></li>
+      <li><a href="endemo2.html#endemo2.industry_sector.Industry.calculate_demand_split_by_nuts2">calculate_demand_split_by_nuts2() (endemo2.industry_sector.Industry method)</a>
+</li>
       <li><a href="endemo2.html#endemo2.industry_sector.Industry.calculate_product_demand">calculate_product_demand() (endemo2.industry_sector.Industry method)</a>
 </li>
       <li><a href="endemo2.html#endemo2.industry_sector.Industry.calculate_rest_sector_demand">calculate_rest_sector_demand() (endemo2.industry_sector.Industry method)</a>
@@ -135,8 +134,6 @@
       <li><a href="endemo2.html#endemo2.commercial_trade_services_sector.CommercialTradeServices.calculate_total_demand">calculate_total_demand() (endemo2.commercial_trade_services_sector.CommercialTradeServices method)</a>
 
       <ul>
-        <li><a href="endemo2.html#endemo2.country.Country.calculate_total_demand">(endemo2.country.Country method)</a>
-</li>
         <li><a href="endemo2.html#endemo2.household_sector.Household.calculate_total_demand">(endemo2.household_sector.Household method)</a>
 </li>
         <li><a href="endemo2.html#endemo2.industry_sector.Industry.calculate_total_demand">(endemo2.industry_sector.Industry method)</a>
@@ -162,7 +159,7 @@
 </li>
       <li><a href="endemo2.html#endemo2.containers.Heat.copy_multiply_scalar">copy_multiply_scalar() (endemo2.containers.Heat method)</a>
 </li>
-      <li><a href="endemo2.html#endemo2.country.Country">Country (class in endemo2.country)</a>
+      <li><a href="endemo2.html#endemo2.containers.Demand.copy_scale">copy_scale() (endemo2.containers.Demand method)</a>
 </li>
       <li><a href="endemo2.html#endemo2.utility.cut_after_x">cut_after_x() (in module endemo2.utility)</a>
 </li>
@@ -229,13 +226,6 @@
 </li>
       </ul></li>
       <li>
-    endemo2.country
-
-      <ul>
-        <li><a href="endemo2.html#module-endemo2.country">module</a>
-</li>
-      </ul></li>
-      <li>
     endemo2.endemo
 
       <ul>
@@ -270,13 +260,6 @@
 
       <ul>
         <li><a href="endemo2.html#module-endemo2.output">module</a>
-</li>
-      </ul></li>
-      <li>
-    endemo2.population
-
-      <ul>
-        <li><a href="endemo2.html#module-endemo2.population">module</a>
 </li>
       </ul></li>
       <li>
@@ -315,8 +298,6 @@
 </li>
       </ul></li>
       <li><a href="endemo2.html#endemo2.prediction_models.Exp">Exp (class in endemo2.prediction_models)</a>
-</li>
-      <li><a href="endemo2.html#endemo2.prediction_models.Coef.exp">exp (endemo2.prediction_models.Coef attribute)</a>
 </li>
       <li><a href="endemo2.html#endemo2.utility.exp_change">exp_change() (in module endemo2.utility)</a>
 </li>
@@ -390,24 +371,14 @@
         <li><a href="endemo2.html#endemo2.products.SpecificConsumptionData.get_coef">(endemo2.products.SpecificConsumptionData method)</a>
 </li>
       </ul></li>
-      <li><a href="endemo2.html#endemo2.population.Population.get_country_historical_data">get_country_historical_data() (endemo2.population.Population method)</a>
-</li>
-      <li><a href="endemo2.html#endemo2.population.Population.get_country_prog">get_country_prog() (endemo2.population.Population method)</a>
-</li>
-      <li><a href="endemo2.html#endemo2.population.Population.get_data">get_data() (endemo2.population.Population method)</a>
-
-      <ul>
-        <li><a href="endemo2.html#endemo2.prediction_models.Timeseries.get_data">(endemo2.prediction_models.Timeseries method)</a>
-</li>
-      </ul></li>
-      <li><a href="endemo2.html#endemo2.country.Country.get_gdp">get_gdp() (endemo2.country.Country method)</a>
-</li>
-      <li><a href="endemo2.html#endemo2.population.NutsRegion.get_historical_data">get_historical_data() (endemo2.population.NutsRegion method)</a>
+      <li><a href="endemo2.html#endemo2.prediction_models.Timeseries.get_data">get_data() (endemo2.prediction_models.Timeseries method)</a>
 </li>
       <li><a href="endemo2.html#endemo2.prediction_models.TimeStepSequence.get_historical_data_raw">get_historical_data_raw() (endemo2.prediction_models.TimeStepSequence method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="endemo2.html#endemo2.products.SpecificConsumptionData.get_historical_specific_demand">get_historical_specific_demand() (endemo2.products.SpecificConsumptionData method)</a>
+</li>
       <li><a href="endemo2.html#endemo2.prediction_models.TimeStepSequence.get_interval_change_rate_raw">get_interval_change_rate_raw() (endemo2.prediction_models.TimeStepSequence method)</a>
 </li>
       <li><a href="endemo2.html#endemo2.prediction_models.Timeseries.get_last_data_entry">get_last_data_entry() (endemo2.prediction_models.Timeseries method)</a>
@@ -420,29 +391,17 @@
       </ul></li>
       <li><a href="endemo2.html#endemo2.prediction_models.Timeseries.get_mean_y">get_mean_y() (endemo2.prediction_models.Timeseries method)</a>
 </li>
-      <li><a href="endemo2.html#endemo2.country.Country.get_name">get_name() (endemo2.country.Country method)</a>
-</li>
-      <li><a href="endemo2.html#endemo2.population.NutsRegion.get_nodes_dfs">get_nodes_dfs() (endemo2.population.NutsRegion method)</a>
-</li>
-      <li><a href="endemo2.html#endemo2.population.Population.get_nuts2_prog">get_nuts2_prog() (endemo2.population.Population method)</a>
-</li>
-      <li><a href="endemo2.html#endemo2.population.Population.get_nuts2_root">get_nuts2_root() (endemo2.population.Population method)</a>
+      <li><a href="endemo2.html#endemo2.products.Product.get_nuts2_installed_capacities">get_nuts2_installed_capacities() (endemo2.products.Product method)</a>
 </li>
       <li><a href="endemo2.html#endemo2.control_parameters.GeneralSettings.get_parameter">get_parameter() (endemo2.control_parameters.GeneralSettings method)</a>
-</li>
-      <li><a href="endemo2.html#endemo2.population.NutsRegion.get_pop_prog">get_pop_prog() (endemo2.population.NutsRegion method)</a>
-</li>
-      <li><a href="endemo2.html#endemo2.country.Country.get_population">get_population() (endemo2.country.Country method)</a>
 </li>
       <li><a href="endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_prediction_raw">get_prediction_raw() (endemo2.prediction_models.PredictedTimeseries method)</a>
 </li>
       <li><a href="endemo2.html#endemo2.industry_sector.Industry.get_product">get_product() (endemo2.industry_sector.Industry method)</a>
 </li>
-      <li><a href="endemo2.html#endemo2.population.Population.get_prog">get_prog() (endemo2.population.Population method)</a>
+      <li><a href="endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_prog">get_prog() (endemo2.prediction_models.PredictedTimeseries method)</a>
 
       <ul>
-        <li><a href="endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_prog">(endemo2.prediction_models.PredictedTimeseries method)</a>
-</li>
         <li><a href="endemo2.html#endemo2.prediction_models.Timeseries.get_prog">(endemo2.prediction_models.Timeseries method)</a>
 </li>
         <li><a href="endemo2.html#endemo2.prediction_models.TimeStepSequence.get_prog">(endemo2.prediction_models.TimeStepSequence method)</a>
@@ -455,8 +414,6 @@
       <li><a href="endemo2.html#endemo2.prediction_models.Timeseries.get_prog_quadr">get_prog_quadr() (endemo2.prediction_models.Timeseries method)</a>
 </li>
       <li><a href="endemo2.html#endemo2.products.SpecificConsumptionData.get_scale">get_scale() (endemo2.products.SpecificConsumptionData method)</a>
-</li>
-      <li><a href="endemo2.html#endemo2.country.Country.get_sector">get_sector() (endemo2.country.Country method)</a>
 </li>
       <li><a href="endemo2.html#endemo2.products.Product.get_specific_consumption">get_specific_consumption() (endemo2.products.Product method)</a>
 </li>
@@ -564,12 +521,10 @@
 </li>
       <li><a href="endemo2.html#endemo2.prediction_models.Lin">Lin (class in endemo2.prediction_models)</a>
 </li>
-      <li><a href="endemo2.html#endemo2.prediction_models.Coef.lin">lin (endemo2.prediction_models.Coef attribute)</a>
+      <li><a href="endemo2.html#endemo2.utility.lin_prediction">lin_prediction() (in module endemo2.utility)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="endemo2.html#endemo2.utility.lin_prediction">lin_prediction() (in module endemo2.utility)</a>
-</li>
       <li><a href="endemo2.html#endemo2.control_parameters.ForecastMethod.LINEAR">LINEAR (endemo2.control_parameters.ForecastMethod attribute)</a>
 </li>
       <li><a href="endemo2.html#endemo2.utility.linear_regression">linear_regression() (in module endemo2.utility)</a>
@@ -602,8 +557,6 @@
 </li>
         <li><a href="endemo2.html#module-endemo2.control_parameters">endemo2.control_parameters</a>
 </li>
-        <li><a href="endemo2.html#module-endemo2.country">endemo2.country</a>
-</li>
         <li><a href="endemo2.html#module-endemo2.endemo">endemo2.endemo</a>
 </li>
         <li><a href="endemo2.html#module-endemo2.household_sector">endemo2.household_sector</a>
@@ -613,8 +566,6 @@
         <li><a href="endemo2.html#module-endemo2.input">endemo2.input</a>
 </li>
         <li><a href="endemo2.html#module-endemo2.output">endemo2.output</a>
-</li>
-        <li><a href="endemo2.html#module-endemo2.population">endemo2.population</a>
 </li>
         <li><a href="endemo2.html#module-endemo2.prediction_models">endemo2.prediction_models</a>
 </li>
@@ -636,14 +587,6 @@
   </ul></td>
 </tr></table>
 
-<h2 id="N">N</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="endemo2.html#endemo2.population.NutsRegion">NutsRegion (class in endemo2.population)</a>
-</li>
-  </ul></td>
-</tr></table>
-
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -659,9 +602,7 @@
 </li>
       <li><a href="endemo2.html#endemo2.utility.plot_timeseries">plot_timeseries() (in module endemo2.utility)</a>
 </li>
-      <li><a href="endemo2.html#endemo2.population.Population">Population (class in endemo2.population)</a>
-</li>
-      <li><a href="endemo2.html#endemo2.input.PopulationData">PopulationData (class in endemo2.input)</a>
+      <li><a href="endemo2.html#endemo2.input.PopulationInput">PopulationInput (class in endemo2.input)</a>
 </li>
       <li><a href="endemo2.html#endemo2.prediction_models.PredictedTimeseries">PredictedTimeseries (class in endemo2.prediction_models)</a>
 </li>
@@ -688,8 +629,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="endemo2.html#endemo2.prediction_models.Quadr">Quadr (class in endemo2.prediction_models)</a>
-</li>
-      <li><a href="endemo2.html#endemo2.prediction_models.Coef.quadr">quadr (endemo2.prediction_models.Coef attribute)</a>
 </li>
       <li><a href="endemo2.html#endemo2.utility.quadr_prediction">quadr_prediction() (in module endemo2.utility)</a>
 </li>

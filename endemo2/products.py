@@ -3,11 +3,11 @@ from __future__ import annotations
 import itertools
 import warnings
 
+import endemo2.country
 from endemo2 import utility as uty
 from endemo2 import input
 from endemo2 import prediction_models as pm
 from endemo2 import control_parameters as cp
-from endemo2 import population as pop
 from endemo2 import containers as ctn
 
 
@@ -47,15 +47,18 @@ class Product:
         forecast.
     :ivar bool _empty: Indicates that the product historical data is empty. This is true, if the country is being
         present in the input table but filters causing the list to be empty.
+    :ivar dict[str, float] _nuts2_installed_capacity: The installed capacity for this product in each NUTS2 region for
+        the country this product belongs to.
     """
 
     def __init__(self, product_name: str, product_input: input.ProductInput, input_manager: input.Input,
-                 country_name: str, population: pop.Population, gdp: pm.TimeStepSequence):
+                 country_name: str, population: endemo2.country.Population, gdp: pm.TimeStepSequence):
         self._country_name = country_name
         self._name = product_name
         self._heat_levels = product_input.heat_levels
         self._perc_used = product_input.perc_used
         self._exp_change_rate = product_input.manual_exp_change_rate
+        self._nuts2_installed_capacity = product_input.nuts2_installed_capacity[country_name]
 
         # get information from industry settings
         industry_settings = input_manager.industry_input.settings
@@ -208,6 +211,10 @@ class Product:
         """ Getter for the specific consumption object. """
         return self._specific_consumption
 
+    def get_nuts2_installed_capacities(self) -> dict[str, float]:
+        """ Getter for the nuts2 installed capacity dictionary. """
+        return self._nuts2_installed_capacity
+
 
 class ProductPrimSec:
     """
@@ -324,9 +331,6 @@ class SpecificConsumptionData:
             zero_electricity_demand = uty.is_zero(electricity_demand_sum_y)
             zero_heat_demand = uty.is_zero(heat_demand_sum_y)
 
-            if country_name in ["Germany"] and self.product_name in ["paper"]:
-                print("break")
-
             if not zero_electricity_demand:
                 self.ts_his_specific_consumption[ctn.DemandType.ELECTRICITY] = \
                     pm.Timeseries(sc_electricity_his, calculation_type=cp.ForecastMethod.LINEAR)
@@ -396,4 +400,4 @@ class SpecificConsumptionData:
         electricity = self.ts_his_specific_consumption[ctn.DemandType.ELECTRICITY].get_prog(year)
         heat = self.ts_his_specific_consumption[ctn.DemandType.HEAT].get_prog(year)
         hydrogen = self.ts_his_specific_consumption[ctn.DemandType.HYDROGEN].get_prog(year)
-        return ctn.SC(electricity, heat, hydrogen, 0)
+        return ctn.SC(max(0.0, electricity), max(0.0, heat), max(0.0, hydrogen), 0.0)

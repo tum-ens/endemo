@@ -52,7 +52,7 @@ class FileGenerator(object):
 
     def end_sheet(self):
         df_out = pd.DataFrame(self.current_out_dict)
-        df_out.to_excel(self.excel_writer, index=False, sheet_name=self.current_sheet_name, float_format="%.7f")
+        df_out.to_excel(self.excel_writer, index=False, sheet_name=self.current_sheet_name, float_format="%.12f")
         self.current_sheet_name = ""
         self.current_out_dict = dict()
 
@@ -327,7 +327,6 @@ def generate_specific_consumption_output(model: endemo.Endemo):
                 save_timeseries_print(fg, 1990, 2020, data)
 
 
-
 def generate_demand_output(model: endemo.Endemo):
     """
     Generates the output that displays debug information related to the demand of products.
@@ -373,3 +372,15 @@ def generate_demand_output(model: endemo.Endemo):
             demand: containers.Demand = \
                 country.get_sector(sector.SectorIdentifier.INDUSTRY).calculate_rest_sector_demand(target_year)
             shortcut_demand_table(fg, demand)
+
+    filename = "endemo2_nuts2_demand_projections.xlsx"
+    fg = FileGenerator(input_manager, filename)
+    with fg:
+        for product_name, product_obj in input_manager.industry_input.active_products.items():
+            fg.start_sheet(product_name)
+            for country in countries.values():
+                dict_nuts2_demand = country.get_sector(sector.SectorIdentifier.INDUSTRY)\
+                    .calculate_demand_split_by_nuts2(product_name, target_year)
+                for (nuts2_region_name, demand) in dict_nuts2_demand.items():
+                    fg.add_entry("NUTS2 Region", nuts2_region_name)
+                    shortcut_demand_table(fg, demand)

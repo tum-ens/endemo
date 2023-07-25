@@ -1,6 +1,6 @@
 import warnings
 
-from endemo2 import population as pop
+import endemo2.country
 from endemo2 import prediction_models as pm
 from endemo2 import products as prd
 from endemo2 import sector, input
@@ -26,7 +26,7 @@ class Industry(sector.Sector):
     :ivar Population country_population: The population of the country, this industry belongs to.
     """
 
-    def __init__(self, country_name: str, population: pop.Population, country_gdp: pm.TimeStepSequence,
+    def __init__(self, country_name: str, population: endemo2.country.Population, country_gdp: pm.TimeStepSequence,
                  input_manager: input.Input):
         self._products = dict()
         self.country_name = country_name
@@ -114,6 +114,26 @@ class Industry(sector.Sector):
         else:
             # if product not in industry, there is no demand -> return 0ed demand
             return ctn.Demand()
+
+    def calculate_demand_split_by_nuts2(self, product_name: str, year: int) -> dict[str, ctn.Demand]:
+        """
+        Calls the calculate_demand function and splits the result according to capacity for each NUTS2 region.
+
+        :param year: The target year, the demand should be calculated for.
+        :return: The dictionary of nuts2_region -> demand.
+        """
+
+        country_demand = self.calculate_product_demand(product_name, year)
+        product_obj = self._products[product_name]
+        nuts2_installed_capacity = product_obj.get_nuts2_installed_capacities()
+
+        result = dict[str, ctn.Demand]()
+
+        for (nuts2_region_name, perc) in nuts2_installed_capacity.items():
+            region_demand = country_demand.copy_scale(perc)
+            result[nuts2_region_name] = region_demand
+
+        return result
 
     def prog_product_amount(self, product_name: str, year: int) -> float:
         """
