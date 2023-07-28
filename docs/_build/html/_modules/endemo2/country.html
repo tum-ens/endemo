@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>endemo2.country &mdash; Endemo2 2.0 documentation</title>
+  <title>endemo2.country &mdash; Endemo 2.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -29,7 +29,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            Endemo2
+            Endemo
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -50,7 +50,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Endemo2</a>
+          <a href="../../index.html">Endemo</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -72,9 +72,9 @@
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">containers</span><span class="p">,</span> <span class="n">industry_sector</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">sector</span>
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">containers</span><span class="p">,</span> <span class="n">industry_sector</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">sector</span>
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">prediction_models</span> <span class="k">as</span> <span class="n">pm</span>
-<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">population</span> <span class="k">as</span> <span class="n">pop</span>
+<span class="kn">from</span> <span class="nn">endemo2.general_containers</span> <span class="kn">import</span> <span class="n">Population</span><span class="p">,</span> <span class="n">NutsRegion</span>
 
 
 <div class="viewcode-block" id="Country"><a class="viewcode-back" href="../../endemo2.html#endemo2.country.Country">[docs]</a><span class="k">class</span> <span class="nc">Country</span><span class="p">:</span>
@@ -110,29 +110,29 @@
 
         <span class="c1"># create nuts2 tree</span>
         <span class="n">nuts2_data</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">general_input</span><span class="o">.</span><span class="n">population</span><span class="o">.</span><span class="n">nuts2_population</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span>
-        <span class="n">nuts2_root</span><span class="p">:</span> <span class="n">pop</span><span class="o">.</span><span class="n">NutsRegion</span>
+        <span class="n">nuts2_root</span><span class="p">:</span> <span class="n">NutsRegion</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span> <span class="ow">in</span> <span class="n">nuts2_data</span><span class="o">.</span><span class="n">prognosis</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">nuts2_root</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">NutsRegion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span><span class="p">,</span> <span class="n">nuts2_data</span><span class="o">.</span><span class="n">historical</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span><span class="p">],</span>
-                                        <span class="n">nuts2_data</span><span class="o">.</span><span class="n">prognosis</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span><span class="p">])</span>
+            <span class="n">nuts2_root</span> <span class="o">=</span> <span class="n">NutsRegion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span><span class="p">,</span> <span class="n">nuts2_data</span><span class="o">.</span><span class="n">historical</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span><span class="p">],</span>
+                                    <span class="n">nuts2_data</span><span class="o">.</span><span class="n">prognosis</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">nuts2_root</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">NutsRegion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span><span class="p">)</span>
+            <span class="n">nuts2_root</span> <span class="o">=</span> <span class="n">NutsRegion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">region_name</span><span class="p">,</span> <span class="n">region_data</span> <span class="ow">in</span> <span class="n">nuts2_data</span><span class="o">.</span><span class="n">historical</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">region_name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="c1"># create and add subregion to root</span>
-            <span class="n">subregion</span><span class="p">:</span> <span class="n">pop</span><span class="o">.</span><span class="n">NutsRegion</span>
+            <span class="n">subregion</span><span class="p">:</span> <span class="n">NutsRegion</span>
             <span class="k">if</span> <span class="n">region_name</span> <span class="ow">in</span> <span class="n">nuts2_data</span><span class="o">.</span><span class="n">prognosis</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">subregion</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">NutsRegion</span><span class="p">(</span><span class="n">region_name</span><span class="p">,</span> <span class="n">historical_data</span><span class="o">=</span><span class="n">region_data</span><span class="p">,</span>
-                                           <span class="n">prediction_data</span><span class="o">=</span><span class="n">nuts2_data</span><span class="o">.</span><span class="n">prognosis</span><span class="p">[</span><span class="n">region_name</span><span class="p">])</span>
+                <span class="n">subregion</span> <span class="o">=</span> <span class="n">NutsRegion</span><span class="p">(</span><span class="n">region_name</span><span class="p">,</span> <span class="n">historical_data</span><span class="o">=</span><span class="n">region_data</span><span class="p">,</span>
+                                       <span class="n">prediction_data</span><span class="o">=</span><span class="n">nuts2_data</span><span class="o">.</span><span class="n">prognosis</span><span class="p">[</span><span class="n">region_name</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">subregion</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">NutsRegion</span><span class="p">(</span><span class="n">region_name</span><span class="p">,</span> <span class="n">historical_data</span><span class="o">=</span><span class="n">region_data</span><span class="p">)</span>
+                <span class="n">subregion</span> <span class="o">=</span> <span class="n">NutsRegion</span><span class="p">(</span><span class="n">region_name</span><span class="p">,</span> <span class="n">historical_data</span><span class="o">=</span><span class="n">region_data</span><span class="p">)</span>
             <span class="n">nuts2_root</span><span class="o">.</span><span class="n">add_child_region</span><span class="p">(</span><span class="n">subregion</span><span class="p">)</span>
 
         <span class="c1"># fill population member variable</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_population</span> <span class="o">=</span> \
-            <span class="n">pop</span><span class="o">.</span><span class="n">Population</span><span class="p">(</span><span class="n">country_population</span><span class="p">,</span> <span class="n">nuts2_root</span><span class="p">,</span>
-                           <span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">nuts2_distribution_based_on_installed_ind_capacity</span><span class="p">)</span>
+            <span class="n">Population</span><span class="p">(</span><span class="n">country_population</span><span class="p">,</span> <span class="n">nuts2_root</span><span class="p">,</span>
+                       <span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">nuts2_distribution_based_on_installed_ind_capacity</span><span class="p">)</span>
 
         <span class="c1"># create gdp timeseries</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gdp</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">TimeStepSequence</span><span class="p">(</span>
@@ -180,7 +180,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span></div>
 
-<div class="viewcode-block" id="Country.get_population"><a class="viewcode-back" href="../../endemo2.html#endemo2.country.Country.get_population">[docs]</a>    <span class="k">def</span> <span class="nf">get_population</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">population</span><span class="o">.</span><span class="n">Population</span><span class="p">:</span>
+<div class="viewcode-block" id="Country.get_population"><a class="viewcode-back" href="../../endemo2.html#endemo2.country.Country.get_population">[docs]</a>    <span class="k">def</span> <span class="nf">get_population</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Population</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Getter for the population container object.</span>
 
@@ -204,6 +204,8 @@
 <span class="sd">        :return: The countries sector corresponding to the sector id.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sectors</span><span class="p">[</span><span class="n">sector_id</span><span class="p">]</span></div></div>
+
+
 </pre></div>
 
            </div>

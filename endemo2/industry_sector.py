@@ -1,6 +1,7 @@
 import warnings
 
-import endemo2.country
+import endemo2.general_containers
+from endemo2 import country
 from endemo2 import prediction_models as pm
 from endemo2 import products as prd
 from endemo2 import sector, input
@@ -26,7 +27,7 @@ class Industry(sector.Sector):
     :ivar Population country_population: The population of the country, this industry belongs to.
     """
 
-    def __init__(self, country_name: str, population: endemo2.country.Population, country_gdp: pm.TimeStepSequence,
+    def __init__(self, country_name: str, population: endemo2.general_containers.Population, country_gdp: pm.TimeStepSequence,
                  input_manager: input.Input):
         self._products = dict()
         self.country_name = country_name
@@ -117,10 +118,10 @@ class Industry(sector.Sector):
 
     def calculate_demand_split_by_nuts2(self, product_name: str, year: int) -> dict[str, ctn.Demand]:
         """
-        Calls the calculate_demand function and splits the result according to capacity for each NUTS2 region.
+        Calls the calculate_product_demand function and splits the result according to capacity for each NUTS2 region.
 
         :param year: The target year, the demand should be calculated for.
-        :return: The dictionary of nuts2_region -> demand.
+        :return: The dictionary of {nuts2_region -> demand}.
         """
 
         country_demand = self.calculate_product_demand(product_name, year)

@@ -3,7 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Endemo2's documentation!
+Welcome to Endemo's documentation!
+===================================
+
+This is the documentation for the rework of the Useful Energy Demand Model "Endemo".
+
+How to maintain the documentation
 ===================================
 
 Whenever you change something in the code and/or the doc strings, please update the documentation using "make html" in a

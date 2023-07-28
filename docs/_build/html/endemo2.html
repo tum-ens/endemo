@@ -20,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Welcome to Endemo2’s documentation!" href="index.html" /> 
+    <link rel="prev" title="Welcome to Endemo’s documentation!" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -130,7 +130,17 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#endemo2-country-module">endemo2.country module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-endemo2.country">endemo2.country module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.country.Country"><code class="docutils literal notranslate"><span class="pre">Country</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.country.Country.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Country.calculate_total_demand()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.country.Country.get_gdp"><code class="docutils literal notranslate"><span class="pre">Country.get_gdp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.country.Country.get_name"><code class="docutils literal notranslate"><span class="pre">Country.get_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.country.Country.get_population"><code class="docutils literal notranslate"><span class="pre">Country.get_population()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.country.Country.get_sector"><code class="docutils literal notranslate"><span class="pre">Country.get_sector()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-endemo2.endemo">endemo2.endemo module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.endemo.Endemo"><code class="docutils literal notranslate"><span class="pre">Endemo</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.endemo.Endemo.load_model"><code class="docutils literal notranslate"><span class="pre">Endemo.load_model()</span></code></a></li>
@@ -205,7 +215,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.output.shortcut_coef_output"><code class="docutils literal notranslate"><span class="pre">shortcut_coef_output()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#endemo2-population-module">endemo2.population module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-endemo2.prediction_models">endemo2.prediction_models module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.prediction_models.Coef"><code class="docutils literal notranslate"><span class="pre">Coef</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.prediction_models.Exp"><code class="docutils literal notranslate"><span class="pre">Exp</span></code></a><ul>
@@ -765,8 +774,95 @@ Only for these products, calculations are performed.</p></li>
 </dd></dl>
 
 </section>
-<section id="endemo2-country-module">
-<h2>endemo2.country module<a class="headerlink" href="#endemo2-country-module" title="Permalink to this heading"></a></h2>
+<section id="module-endemo2.country">
+<span id="endemo2-country-module"></span><h2>endemo2.country module<a class="headerlink" href="#module-endemo2.country" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.country.Country">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">endemo2.country.</span></span><span class="sig-name descname"><span class="pre">Country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#endemo2.input.Input" title="endemo2.input.Input"><span class="pre">Input</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/country.html#Country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.country.Country" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The Country connects all sectors and data from a single country. It is a completely self-contained unit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – Name of the country.</p></li>
+<li><p><strong>input_manager</strong> – The input manager containing all the input files, so country can fill the variables in its constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>_name</strong> (<em>str</em>) – The name of the country (en).</p></li>
+<li><p><strong>_abbreviations</strong> (<em>[</em><em>str</em><em>]</em>) – Possible abbreviations for this country.</p></li>
+<li><p><strong>_population</strong> (<em>Population</em><em>[</em><a class="reference internal" href="#endemo2.prediction_models.PredictedTimeseries" title="endemo2.prediction_models.PredictedTimeseries"><em>PredictedTimeseries</em></a><em>, </em><em>NutsRegion</em><em>]</em>) – Population object, containing important data and
+timeseries of the countries’ population.</p></li>
+<li><p><strong>_gdp</strong> (<a class="reference internal" href="#endemo2.prediction_models.TimeStepSequence" title="endemo2.prediction_models.TimeStepSequence"><em>TimeStepSequence</em></a>) – The Timeseries for the GDP of this country.</p></li>
+<li><p><strong>_sectors</strong> (<em>dict</em><em>[</em><a class="reference internal" href="#endemo2.sector.SectorIdentifier" title="endemo2.sector.SectorIdentifier"><em>SectorIdentifier</em></a><em>, </em><a class="reference internal" href="#endemo2.sector.Sector" title="endemo2.sector.Sector"><em>Sector</em></a><em>]</em>) – The sector objects for this country, accessible by the sector
+identifier.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.country.Country.calculate_total_demand">
+<span class="sig-name descname"><span class="pre">calculate_total_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">Demand</span></a></span></span><a class="reference internal" href="_modules/endemo2/country.html#Country.calculate_total_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.country.Country.calculate_total_demand" title="Permalink to this definition"></a></dt>
+<dd><p>Sum the demand over all sectors of the country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> – Target year for which the prediction should be calculated.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The demand for a country summed over all sectors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.country.Country.get_gdp">
+<span class="sig-name descname"><span class="pre">get_gdp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.prediction_models.TimeStepSequence" title="endemo2.prediction_models.TimeStepSequence"><span class="pre">TimeStepSequence</span></a></span></span><a class="reference internal" href="_modules/endemo2/country.html#Country.get_gdp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.country.Country.get_gdp" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the countries’ GDP Timeseries</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The GDP Timeseries for this country.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.country.Country.get_name">
+<span class="sig-name descname"><span class="pre">get_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/endemo2/country.html#Country.get_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.country.Country.get_name" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the country name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The country name (en).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.country.Country.get_population">
+<span class="sig-name descname"><span class="pre">get_population</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Population</span></span></span><a class="reference internal" href="_modules/endemo2/country.html#Country.get_population"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.country.Country.get_population" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the population container object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The countries’ population container object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.country.Country.get_sector">
+<span class="sig-name descname"><span class="pre">get_sector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sector_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#endemo2.sector.SectorIdentifier" title="endemo2.sector.SectorIdentifier"><span class="pre">SectorIdentifier</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.sector.Sector" title="endemo2.sector.Sector"><span class="pre">Sector</span></a></span></span><a class="reference internal" href="_modules/endemo2/country.html#Country.get_sector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.country.Country.get_sector" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the sectors of a country. Accessed by the sectors’ identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sector_id</strong> – Identifies Sector by enum value from SectorIdentifier.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The countries sector corresponding to the sector id.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-endemo2.endemo">
 <span id="endemo2-endemo-module"></span><h2>endemo2.endemo module<a class="headerlink" href="#module-endemo2.endemo" title="Permalink to this heading"></a></h2>
@@ -779,7 +875,7 @@ Only for these products, calculations are performed.</p></li>
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_manager</strong> (<a class="reference internal" href="#endemo2.input.Input" title="endemo2.input.Input"><em>Input</em></a>) – holds all the input from the Excel sheets for the current run of the program.</p></li>
-<li><p><strong>countries</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Country</em><em>]</em>) – holds all the country objects, accessible by the countries english name.</p></li>
+<li><p><strong>countries</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#endemo2.country.Country" title="endemo2.country.Country"><em>Country</em></a><em>]</em>) – holds all the country objects, accessible by the countries english name.</p></li>
 </ul>
 </dd>
 </dl>
@@ -862,13 +958,13 @@ Set_and_Control_Parameters.xlsx in interval [0,1].</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.industry_sector.Industry.calculate_demand_split_by_nuts2">
 <span class="sig-name descname"><span class="pre">calculate_demand_split_by_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">endemo2.containers.Demand</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/endemo2/industry_sector.html#Industry.calculate_demand_split_by_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry_sector.Industry.calculate_demand_split_by_nuts2" title="Permalink to this definition"></a></dt>
-<dd><p>Calls the calculate_demand function and splits the result according to capacity for each NUTS2 region.</p>
+<dd><p>Calls the calculate_product_demand function and splits the result according to capacity for each NUTS2 region.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>year</strong> – The target year, the demand should be calculated for.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The dictionary of nuts2_region -&gt; demand.</p>
+<dd class="field-even"><p>The dictionary of {nuts2_region -&gt; demand}.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1323,9 +1419,6 @@ model.</p>
 <span class="sig-prename descclassname"><span class="pre">endemo2.output.</span></span><span class="sig-name descname"><span class="pre">shortcut_coef_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_coef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lin_coef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quadr_coef</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output.html#shortcut_coef_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.shortcut_coef_output" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
-</section>
-<section id="endemo2-population-module">
-<h2>endemo2.population module<a class="headerlink" href="#endemo2-population-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-endemo2.prediction_models">
 <span id="endemo2-prediction-models-module"></span><h2>endemo2.prediction_models module<a class="headerlink" href="#module-endemo2.prediction_models" title="Permalink to this heading"></a></h2>
@@ -2304,7 +2397,7 @@ Can be cast to list to apply on whole input at once and create a list as output 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Endemo2’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Endemo’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

@@ -75,6 +75,7 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">endemo2.country</span>
+<span class="kn">import</span> <span class="nn">endemo2.general_containers</span>
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">utility</span> <span class="k">as</span> <span class="n">uty</span>
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="nb">input</span>
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">prediction_models</span> <span class="k">as</span> <span class="n">pm</span>
@@ -123,7 +124,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">product_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">product_input</span><span class="p">:</span> <span class="nb">input</span><span class="o">.</span><span class="n">ProductInput</span><span class="p">,</span> <span class="n">input_manager</span><span class="p">:</span> <span class="nb">input</span><span class="o">.</span><span class="n">Input</span><span class="p">,</span>
-                 <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">population</span><span class="p">:</span> <span class="n">endemo2</span><span class="o">.</span><span class="n">country</span><span class="o">.</span><span class="n">Population</span><span class="p">,</span> <span class="n">gdp</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">TimeStepSequence</span><span class="p">):</span>
+                 <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">population</span><span class="p">:</span> <span class="n">endemo2</span><span class="o">.</span><span class="n">general_containers</span><span class="o">.</span><span class="n">Population</span><span class="p">,</span> <span class="n">gdp</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">TimeStepSequence</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_country_name</span> <span class="o">=</span> <span class="n">country_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">product_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_heat_levels</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">heat_levels</span>
@@ -248,6 +249,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the prognosis for the amount of this product in a certain year according to current settings regarding gdp</span>
 <span class="sd">            and per_capita calculation.</span>
+<span class="sd">            </span>
 <span class="sd">        :param year:</span>
 <span class="sd">        :return: The estimated product amount for given year.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

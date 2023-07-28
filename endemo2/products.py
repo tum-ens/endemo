@@ -4,6 +4,7 @@ import itertools
 import warnings
 
 import endemo2.country
+import endemo2.general_containers
 from endemo2 import utility as uty
 from endemo2 import input
 from endemo2 import prediction_models as pm
@@ -52,7 +53,7 @@ class Product:
     """
 
     def __init__(self, product_name: str, product_input: input.ProductInput, input_manager: input.Input,
-                 country_name: str, population: endemo2.country.Population, gdp: pm.TimeStepSequence):
+                 country_name: str, population: endemo2.general_containers.Population, gdp: pm.TimeStepSequence):
         self._country_name = country_name
         self._name = product_name
         self._heat_levels = product_input.heat_levels
@@ -177,6 +178,7 @@ class Product:
         """
         Get the prognosis for the amount of this product in a certain year according to current settings regarding gdp
             and per_capita calculation.
+
         :param year:
         :return: The estimated product amount for given year.
         """

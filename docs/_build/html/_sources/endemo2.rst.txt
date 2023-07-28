@@ -76,14 +76,6 @@ endemo2.output module
    :undoc-members:
    :show-inheritance:
 
-endemo2.population module
--------------------------
-
-.. automodule:: endemo2.population
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 endemo2.prediction\_models module
 ---------------------------------
 
