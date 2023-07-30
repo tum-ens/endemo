@@ -3,7 +3,7 @@ from endemo2 import sector
 
 
 class Household(sector.Sector):
-    def calculate_total_demand(self, year: int) -> ctn.Demand:
+    def calculate_forecasted_demand(self, year: int) -> ctn.Demand:
         """ Not implemented yet. calculate household sector """
         print("Household sector is not implemented yet.")
         pass

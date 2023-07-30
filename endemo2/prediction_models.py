@@ -65,6 +65,25 @@ class Timeseries:
         self._calc_coef_lin()
         self._calc_coef_quadr()
 
+    def get_value(self, target_x):
+        """
+        Get the y-axis value for a certain target_x.
+        Combines historical data and prediction data. When historical data is available it is used.
+        When not, a prognosis is made instead.
+
+        :param target_x: The target x-axis value.
+        :return: The corresponding y-axis value, historical or prognosis.
+        """
+
+        last_year = self.get_last_data_entry()[1]
+
+        if target_x <= last_year:
+            for (x, y) in self.get_data():
+                if target_x == x:
+                    return y
+                    # if target year not in data (spotty data or in future) use prediction instead
+        return self.get_prog(target_x)
+
     def get_prog(self, x) -> float:
         """
         Getter for the prognosis of this timeseries.
@@ -196,6 +215,25 @@ class PredictedTimeseries(Timeseries):
                  calculation_type: cp.ForecastMethod = cp.ForecastMethod.LINEAR, rate_of_change=0.0):
         super().__init__(historical_data, calculation_type, rate_of_change)
         self._prediction = prediction_data
+
+    def get_value(self, target_x):
+        """
+        Get the y-axis value for a certain target_x.
+        Combines historical data and prediction data. When historical data is available it is used.
+        When not, a prognosis is made instead.
+
+        :param target_x: The target x-axis value.
+        :return: The corresponding y-axis value, historical or prognosis.
+        """
+
+        last_year = self.get_last_data_entry()[1]
+
+        if target_x <= last_year:
+            for (x, y) in self.get_data():
+                if target_x == x:
+                    return y
+        # if target year not in data (spotty data or in future) use prediction instead
+        return self.get_manual_prog(target_x)
 
     def get_prog(self, target_x) -> float:
         """

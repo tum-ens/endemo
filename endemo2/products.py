@@ -108,6 +108,10 @@ class Product:
                                                              country_name=country_name, product_input=product_input,
                                                              input_manager=input_manager)
 
+        if product_name in ["alu_prim"]:
+            print(country_name + ": ")
+            print(self._amount_per_capita_per_year.get_data())
+
     def is_empty(self) -> bool:
         """ Getter for the _empty attribute. """
         return self._empty

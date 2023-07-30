@@ -6,6 +6,7 @@ from endemo2 import prediction_models as pm
 from endemo2 import products as prd
 from endemo2 import sector, input
 from endemo2 import containers as ctn
+from endemo2 import general_containers as gc
 
 
 class Industry(sector.Sector):
@@ -70,7 +71,6 @@ class Industry(sector.Sector):
         :param target_year: The year, the rest sector demand should be calculated for.
         :return: The demand of the rest sector in given year rest(y).
         """
-
         result = ctn.Demand()
 
         for dt, (perc_sy, demand_sy) in self.rest_calc_data.items():
@@ -83,7 +83,7 @@ class Industry(sector.Sector):
 
         return result
 
-    def calculate_total_demand(self, year: int) -> ctn.Demand:
+    def calculate_forecasted_demand(self, year: int) -> ctn.Demand:
         """
         Sums over the demand of each product.
 
@@ -96,6 +96,18 @@ class Industry(sector.Sector):
             result.add(self.calculate_product_demand(name, year))
 
         return result
+
+    def calculate_total_demand(self, year: int) -> ctn.Demand:
+        """
+        Calculate total demand, including the forecasted demand and rest sector.
+
+        :param year: Target year the demand should be calculated for.
+        :return: The total demand summed over all products in this industry and rest sector.
+        """
+        total_demand = ctn.Demand()
+        total_demand.add(self.calculate_forecasted_demand(year))
+        total_demand.add(self.calculate_rest_sector_demand(year))
+        return total_demand
 
     def calculate_product_demand(self, product_name: str, year: int) -> ctn.Demand:
         """
@@ -123,7 +135,6 @@ class Industry(sector.Sector):
         :param year: The target year, the demand should be calculated for.
         :return: The dictionary of {nuts2_region -> demand}.
         """
-
         country_demand = self.calculate_product_demand(product_name, year)
         product_obj = self._products[product_name]
         nuts2_installed_capacity = product_obj.get_nuts2_installed_capacities()
@@ -134,6 +145,64 @@ class Industry(sector.Sector):
             region_demand = country_demand.copy_scale(perc)
             result[nuts2_region_name] = region_demand
 
+        return result
+
+    def calculate_rest_demand_split_by_nuts2(self, nuts2_root: gc.NutsRegion, year: int) -> dict[str, ctn.Demand]:
+        """
+        Calls the calculate_rest_sector_demand function and splits the result according to capacity for each NUTS2
+        region.
+
+        :param nuts2_root: The root of the nuts2region tree that is used to split the rest demand.
+        :param year: The target year, the demand should be calculated for.
+        :return: The dictionary of {nuts2_region -> demand}.
+        """
+        rest_demand = self.calculate_rest_sector_demand(year)
+        nuts2_objs = nuts2_root.get_all_leaf_nodes()
+
+        result = dict[str, ctn.Demand]()
+
+        for nuts2_obj in nuts2_objs:
+            region_demand = rest_demand.copy_scale(nuts2_root.get_pop_perc_of_subregion_in_year(nuts2_obj, year))
+            result[nuts2_obj.get_region_name()] = region_demand
+
+        return result
+
+    def calculate_forecasted_demand_split_by_nuts2(self, year: int) -> dict[str, ctn.Demand]:
+        """
+        Calls the calculate_demand_split_by_nuts2 function and sums over all products.
+
+        :param year: The target year, the demand should be calculated for.
+        :return: The dictionary of {nuts2_region -> demand}.
+        """
+        result = dict[str, ctn.Demand]()
+
+        for (product_name, _) in self._products.items():
+            dict_product_demand_nuts2 = self.calculate_demand_split_by_nuts2(product_name, year)
+            for (nuts2_name, nuts2_product_demand) in dict_product_demand_nuts2.items():
+                if nuts2_name not in result.keys():
+                    result[nuts2_name] = ctn.Demand()
+                result[nuts2_name].add(nuts2_product_demand)
+
+        return result
+
+    def calculate_total_demand_split_by_nuts2(self, nuts2_root: gc.NutsRegion, year: int) -> dict[str, ctn.Demand]:
+        """
+        Calculate total demand, including the forecasted demand and rest sector.
+
+        :param year: Target year the demand should be calculated for.
+        :return: The total demand summed over all products in this industry and rest sector, split by nuts2 regions.
+        """
+        result = dict[str, ctn.Demand]()
+        forecasted_demand = self.calculate_forecasted_demand_split_by_nuts2(year)
+        rest_demand = self.calculate_rest_demand_split_by_nuts2(nuts2_root, year)
+
+        for nuts2_code in forecasted_demand.keys():
+            if nuts2_code not in rest_demand.keys():
+                continue
+            total_demand = ctn.Demand()
+            total_demand.add(forecasted_demand[nuts2_code])
+            total_demand.add(rest_demand[nuts2_code])
+            result[nuts2_code] = total_demand
         return result
 
     def prog_product_amount(self, product_name: str, year: int) -> float:

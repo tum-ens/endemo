@@ -3,7 +3,7 @@ from endemo2 import sector
 
 
 class Transport(sector.Sector):
-    def calculate_total_demand(self, year: int) -> ctn.Demand:
+    def calculate_forecasted_demand(self, year: int) -> ctn.Demand:
         # calculate transport sector
         print("Transport sector is not implemented yet.")
         pass

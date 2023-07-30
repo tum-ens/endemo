@@ -97,7 +97,7 @@ class Country:
         total_demand = containers.Demand()
 
         for sector_name, obj_sector in self._sectors.items():
-            total_demand.add(obj_sector.calculate_total_demand(year))
+            total_demand.add(obj_sector.calculate_forecasted_demand(year))
 
         return total_demand
 
@@ -134,4 +134,7 @@ class Country:
         """
         return self._sectors[sector_id]
 
+    def get_nuts2_root(self) -> NutsRegion:
+        """ Getter for the root NutsRegion. """
+        return self._population.get_nuts2_root()
 

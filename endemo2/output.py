@@ -363,7 +363,7 @@ def generate_demand_output(model: endemo.Endemo):
         for country in countries.values():
             fg.add_entry("Country", country.get_name())
             demand: containers.Demand = \
-                country.get_sector(sector.SectorIdentifier.INDUSTRY).calculate_total_demand(target_year)
+                country.get_sector(sector.SectorIdentifier.INDUSTRY).calculate_forecasted_demand(target_year)
             shortcut_demand_table(fg, demand)
 
         fg.start_sheet("rest")
@@ -371,6 +371,13 @@ def generate_demand_output(model: endemo.Endemo):
             fg.add_entry("Country", country.get_name())
             demand: containers.Demand = \
                 country.get_sector(sector.SectorIdentifier.INDUSTRY).calculate_rest_sector_demand(target_year)
+            shortcut_demand_table(fg, demand)
+
+        fg.start_sheet("IND")
+        for country in countries.values():
+            fg.add_entry("Country", country.get_name())
+            demand: containers.Demand = \
+                country.get_sector(sector.SectorIdentifier.INDUSTRY).calculate_total_demand(target_year)
             shortcut_demand_table(fg, demand)
 
     filename = "endemo2_nuts2_demand_projections.xlsx"
@@ -384,3 +391,25 @@ def generate_demand_output(model: endemo.Endemo):
                 for (nuts2_region_name, demand) in dict_nuts2_demand.items():
                     fg.add_entry("NUTS2 Region", nuts2_region_name)
                     shortcut_demand_table(fg, demand)
+            fg.start_sheet("forecasted")
+            for country in countries.values():
+                dict_nuts2_demand = country.get_sector(sector.SectorIdentifier.INDUSTRY) \
+                    .calculate_forecasted_demand_split_by_nuts2(target_year)
+                for (nuts2_region_name, demand) in dict_nuts2_demand.items():
+                    fg.add_entry("NUTS2 Region", nuts2_region_name)
+                    shortcut_demand_table(fg, demand)
+            fg.start_sheet("rest")
+            for country in countries.values():
+                dict_nuts2_demand = country.get_sector(sector.SectorIdentifier.INDUSTRY) \
+                    .calculate_rest_demand_split_by_nuts2(country.get_nuts2_root(), target_year)
+                for (nuts2_region_name, demand) in dict_nuts2_demand.items():
+                    fg.add_entry("NUTS2 Region", nuts2_region_name)
+                    shortcut_demand_table(fg, demand)
+            fg.start_sheet("IND")
+            for country in countries.values():
+                dict_nuts2_demand = country.get_sector(sector.SectorIdentifier.INDUSTRY) \
+                    .calculate_total_demand_split_by_nuts2(country.get_nuts2_root(), target_year)
+                for (nuts2_region_name, demand) in dict_nuts2_demand.items():
+                    fg.add_entry("NUTS2 Region", nuts2_region_name)
+                    shortcut_demand_table(fg, demand)
+
