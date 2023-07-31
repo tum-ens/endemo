@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.sectors.industry_sector &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/endemo2.html">API reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.sectors.industry_sector</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.sectors.industry_sector</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">endemo2.general.country_containers</span>
+<span class="kn">from</span> <span class="nn">endemo2.utility</span> <span class="kn">import</span> <span class="n">prediction_models</span> <span class="k">as</span> <span class="n">pm</span>
+<span class="kn">from</span> <span class="nn">endemo2.industry</span> <span class="kn">import</span> <span class="n">products</span> <span class="k">as</span> <span class="n">prd</span>
+<span class="kn">from</span> <span class="nn">endemo2.input</span> <span class="kn">import</span> <span class="nb">input</span>
+<span class="kn">from</span> <span class="nn">endemo2.sectors</span> <span class="kn">import</span> <span class="n">sector</span>
+<span class="kn">from</span> <span class="nn">endemo2.general</span> <span class="kn">import</span> <span class="n">demand_containers</span> <span class="k">as</span> <span class="n">dc</span>
+<span class="kn">from</span> <span class="nn">endemo2.general</span> <span class="kn">import</span> <span class="n">country_containers</span> <span class="k">as</span> <span class="n">cc</span>
+
+
+<div class="viewcode-block" id="Industry"><a class="viewcode-back" href="../../../_autosummary/endemo2.sectors.industry_sector.Industry.html#endemo2.sectors.industry_sector.Industry">[docs]</a><span class="k">class</span> <span class="nc">Industry</span><span class="p">(</span><span class="n">sector</span><span class="o">.</span><span class="n">Sector</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Industry class represents the industry sector of one country. It holds all products produced by this industry.</span>
+
+<span class="sd">    :param Population population: The population object of the country.</span>
+<span class="sd">    :param TimeStepSequence country_gdp: The countries&#39; GDP Timeseries</span>
+<span class="sd">    :param Input input_manager: The models input data from the Excel files.</span>
+
+
+<span class="sd">    :ivar str country_name: Name of the country this industry is located in.</span>
+<span class="sd">    :ivar dict[str, Product] _products: All products in this industry.</span>
+<span class="sd">    :ivar int rest_calc_basis_year: Year that is used as the starting point for the rest sector percentage prediction.</span>
+<span class="sd">    :ivar dict[DemandType, (float, float)] rest_calc_data: rest sector start-percentage and rest sector start-demand,</span>
+<span class="sd">        used to forecast the rest sector demand for a certain year.</span>
+<span class="sd">    :ivar float rest_growth_rate: Growth rate percentage of the rest sector as specified in</span>
+<span class="sd">        Set_and_Control_Parameters.xlsx in interval [0,1].</span>
+<span class="sd">    :ivar Population country_population: The population of the country, this industry belongs to.</span>
+<span class="sd">    :ivar bool nuts2_distribution_by_installed_capacities: If true, distribution of (forecasted) demand over nuts2</span>
+<span class="sd">        regions is calculated by percentages given in the installed_capacities file, otherwise distribution is</span>
+<span class="sd">        calculated according to population density.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">population</span><span class="p">:</span> <span class="n">cc</span><span class="o">.</span><span class="n">Population</span><span class="p">,</span>
+                 <span class="n">country_gdp</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">TimeStepSequence</span><span class="p">,</span> <span class="n">input_manager</span><span class="p">:</span> <span class="nb">input</span><span class="o">.</span><span class="n">Input</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_products</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">country_name</span> <span class="o">=</span> <span class="n">country_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">country_population</span> <span class="o">=</span> <span class="n">population</span>
+        <span class="n">active_products</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">active_products</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_distribution_by_installed_capacities</span> <span class="o">=</span> \
+            <span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">nuts2_distribution_based_on_installed_ind_capacity</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">product_name</span><span class="p">,</span> <span class="n">product_input</span><span class="p">)</span> <span class="ow">in</span> <span class="n">active_products</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_products</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">prd</span><span class="o">.</span><span class="n">Product</span><span class="p">(</span><span class="n">product_name</span><span class="p">,</span> <span class="n">product_input</span><span class="p">,</span> <span class="n">input_manager</span><span class="p">,</span>
+                                                       <span class="n">country_name</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">country_gdp</span><span class="p">)</span>
+
+        <span class="c1"># store rest sector calculation parameters</span>
+        <span class="n">rest_sector_input</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">rest_sector_input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest_calc_basis_year</span> <span class="o">=</span> <span class="n">rest_sector_input</span><span class="o">.</span><span class="n">rest_calc_basis_year</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest_calc_data</span> <span class="o">=</span> <span class="n">rest_sector_input</span><span class="o">.</span><span class="n">rest_calc_data</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest_heat_levels</span> <span class="o">=</span> <span class="n">rest_sector_input</span><span class="o">.</span><span class="n">rest_sector_heat_levels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest_growth_rate</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">rest_sector_growth_rate</span>
+
+        <span class="c1"># create warnings</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_products</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Industry Sector in Country &quot;</span> <span class="o">+</span> <span class="n">country_name</span> <span class="o">+</span> <span class="s2">&quot; has an empty list of products.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Industry.get_product"><a class="viewcode-back" href="../../../_autosummary/endemo2.sectors.industry_sector.Industry.html#endemo2.sectors.industry_sector.Industry.get_product">[docs]</a>    <span class="k">def</span> <span class="nf">get_product</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">prd</span><span class="o">.</span><span class="n">Product</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for a product from the industry.</span>
+
+<span class="sd">        :param str name: Name of the product. Example: &quot;steel_prim&quot;.</span>
+<span class="sd">        :return: Product object with the matching name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_products</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Industry.calculate_rest_sector_demand"><a class="viewcode-back" href="../../../_autosummary/endemo2.sectors.industry_sector.Industry.html#endemo2.sectors.industry_sector.Industry.calculate_rest_sector_demand">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_rest_sector_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the rest sector demand for a certain year.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            rest_{\\text{start_year}}[TWh]=perc_{\\text{start_year}}*demand_{\\text{start_year}}[TWh]\\\\</span>
+<span class="sd">            rest(y)[TWh] = rest_{\\text{start_year}}[TWh]*(1+r)^{y-\\text{start_year}}</span>
+
+
+<span class="sd">        :param int target_year: The year, the rest sector demand should be calculated for.</span>
+<span class="sd">        :return: The demand of the rest sector in given year rest(y).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">dt</span><span class="p">,</span> <span class="p">(</span><span class="n">perc_sy</span><span class="p">,</span> <span class="n">demand_sy</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_calc_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">rest_start_year</span> <span class="o">=</span> <span class="n">perc_sy</span> <span class="o">*</span> <span class="n">demand_sy</span>
+            <span class="n">rest_target_year</span> <span class="o">=</span> \
+                <span class="n">rest_start_year</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_growth_rate</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">target_year</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_calc_basis_year</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dt</span> <span class="o">==</span> <span class="n">dc</span><span class="o">.</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">:</span>
+                <span class="n">rest_target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_heat_levels</span><span class="o">.</span><span class="n">copy_multiply_scalar</span><span class="p">(</span><span class="n">rest_start_year</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">rest_target_year</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Industry.calculate_forecasted_demand"><a class="viewcode-back" href="../../../_autosummary/endemo2.sectors.industry_sector.Industry.html#endemo2.sectors.industry_sector.Industry.calculate_forecasted_demand">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_forecasted_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sums over the demand of each product.</span>
+
+<span class="sd">        :param int year: Target year the demand should be calculated for.</span>
+<span class="sd">        :return: The demand summed over all products in this industry.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_products</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculate_product_demand</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">year</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Industry.calculate_total_demand"><a class="viewcode-back" href="../../../_autosummary/endemo2.sectors.industry_sector.Industry.html#endemo2.sectors.industry_sector.Industry.calculate_total_demand">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_total_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate total demand, including the forecasted demand and rest sector.</span>
+
+<span class="sd">        :param int year: Target year the demand should be calculated for.</span>
+<span class="sd">        :return: The total demand summed over all products in this industry and rest sector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">total_demand</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">()</span>
+        <span class="n">total_demand</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculate_forecasted_demand</span><span class="p">(</span><span class="n">year</span><span class="p">))</span>
+        <span class="n">total_demand</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculate_rest_sector_demand</span><span class="p">(</span><span class="n">year</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">total_demand</span></div>
+
+<div class="viewcode-block" id="Industry.calculate_product_demand"><a class="viewcode-back" href="../../../_autosummary/endemo2.sectors.industry_sector.Industry.html#endemo2.sectors.industry_sector.Industry.calculate_product_demand">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_product_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">product_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for a products demand by product name and for the year.</span>
+<span class="sd">        If the product is not in the industry, a Demand object indicating zero demand is returned.</span>
+
+<span class="sd">        :param str product_name: The name of the product, whose demand should be returned.</span>
+<span class="sd">        :param int year: Target year the demand should be calculated for.</span>
+<span class="sd">        :return: The demand of the product in this industry.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">product_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_products</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">product_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_products</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span>
+            <span class="n">product_demand</span> <span class="o">=</span> <span class="n">product_obj</span><span class="o">.</span><span class="n">calculate_demand</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">product_obj</span><span class="o">.</span><span class="n">is_per_capita</span><span class="p">():</span>
+                <span class="n">product_demand</span><span class="o">.</span><span class="n">scale</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">country_population</span><span class="o">.</span><span class="n">get_country_prog</span><span class="p">(</span><span class="n">year</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="n">product_demand</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># if product not in industry, there is no demand -&gt; return 0ed demand</span>
+            <span class="k">return</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Industry.calculate_demand_split_by_nuts2"><a class="viewcode-back" href="../../../_autosummary/endemo2.sectors.industry_sector.Industry.html#endemo2.sectors.industry_sector.Industry.calculate_demand_split_by_nuts2">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_demand_split_by_nuts2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">product_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the calculate_product_demand function and splits the result according to capacity for each NUTS2 region.</span>
+
+<span class="sd">        :param str product_name: Name of product to calculate demand for.</span>
+<span class="sd">        :param int year: The target year, the demand should be calculated for.</span>
+<span class="sd">        :return: The dictionary of {nuts2_region -&gt; demand}.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">country_demand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_product_demand</span><span class="p">(</span><span class="n">product_name</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">]()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_distribution_by_installed_capacities</span><span class="p">:</span>
+            <span class="n">product_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_products</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span>
+            <span class="n">nuts2_installed_capacity</span> <span class="o">=</span> <span class="n">product_obj</span><span class="o">.</span><span class="n">get_nuts2_installed_capacities</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="n">nuts2_region_name</span><span class="p">,</span> <span class="n">perc</span><span class="p">)</span> <span class="ow">in</span> <span class="n">nuts2_installed_capacity</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">region_demand</span> <span class="o">=</span> <span class="n">country_demand</span><span class="o">.</span><span class="n">copy_scale</span><span class="p">(</span><span class="n">perc</span><span class="p">)</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">nuts2_region_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">region_demand</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nuts2_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_population</span><span class="o">.</span><span class="n">get_nuts2_root</span><span class="p">()</span>
+            <span class="n">nuts2_objs</span> <span class="o">=</span> <span class="n">nuts2_root</span><span class="o">.</span><span class="n">get_all_leaf_nodes</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">nuts2_obj</span> <span class="ow">in</span> <span class="n">nuts2_objs</span><span class="p">:</span>
+                <span class="n">region_demand</span> <span class="o">=</span> <span class="n">country_demand</span><span class="o">.</span><span class="n">copy_scale</span><span class="p">(</span><span class="n">nuts2_root</span><span class="o">.</span><span class="n">get_pop_perc_of_subregion_in_year</span><span class="p">(</span><span class="n">nuts2_obj</span><span class="p">,</span> <span class="n">year</span><span class="p">))</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">nuts2_obj</span><span class="o">.</span><span class="n">get_region_name</span><span class="p">()]</span> <span class="o">=</span> <span class="n">region_demand</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Industry.calculate_rest_demand_split_by_nuts2"><a class="viewcode-back" href="../../../_autosummary/endemo2.sectors.industry_sector.Industry.html#endemo2.sectors.industry_sector.Industry.calculate_rest_demand_split_by_nuts2">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_rest_demand_split_by_nuts2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the calculate_rest_sector_demand function and splits the result according to capacity for each NUTS2</span>
+<span class="sd">        region.</span>
+
+<span class="sd">        :param int year: The target year, the demand should be calculated for.</span>
+<span class="sd">        :return: The dictionary of {nuts2_region -&gt; demand}.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rest_demand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_rest_sector_demand</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+        <span class="n">nuts2_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_population</span><span class="o">.</span><span class="n">get_nuts2_root</span><span class="p">()</span>
+        <span class="n">nuts2_objs</span> <span class="o">=</span> <span class="n">nuts2_root</span><span class="o">.</span><span class="n">get_all_leaf_nodes</span><span class="p">()</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">]()</span>
+
+        <span class="k">for</span> <span class="n">nuts2_obj</span> <span class="ow">in</span> <span class="n">nuts2_objs</span><span class="p">:</span>
+            <span class="n">region_demand</span> <span class="o">=</span> <span class="n">rest_demand</span><span class="o">.</span><span class="n">copy_scale</span><span class="p">(</span><span class="n">nuts2_root</span><span class="o">.</span><span class="n">get_pop_perc_of_subregion_in_year</span><span class="p">(</span><span class="n">nuts2_obj</span><span class="p">,</span> <span class="n">year</span><span class="p">))</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">nuts2_obj</span><span class="o">.</span><span class="n">get_region_name</span><span class="p">()]</span> <span class="o">=</span> <span class="n">region_demand</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Industry.calculate_forecasted_demand_split_by_nuts2"><a class="viewcode-back" href="../../../_autosummary/endemo2.sectors.industry_sector.Industry.html#endemo2.sectors.industry_sector.Industry.calculate_forecasted_demand_split_by_nuts2">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_forecasted_demand_split_by_nuts2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the calculate_demand_split_by_nuts2 function and sums over all products.</span>
+
+<span class="sd">        :param int year: The target year, the demand should be calculated for.</span>
+<span class="sd">        :return: The dictionary of {nuts2_region -&gt; demand}.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">]()</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">product_name</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_products</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dict_product_demand_nuts2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_demand_split_by_nuts2</span><span class="p">(</span><span class="n">product_name</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">nuts2_name</span><span class="p">,</span> <span class="n">nuts2_product_demand</span><span class="p">)</span> <span class="ow">in</span> <span class="n">dict_product_demand_nuts2</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">nuts2_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">result</span><span class="p">[</span><span class="n">nuts2_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">()</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">nuts2_name</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">nuts2_product_demand</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Industry.calculate_total_demand_split_by_nuts2"><a class="viewcode-back" href="../../../_autosummary/endemo2.sectors.industry_sector.Industry.html#endemo2.sectors.industry_sector.Industry.calculate_total_demand_split_by_nuts2">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_total_demand_split_by_nuts2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate total demand, including the forecasted demand and rest sector.</span>
+
+<span class="sd">        :param int year: Target year the demand should be calculated for.</span>
+<span class="sd">        :return: The total demand summed over all products in this industry and rest sector, split by nuts2 regions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">]()</span>
+        <span class="n">forecasted_demand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_forecasted_demand_split_by_nuts2</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+        <span class="n">rest_demand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_rest_demand_split_by_nuts2</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">nuts2_code</span> <span class="ow">in</span> <span class="n">forecasted_demand</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">nuts2_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rest_demand</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="n">total_demand</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">Demand</span><span class="p">()</span>
+            <span class="n">total_demand</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">forecasted_demand</span><span class="p">[</span><span class="n">nuts2_code</span><span class="p">])</span>
+            <span class="n">total_demand</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">rest_demand</span><span class="p">[</span><span class="n">nuts2_code</span><span class="p">])</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">nuts2_code</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_demand</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Industry.prog_product_amount"><a class="viewcode-back" href="../../../_autosummary/endemo2.sectors.industry_sector.Industry.html#endemo2.sectors.industry_sector.Industry.prog_product_amount">[docs]</a>    <span class="k">def</span> <span class="nf">prog_product_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">product_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the predicted amount of a product within this industry.</span>
+
+<span class="sd">        :param str product_name: Name of the product. Example: &quot;steel_prim&quot;.</span>
+<span class="sd">        :param int year: Target year, which the amount should be calculated for.</span>
+<span class="sd">        :return: The products predicted amount in target year.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">product_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_products</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_products</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span><span class="o">.</span><span class="n">get_amount_prog</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># if product not in industry, there is no amount -&gt; return 0</span>
+            <span class="k">return</span> <span class="mi">0</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

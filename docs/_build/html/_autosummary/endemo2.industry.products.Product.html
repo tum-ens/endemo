@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.industry.products.Product &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="endemo2.industry.products.ProductPrimSec" href="endemo2.industry.products.ProductPrimSec.html" />
+    <link rel="prev" title="endemo2.industry.products" href="endemo2.industry.products.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="endemo2.execution.html">endemo2.execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.general.html">endemo2.general</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="endemo2.industry.html">endemo2.industry</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="endemo2.industry.products.html">endemo2.industry.products</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">endemo2.industry.products.Product</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.industry.products.Product"><code class="docutils literal notranslate"><span class="pre">Product</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.industry.products.ProductPrimSec.html">endemo2.industry.products.ProductPrimSec</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.industry.products.SpecificConsumptionData.html">endemo2.industry.products.SpecificConsumptionData</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.input.html">endemo2.input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.sectors.html">endemo2.sectors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.utility.html">endemo2.utility</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="endemo2.industry.html">endemo2.industry</a></li>
+          <li class="breadcrumb-item"><a href="endemo2.industry.products.html">endemo2.industry.products</a></li>
+      <li class="breadcrumb-item active">endemo2.industry.products.Product</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="endemo2-industry-products-product">
+<h1>endemo2.industry.products.Product<a class="headerlink" href="#endemo2-industry-products-product" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gdp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Holds all information and objects belonging to a product in the industry of a country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the product type. For example “steel_prim”.</p></li>
+<li><p><strong>product_input</strong> (<a class="reference internal" href="endemo2.input.input.ProductInput.html#endemo2.input.input.ProductInput" title="endemo2.input.input.ProductInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProductInput</span></code></a>) – The product types input from the input manager. (Redundant)</p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input.input.Input.html#endemo2.input.input.Input" title="endemo2.input.input.Input"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input</span></code></a>) – The input manager, which holds all input data used to create this product.</p></li>
+<li><p><strong>country_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the country to whose industry this product belongs to.</p></li>
+<li><p><strong>population</strong> (<a class="reference internal" href="endemo2.general.country_containers.Population.html#endemo2.general.country_containers.Population" title="endemo2.general.country_containers.Population"><code class="xref py py-class docutils literal notranslate"><span class="pre">Population</span></code></a>) – The countries population amount used to create timeseries per capita.</p></li>
+<li><p><strong>gdp</strong> (<a class="reference internal" href="endemo2.utility.prediction_models.TimeStepSequence.html#endemo2.utility.prediction_models.TimeStepSequence" title="endemo2.utility.prediction_models.TimeStepSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeStepSequence</span></code></a>) – The countries gdp used to create timeseries per gdp.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the product. For example “steel_prim”.</p></li>
+<li><p><strong>_country_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the country to whose industry this product belongs to.</p></li>
+<li><p><strong>_specific_consumption</strong> (<a class="reference internal" href="endemo2.industry.products.SpecificConsumptionData.html#endemo2.industry.products.SpecificConsumptionData" title="endemo2.industry.products.SpecificConsumptionData"><em>SpecificConsumptionData</em></a>) – The object used to optionally calculate and get the specific
+consumption amounts for this product type.</p></li>
+<li><p><strong>_bat</strong> (<a class="reference internal" href="endemo2.general.demand_containers.EH.html#endemo2.general.demand_containers.EH" title="endemo2.general.demand_containers.EH"><em>EH</em></a>) – The specific consumption of the best available technology.</p></li>
+<li><p><strong>_perc_used</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – The percentage of the predicted amount used of this product. Can be configured to model new
+technology replacing old ones.</p></li>
+<li><p><strong>_exp_change_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – The manual change rate for the exponential forecast method.</p></li>
+<li><p><strong>_heat_levels</strong> (<a class="reference internal" href="endemo2.general.demand_containers.Heat.html#endemo2.general.demand_containers.Heat" title="endemo2.general.demand_containers.Heat"><em>Heat</em></a>) – The heat levels, that splits the forecasted heat demand into demand at different heat
+levels, by using fixed percentages.</p></li>
+<li><p><strong>_amount_per_year</strong> (<a class="reference internal" href="endemo2.utility.prediction_models.Timeseries.html#endemo2.utility.prediction_models.Timeseries" title="endemo2.utility.prediction_models.Timeseries"><em>Timeseries</em></a>) – Used to predict the product amount. The x-axis is time in years.</p></li>
+<li><p><strong>_amount_per_gdp</strong> (<a class="reference internal" href="endemo2.utility.prediction_models.Timeseries.html#endemo2.utility.prediction_models.Timeseries" title="endemo2.utility.prediction_models.Timeseries"><em>Timeseries</em></a>) – Used to predict the product amount. The x-axis is the countries’ gdp.</p></li>
+<li><p><strong>_amount_per_capita_per_year</strong> (<a class="reference internal" href="endemo2.utility.prediction_models.Timeseries.html#endemo2.utility.prediction_models.Timeseries" title="endemo2.utility.prediction_models.Timeseries"><em>Timeseries</em></a>) – Used to predict the product amount per capita.
+The x-axis is time in years.</p></li>
+<li><p><strong>_amount_per_capita_per_gdp</strong> (<a class="reference internal" href="endemo2.utility.prediction_models.Timeseries.html#endemo2.utility.prediction_models.Timeseries" title="endemo2.utility.prediction_models.Timeseries"><em>Timeseries</em></a>) – Used to predict the product amount per capita.
+The x-axis is time in years.</p></li>
+<li><p><strong>_use_per_capita</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – Indicates whether the timeseries that predict amount per capita should be used for the
+forecast.</p></li>
+<li><p><strong>_use_gdp_as_x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – Indicated whether the timeseries that use the gdp as x-axis should be used for the
+forecast.</p></li>
+<li><p><strong>_empty</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – Indicates that the product historical data is empty. This is true, if the country is being
+present in the input table but filters causing the list to be empty.</p></li>
+<li><p><strong>_nuts2_installed_capacity</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>]</em>) – The installed capacity for this product in each NUTS2 region for
+the country this product belongs to.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.industry.products.Product.calculate_demand" title="endemo2.industry.products.Product.calculate_demand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_demand</span></code></a></p></td>
+<td><p>Calculates the demand for this product.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#endemo2.industry.products.Product.get_active_timeseries" title="endemo2.industry.products.Product.get_active_timeseries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_active_timeseries</span></code></a></p></td>
+<td><p>Getter for the current timeseries according to current settings regarding gdp and per_capita calculation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.industry.products.Product.get_amount_prog" title="endemo2.industry.products.Product.get_amount_prog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_amount_prog</span></code></a></p></td>
+<td><p>Get the prognosis for the amount of this product in a certain year according to current settings regarding gdp</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#endemo2.industry.products.Product.get_coef" title="endemo2.industry.products.Product.get_coef"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coef</span></code></a></p></td>
+<td><p>Getter for the coefficients of the currently used timeseries according to settings.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.industry.products.Product.get_nuts2_installed_capacities" title="endemo2.industry.products.Product.get_nuts2_installed_capacities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_nuts2_installed_capacities</span></code></a></p></td>
+<td><p>Getter for the nuts2 installed capacity dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#endemo2.industry.products.Product.get_specific_consumption" title="endemo2.industry.products.Product.get_specific_consumption"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_specific_consumption</span></code></a></p></td>
+<td><p>Getter for the specific consumption object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.industry.products.Product.get_timeseries_amount_per_capita_per_gdp" title="endemo2.industry.products.Product.get_timeseries_amount_per_capita_per_gdp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_timeseries_amount_per_capita_per_gdp</span></code></a></p></td>
+<td><p>Getter for the _amount_per_capita_per_gdp timeseries.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#endemo2.industry.products.Product.get_timeseries_amount_per_capita_per_year" title="endemo2.industry.products.Product.get_timeseries_amount_per_capita_per_year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_timeseries_amount_per_capita_per_year</span></code></a></p></td>
+<td><p>Getter for the _amount_per_capita_per_year timeseries.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.industry.products.Product.get_timeseries_amount_per_gdp" title="endemo2.industry.products.Product.get_timeseries_amount_per_gdp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_timeseries_amount_per_gdp</span></code></a></p></td>
+<td><p>Getter for the _amount_per_gdp timeseries.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#endemo2.industry.products.Product.get_timeseries_amount_per_year" title="endemo2.industry.products.Product.get_timeseries_amount_per_year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_timeseries_amount_per_year</span></code></a></p></td>
+<td><p>Getter for the _amount_per_year timeseries.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.industry.products.Product.is_empty" title="endemo2.industry.products.Product.is_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_empty</span></code></a></p></td>
+<td><p>Getter for the _empty attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#endemo2.industry.products.Product.is_per_capita" title="endemo2.industry.products.Product.is_per_capita"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_per_capita</span></code></a></p></td>
+<td><p>Getter for the _use_per_capita attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.industry.products.Product.is_per_gdp" title="endemo2.industry.products.Product.is_per_gdp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_per_gdp</span></code></a></p></td>
+<td><p>Getter for the _use_gdp_as_x attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#endemo2.industry.products.Product.split_heat_levels" title="endemo2.industry.products.Product.split_heat_levels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split_heat_levels</span></code></a></p></td>
+<td><p>Takes amount of heat as input and splits it into different heat levels, according to the _heat_levels attribute.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product.calculate_demand">
+<span class="sig-name descname"><span class="pre">calculate_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product.calculate_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product.calculate_demand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the demand for this product. Returns zero demand when the _empty attribute is true.</p>
+<div class="math notranslate nohighlight">
+\[D(y)[TWh/T] = p*A(y)[T]*(c_{electricity}, c_{heat_{split}}, c_{hydrogen})[TWh/T]\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The target year, the demand should be calculated for.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="endemo2.general.demand_containers.Demand.html#endemo2.general.demand_containers.Demand" title="endemo2.general.demand_containers.Demand"><code class="xref py py-class docutils literal notranslate"><span class="pre">Demand</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The calculated demand.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product.get_active_timeseries">
+<span class="sig-name descname"><span class="pre">get_active_timeseries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product.get_active_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product.get_active_timeseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the current timeseries according to current settings regarding gdp
+and per_capita calculation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="endemo2.utility.prediction_models.Timeseries.html#endemo2.utility.prediction_models.Timeseries" title="endemo2.utility.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product.get_amount_prog">
+<span class="sig-name descname"><span class="pre">get_amount_prog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product.get_amount_prog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product.get_amount_prog" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Get the prognosis for the amount of this product in a certain year according to current settings regarding gdp</dt><dd><p>and per_capita calculation.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – </p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The estimated product amount for given year.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product.get_coef">
+<span class="sig-name descname"><span class="pre">get_coef</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product.get_coef"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product.get_coef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the coefficients of the currently used timeseries according to settings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="endemo2.utility.prediction_models.Coef.html#endemo2.utility.prediction_models.Coef" title="endemo2.utility.prediction_models.Coef"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coef</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product.get_nuts2_installed_capacities">
+<span class="sig-name descname"><span class="pre">get_nuts2_installed_capacities</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product.get_nuts2_installed_capacities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product.get_nuts2_installed_capacities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the nuts2 installed capacity dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product.get_specific_consumption">
+<span class="sig-name descname"><span class="pre">get_specific_consumption</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product.get_specific_consumption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product.get_specific_consumption" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the specific consumption object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="endemo2.industry.products.SpecificConsumptionData.html#endemo2.industry.products.SpecificConsumptionData" title="endemo2.industry.products.SpecificConsumptionData"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpecificConsumptionData</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product.get_timeseries_amount_per_capita_per_gdp">
+<span class="sig-name descname"><span class="pre">get_timeseries_amount_per_capita_per_gdp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product.get_timeseries_amount_per_capita_per_gdp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product.get_timeseries_amount_per_capita_per_gdp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the _amount_per_capita_per_gdp timeseries.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product.get_timeseries_amount_per_capita_per_year">
+<span class="sig-name descname"><span class="pre">get_timeseries_amount_per_capita_per_year</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product.get_timeseries_amount_per_capita_per_year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product.get_timeseries_amount_per_capita_per_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the _amount_per_capita_per_year timeseries.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product.get_timeseries_amount_per_gdp">
+<span class="sig-name descname"><span class="pre">get_timeseries_amount_per_gdp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product.get_timeseries_amount_per_gdp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product.get_timeseries_amount_per_gdp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the _amount_per_gdp timeseries.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product.get_timeseries_amount_per_year">
+<span class="sig-name descname"><span class="pre">get_timeseries_amount_per_year</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product.get_timeseries_amount_per_year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product.get_timeseries_amount_per_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the _amount_per_year timeseries.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product.is_empty">
+<span class="sig-name descname"><span class="pre">is_empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product.is_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product.is_empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the _empty attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product.is_per_capita">
+<span class="sig-name descname"><span class="pre">is_per_capita</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product.is_per_capita"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product.is_per_capita" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the _use_per_capita attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product.is_per_gdp">
+<span class="sig-name descname"><span class="pre">is_per_gdp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product.is_per_gdp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product.is_per_gdp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the _use_gdp_as_x attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.Product.split_heat_levels">
+<span class="sig-name descname"><span class="pre">split_heat_levels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#Product.split_heat_levels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.Product.split_heat_levels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes amount of heat as input and splits it into different heat levels, according to the _heat_levels attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – The amount of heat to be split into different heat levels.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The amount of heat in different heat levels as a tuple: (Q1, Q2, Q3, Q4)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="endemo2.industry.products.html" class="btn btn-neutral float-left" title="endemo2.industry.products" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="endemo2.industry.products.ProductPrimSec.html" class="btn btn-neutral float-right" title="endemo2.industry.products.ProductPrimSec" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

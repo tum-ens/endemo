@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.utility.utility &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="endemo2.utility.utility.combine_data_on_x" href="endemo2.utility.utility.combine_data_on_x.html" />
+    <link rel="prev" title="endemo2.utility.prediction_models.Timeseries" href="endemo2.utility.prediction_models.Timeseries.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="endemo2.html">endemo2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="endemo2.execution.html">endemo2.execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.general.html">endemo2.general</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.industry.html">endemo2.industry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.input.html">endemo2.input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.sectors.html">endemo2.sectors</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="endemo2.utility.html">endemo2.utility</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="endemo2.utility.prediction_models.html">endemo2.utility.prediction_models</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">endemo2.utility.utility</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.combine_data_on_x.html">endemo2.utility.utility.combine_data_on_x</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.convert_table_to_filtered_data_series_per_country.html">endemo2.utility.utility.convert_table_to_filtered_data_series_per_country</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.cut_after_x.html">endemo2.utility.utility.cut_after_x</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.exp_change.html">endemo2.utility.utility.exp_change</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.filter_out_nan_and_inf.html">endemo2.utility.utility.filter_out_nan_and_inf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.is_permissible_float.html">endemo2.utility.utility.is_permissible_float</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.is_tuple_list_zero.html">endemo2.utility.utility.is_tuple_list_zero</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.is_zero.html">endemo2.utility.utility.is_zero</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.lin_prediction.html">endemo2.utility.utility.lin_prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.linear_regression.html">endemo2.utility.utility.linear_regression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.map_data_y.html">endemo2.utility.utility.map_data_y</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.plot_timeseries.html">endemo2.utility.utility.plot_timeseries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.quadr_prediction.html">endemo2.utility.utility.quadr_prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.quadratic_regression.html">endemo2.utility.utility.quadratic_regression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.quadratic_regression_delta.html">endemo2.utility.utility.quadratic_regression_delta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.str_dict.html">endemo2.utility.utility.str_dict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.zip_data_on_x_and_map.html">endemo2.utility.utility.zip_data_on_x_and_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.utility.utility.zip_on_x.html">endemo2.utility.utility.zip_on_x</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="endemo2.html">endemo2</a></li>
+          <li class="breadcrumb-item"><a href="endemo2.utility.html">endemo2.utility</a></li>
+      <li class="breadcrumb-item active">endemo2.utility.utility</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-endemo2.utility.utility">
+<span id="endemo2-utility-utility"></span><h1>endemo2.utility.utility<a class="headerlink" href="#module-endemo2.utility.utility" title="Permalink to this heading">¶</a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="endemo2.utility.utility.combine_data_on_x.html#endemo2.utility.utility.combine_data_on_x" title="endemo2.utility.utility.combine_data_on_x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_data_on_x</span></code></a>(xys1, xys2[, ascending_x])</p></td>
+<td><p>Zip the two lists of tuples on the condition that the first tuple entry matches.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endemo2.utility.utility.convert_table_to_filtered_data_series_per_country.html#endemo2.utility.utility.convert_table_to_filtered_data_series_per_country" title="endemo2.utility.utility.convert_table_to_filtered_data_series_per_country"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_table_to_filtered_data_series_per_country</span></code></a>(df)</p></td>
+<td><p>Create a dictionary from a table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="endemo2.utility.utility.cut_after_x.html#endemo2.utility.utility.cut_after_x" title="endemo2.utility.utility.cut_after_x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cut_after_x</span></code></a>(data, last_x)</p></td>
+<td><p>Cuts the tail of a list, according to first entry of tuple being larger than last_x.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endemo2.utility.utility.exp_change.html#endemo2.utility.utility.exp_change" title="endemo2.utility.utility.exp_change"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp_change</span></code></a>(start_point, change_rate, target_x)</p></td>
+<td><p>Calculates the result of exponential growth on a start point.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="endemo2.utility.utility.filter_out_nan_and_inf.html#endemo2.utility.utility.filter_out_nan_and_inf" title="endemo2.utility.utility.filter_out_nan_and_inf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_out_nan_and_inf</span></code></a>(data)</p></td>
+<td><p>Filters out all entries in the list of tuples, where one of the values is either Inf or NaN.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endemo2.utility.utility.is_permissible_float.html#endemo2.utility.utility.is_permissible_float" title="endemo2.utility.utility.is_permissible_float"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_permissible_float</span></code></a>(x)</p></td>
+<td><p>Checks if a string could be converted to a float that is not NaN or Inf, without throwing an exception.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="endemo2.utility.utility.is_tuple_list_zero.html#endemo2.utility.utility.is_tuple_list_zero" title="endemo2.utility.utility.is_tuple_list_zero"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_tuple_list_zero</span></code></a>(xys)</p></td>
+<td><p>A wrapper for the is_zero function that applies it on a list of tuples, where only the second entries in a tuple are checked for being zero.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endemo2.utility.utility.is_zero.html#endemo2.utility.utility.is_zero" title="endemo2.utility.utility.is_zero"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_zero</span></code></a>(xs)</p></td>
+<td><p>Checks for a list of floats if there are only zeroes present in it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="endemo2.utility.utility.lin_prediction.html#endemo2.utility.utility.lin_prediction" title="endemo2.utility.utility.lin_prediction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lin_prediction</span></code></a>(coef, target_x)</p></td>
+<td><p>Calculates the result of a linear function according to given coefficients.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endemo2.utility.utility.linear_regression.html#endemo2.utility.utility.linear_regression" title="endemo2.utility.utility.linear_regression"><code class="xref py py-obj docutils literal notranslate"><span class="pre">linear_regression</span></code></a>(data[, visualize])</p></td>
+<td><p>Apply linear regression on data and return the coefficients.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="endemo2.utility.utility.map_data_y.html#endemo2.utility.utility.map_data_y" title="endemo2.utility.utility.map_data_y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">map_data_y</span></code></a>(xys, function)</p></td>
+<td><p>Applies the given function component-wise on the y-axis of the given data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endemo2.utility.utility.plot_timeseries.html#endemo2.utility.utility.plot_timeseries" title="endemo2.utility.utility.plot_timeseries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_timeseries</span></code></a>(ts[, title, x_label, y_label])</p></td>
+<td><p>Show a timeseries plotted with different optional labels.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="endemo2.utility.utility.quadr_prediction.html#endemo2.utility.utility.quadr_prediction" title="endemo2.utility.utility.quadr_prediction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quadr_prediction</span></code></a>(coef, target_x)</p></td>
+<td><p>Calculates the result of a quadratic function according to given coefficients.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endemo2.utility.utility.quadratic_regression.html#endemo2.utility.utility.quadratic_regression" title="endemo2.utility.utility.quadratic_regression"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quadratic_regression</span></code></a>(data[, visualize])</p></td>
+<td><p>Apply quadratic regression on data and return the coefficients.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="endemo2.utility.utility.quadratic_regression_delta.html#endemo2.utility.utility.quadratic_regression_delta" title="endemo2.utility.utility.quadratic_regression_delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quadratic_regression_delta</span></code></a>(data[, visualize])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">todo<span class="colon">:</span></dt>
+<dd class="field-odd"><p>implement later</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endemo2.utility.utility.str_dict.html#endemo2.utility.utility.str_dict" title="endemo2.utility.utility.str_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str_dict</span></code></a>(dictionary)</p></td>
+<td><p>Used to convert a dictionary to a string in a more readable form than if we would use the regular python implementation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="endemo2.utility.utility.zip_data_on_x_and_map.html#endemo2.utility.utility.zip_data_on_x_and_map" title="endemo2.utility.utility.zip_data_on_x_and_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zip_data_on_x_and_map</span></code></a>(xys1, xys2, function)</p></td>
+<td><p>Combines two data lists and applies the given function to them.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="endemo2.utility.utility.zip_on_x.html#endemo2.utility.utility.zip_on_x" title="endemo2.utility.utility.zip_on_x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zip_on_x</span></code></a>(a, b)</p></td>
+<td><p>A helper function for combine_data_on_x.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="endemo2.utility.prediction_models.Timeseries.html" class="btn btn-neutral float-left" title="endemo2.utility.prediction_models.Timeseries" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="endemo2.utility.utility.combine_data_on_x.html" class="btn btn-neutral float-right" title="endemo2.utility.utility.combine_data_on_x" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

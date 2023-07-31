@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.general.country &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/endemo2.html">API reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.general.country</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.general.country</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="nb">input</span>
+<span class="kn">from</span> <span class="nn">endemo2.sectors</span> <span class="kn">import</span> <span class="n">industry_sector</span><span class="p">,</span> <span class="n">sector</span>
+<span class="kn">from</span> <span class="nn">endemo2.utility</span> <span class="kn">import</span> <span class="n">prediction_models</span> <span class="k">as</span> <span class="n">pm</span>
+<span class="kn">from</span> <span class="nn">endemo2.general.country_containers</span> <span class="kn">import</span> <span class="n">Population</span><span class="p">,</span> <span class="n">NutsRegion</span>
+
+
+<div class="viewcode-block" id="Country"><a class="viewcode-back" href="../../../_autosummary/endemo2.general.country.Country.html#endemo2.general.country.Country">[docs]</a><span class="k">class</span> <span class="nc">Country</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Country connects all sectors and data from a single country. It is a completely self-contained unit.</span>
+
+<span class="sd">    :param name: Name of the country.</span>
+<span class="sd">    :param input_manager:</span>
+<span class="sd">        The input manager containing all the input files, so country can fill the variables in its constructor.</span>
+
+<span class="sd">    :ivar str _name: The name of the country (en).</span>
+<span class="sd">    :ivar [str] _abbreviations: Possible abbreviations for this country.</span>
+<span class="sd">    :ivar Population[PredictedTimeseries, NutsRegion] _population: Population object, containing important data and</span>
+<span class="sd">        timeseries of the countries&#39; population.</span>
+<span class="sd">    :ivar TimeStepSequence _gdp: The Timeseries for the GDP of this country.</span>
+<span class="sd">    :ivar dict[SectorIdentifier, Sector] _sectors: The sector objects for this country, accessible by the sector</span>
+<span class="sd">        identifier.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">input_manager</span><span class="p">:</span> <span class="nb">input</span><span class="o">.</span><span class="n">Input</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sectors</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># fill abbreviations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">general_input</span><span class="o">.</span><span class="n">abbreviations</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span>
+
+        <span class="c1"># create population timeseries</span>
+        <span class="n">country_population</span> <span class="o">=</span> \
+            <span class="n">pm</span><span class="o">.</span><span class="n">PredictedTimeseries</span><span class="p">(</span>
+                <span class="n">historical_data</span><span class="o">=</span><span class="n">input_manager</span><span class="o">.</span><span class="n">general_input</span><span class="o">.</span><span class="n">population</span><span class="o">.</span><span class="n">country_population</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span><span class="o">.</span><span class="n">historical</span><span class="p">,</span>
+                <span class="n">prediction_data</span><span class="o">=</span><span class="n">input_manager</span><span class="o">.</span><span class="n">general_input</span><span class="o">.</span><span class="n">population</span><span class="o">.</span><span class="n">country_population</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span><span class="o">.</span><span class="n">prognosis</span><span class="p">)</span>
+
+        <span class="c1"># create nuts2 tree</span>
+        <span class="n">nuts2_data</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">general_input</span><span class="o">.</span><span class="n">population</span><span class="o">.</span><span class="n">nuts2_population</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span>
+        <span class="n">nuts2_root</span><span class="p">:</span> <span class="n">NutsRegion</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span> <span class="ow">in</span> <span class="n">nuts2_data</span><span class="o">.</span><span class="n">prognosis</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">nuts2_root</span> <span class="o">=</span> <span class="n">NutsRegion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span><span class="p">,</span> <span class="n">nuts2_data</span><span class="o">.</span><span class="n">historical</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span><span class="p">],</span>
+                                    <span class="n">nuts2_data</span><span class="o">.</span><span class="n">prognosis</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nuts2_root</span> <span class="o">=</span> <span class="n">NutsRegion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">region_name</span><span class="p">,</span> <span class="n">region_data</span> <span class="ow">in</span> <span class="n">nuts2_data</span><span class="o">.</span><span class="n">historical</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">region_name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="o">.</span><span class="n">alpha2</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="c1"># create and add subregion to root</span>
+            <span class="n">subregion</span><span class="p">:</span> <span class="n">NutsRegion</span>
+            <span class="k">if</span> <span class="n">region_name</span> <span class="ow">in</span> <span class="n">nuts2_data</span><span class="o">.</span><span class="n">prognosis</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">subregion</span> <span class="o">=</span> <span class="n">NutsRegion</span><span class="p">(</span><span class="n">region_name</span><span class="p">,</span> <span class="n">historical_data</span><span class="o">=</span><span class="n">region_data</span><span class="p">,</span>
+                                       <span class="n">prediction_data</span><span class="o">=</span><span class="n">nuts2_data</span><span class="o">.</span><span class="n">prognosis</span><span class="p">[</span><span class="n">region_name</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">subregion</span> <span class="o">=</span> <span class="n">NutsRegion</span><span class="p">(</span><span class="n">region_name</span><span class="p">,</span> <span class="n">historical_data</span><span class="o">=</span><span class="n">region_data</span><span class="p">)</span>
+            <span class="n">nuts2_root</span><span class="o">.</span><span class="n">add_child_region</span><span class="p">(</span><span class="n">subregion</span><span class="p">)</span>
+
+        <span class="c1"># fill population member variable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_population</span> <span class="o">=</span> \
+            <span class="n">Population</span><span class="p">(</span><span class="n">country_population</span><span class="p">,</span> <span class="n">nuts2_root</span><span class="p">,</span>
+                       <span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">nuts2_distribution_based_on_installed_ind_capacity</span><span class="p">)</span>
+
+        <span class="c1"># create gdp timeseries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gdp</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">TimeStepSequence</span><span class="p">(</span>
+            <span class="n">historical_data</span><span class="o">=</span><span class="n">input_manager</span><span class="o">.</span><span class="n">general_input</span><span class="o">.</span><span class="n">gdp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span><span class="o">.</span><span class="n">historical</span><span class="p">,</span>
+            <span class="n">progression_data</span><span class="o">=</span><span class="n">input_manager</span><span class="o">.</span><span class="n">general_input</span><span class="o">.</span><span class="n">gdp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span><span class="o">.</span><span class="n">prognosis</span><span class="p">)</span>
+
+        <span class="c1"># create sectors and pass on required data</span>
+        <span class="n">active_sectors</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">get_active_sectors</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s2">&quot;industry&quot;</span> <span class="ow">in</span> <span class="n">active_sectors</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sectors</span><span class="p">[</span><span class="n">sector</span><span class="o">.</span><span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">INDUSTRY</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">industry_sector</span><span class="o">.</span><span class="n">Industry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_population</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdp</span><span class="p">,</span> <span class="n">input_manager</span><span class="p">)</span>
+
+        <span class="c1"># create warnings</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_abbreviations</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Country &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+</span> <span class="s2">&quot; has an empty list of Abbreviations.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_population</span><span class="o">.</span><span class="n">country_level_population</span><span class="o">.</span><span class="n">get_data</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Country &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+</span> <span class="s2">&quot; has an empty list of historical Population.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_population</span><span class="o">.</span><span class="n">country_level_population</span><span class="o">.</span><span class="n">get_prediction_raw</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Country &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+</span> <span class="s2">&quot; has an empty list of prediction for Population.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdp</span><span class="o">.</span><span class="n">get_historical_data_raw</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Country &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+</span> <span class="s2">&quot; has an empty list of historical gdp.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdp</span><span class="o">.</span><span class="n">get_interval_change_rate_raw</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Country &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+</span> <span class="s2">&quot; has an empty list of interval_changeRate for gdp.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Country.calculate_total_demand"><a class="viewcode-back" href="../../../_autosummary/endemo2.general.country.Country.html#endemo2.general.country.Country.calculate_total_demand">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_total_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">containers</span><span class="o">.</span><span class="n">Demand</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sum the demand over all sectors of the country.</span>
+
+<span class="sd">        :param year: Target year for which the prediction should be calculated.</span>
+<span class="sd">        :return: The demand for a country summed over all sectors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">total_demand</span> <span class="o">=</span> <span class="n">containers</span><span class="o">.</span><span class="n">Demand</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">sector_name</span><span class="p">,</span> <span class="n">obj_sector</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sectors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">total_demand</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obj_sector</span><span class="o">.</span><span class="n">calculate_forecasted_demand</span><span class="p">(</span><span class="n">year</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">total_demand</span></div>
+
+<div class="viewcode-block" id="Country.get_name"><a class="viewcode-back" href="../../../_autosummary/endemo2.general.country.Country.html#endemo2.general.country.Country.get_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the country name.</span>
+
+<span class="sd">        :return: The country name (en).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span></div>
+
+<div class="viewcode-block" id="Country.get_population"><a class="viewcode-back" href="../../../_autosummary/endemo2.general.country.Country.html#endemo2.general.country.Country.get_population">[docs]</a>    <span class="k">def</span> <span class="nf">get_population</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Population</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the population container object.</span>
+
+<span class="sd">        :return: The countries&#39; population container object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_population</span></div>
+
+<div class="viewcode-block" id="Country.get_gdp"><a class="viewcode-back" href="../../../_autosummary/endemo2.general.country.Country.html#endemo2.general.country.Country.get_gdp">[docs]</a>    <span class="k">def</span> <span class="nf">get_gdp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pm</span><span class="o">.</span><span class="n">TimeStepSequence</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the countries&#39; GDP Timeseries</span>
+
+<span class="sd">        :return: The GDP Timeseries for this country.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gdp</span></div>
+
+<div class="viewcode-block" id="Country.get_sector"><a class="viewcode-back" href="../../../_autosummary/endemo2.general.country.Country.html#endemo2.general.country.Country.get_sector">[docs]</a>    <span class="k">def</span> <span class="nf">get_sector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sector_id</span><span class="p">:</span> <span class="n">sector</span><span class="o">.</span><span class="n">SectorIdentifier</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sector</span><span class="o">.</span><span class="n">Sector</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the sectors of a country. Accessed by the sectors&#39; identifier.</span>
+
+<span class="sd">        :param sector_id: Identifies Sector by enum value from SectorIdentifier.</span>
+<span class="sd">        :return: The countries sector corresponding to the sector id.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sectors</span><span class="p">[</span><span class="n">sector_id</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Country.get_nuts2_root"><a class="viewcode-back" href="../../../_autosummary/endemo2.general.country.Country.html#endemo2.general.country.Country.get_nuts2_root">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuts2_root</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NutsRegion</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the root NutsRegion. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_population</span><span class="o">.</span><span class="n">get_nuts2_root</span><span class="p">()</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
