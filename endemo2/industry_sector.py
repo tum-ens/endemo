@@ -26,14 +26,19 @@ class Industry(sector.Sector):
     :ivar float rest_growth_rate: Growth rate percentage of the rest sector as specified in
         Set_and_Control_Parameters.xlsx in interval [0,1].
     :ivar Population country_population: The population of the country, this industry belongs to.
+    :ivar bool nuts2_distribution_by_installed_capacities: If true, distribution of (forecasted) demand over nuts2
+        regions is calculated by percentages given in the installed_capacities file, otherwise distribution is
+        calculated according to population density.
     """
 
-    def __init__(self, country_name: str, population: endemo2.general_containers.Population, country_gdp: pm.TimeStepSequence,
-                 input_manager: input.Input):
+    def __init__(self, country_name: str, population: endemo2.general_containers.Population,
+                 country_gdp: pm.TimeStepSequence, input_manager: input.Input):
         self._products = dict()
         self.country_name = country_name
         self.country_population = population
         active_products = input_manager.industry_input.active_products
+        self.nuts2_distribution_by_installed_capacities = \
+            input_manager.ctrl.industry_settings.nuts2_distribution_based_on_installed_ind_capacity
 
         for (product_name, product_input) in active_products.items():
             self._products[product_name] = prd.Product(product_name, product_input, input_manager,
@@ -54,7 +59,7 @@ class Industry(sector.Sector):
         """
         Getter for a product from the industry.
 
-        :param name: Name of the product. Example: "steel_prim".
+        :param str name: Name of the product. Example: "steel_prim".
         :return: Product object with the matching name.
         """
         return self._products[name]
@@ -68,7 +73,7 @@ class Industry(sector.Sector):
             rest(y)[TWh] = rest_{\\text{start_year}}[TWh]*(1+r)^{y-\\text{start_year}}
 
 
-        :param target_year: The year, the rest sector demand should be calculated for.
+        :param int target_year: The year, the rest sector demand should be calculated for.
         :return: The demand of the rest sector in given year rest(y).
         """
         result = ctn.Demand()
@@ -87,7 +92,7 @@ class Industry(sector.Sector):
         """
         Sums over the demand of each product.
 
-        :param year: Target year the demand should be calculated for.
+        :param int year: Target year the demand should be calculated for.
         :return: The demand summed over all products in this industry.
         """
         result = ctn.Demand()
@@ -101,7 +106,7 @@ class Industry(sector.Sector):
         """
         Calculate total demand, including the forecasted demand and rest sector.
 
-        :param year: Target year the demand should be calculated for.
+        :param int year: Target year the demand should be calculated for.
         :return: The total demand summed over all products in this industry and rest sector.
         """
         total_demand = ctn.Demand()
@@ -114,8 +119,8 @@ class Industry(sector.Sector):
         Getter for a products demand by product name and for the year.
         If the product is not in the industry, a Demand object indicating zero demand is returned.
 
-        :param product_name: The name of the product, whose demand should be returned.
-        :param year: Target year the demand should be calculated for.
+        :param str product_name: The name of the product, whose demand should be returned.
+        :param int year: Target year the demand should be calculated for.
         :return: The demand of the product in this industry.
         """
         if product_name in self._products.keys():
@@ -132,31 +137,39 @@ class Industry(sector.Sector):
         """
         Calls the calculate_product_demand function and splits the result according to capacity for each NUTS2 region.
 
-        :param year: The target year, the demand should be calculated for.
+        :param int year: The target year, the demand should be calculated for.
         :return: The dictionary of {nuts2_region -> demand}.
         """
         country_demand = self.calculate_product_demand(product_name, year)
-        product_obj = self._products[product_name]
-        nuts2_installed_capacity = product_obj.get_nuts2_installed_capacities()
 
         result = dict[str, ctn.Demand]()
 
-        for (nuts2_region_name, perc) in nuts2_installed_capacity.items():
-            region_demand = country_demand.copy_scale(perc)
-            result[nuts2_region_name] = region_demand
+        if self.nuts2_distribution_by_installed_capacities:
+            product_obj = self._products[product_name]
+            nuts2_installed_capacity = product_obj.get_nuts2_installed_capacities()
+
+            for (nuts2_region_name, perc) in nuts2_installed_capacity.items():
+                region_demand = country_demand.copy_scale(perc)
+                result[nuts2_region_name] = region_demand
+        else:
+            nuts2_root = self.country_population.get_nuts2_root()
+            nuts2_objs = nuts2_root.get_all_leaf_nodes()
+            for nuts2_obj in nuts2_objs:
+                region_demand = country_demand.copy_scale(nuts2_root.get_pop_perc_of_subregion_in_year(nuts2_obj, year))
+                result[nuts2_obj.get_region_name()] = region_demand
 
         return result
 
-    def calculate_rest_demand_split_by_nuts2(self, nuts2_root: gc.NutsRegion, year: int) -> dict[str, ctn.Demand]:
+    def calculate_rest_demand_split_by_nuts2(self, year: int) -> dict[str, ctn.Demand]:
         """
         Calls the calculate_rest_sector_demand function and splits the result according to capacity for each NUTS2
         region.
 
-        :param nuts2_root: The root of the nuts2region tree that is used to split the rest demand.
-        :param year: The target year, the demand should be calculated for.
+        :param int year: The target year, the demand should be calculated for.
         :return: The dictionary of {nuts2_region -> demand}.
         """
         rest_demand = self.calculate_rest_sector_demand(year)
+        nuts2_root = self.country_population.get_nuts2_root()
         nuts2_objs = nuts2_root.get_all_leaf_nodes()
 
         result = dict[str, ctn.Demand]()
@@ -171,7 +184,7 @@ class Industry(sector.Sector):
         """
         Calls the calculate_demand_split_by_nuts2 function and sums over all products.
 
-        :param year: The target year, the demand should be calculated for.
+        :param int year: The target year, the demand should be calculated for.
         :return: The dictionary of {nuts2_region -> demand}.
         """
         result = dict[str, ctn.Demand]()
@@ -185,16 +198,16 @@ class Industry(sector.Sector):
 
         return result
 
-    def calculate_total_demand_split_by_nuts2(self, nuts2_root: gc.NutsRegion, year: int) -> dict[str, ctn.Demand]:
+    def calculate_total_demand_split_by_nuts2(self, year: int) -> dict[str, ctn.Demand]:
         """
         Calculate total demand, including the forecasted demand and rest sector.
 
-        :param year: Target year the demand should be calculated for.
+        :param int year: Target year the demand should be calculated for.
         :return: The total demand summed over all products in this industry and rest sector, split by nuts2 regions.
         """
         result = dict[str, ctn.Demand]()
         forecasted_demand = self.calculate_forecasted_demand_split_by_nuts2(year)
-        rest_demand = self.calculate_rest_demand_split_by_nuts2(nuts2_root, year)
+        rest_demand = self.calculate_rest_demand_split_by_nuts2(year)
 
         for nuts2_code in forecasted_demand.keys():
             if nuts2_code not in rest_demand.keys():
@@ -209,8 +222,8 @@ class Industry(sector.Sector):
         """
         Getter for the predicted amount of a product within this industry.
 
-        :param product_name: Name of the product. Example: "steel_prim".
-        :param year: Target year, which the amount should be calculated for.
+        :param str product_name: Name of the product. Example: "steel_prim".
+        :param int year: Target year, which the amount should be calculated for.
         :return: The products predicted amount in target year.
         """
         if product_name in self._products.keys():

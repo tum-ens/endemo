@@ -136,6 +136,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_calc_coef_lin</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_calc_coef_quadr</span><span class="p">()</span>
 
+<div class="viewcode-block" id="Timeseries.get_value"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the y-axis value for a certain target_x.</span>
+<span class="sd">        Combines historical data and prediction data. When historical data is available it is used.</span>
+<span class="sd">        When not, a prognosis is made instead.</span>
+
+<span class="sd">        :param target_x: The target x-axis value.</span>
+<span class="sd">        :return: The corresponding y-axis value, historical or prognosis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">last_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_last_data_entry</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">target_x</span> <span class="o">&lt;=</span> <span class="n">last_year</span><span class="p">:</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">target_x</span> <span class="o">==</span> <span class="n">x</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">y</span>
+                    <span class="c1"># if target year not in data (spotty data or in future) use prediction instead</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_prog</span><span class="p">(</span><span class="n">target_x</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="Timeseries.get_prog"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.Timeseries.get_prog">[docs]</a>    <span class="k">def</span> <span class="nf">get_prog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Getter for the prognosis of this timeseries.</span>
@@ -267,6 +286,25 @@
                  <span class="n">calculation_type</span><span class="p">:</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">historical_data</span><span class="p">,</span> <span class="n">calculation_type</span><span class="p">,</span> <span class="n">rate_of_change</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prediction</span> <span class="o">=</span> <span class="n">prediction_data</span>
+
+<div class="viewcode-block" id="PredictedTimeseries.get_value"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the y-axis value for a certain target_x.</span>
+<span class="sd">        Combines historical data and prediction data. When historical data is available it is used.</span>
+<span class="sd">        When not, a prognosis is made instead.</span>
+
+<span class="sd">        :param target_x: The target x-axis value.</span>
+<span class="sd">        :return: The corresponding y-axis value, historical or prognosis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">last_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_last_data_entry</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">target_x</span> <span class="o">&lt;=</span> <span class="n">last_year</span><span class="p">:</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">target_x</span> <span class="o">==</span> <span class="n">x</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">y</span>
+        <span class="c1"># if target year not in data (spotty data or in future) use prediction instead</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_manual_prog</span><span class="p">(</span><span class="n">target_x</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PredictedTimeseries.get_prog"><a class="viewcode-back" href="../../endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_prog">[docs]</a>    <span class="k">def</span> <span class="nf">get_prog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

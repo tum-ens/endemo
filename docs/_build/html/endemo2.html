@@ -48,7 +48,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-endemo2.commercial_trade_services_sector">endemo2.commercial_trade_services_sector module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.commercial_trade_services_sector.CommercialTradeServices"><code class="docutils literal notranslate"><span class="pre">CommercialTradeServices</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#endemo2.commercial_trade_services_sector.CommercialTradeServices.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">CommercialTradeServices.calculate_total_demand()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.commercial_trade_services_sector.CommercialTradeServices.calculate_forecasted_demand"><code class="docutils literal notranslate"><span class="pre">CommercialTradeServices.calculate_forecasted_demand()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -135,6 +135,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.country.Country.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Country.calculate_total_demand()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.country.Country.get_gdp"><code class="docutils literal notranslate"><span class="pre">Country.get_gdp()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.country.Country.get_name"><code class="docutils literal notranslate"><span class="pre">Country.get_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.country.Country.get_nuts2_root"><code class="docutils literal notranslate"><span class="pre">Country.get_nuts2_root()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.country.Country.get_population"><code class="docutils literal notranslate"><span class="pre">Country.get_population()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.country.Country.get_sector"><code class="docutils literal notranslate"><span class="pre">Country.get_sector()</span></code></a></li>
 </ul>
@@ -152,9 +153,9 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-endemo2.household_sector">endemo2.household_sector module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#endemo2.household_sector.Household"><code class="docutils literal notranslate"><span class="pre">Household</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#endemo2.household_sector.Household.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Household.calculate_total_demand()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-endemo2.sectors.household_sector">endemo2.sectors.household_sector module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.sectors.household_sector.Household"><code class="docutils literal notranslate"><span class="pre">Household</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.sectors.household_sector.Household.calculate_forecasted_demand"><code class="docutils literal notranslate"><span class="pre">Household.calculate_forecasted_demand()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -162,9 +163,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-endemo2.industry_sector">endemo2.industry_sector module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.industry_sector.Industry"><code class="docutils literal notranslate"><span class="pre">Industry</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.industry_sector.Industry.calculate_demand_split_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_demand_split_by_nuts2()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.industry_sector.Industry.calculate_forecasted_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_forecasted_demand()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.industry_sector.Industry.calculate_forecasted_demand_split_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_forecasted_demand_split_by_nuts2()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.industry_sector.Industry.calculate_product_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_product_demand()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.industry_sector.Industry.calculate_rest_demand_split_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_rest_demand_split_by_nuts2()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.industry_sector.Industry.calculate_rest_sector_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_rest_sector_demand()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.industry_sector.Industry.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_total_demand()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.industry_sector.Industry.calculate_total_demand_split_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_total_demand_split_by_nuts2()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.industry_sector.Industry.get_product"><code class="docutils literal notranslate"><span class="pre">Industry.get_product()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.industry_sector.Industry.prog_product_amount"><code class="docutils literal notranslate"><span class="pre">Industry.prog_product_amount()</span></code></a></li>
 </ul>
@@ -232,6 +237,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.prediction_models.PredictedTimeseries.get_manual_prog"><code class="docutils literal notranslate"><span class="pre">PredictedTimeseries.get_manual_prog()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.prediction_models.PredictedTimeseries.get_prediction_raw"><code class="docutils literal notranslate"><span class="pre">PredictedTimeseries.get_prediction_raw()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.prediction_models.PredictedTimeseries.get_prog"><code class="docutils literal notranslate"><span class="pre">PredictedTimeseries.get_prog()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.prediction_models.PredictedTimeseries.get_value"><code class="docutils literal notranslate"><span class="pre">PredictedTimeseries.get_value()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.prediction_models.Quadr"><code class="docutils literal notranslate"><span class="pre">Quadr</span></code></a><ul>
@@ -262,6 +268,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.prediction_models.Timeseries.get_prog_exp"><code class="docutils literal notranslate"><span class="pre">Timeseries.get_prog_exp()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.prediction_models.Timeseries.get_prog_lin"><code class="docutils literal notranslate"><span class="pre">Timeseries.get_prog_lin()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#endemo2.prediction_models.Timeseries.get_prog_quadr"><code class="docutils literal notranslate"><span class="pre">Timeseries.get_prog_quadr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.prediction_models.Timeseries.get_value"><code class="docutils literal notranslate"><span class="pre">Timeseries.get_value()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -300,7 +307,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-endemo2.sector">endemo2.sector module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.sector.Sector"><code class="docutils literal notranslate"><span class="pre">Sector</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#endemo2.sector.Sector.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Sector.calculate_total_demand()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.sector.Sector.calculate_forecasted_demand"><code class="docutils literal notranslate"><span class="pre">Sector.calculate_forecasted_demand()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.sector.SectorIdentifier"><code class="docutils literal notranslate"><span class="pre">SectorIdentifier</span></code></a><ul>
@@ -311,7 +318,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-endemo2.transport_sector">endemo2.transport_sector module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#endemo2.transport_sector.Transport"><code class="docutils literal notranslate"><span class="pre">Transport</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#endemo2.transport_sector.Transport.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Transport.calculate_total_demand()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.transport_sector.Transport.calculate_forecasted_demand"><code class="docutils literal notranslate"><span class="pre">Transport.calculate_forecasted_demand()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -378,8 +385,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">endemo2.commercial_trade_services_sector.</span></span><span class="sig-name descname"><span class="pre">CommercialTradeServices</span></span><a class="reference internal" href="_modules/endemo2/commercial_trade_services_sector.html#CommercialTradeServices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.commercial_trade_services_sector.CommercialTradeServices" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#endemo2.sector.Sector" title="endemo2.sector.Sector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sector</span></code></a></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="endemo2.commercial_trade_services_sector.CommercialTradeServices.calculate_total_demand">
-<span class="sig-name descname"><span class="pre">calculate_total_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">Demand</span></a></span></span><a class="reference internal" href="_modules/endemo2/commercial_trade_services_sector.html#CommercialTradeServices.calculate_total_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.commercial_trade_services_sector.CommercialTradeServices.calculate_total_demand" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="endemo2.commercial_trade_services_sector.CommercialTradeServices.calculate_forecasted_demand">
+<span class="sig-name descname"><span class="pre">calculate_forecasted_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">Demand</span></a></span></span><a class="reference internal" href="_modules/endemo2/commercial_trade_services_sector.html#CommercialTradeServices.calculate_forecasted_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.commercial_trade_services_sector.CommercialTradeServices.calculate_forecasted_demand" title="Permalink to this definition"></a></dt>
 <dd><p>Not implemented yet. calculate commercial, trade, services sector</p>
 </dd></dl>
 
@@ -730,7 +737,6 @@ to the internal enum representation.</p></li>
 <li><p><strong>time_trend_model_activation_quadratic</strong> (<em>bool</em>) – “If the time trend model is deactivated, the traditional approach is selected”</p></li>
 <li><p><strong>production_quantity_calc_per_capita</strong> (<em>bool</em>) – Decides, whether the production quantity prognosis should use per-capita projection.</p></li>
 <li><p><strong>trend_calc_for_spec</strong> (<em>bool</em>) – Decides, whether specific consumption should be predicted from historical data, when available.</p></li>
-<li><p><strong>h2_subst_of_heat</strong> (<em>float</em>) – “Values from 0 to 1. For max. possible substitution of heat with hydrogen in industrial processes set 1.”</p></li>
 <li><p><strong>nuts2_distribution_based_on_installed_ind_capacity</strong> (<em>bool</em>) – “If false, distribution per population density.”</p></li>
 <li><p><strong>skip_years</strong> (<em>[</em><em>int</em><em>]</em>) – Years that are skipped while reading files, to remove outliers.</p></li>
 <li><p><strong>last_available_year</strong> (<em>int</em>) – Last year that’s read from historical production files (exclusive).</p></li>
@@ -744,7 +750,7 @@ Only for these products, calculations are performed.</p></li>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="endemo2.control_parameters.IndustrySettings.forecast_map">
-<span class="sig-name descname"><span class="pre">forecast_map</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'Exponential':</span> <span class="pre">ForecastMethod.EXPONENTIAL,</span> <span class="pre">'Trend':</span> <span class="pre">ForecastMethod.LINEAR,</span> <span class="pre">'U-shape':</span> <span class="pre">ForecastMethod.QUADRATIC}</span></em><a class="headerlink" href="#endemo2.control_parameters.IndustrySettings.forecast_map" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">forecast_map</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'Exponential':</span> <span class="pre">ForecastMethod.EXPONENTIAL,</span> <span class="pre">'Linear</span> <span class="pre">GDP</span> <span class="pre">function':</span> <span class="pre">ForecastMethod.LINEAR,</span> <span class="pre">'Linear</span> <span class="pre">time</span> <span class="pre">trend':</span> <span class="pre">ForecastMethod.LINEAR,</span> <span class="pre">'Quadratic</span> <span class="pre">GDP</span> <span class="pre">function':</span> <span class="pre">ForecastMethod.QUADRATIC}</span></em><a class="headerlink" href="#endemo2.control_parameters.IndustrySettings.forecast_map" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -837,6 +843,12 @@ identifier.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="endemo2.country.Country.get_nuts2_root">
+<span class="sig-name descname"><span class="pre">get_nuts2_root</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NutsRegion</span></span></span><a class="reference internal" href="_modules/endemo2/country.html#Country.get_nuts2_root"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.country.Country.get_nuts2_root" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the root NutsRegion.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="endemo2.country.Country.get_population">
 <span class="sig-name descname"><span class="pre">get_population</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Population</span></span></span><a class="reference internal" href="_modules/endemo2/country.html#Country.get_population"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.country.Country.get_population" title="Permalink to this definition"></a></dt>
 <dd><p>Getter for the population container object.</p>
@@ -912,15 +924,15 @@ identifier.</p></li>
 </dd></dl>
 
 </section>
-<section id="module-endemo2.household_sector">
-<span id="endemo2-household-sector-module"></span><h2>endemo2.household_sector module<a class="headerlink" href="#module-endemo2.household_sector" title="Permalink to this heading"></a></h2>
+<section id="module-endemo2.sectors.household_sector">
+<span id="endemo2-sectors-household-sector-module"></span><h2>endemo2.sectors.household_sector module<a class="headerlink" href="#module-endemo2.sectors.household_sector" title="Permalink to this heading"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="endemo2.household_sector.Household">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">endemo2.household_sector.</span></span><span class="sig-name descname"><span class="pre">Household</span></span><a class="reference internal" href="_modules/endemo2/household_sector.html#Household"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.household_sector.Household" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="endemo2.sectors.household_sector.Household">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">endemo2.sectors.household_sector.</span></span><span class="sig-name descname"><span class="pre">Household</span></span><a class="reference internal" href="_modules/endemo2/sectors/household_sector.html#Household"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.sectors.household_sector.Household" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#endemo2.sector.Sector" title="endemo2.sector.Sector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sector</span></code></a></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="endemo2.household_sector.Household.calculate_total_demand">
-<span class="sig-name descname"><span class="pre">calculate_total_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">Demand</span></a></span></span><a class="reference internal" href="_modules/endemo2/household_sector.html#Household.calculate_total_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.household_sector.Household.calculate_total_demand" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="endemo2.sectors.household_sector.Household.calculate_forecasted_demand">
+<span class="sig-name descname"><span class="pre">calculate_forecasted_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">Demand</span></a></span></span><a class="reference internal" href="_modules/endemo2/sectors/household_sector.html#Household.calculate_forecasted_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.sectors.household_sector.Household.calculate_forecasted_demand" title="Permalink to this definition"></a></dt>
 <dd><p>Not implemented yet. calculate household sector</p>
 </dd></dl>
 
@@ -952,6 +964,9 @@ used to forecast the rest sector demand for a certain year.</p></li>
 <li><p><strong>rest_growth_rate</strong> (<em>float</em>) – Growth rate percentage of the rest sector as specified in
 Set_and_Control_Parameters.xlsx in interval [0,1].</p></li>
 <li><p><strong>country_population</strong> (<em>Population</em>) – The population of the country, this industry belongs to.</p></li>
+<li><p><strong>nuts2_distribution_by_installed_capacities</strong> (<em>bool</em>) – If true, distribution of (forecasted) demand over nuts2
+regions is calculated by percentages given in the installed_capacities file, otherwise distribution is
+calculated according to population density.</p></li>
 </ul>
 </dd>
 </dl>
@@ -961,7 +976,35 @@ Set_and_Control_Parameters.xlsx in interval [0,1].</p></li>
 <dd><p>Calls the calculate_product_demand function and splits the result according to capacity for each NUTS2 region.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>year</strong> – The target year, the demand should be calculated for.</p>
+<dd class="field-odd"><p><strong>year</strong> (<em>int</em>) – The target year, the demand should be calculated for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dictionary of {nuts2_region -&gt; demand}.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry_sector.Industry.calculate_forecasted_demand">
+<span class="sig-name descname"><span class="pre">calculate_forecasted_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">Demand</span></a></span></span><a class="reference internal" href="_modules/endemo2/industry_sector.html#Industry.calculate_forecasted_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry_sector.Industry.calculate_forecasted_demand" title="Permalink to this definition"></a></dt>
+<dd><p>Sums over the demand of each product.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> (<em>int</em>) – Target year the demand should be calculated for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The demand summed over all products in this industry.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry_sector.Industry.calculate_forecasted_demand_split_by_nuts2">
+<span class="sig-name descname"><span class="pre">calculate_forecasted_demand_split_by_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">endemo2.containers.Demand</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/endemo2/industry_sector.html#Industry.calculate_forecasted_demand_split_by_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry_sector.Industry.calculate_forecasted_demand_split_by_nuts2" title="Permalink to this definition"></a></dt>
+<dd><p>Calls the calculate_demand_split_by_nuts2 function and sums over all products.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> (<em>int</em>) – The target year, the demand should be calculated for.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The dictionary of {nuts2_region -&gt; demand}.</p>
@@ -977,12 +1020,27 @@ If the product is not in the industry, a Demand object indicating zero demand is
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>product_name</strong> – The name of the product, whose demand should be returned.</p></li>
-<li><p><strong>year</strong> – Target year the demand should be calculated for.</p></li>
+<li><p><strong>product_name</strong> (<em>str</em>) – The name of the product, whose demand should be returned.</p></li>
+<li><p><strong>year</strong> (<em>int</em>) – Target year the demand should be calculated for.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The demand of the product in this industry.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry_sector.Industry.calculate_rest_demand_split_by_nuts2">
+<span class="sig-name descname"><span class="pre">calculate_rest_demand_split_by_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">endemo2.containers.Demand</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/endemo2/industry_sector.html#Industry.calculate_rest_demand_split_by_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry_sector.Industry.calculate_rest_demand_split_by_nuts2" title="Permalink to this definition"></a></dt>
+<dd><p>Calls the calculate_rest_sector_demand function and splits the result according to capacity for each NUTS2
+region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> (<em>int</em>) – The target year, the demand should be calculated for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dictionary of {nuts2_region -&gt; demand}.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -996,7 +1054,7 @@ If the product is not in the industry, a Demand object indicating zero demand is
 rest(y)[TWh] = rest_{\text{start_year}}[TWh]*(1+r)^{y-\text{start_year}}\end{split}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>target_year</strong> – The year, the rest sector demand should be calculated for.</p>
+<dd class="field-odd"><p><strong>target_year</strong> (<em>int</em>) – The year, the rest sector demand should be calculated for.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The demand of the rest sector in given year rest(y).</p>
@@ -1007,13 +1065,27 @@ rest(y)[TWh] = rest_{\text{start_year}}[TWh]*(1+r)^{y-\text{start_year}}\end{spl
 <dl class="py method">
 <dt class="sig sig-object py" id="endemo2.industry_sector.Industry.calculate_total_demand">
 <span class="sig-name descname"><span class="pre">calculate_total_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">Demand</span></a></span></span><a class="reference internal" href="_modules/endemo2/industry_sector.html#Industry.calculate_total_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry_sector.Industry.calculate_total_demand" title="Permalink to this definition"></a></dt>
-<dd><p>Sums over the demand of each product.</p>
+<dd><p>Calculate total demand, including the forecasted demand and rest sector.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>year</strong> – Target year the demand should be calculated for.</p>
+<dd class="field-odd"><p><strong>year</strong> (<em>int</em>) – Target year the demand should be calculated for.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The demand summed over all products in this industry.</p>
+<dd class="field-even"><p>The total demand summed over all products in this industry and rest sector.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry_sector.Industry.calculate_total_demand_split_by_nuts2">
+<span class="sig-name descname"><span class="pre">calculate_total_demand_split_by_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">endemo2.containers.Demand</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/endemo2/industry_sector.html#Industry.calculate_total_demand_split_by_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry_sector.Industry.calculate_total_demand_split_by_nuts2" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate total demand, including the forecasted demand and rest sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> (<em>int</em>) – Target year the demand should be calculated for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The total demand summed over all products in this industry and rest sector, split by nuts2 regions.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1024,7 +1096,7 @@ rest(y)[TWh] = rest_{\text{start_year}}[TWh]*(1+r)^{y-\text{start_year}}\end{spl
 <dd><p>Getter for a product from the industry.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> – Name of the product. Example: “steel_prim”.</p>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name of the product. Example: “steel_prim”.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Product object with the matching name.</p>
@@ -1039,8 +1111,8 @@ rest(y)[TWh] = rest_{\text{start_year}}[TWh]*(1+r)^{y-\text{start_year}}\end{spl
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>product_name</strong> – Name of the product. Example: “steel_prim”.</p></li>
-<li><p><strong>year</strong> – Target year, which the amount should be calculated for.</p></li>
+<li><p><strong>product_name</strong> (<em>str</em>) – Name of the product. Example: “steel_prim”.</p></li>
+<li><p><strong>year</strong> (<em>int</em>) – Target year, which the amount should be calculated for.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1535,6 +1607,22 @@ for use in the parent class.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.prediction_models.PredictedTimeseries.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/prediction_models.html#PredictedTimeseries.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.prediction_models.PredictedTimeseries.get_value" title="Permalink to this definition"></a></dt>
+<dd><p>Get the y-axis value for a certain target_x.
+Combines historical data and prediction data. When historical data is available it is used.
+When not, a prognosis is made instead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_x</strong> – The target x-axis value.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The corresponding y-axis value, historical or prognosis.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1754,6 +1842,22 @@ interval-growth-rate forecast.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The predicted y value at x-axis value x.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.prediction_models.Timeseries.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/prediction_models.html#Timeseries.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.prediction_models.Timeseries.get_value" title="Permalink to this definition"></a></dt>
+<dd><p>Get the y-axis value for a certain target_x.
+Combines historical data and prediction data. When historical data is available it is used.
+When not, a prognosis is made instead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_x</strong> – The target x-axis value.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The corresponding y-axis value, historical or prognosis.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2042,8 +2146,8 @@ be used.</p></li>
 <p>The parent class for all sectors.
 Contains what different sectors have in common.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="endemo2.sector.Sector.calculate_total_demand">
-<span class="sig-name descname"><span class="pre">calculate_total_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">Demand</span></a></span></span><a class="reference internal" href="_modules/endemo2/sector.html#Sector.calculate_total_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.sector.Sector.calculate_total_demand" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="endemo2.sector.Sector.calculate_forecasted_demand">
+<span class="sig-name descname"><span class="pre">calculate_forecasted_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">Demand</span></a></span></span><a class="reference internal" href="_modules/endemo2/sector.html#Sector.calculate_forecasted_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.sector.Sector.calculate_forecasted_demand" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2069,8 +2173,8 @@ Contains what different sectors have in common.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">endemo2.transport_sector.</span></span><span class="sig-name descname"><span class="pre">Transport</span></span><a class="reference internal" href="_modules/endemo2/transport_sector.html#Transport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.transport_sector.Transport" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#endemo2.sector.Sector" title="endemo2.sector.Sector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sector</span></code></a></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="endemo2.transport_sector.Transport.calculate_total_demand">
-<span class="sig-name descname"><span class="pre">calculate_total_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">Demand</span></a></span></span><a class="reference internal" href="_modules/endemo2/transport_sector.html#Transport.calculate_total_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.transport_sector.Transport.calculate_total_demand" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="endemo2.transport_sector.Transport.calculate_forecasted_demand">
+<span class="sig-name descname"><span class="pre">calculate_forecasted_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#endemo2.containers.Demand" title="endemo2.containers.Demand"><span class="pre">Demand</span></a></span></span><a class="reference internal" href="_modules/endemo2/transport_sector.html#Transport.calculate_forecasted_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.transport_sector.Transport.calculate_forecasted_demand" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

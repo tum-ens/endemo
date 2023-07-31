@@ -77,6 +77,8 @@
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">containers</span><span class="p">,</span> <span class="n">sector</span><span class="p">,</span> <span class="n">endemo</span>
 <span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">industry_sector</span> <span class="k">as</span> <span class="n">ind</span>
 
+<span class="n">out_file_prefix</span> <span class="o">=</span> <span class="s2">&quot;endemo2_&quot;</span>
+
 
 <div class="viewcode-block" id="FileGenerator"><a class="viewcode-back" href="../../endemo2.html#endemo2.output.FileGenerator">[docs]</a><span class="k">class</span> <span class="nc">FileGenerator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -169,7 +171,7 @@
         <span class="n">fg</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="s2">&quot;Last Data Entry&quot;</span><span class="p">,</span> <span class="n">product</span><span class="o">.</span><span class="n">get_active_timeseries</span><span class="p">()</span><span class="o">.</span><span class="n">get_last_data_entry</span><span class="p">())</span>
         <span class="n">shortcut_coef_output</span><span class="p">(</span><span class="n">fg</span><span class="p">,</span> <span class="n">year_coef</span><span class="p">,</span> <span class="n">year_coef</span><span class="p">,</span> <span class="n">gdp_coef</span><span class="p">)</span>
 
-    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;endemo2_industry_coef_current_settings.xlsx&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">out_file_prefix</span> <span class="o">+</span> <span class="s2">&quot;industry_coef_current_settings.xlsx&quot;</span>
     <span class="n">fg</span> <span class="o">=</span> <span class="n">FileGenerator</span><span class="p">(</span><span class="n">input_manager</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">fg</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_obj</span> <span class="ow">in</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">active_products</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -182,7 +184,7 @@
                 <span class="n">fg</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="s2">&quot;Per GDP&quot;</span><span class="p">,</span> <span class="n">product</span><span class="o">.</span><span class="n">is_per_gdp</span><span class="p">())</span>
                 <span class="n">shortcut_coef_table</span><span class="p">(</span><span class="n">fg</span><span class="p">,</span> <span class="n">product</span><span class="p">,</span> <span class="n">coef</span><span class="p">,</span> <span class="n">coef</span><span class="p">)</span>
 
-    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;endemo2_industry_coef_total.xlsx&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">out_file_prefix</span> <span class="o">+</span> <span class="s2">&quot;industry_coef_total.xlsx&quot;</span>
     <span class="n">fg</span> <span class="o">=</span> <span class="n">FileGenerator</span><span class="p">(</span><span class="n">input_manager</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">fg</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_obj</span> <span class="ow">in</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">active_products</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -194,7 +196,7 @@
                 <span class="n">gdp_coef</span> <span class="o">=</span> <span class="n">product</span><span class="o">.</span><span class="n">get_timeseries_amount_per_gdp</span><span class="p">()</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span>
                 <span class="n">shortcut_coef_table</span><span class="p">(</span><span class="n">fg</span><span class="p">,</span> <span class="n">product</span><span class="p">,</span> <span class="n">year_coef</span><span class="p">,</span> <span class="n">gdp_coef</span><span class="p">)</span>
 
-    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;endemo2_industry_coef_per_capita.xlsx&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">out_file_prefix</span> <span class="o">+</span> <span class="s2">&quot;industry_coef_per_capita.xlsx&quot;</span>
     <span class="n">fg</span> <span class="o">=</span> <span class="n">FileGenerator</span><span class="p">(</span><span class="n">input_manager</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">fg</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_obj</span> <span class="ow">in</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">active_products</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -218,7 +220,7 @@
     <span class="n">countries</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">countries</span>
     <span class="n">target_year</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
 
-    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;endemo2_population_prognosis.xlsx&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">out_file_prefix</span> <span class="o">+</span> <span class="s2">&quot;population_prognosis.xlsx&quot;</span>
     <span class="n">fg</span> <span class="o">=</span> <span class="n">FileGenerator</span><span class="p">(</span><span class="n">input_manager</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">fg</span><span class="p">:</span>
         <span class="n">fg</span><span class="o">.</span><span class="n">start_sheet</span><span class="p">(</span><span class="s2">&quot;Country Population calculated per Country&quot;</span><span class="p">)</span>
@@ -253,7 +255,7 @@
     <span class="n">countries</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">countries</span>
     <span class="n">target_year</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
 
-    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;endemo2_gdp_prognosis.xlsx&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">out_file_prefix</span> <span class="o">+</span> <span class="s2">&quot;gdp_prognosis.xlsx&quot;</span>
     <span class="n">fg</span> <span class="o">=</span> <span class="n">FileGenerator</span><span class="p">(</span><span class="n">input_manager</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">fg</span><span class="p">:</span>
         <span class="n">fg</span><span class="o">.</span><span class="n">start_sheet</span><span class="p">(</span><span class="s2">&quot;Prognosis&quot;</span><span class="p">)</span>
@@ -273,7 +275,7 @@
     <span class="n">countries</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">countries</span>
     <span class="n">target_year</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
 
-    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;endemo2_amount_prognosis.xlsx&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">out_file_prefix</span> <span class="o">+</span> <span class="s2">&quot;amount_prognosis.xlsx&quot;</span>
     <span class="n">fg</span> <span class="o">=</span> <span class="n">FileGenerator</span><span class="p">(</span><span class="n">input_manager</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">fg</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_obj</span> <span class="ow">in</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">active_products</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -323,7 +325,7 @@
     <span class="n">countries</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">countries</span>
     <span class="n">target_year</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
 
-    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;endemo2_specific_consumption_projections.xlsx&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">out_file_prefix</span> <span class="o">+</span> <span class="s2">&quot;specific_consumption_projections.xlsx&quot;</span>
     <span class="n">fg</span> <span class="o">=</span> <span class="n">FileGenerator</span><span class="p">(</span><span class="n">input_manager</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">fg</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_obj</span> <span class="ow">in</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">active_products</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -338,7 +340,7 @@
                 <span class="n">fg</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="s2">&quot;Hydrogen [GJ/t]&quot;</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">hydrogen</span><span class="p">)</span>
                 <span class="n">fg</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="s2">&quot;max. subst. of heat with H2 [%]&quot;</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">max_subst_h2</span><span class="p">)</span>
 
-    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;endemo2_specific_consumption_coef_electricity.xlsx&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">out_file_prefix</span> <span class="o">+</span> <span class="s2">&quot;specific_consumption_coef_electricity.xlsx&quot;</span>
     <span class="n">fg</span> <span class="o">=</span> <span class="n">FileGenerator</span><span class="p">(</span><span class="n">input_manager</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">fg</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_obj</span> <span class="ow">in</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">active_products</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -351,7 +353,7 @@
                 <span class="n">electricity_coef</span> <span class="o">=</span> <span class="n">sc_obj</span><span class="o">.</span><span class="n">get_coef</span><span class="p">(</span><span class="n">containers</span><span class="o">.</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">)</span>
                 <span class="n">shortcut_coef_output</span><span class="p">(</span><span class="n">fg</span><span class="p">,</span> <span class="n">electricity_coef</span><span class="p">,</span> <span class="n">electricity_coef</span><span class="p">,</span> <span class="n">electricity_coef</span><span class="p">)</span>
 
-    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;endemo2_specific_consumption_coef_heat.xlsx&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">out_file_prefix</span> <span class="o">+</span> <span class="s2">&quot;specific_consumption_coef_heat.xlsx&quot;</span>
     <span class="n">fg</span> <span class="o">=</span> <span class="n">FileGenerator</span><span class="p">(</span><span class="n">input_manager</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">fg</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_obj</span> <span class="ow">in</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">active_products</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -378,7 +380,7 @@
             <span class="n">fg</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;endemo2_specific_consumption_timelines.xlsx&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">out_file_prefix</span> <span class="o">+</span> <span class="s2">&quot;specific_consumption_timelines.xlsx&quot;</span>
     <span class="n">fg</span> <span class="o">=</span> <span class="n">FileGenerator</span><span class="p">(</span><span class="n">input_manager</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">fg</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_obj</span> <span class="ow">in</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">active_products</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -419,7 +421,7 @@
         <span class="n">fg</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="s2">&quot;Heat Q3 [TWh]&quot;</span><span class="p">,</span> <span class="n">demand</span><span class="o">.</span><span class="n">heat</span><span class="o">.</span><span class="n">q3</span><span class="p">)</span>
         <span class="n">fg</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="s2">&quot;Heat Q4 [TWh]&quot;</span><span class="p">,</span> <span class="n">demand</span><span class="o">.</span><span class="n">heat</span><span class="o">.</span><span class="n">q4</span><span class="p">)</span>
 
-    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;endemo2_demand_projections.xlsx&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">out_file_prefix</span> <span class="o">+</span> <span class="s2">&quot;demand_projections.xlsx&quot;</span>
     <span class="n">fg</span> <span class="o">=</span> <span class="n">FileGenerator</span><span class="p">(</span><span class="n">input_manager</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">fg</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_obj</span> <span class="ow">in</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">active_products</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -434,7 +436,7 @@
         <span class="k">for</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">countries</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">fg</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="s2">&quot;Country&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
             <span class="n">demand</span><span class="p">:</span> <span class="n">containers</span><span class="o">.</span><span class="n">Demand</span> <span class="o">=</span> \
-                <span class="n">country</span><span class="o">.</span><span class="n">get_sector</span><span class="p">(</span><span class="n">sector</span><span class="o">.</span><span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">INDUSTRY</span><span class="p">)</span><span class="o">.</span><span class="n">calculate_total_demand</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+                <span class="n">country</span><span class="o">.</span><span class="n">get_sector</span><span class="p">(</span><span class="n">sector</span><span class="o">.</span><span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">INDUSTRY</span><span class="p">)</span><span class="o">.</span><span class="n">calculate_forecasted_demand</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
             <span class="n">shortcut_demand_table</span><span class="p">(</span><span class="n">fg</span><span class="p">,</span> <span class="n">demand</span><span class="p">)</span>
 
         <span class="n">fg</span><span class="o">.</span><span class="n">start_sheet</span><span class="p">(</span><span class="s2">&quot;rest&quot;</span><span class="p">)</span>
@@ -444,7 +446,14 @@
                 <span class="n">country</span><span class="o">.</span><span class="n">get_sector</span><span class="p">(</span><span class="n">sector</span><span class="o">.</span><span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">INDUSTRY</span><span class="p">)</span><span class="o">.</span><span class="n">calculate_rest_sector_demand</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
             <span class="n">shortcut_demand_table</span><span class="p">(</span><span class="n">fg</span><span class="p">,</span> <span class="n">demand</span><span class="p">)</span>
 
-    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;endemo2_nuts2_demand_projections.xlsx&quot;</span>
+        <span class="n">fg</span><span class="o">.</span><span class="n">start_sheet</span><span class="p">(</span><span class="s2">&quot;IND&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">countries</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">fg</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="s2">&quot;Country&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
+            <span class="n">demand</span><span class="p">:</span> <span class="n">containers</span><span class="o">.</span><span class="n">Demand</span> <span class="o">=</span> \
+                <span class="n">country</span><span class="o">.</span><span class="n">get_sector</span><span class="p">(</span><span class="n">sector</span><span class="o">.</span><span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">INDUSTRY</span><span class="p">)</span><span class="o">.</span><span class="n">calculate_total_demand</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+            <span class="n">shortcut_demand_table</span><span class="p">(</span><span class="n">fg</span><span class="p">,</span> <span class="n">demand</span><span class="p">)</span>
+
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">out_file_prefix</span> <span class="o">+</span> <span class="s2">&quot;nuts2_demand_projections.xlsx&quot;</span>
     <span class="n">fg</span> <span class="o">=</span> <span class="n">FileGenerator</span><span class="p">(</span><span class="n">input_manager</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">fg</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_obj</span> <span class="ow">in</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">active_products</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -454,7 +463,29 @@
                     <span class="o">.</span><span class="n">calculate_demand_split_by_nuts2</span><span class="p">(</span><span class="n">product_name</span><span class="p">,</span> <span class="n">target_year</span><span class="p">)</span>
                 <span class="k">for</span> <span class="p">(</span><span class="n">nuts2_region_name</span><span class="p">,</span> <span class="n">demand</span><span class="p">)</span> <span class="ow">in</span> <span class="n">dict_nuts2_demand</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                     <span class="n">fg</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="s2">&quot;NUTS2 Region&quot;</span><span class="p">,</span> <span class="n">nuts2_region_name</span><span class="p">)</span>
+                    <span class="n">shortcut_demand_table</span><span class="p">(</span><span class="n">fg</span><span class="p">,</span> <span class="n">demand</span><span class="p">)</span>
+            <span class="n">fg</span><span class="o">.</span><span class="n">start_sheet</span><span class="p">(</span><span class="s2">&quot;forecasted&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">countries</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">dict_nuts2_demand</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="n">get_sector</span><span class="p">(</span><span class="n">sector</span><span class="o">.</span><span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">INDUSTRY</span><span class="p">)</span> \
+                    <span class="o">.</span><span class="n">calculate_forecasted_demand_split_by_nuts2</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">nuts2_region_name</span><span class="p">,</span> <span class="n">demand</span><span class="p">)</span> <span class="ow">in</span> <span class="n">dict_nuts2_demand</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">fg</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="s2">&quot;NUTS2 Region&quot;</span><span class="p">,</span> <span class="n">nuts2_region_name</span><span class="p">)</span>
+                    <span class="n">shortcut_demand_table</span><span class="p">(</span><span class="n">fg</span><span class="p">,</span> <span class="n">demand</span><span class="p">)</span>
+            <span class="n">fg</span><span class="o">.</span><span class="n">start_sheet</span><span class="p">(</span><span class="s2">&quot;rest&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">countries</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">dict_nuts2_demand</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="n">get_sector</span><span class="p">(</span><span class="n">sector</span><span class="o">.</span><span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">INDUSTRY</span><span class="p">)</span> \
+                    <span class="o">.</span><span class="n">calculate_rest_demand_split_by_nuts2</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">nuts2_region_name</span><span class="p">,</span> <span class="n">demand</span><span class="p">)</span> <span class="ow">in</span> <span class="n">dict_nuts2_demand</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">fg</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="s2">&quot;NUTS2 Region&quot;</span><span class="p">,</span> <span class="n">nuts2_region_name</span><span class="p">)</span>
+                    <span class="n">shortcut_demand_table</span><span class="p">(</span><span class="n">fg</span><span class="p">,</span> <span class="n">demand</span><span class="p">)</span>
+            <span class="n">fg</span><span class="o">.</span><span class="n">start_sheet</span><span class="p">(</span><span class="s2">&quot;IND&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">countries</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">dict_nuts2_demand</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="n">get_sector</span><span class="p">(</span><span class="n">sector</span><span class="o">.</span><span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">INDUSTRY</span><span class="p">)</span> \
+                    <span class="o">.</span><span class="n">calculate_total_demand_split_by_nuts2</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">nuts2_region_name</span><span class="p">,</span> <span class="n">demand</span><span class="p">)</span> <span class="ow">in</span> <span class="n">dict_nuts2_demand</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">fg</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="s2">&quot;NUTS2 Region&quot;</span><span class="p">,</span> <span class="n">nuts2_region_name</span><span class="p">)</span>
                     <span class="n">shortcut_demand_table</span><span class="p">(</span><span class="n">fg</span><span class="p">,</span> <span class="n">demand</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>

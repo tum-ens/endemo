@@ -168,7 +168,7 @@
         <span class="n">total_demand</span> <span class="o">=</span> <span class="n">containers</span><span class="o">.</span><span class="n">Demand</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">sector_name</span><span class="p">,</span> <span class="n">obj_sector</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sectors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">total_demand</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obj_sector</span><span class="o">.</span><span class="n">calculate_total_demand</span><span class="p">(</span><span class="n">year</span><span class="p">))</span>
+            <span class="n">total_demand</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obj_sector</span><span class="o">.</span><span class="n">calculate_forecasted_demand</span><span class="p">(</span><span class="n">year</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">total_demand</span></div>
 
@@ -203,8 +203,11 @@
 <span class="sd">        :param sector_id: Identifies Sector by enum value from SectorIdentifier.</span>
 <span class="sd">        :return: The countries sector corresponding to the sector id.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sectors</span><span class="p">[</span><span class="n">sector_id</span><span class="p">]</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sectors</span><span class="p">[</span><span class="n">sector_id</span><span class="p">]</span></div>
 
+<div class="viewcode-block" id="Country.get_nuts2_root"><a class="viewcode-back" href="../../endemo2.html#endemo2.country.Country.get_nuts2_root">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuts2_root</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NutsRegion</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the root NutsRegion. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_population</span><span class="o">.</span><span class="n">get_nuts2_root</span><span class="p">()</span></div></div>
 
 </pre></div>
 

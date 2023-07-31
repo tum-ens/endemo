@@ -179,6 +179,10 @@
                                                              <span class="n">country_name</span><span class="o">=</span><span class="n">country_name</span><span class="p">,</span> <span class="n">product_input</span><span class="o">=</span><span class="n">product_input</span><span class="p">,</span>
                                                              <span class="n">input_manager</span><span class="o">=</span><span class="n">input_manager</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">product_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;alu_prim&quot;</span><span class="p">]:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">country_name</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_amount_per_capita_per_year</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+
 <div class="viewcode-block" id="Product.is_empty"><a class="viewcode-back" href="../../endemo2.html#endemo2.products.Product.is_empty">[docs]</a>    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the _empty attribute. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty</span></div>
@@ -249,7 +253,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the prognosis for the amount of this product in a certain year according to current settings regarding gdp</span>
 <span class="sd">            and per_capita calculation.</span>
-<span class="sd">            </span>
+
 <span class="sd">        :param year:</span>
 <span class="sd">        :return: The estimated product amount for given year.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

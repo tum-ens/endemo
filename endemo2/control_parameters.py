@@ -51,8 +51,6 @@ class IndustrySettings:
         Decides, whether the production quantity prognosis should use per-capita projection.
     :ivar bool trend_calc_for_spec:
         Decides, whether specific consumption should be predicted from historical data, when available.
-    :ivar float h2_subst_of_heat:
-        "Values from 0 to 1. For max. possible substitution of heat with hydrogen in industrial processes set 1."
     :ivar bool nuts2_distribution_based_on_installed_ind_capacity: "If false, distribution per population density."
     :ivar [int] skip_years: Years that are skipped while reading files, to remove outliers.
     :ivar int last_available_year: Last year that's read from historical production files (exclusive).
@@ -62,7 +60,9 @@ class IndustrySettings:
         Only for these products, calculations are performed.
     :ivar float rest_sector_growth_rate: The growth rate of the rest sector.
     """
-    forecast_map = dict({"Trend": ForecastMethod.LINEAR, "U-shape": ForecastMethod.QUADRATIC,
+    forecast_map = dict({"Linear time trend": ForecastMethod.LINEAR,
+                         "Linear GDP function": ForecastMethod.LINEAR,
+                         "Quadratic GDP function": ForecastMethod.QUADRATIC,
                          "Exponential": ForecastMethod.EXPONENTIAL})
 
     def __init__(self, ex_general: pd.DataFrame, ex_subsectors: pd.DataFrame):
@@ -80,9 +80,6 @@ class IndustrySettings:
         self.trend_calc_for_spec = \
             ex_general[ex_general["Parameter"] == "Trend calculation for specific energy requirements"].get(
                 "Value").iloc[0]
-
-        self.h2_subst_of_heat = \
-            ex_general[ex_general["Parameter"] == "H2 substitution of heat"].get("Value").iloc[0]
 
         self.nuts2_distribution_based_on_installed_ind_capacity = \
             ex_general[ex_general["Parameter"] == "NUTS2 distribution based on installed industrial capacity"].get(

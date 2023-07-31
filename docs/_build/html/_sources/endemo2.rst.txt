@@ -44,10 +44,10 @@ endemo2.endemo module
    :undoc-members:
    :show-inheritance:
 
-endemo2.household\_sector module
---------------------------------
+endemo2.sectors.household\_sector module
+----------------------------------------
 
-.. automodule:: endemo2.household_sector
+.. automodule:: endemo2.sectors.household_sector
    :members:
    :undoc-members:
    :show-inheritance:

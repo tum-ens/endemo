@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>endemo2.control_parameters &mdash; Endemo2 2.0 documentation</title>
+  <title>endemo2.control_parameters &mdash; Endemo 2.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -29,7 +29,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            Endemo2
+            Endemo
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -50,7 +50,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Endemo2</a>
+          <a href="../../index.html">Endemo</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -122,8 +122,6 @@
 <span class="sd">        Decides, whether the production quantity prognosis should use per-capita projection.</span>
 <span class="sd">    :ivar bool trend_calc_for_spec:</span>
 <span class="sd">        Decides, whether specific consumption should be predicted from historical data, when available.</span>
-<span class="sd">    :ivar float h2_subst_of_heat:</span>
-<span class="sd">        &quot;Values from 0 to 1. For max. possible substitution of heat with hydrogen in industrial processes set 1.&quot;</span>
 <span class="sd">    :ivar bool nuts2_distribution_based_on_installed_ind_capacity: &quot;If false, distribution per population density.&quot;</span>
 <span class="sd">    :ivar [int] skip_years: Years that are skipped while reading files, to remove outliers.</span>
 <span class="sd">    :ivar int last_available_year: Last year that&#39;s read from historical production files (exclusive).</span>
@@ -133,7 +131,9 @@
 <span class="sd">        Only for these products, calculations are performed.</span>
 <span class="sd">    :ivar float rest_sector_growth_rate: The growth rate of the rest sector.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">forecast_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span><span class="s2">&quot;Trend&quot;</span><span class="p">:</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">,</span> <span class="s2">&quot;U-shape&quot;</span><span class="p">:</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">QUADRATIC</span><span class="p">,</span>
+    <span class="n">forecast_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span><span class="s2">&quot;Linear time trend&quot;</span><span class="p">:</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">,</span>
+                         <span class="s2">&quot;Linear GDP function&quot;</span><span class="p">:</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">,</span>
+                         <span class="s2">&quot;Quadratic GDP function&quot;</span><span class="p">:</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">QUADRATIC</span><span class="p">,</span>
                          <span class="s2">&quot;Exponential&quot;</span><span class="p">:</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">EXPONENTIAL</span><span class="p">})</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ex_general</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">ex_subsectors</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
@@ -151,9 +151,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">trend_calc_for_spec</span> <span class="o">=</span> \
             <span class="n">ex_general</span><span class="p">[</span><span class="n">ex_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Trend calculation for specific energy requirements&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
                 <span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">h2_subst_of_heat</span> <span class="o">=</span> \
-            <span class="n">ex_general</span><span class="p">[</span><span class="n">ex_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;H2 substitution of heat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_distribution_based_on_installed_ind_capacity</span> <span class="o">=</span> \
             <span class="n">ex_general</span><span class="p">[</span><span class="n">ex_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NUTS2 distribution based on installed industrial capacity&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>

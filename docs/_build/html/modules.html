@@ -77,7 +77,7 @@
 <li class="toctree-l2"><a class="reference internal" href="endemo2.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.commercial_trade_services_sector">endemo2.commercial_trade_services_sector module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.commercial_trade_services_sector.CommercialTradeServices"><code class="docutils literal notranslate"><span class="pre">CommercialTradeServices</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.commercial_trade_services_sector.CommercialTradeServices.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">CommercialTradeServices.calculate_total_demand()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.commercial_trade_services_sector.CommercialTradeServices.calculate_forecasted_demand"><code class="docutils literal notranslate"><span class="pre">CommercialTradeServices.calculate_forecasted_demand()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -164,6 +164,7 @@
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.country.Country.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Country.calculate_total_demand()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.country.Country.get_gdp"><code class="docutils literal notranslate"><span class="pre">Country.get_gdp()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.country.Country.get_name"><code class="docutils literal notranslate"><span class="pre">Country.get_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.country.Country.get_nuts2_root"><code class="docutils literal notranslate"><span class="pre">Country.get_nuts2_root()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.country.Country.get_population"><code class="docutils literal notranslate"><span class="pre">Country.get_population()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.country.Country.get_sector"><code class="docutils literal notranslate"><span class="pre">Country.get_sector()</span></code></a></li>
 </ul>
@@ -181,9 +182,9 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.household_sector">endemo2.household_sector module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.household_sector.Household"><code class="docutils literal notranslate"><span class="pre">Household</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.household_sector.Household.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Household.calculate_total_demand()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.sectors.household_sector">endemo2.sectors.household_sector module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.sectors.household_sector.Household"><code class="docutils literal notranslate"><span class="pre">Household</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.sectors.household_sector.Household.calculate_forecasted_demand"><code class="docutils literal notranslate"><span class="pre">Household.calculate_forecasted_demand()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -191,9 +192,13 @@
 <li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.industry_sector">endemo2.industry_sector module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry"><code class="docutils literal notranslate"><span class="pre">Industry</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry.calculate_demand_split_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_demand_split_by_nuts2()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry.calculate_forecasted_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_forecasted_demand()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry.calculate_forecasted_demand_split_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_forecasted_demand_split_by_nuts2()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry.calculate_product_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_product_demand()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry.calculate_rest_demand_split_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_rest_demand_split_by_nuts2()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry.calculate_rest_sector_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_rest_sector_demand()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_total_demand()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry.calculate_total_demand_split_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_total_demand_split_by_nuts2()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry.get_product"><code class="docutils literal notranslate"><span class="pre">Industry.get_product()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.industry_sector.Industry.prog_product_amount"><code class="docutils literal notranslate"><span class="pre">Industry.prog_product_amount()</span></code></a></li>
 </ul>
@@ -261,6 +266,7 @@
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_manual_prog"><code class="docutils literal notranslate"><span class="pre">PredictedTimeseries.get_manual_prog()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_prediction_raw"><code class="docutils literal notranslate"><span class="pre">PredictedTimeseries.get_prediction_raw()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_prog"><code class="docutils literal notranslate"><span class="pre">PredictedTimeseries.get_prog()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.PredictedTimeseries.get_value"><code class="docutils literal notranslate"><span class="pre">PredictedTimeseries.get_value()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.Quadr"><code class="docutils literal notranslate"><span class="pre">Quadr</span></code></a><ul>
@@ -291,6 +297,7 @@
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.Timeseries.get_prog_exp"><code class="docutils literal notranslate"><span class="pre">Timeseries.get_prog_exp()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.Timeseries.get_prog_lin"><code class="docutils literal notranslate"><span class="pre">Timeseries.get_prog_lin()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.Timeseries.get_prog_quadr"><code class="docutils literal notranslate"><span class="pre">Timeseries.get_prog_quadr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.prediction_models.Timeseries.get_value"><code class="docutils literal notranslate"><span class="pre">Timeseries.get_value()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -329,7 +336,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.sector">endemo2.sector module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.sector.Sector"><code class="docutils literal notranslate"><span class="pre">Sector</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.sector.Sector.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Sector.calculate_total_demand()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.sector.Sector.calculate_forecasted_demand"><code class="docutils literal notranslate"><span class="pre">Sector.calculate_forecasted_demand()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.sector.SectorIdentifier"><code class="docutils literal notranslate"><span class="pre">SectorIdentifier</span></code></a><ul>
@@ -340,7 +347,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.transport_sector">endemo2.transport_sector module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.transport_sector.Transport"><code class="docutils literal notranslate"><span class="pre">Transport</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.transport_sector.Transport.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Transport.calculate_total_demand()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.transport_sector.Transport.calculate_forecasted_demand"><code class="docutils literal notranslate"><span class="pre">Transport.calculate_forecasted_demand()</span></code></a></li>
 </ul>
 </li>
 </ul>

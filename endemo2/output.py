@@ -6,6 +6,8 @@ import pandas as pd
 from endemo2 import containers, sector, endemo
 from endemo2 import industry_sector as ind
 
+out_file_prefix = "endemo2_"
+
 
 class FileGenerator(object):
     """
@@ -98,7 +100,7 @@ def generate_coefficient_output(model: endemo.Endemo) -> None:
         fg.add_entry("Last Data Entry", product.get_active_timeseries().get_last_data_entry())
         shortcut_coef_output(fg, year_coef, year_coef, gdp_coef)
 
-    filename = "endemo2_industry_coef_current_settings.xlsx"
+    filename = out_file_prefix + "industry_coef_current_settings.xlsx"
     fg = FileGenerator(input_manager, filename)
     with fg:
         for product_name, product_obj in input_manager.industry_input.active_products.items():
@@ -111,7 +113,7 @@ def generate_coefficient_output(model: endemo.Endemo) -> None:
                 fg.add_entry("Per GDP", product.is_per_gdp())
                 shortcut_coef_table(fg, product, coef, coef)
 
-    filename = "endemo2_industry_coef_total.xlsx"
+    filename = out_file_prefix + "industry_coef_total.xlsx"
     fg = FileGenerator(input_manager, filename)
     with fg:
         for product_name, product_obj in input_manager.industry_input.active_products.items():
@@ -123,7 +125,7 @@ def generate_coefficient_output(model: endemo.Endemo) -> None:
                 gdp_coef = product.get_timeseries_amount_per_gdp().get_coef()
                 shortcut_coef_table(fg, product, year_coef, gdp_coef)
 
-    filename = "endemo2_industry_coef_per_capita.xlsx"
+    filename = out_file_prefix + "industry_coef_per_capita.xlsx"
     fg = FileGenerator(input_manager, filename)
     with fg:
         for product_name, product_obj in input_manager.industry_input.active_products.items():
@@ -147,7 +149,7 @@ def generate_population_prognosis_output(model: endemo.Endemo):
     countries = model.countries
     target_year = input_manager.ctrl.general_settings.target_year
 
-    filename = "endemo2_population_prognosis.xlsx"
+    filename = out_file_prefix + "population_prognosis.xlsx"
     fg = FileGenerator(input_manager, filename)
     with fg:
         fg.start_sheet("Country Population calculated per Country")
@@ -182,7 +184,7 @@ def generate_gdp_prognosis_output(model: endemo.Endemo):
     countries = model.countries
     target_year = input_manager.ctrl.general_settings.target_year
 
-    filename = "endemo2_gdp_prognosis.xlsx"
+    filename = out_file_prefix + "gdp_prognosis.xlsx"
     fg = FileGenerator(input_manager, filename)
     with fg:
         fg.start_sheet("Prognosis")
@@ -202,7 +204,7 @@ def generate_amount_prognosis_output(model: endemo.Endemo):
     countries = model.countries
     target_year = input_manager.ctrl.general_settings.target_year
 
-    filename = "endemo2_amount_prognosis.xlsx"
+    filename = out_file_prefix + "amount_prognosis.xlsx"
     fg = FileGenerator(input_manager, filename)
     with fg:
         for product_name, product_obj in input_manager.industry_input.active_products.items():
@@ -252,7 +254,7 @@ def generate_specific_consumption_output(model: endemo.Endemo):
     countries = model.countries
     target_year = input_manager.ctrl.general_settings.target_year
 
-    filename = "endemo2_specific_consumption_projections.xlsx"
+    filename = out_file_prefix + "specific_consumption_projections.xlsx"
     fg = FileGenerator(input_manager, filename)
     with fg:
         for product_name, product_obj in input_manager.industry_input.active_products.items():
@@ -267,7 +269,7 @@ def generate_specific_consumption_output(model: endemo.Endemo):
                 fg.add_entry("Hydrogen [GJ/t]", sc.hydrogen)
                 fg.add_entry("max. subst. of heat with H2 [%]", sc.max_subst_h2)
 
-    filename = "endemo2_specific_consumption_coef_electricity.xlsx"
+    filename = out_file_prefix + "specific_consumption_coef_electricity.xlsx"
     fg = FileGenerator(input_manager, filename)
     with fg:
         for product_name, product_obj in input_manager.industry_input.active_products.items():
@@ -280,7 +282,7 @@ def generate_specific_consumption_output(model: endemo.Endemo):
                 electricity_coef = sc_obj.get_coef(containers.DemandType.ELECTRICITY)
                 shortcut_coef_output(fg, electricity_coef, electricity_coef, electricity_coef)
 
-    filename = "endemo2_specific_consumption_coef_heat.xlsx"
+    filename = out_file_prefix + "specific_consumption_coef_heat.xlsx"
     fg = FileGenerator(input_manager, filename)
     with fg:
         for product_name, product_obj in input_manager.industry_input.active_products.items():
@@ -307,7 +309,7 @@ def generate_specific_consumption_output(model: endemo.Endemo):
             fg.add_entry(i, "-")
             i += 1
 
-    filename = "endemo2_specific_consumption_timelines.xlsx"
+    filename = out_file_prefix + "specific_consumption_timelines.xlsx"
     fg = FileGenerator(input_manager, filename)
     with fg:
         for product_name, product_obj in input_manager.industry_input.active_products.items():
@@ -348,7 +350,7 @@ def generate_demand_output(model: endemo.Endemo):
         fg.add_entry("Heat Q3 [TWh]", demand.heat.q3)
         fg.add_entry("Heat Q4 [TWh]", demand.heat.q4)
 
-    filename = "endemo2_demand_projections.xlsx"
+    filename = out_file_prefix + "demand_projections.xlsx"
     fg = FileGenerator(input_manager, filename)
     with fg:
         for product_name, product_obj in input_manager.industry_input.active_products.items():
@@ -380,7 +382,7 @@ def generate_demand_output(model: endemo.Endemo):
                 country.get_sector(sector.SectorIdentifier.INDUSTRY).calculate_total_demand(target_year)
             shortcut_demand_table(fg, demand)
 
-    filename = "endemo2_nuts2_demand_projections.xlsx"
+    filename = out_file_prefix + "nuts2_demand_projections.xlsx"
     fg = FileGenerator(input_manager, filename)
     with fg:
         for product_name, product_obj in input_manager.industry_input.active_products.items():
@@ -401,14 +403,14 @@ def generate_demand_output(model: endemo.Endemo):
             fg.start_sheet("rest")
             for country in countries.values():
                 dict_nuts2_demand = country.get_sector(sector.SectorIdentifier.INDUSTRY) \
-                    .calculate_rest_demand_split_by_nuts2(country.get_nuts2_root(), target_year)
+                    .calculate_rest_demand_split_by_nuts2(target_year)
                 for (nuts2_region_name, demand) in dict_nuts2_demand.items():
                     fg.add_entry("NUTS2 Region", nuts2_region_name)
                     shortcut_demand_table(fg, demand)
             fg.start_sheet("IND")
             for country in countries.values():
                 dict_nuts2_demand = country.get_sector(sector.SectorIdentifier.INDUSTRY) \
-                    .calculate_total_demand_split_by_nuts2(country.get_nuts2_root(), target_year)
+                    .calculate_total_demand_split_by_nuts2(target_year)
                 for (nuts2_region_name, demand) in dict_nuts2_demand.items():
                     fg.add_entry("NUTS2 Region", nuts2_region_name)
                     shortcut_demand_table(fg, demand)

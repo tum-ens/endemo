@@ -15,7 +15,7 @@ class Population:
     :ivar bool nuts2_used: Decides, which type of population should be used for getters.
     """
 
-    def __init__(self, country_level_population: pm.PredictedTimeseries, nuts2: NutsRegion, nuts2_used: bool):
+    def __init__(self, country_level_population: pm.PredictedTimeseries, nuts2: NutsRegion, nuts2_used: bool = False):
         self.country_level_population = country_level_population
         self.nuts2 = nuts2
         self.nuts2_used = nuts2_used
