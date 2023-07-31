@@ -1,7 +1,6 @@
-docs
-====
+IDP
+===
 
 .. toctree::
    :maxdepth: 4
 
-   conf

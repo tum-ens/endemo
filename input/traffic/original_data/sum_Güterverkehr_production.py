@@ -9,15 +9,15 @@ def load_excel_sheet(filepath, filename, sheetname):
 
 year = "2018"
 
-# production_per_land_his_alu = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic', 'ProduktionsmengeGüterverkehr.xlsx','Aluminium')
+# production_per_land_his_alu = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo2\input\traffic', 'ProduktionsmengeGüterverkehr.xlsx','Aluminium')
 
-# production_per_land_his_cem = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic', "ProduktionsmengeGüterverkehr.xlsx",'Cement')
+# production_per_land_his_cem = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo2\input\traffic', "ProduktionsmengeGüterverkehr.xlsx",'Cement')
 
-# production_per_land_his_glas = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic', "ProduktionsmengeGüterverkehr.xlsx",'Glas')
+# production_per_land_his_glas = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo2\input\traffic', "ProduktionsmengeGüterverkehr.xlsx",'Glas')
 
-# production_per_land_his_pa = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic', "ProduktionsmengeGüterverkehr.xlsx",'Paper')
+# production_per_land_his_pa = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo2\input\traffic', "ProduktionsmengeGüterverkehr.xlsx",'Paper')
 
-# production_per_land_his_steel = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic', "ProduktionsmengeGüterverkehr.xlsx",'Steel')
+# production_per_land_his_steel = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo2\input\traffic', "ProduktionsmengeGüterverkehr.xlsx",'Steel')
 
 production_per_land_his_alu = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic', 'ProduktionsmengeGüterverkehr_2030.xlsx','Aluminium')
 
@@ -83,7 +83,7 @@ for country in range(0, len(Countries)):
     add.append([Countries['Country_engl'][country], calc_sum])
 
 production = pd.DataFrame(add)
-#production.to_excel(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic\Productionvolume_historical.xlsx', index=False)
+#production.to_excel(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo2\input\traffic\Productionvolume_historical.xlsx', index=False)
 production.to_excel(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic\Productionvolume_single_2050.xlsx', index=False)
 
 print('finished.')
