@@ -150,14 +150,13 @@ def quadratic_regression(data: list[(float, float)], visualize: bool = False) ->
     return k0, k1, k2
 
 
-def quadratic_regression_delta(data: list[(float, float)], visualize: bool = False) \
+def quadratic_regression_delta(data: dict[str, [(float, float)]]) \
         -> ((float, float, float), dict[str, float]):
     """
     :todo: implement later
 
-    :param data: The data on which linear regression is applied.
-    :param visualize: Indicate, whether the result should be immediately plotted.
-    :return: The calculated coefficients (k0, k1)
+    :param dict data: The data on which linear regression is applied. It should be structured like {tag -> data list}
+    :return: The calculated coefficients (k0, k1, k2) and the offset for each tag {tag -> offset}
     """
     N = len(data)
 

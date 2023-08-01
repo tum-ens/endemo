@@ -19,6 +19,7 @@ class Endemo:
         """ Reads all the input files from the input folder and stores it in the input_manager member variable. """
         self.input_manager = input.Input()
 
+        # create countries
         for country_name in self.input_manager.ctrl.general_settings.active_countries:
             self.countries[country_name] = country.Country(country_name, self.input_manager)
 

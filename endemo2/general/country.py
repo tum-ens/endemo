@@ -1,10 +1,13 @@
 from __future__ import annotations
+
+import enum
 import warnings
 
-from endemo2 import input
+from endemo2.input import input
 from endemo2.sectors import industry_sector, sector
 from endemo2.utility import prediction_models as pm
 from endemo2.general.country_containers import Population, NutsRegion
+from endemo2.general import demand_containers as dc
 
 
 class Country:
@@ -88,14 +91,14 @@ class Country:
         if not self._gdp.get_interval_change_rate_raw():
             warnings.warn("Country " + self._name + " has an empty list of interval_changeRate for gdp.")
 
-    def calculate_total_demand(self, year: int) -> containers.Demand:
+    def calculate_total_demand(self, year: int) -> dc.Demand:
         """
         Sum the demand over all sectors of the country.
 
         :param year: Target year for which the prediction should be calculated.
         :return: The demand for a country summed over all sectors.
         """
-        total_demand = containers.Demand()
+        total_demand = dc.Demand()
 
         for sector_name, obj_sector in self._sectors.items():
             total_demand.add(obj_sector.calculate_forecasted_demand(year))
