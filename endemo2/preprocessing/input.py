@@ -10,22 +10,23 @@ import pandas as pd
 
 from endemo2.general import demand_containers as dc
 from endemo2.utility import utility as uty
-from endemo2.input import control_parameters as cp
+from endemo2.preprocessing import control_parameters as cp
+from endemo2.general import country_containers as cc
 
 
 class Input:
     """
-    The Input class connects all types of input data, that is in the form of excel/csv sheets in the 'input' folder.
+    The Input class connects all types of preprocessing data, that is in the form of excel/csv sheets in the 'preprocessing' folder.
 
     :ivar str super_path: Path of project folder
-    :ivar str input_path: Path of input files
+    :ivar str input_path: Path of preprocessing files
     :ivar str output_path: Path for output files
-    :ivar str general_path: Path for input files in "general" folder
-    :ivar str industry_path: Path for input files in "industry" folder
+    :ivar str general_path: Path for preprocessing files in "general" folder
+    :ivar str industry_path: Path for preprocessing files in "industry" folder
 
     :ivar ControlParameters ctrl: Holds all information received from Set_and_Control_Parameters.xlsx
-    :ivar GeneralInput general_input: Holds all information of the input files from the "input/general" folder.
-    :ivar IndustryInput industry_input: Holds all information of the input files from the "input/industry" folder.
+    :ivar GeneralInput general_input: Holds all information of the preprocessing files from the "preprocessing/general" folder.
+    :ivar IndustryInput industry_input: Holds all information of the preprocessing files from the "preprocessing/industry" folder.
     """
 
     super_path = Path(os.path.abspath(''))
@@ -53,7 +54,8 @@ class Input:
         self.general_input = GeneralInput(self.ctrl, self.general_path)
 
         # read industry
-        self.industry_input = IndustryInput(self.industry_path, industry_settings, self.general_input.abbreviations)
+        self.industry_input = IndustryInput(self.industry_path, industry_settings, self.general_input.abbreviations,
+                                            self.ctrl.general_settings.active_countries)
 
 
 class PopulationInput:
@@ -62,7 +64,7 @@ class PopulationInput:
 
     :param ControlParameters ctrl: The parsed Set_and_Control_Parameters.xlsx file.
     :param set nuts2_valid_regions: The set of nuts2 regions that are recognized.
-        They are used to filter the input data.
+        They are used to filter the preprocessing data.
     :param dict abbreviations: The countries abbreviations, used to access nuts2 data.
     :param pd.DataFrame df_country_pop_his: The sheet containing data of population history per country.
     :param pd.DataFrame df_country_pop_prog: The sheet containing the manual prognosis of population amount per country.
@@ -145,13 +147,13 @@ class PopulationInput:
 
 class GeneralInput:
     """
-    General Input contains all input that is read from the "input/general" folder.
+    General Input contains all preprocessing that is read from the "preprocessing/general" folder.
 
     :param ControlParameters ctrl: The parsed Set_and_Control_Parameters.xlsx
-    :param Path path: The path to the input/general folder
+    :param Path path: The path to the preprocessing/general folder
 
     :ivar dict[str, ("alpha2", "alpha3", "german_name")] abbreviations: The abbreviations for each country.
-    :ivar PopulationData population: All data from the population input.
+    :ivar PopulationData population: All data from the population preprocessing.
     :ivar dict[str, HisProg[[(float, float)], [Interval, float]]] gdp: The gdp for each country.
     :ivar dict[str, ("electricity", "heat")] efficiency: The efficiency for each energy carrier.
     :ivar set nuts2_valid_regions: The set of valid nuts2 regions within the selected NUTS2 code.
@@ -225,7 +227,7 @@ class GeneralInput:
 
 class ProductInput:
     """
-    The Product Input summarizes all input data, that is specific to a certain product type, but holds the
+    The Product Input summarizes all preprocessing data, that is specific to a certain product type, but holds the
     information for all countries. Example product type: steel_prim
 
     :param sc: specific_consumption_default
@@ -251,10 +253,12 @@ class ProductInput:
         This is used to model modern technologies replacing old ones.
     :ivar dict[str, dict[str, float]]: Installed capacity in %/100 for each NUTS2 Region.
         Structure {country_name -> {nuts2_region_name -> capacity_value}}
+    :ivar dict[str, dict[str, [[str]]]] country_groups: Input from country group file,
+        structured as {group_type -> list_of_groups}.
     """
 
     def __init__(self, name, sc, bat, prod, sc_h, sc_h_active, heat_levels, manual_exp_change_rate, perc_used,
-                 nuts2_installed_capacity):
+                 nuts2_installed_capacity, country_groups):
         self.product_name = name
         self.specific_consumption_default = sc
         self.bat = bat
@@ -268,6 +272,7 @@ class ProductInput:
 
         self.perc_used = float(perc_used) if not math.isnan(float(perc_used)) else 1
         self.nuts2_installed_capacity = nuts2_installed_capacity
+        self.country_groups = country_groups
 
     def __str__(self):
         return "\n\tSpecific Consumption: " + uty.str_dict(self.specific_consumption_default) + \
@@ -277,7 +282,7 @@ class ProductInput:
 
 class RestSectorInput:
     """
-    A container for the input data regarding the rest sectors.
+    A container for the preprocessing data regarding the rest sectors.
 
     :ivar dict[str, dict[DemandType, (float, float)]] rest_calc_data: Used for the calculation of the rest sector.
         It has the following structure: {country_name -> {demand_type -> (rest_sector_percent, demand_2018)}}
@@ -357,19 +362,19 @@ class FileReadingHelper:
 
 class IndustryInput:
     """
-    Industry Input denoted input that is read from the "input/industry" folder.
+    Industry Input denoted preprocessing that is read from the "preprocessing/industry" folder.
 
     :param industry_path: The path to the industry folder.
     :param industry_settings: The parsed sector-specific settings for the industry sector.
 
-    :ivar dict[str, ProductInput] active_products: Stores the product specific input for all active products.
+    :ivar dict[str, ProductInput] active_products: Stores the product specific preprocessing for all active products.
     :ivar IndustrySettings settings: Stores the sector-specific settings for industry.
     :ivar dict[str, Retrieve] product_data_access: Specify how data sheets for each product should be accessed
     :ivar dict[str, str] sc_historical_data_file_names: The file names of the files used for certain products to read
         historical information on specific consumption.
     :ivar [str] sc_historical_sheet_names: The sheet names for the files used to read
         historical information on specific consumption for certain products.
-    :ivar RestSectorInput rest_sector_input: All input data relating to the rest sector.
+    :ivar RestSectorInput rest_sector_input: All preprocessing data relating to the rest sector.
     """
 
     product_data_access = {
@@ -405,13 +410,15 @@ class IndustryInput:
     sc_historical_sheet_names = ["Feste fossile Brennstoffe", "Synthetische Gase", "Erdgas", "Oel",
                                  "Erneuerbare Energien", "Abfaelle", "Elektrizitaet", "Waerme"]
 
-    def __init__(self, industry_path: Path, industry_settings: cp.IndustrySettings, abbreviations: dict):
+    def __init__(self, industry_path: Path, industry_settings: cp.IndustrySettings, abbreviations: dict,
+                 active_countries: [str]):
         self.settings = industry_settings
         self.active_products = dict[str, ProductInput]()
 
         ex_spec = pd.ExcelFile(industry_path / "Specific_Consumption.xlsx")
         ex_bat = pd.ExcelFile(industry_path / "BAT_Consumption.xlsx")
         ex_nuts2_ic = pd.ExcelFile(industry_path / "Installed_capacity_NUTS2.xlsx")
+        ex_country_groups = pd.ExcelFile(industry_path / "Country_Groups.xlsx")
 
         # read heat levels
         df_heat_levels = pd.read_excel(industry_path / "Heat_levels.xlsx")
@@ -537,10 +544,38 @@ class IndustryInput:
                 perc_value = row[product_name_general + " %"]
                 dict_installed_capacity_nuts2[country_name_en][nuts2] = perc_value if not np.isnan(perc_value) else 0.0
 
+            # read country groups
+            country_groups = dict[str, [[str]]](
+                {cc.GroupType.SEPARATE: [], cc.GroupType.JOINED: [], cc.GroupType.JOINED_DIVERSIFIED: []})
+
+            df_country_groups = pd.read_excel(ex_country_groups, sheet_name="Example")  # sheet_name=product_name)
+
+            map_group_type = {"joined": cc.GroupType.JOINED,
+                              "joined_diversified": cc.GroupType.JOINED_DIVERSIFIED,
+                              "separate": cc.GroupType.SEPARATE}
+
+            all_countries = active_countries
+            grouped_countries = set()
+            all_others_group_type = None
+
+            for _, row in df_country_groups.iterrows():
+                group_type = map_group_type[row["Combination Type"]]
+                new_group = [entry for entry in row[1:] if str(entry) != "nan"]
+                if "all_others" in new_group:
+                    all_others_group_type = group_type
+                    continue
+                country_groups[group_type].append(new_group)
+                grouped_countries |= set(new_group)
+            if all_others_group_type is not None:
+                country_groups[all_others_group_type] = [country for country in all_countries if
+                                                         country not in grouped_countries]
+
             # finally store in product data class
             self.active_products[product_name] = \
                 ProductInput(product_name, dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his,
                              sc_his_calc, dict_heat_levels[product_name],
                              industry_settings.product_settings[product_name].manual_exp_change_rate,
                              industry_settings.product_settings[product_name].perc_used,
-                             dict_installed_capacity_nuts2)
+                             dict_installed_capacity_nuts2, country_groups)
+
+

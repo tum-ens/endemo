@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import enum
 import warnings
 
-from endemo2.input import input
 from endemo2.sectors import industry_sector, sector
 from endemo2.utility import prediction_models as pm
 from endemo2.general.country_containers import Population, NutsRegion
 from endemo2.general import demand_containers as dc
+from endemo2.preprocessing import preprocessor as pp
 
 
 class Country:
@@ -15,19 +14,20 @@ class Country:
     The Country connects all sectors and data from a single country. It is a completely self-contained unit.
 
     :param name: Name of the country.
-    :param input_manager:
-        The input manager containing all the input files, so country can fill the variables in its constructor.
+    :param preprocessor: The preprocessing manager containing all the preprocessing files,
+    so country can fill the variables in its constructor.
 
     :ivar str _name: The name of the country (en).
     :ivar [str] _abbreviations: Possible abbreviations for this country.
-    :ivar Population[PredictedTimeseries, NutsRegion] _population: Population object, containing important data and
-        timeseries of the countries' population.
-    :ivar TimeStepSequence _gdp: The Timeseries for the GDP of this country.
+    :ivar Population[DataManualPrediction, NutsRegion] _population: Population object, containing important data and
+        the prediction of the countries' population.
+    :ivar DataStepSequence _gdp: The data (and prediction) for the GDP of this country.
     :ivar dict[SectorIdentifier, Sector] _sectors: The sector objects for this country, accessible by the sector
         identifier.
     """
 
-    def __init__(self, name: str, input_manager: input.Input):
+    def __init__(self, name: str, preprocessor: pp.Preprocessor):
+        input_manager = preprocessor.input_manager
 
         self._name = name
         self._sectors = dict()
@@ -35,9 +35,9 @@ class Country:
         # fill abbreviations
         self._abbreviations = input_manager.general_input.abbreviations[self._name]
 
-        # create population timeseries
+        # create population Data object
         country_population = \
-            pm.PredictedTimeseries(
+            pm.DataManualPrediction(
                 historical_data=input_manager.general_input.population.country_population[self._name].historical,
                 prediction_data=input_manager.general_input.population.country_population[self._name].prognosis)
 
@@ -67,8 +67,8 @@ class Country:
             Population(country_population, nuts2_root,
                        input_manager.ctrl.industry_settings.nuts2_distribution_based_on_installed_ind_capacity)
 
-        # create gdp timeseries
-        self._gdp = pm.TimeStepSequence(
+        # create gdp Data object
+        self._gdp = pm.DataStepSequence(
             historical_data=input_manager.general_input.gdp[self._name].historical,
             progression_data=input_manager.general_input.gdp[self._name].prognosis)
 
@@ -77,7 +77,7 @@ class Country:
 
         if "industry" in active_sectors:
             self._sectors[sector.SectorIdentifier.INDUSTRY] = \
-                industry_sector.Industry(self._name, self._population, self._gdp, input_manager)
+                industry_sector.Industry(self._name, self._population, self._gdp, preprocessor)
 
         # create warnings
         if not self._abbreviations:
@@ -121,11 +121,11 @@ class Country:
         """
         return self._population
 
-    def get_gdp(self) -> pm.TimeStepSequence:
+    def get_gdp(self) -> pm.DataStepSequence:
         """
-        Getter for the countries' GDP Timeseries
+        Getter for the countries' GDP DataStepSequence
 
-        :return: The GDP Timeseries for this country.
+        :return: The GDP DataStepSequence for this country.
         """
         return self._gdp
 

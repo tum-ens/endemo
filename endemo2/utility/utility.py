@@ -62,30 +62,30 @@ def is_tuple_list_zero(xys: [(float, float)]) -> bool:
         return is_zero(list(zip(*xys))[1])
 
 
-def plot_timeseries(ts: pm.Timeseries, title: str = "", x_label: str = "", y_label: str = "") -> None:
+def plot_data_regression(dr: pm.DataAnalyzer, title: str = "", x_label: str = "", y_label: str = "") -> None:
     """
-    Show a timeseries plotted with different optional labels.
+    Show a DataAnalyzer plotted with different optional labels.
 
-    :param ts: The timeseries to be plotted.
+    :param dr: The DataAnalyzer to be plotted.
     :param title: The title of the plot.
     :param x_label: The label for the x-axis of the plot.
     :param y_label: The label for the y-axis of the plot.
     """
-    x, y = zip(*ts.get_data())
+    x, y = zip(*dr.get_data())
 
-    coef = ts.get_coef()
+    coef = dr.get_coef()
 
     # Plot points
     plt.plot(x, y, 'o', color="grey", label="data points")
 
     # Plot exp regression
-    plt.plot(x, [exp_change((coef.exp.x0, coef.exp.y0), coef.exp.r, e) for e in x], color="purple", label="exponential")
+    plt.plot(x, [exp_change((coef._exp.x0, coef._exp.y0), coef._exp.r, e) for e in x], color="purple", label="exponential")
 
     # Plot linear regression
-    plt.plot(x, [lin_prediction((coef.lin.k0, coef.lin.k1), e) for e in x], color="orange", label="linear")
+    plt.plot(x, [lin_prediction((coef._lin.k0, coef._lin.k1), e) for e in x], color="orange", label="linear")
 
     # Plot quadratic regression
-    plt.plot(x, [quadr_prediction((coef.quadr.k0, coef.quadr.k1, coef.quadr.k2), e) for e in x], color="blue",
+    plt.plot(x, [quadr_prediction((coef._quadr.k0, coef._quadr.k1, coef._quadr.k2), e) for e in x], color="blue",
              label="quadratic")
 
     plt.title(title)
@@ -94,6 +94,27 @@ def plot_timeseries(ts: pm.Timeseries, title: str = "", x_label: str = "", y_lab
 
     plt.legend(loc='best')
     plt.show()
+
+
+def apply_all_regressions(data: list[(float, float)]) -> pm.Coef:
+    """
+    Applies all available regression algorithms to given data and returns coefficient object.
+
+    :param data: Data that regression is applied on.
+    :return: A coefficient object summarizing the results from all regressions.
+    """
+    result = pm.Coef()
+
+    if len(data) == 0:
+        return result
+
+    lin_res = linear_regression(data)
+    result.set_lin(lin_res[0], lin_res[1])
+
+    quadr_res = quadratic_regression(data)
+    result.set_quadr(quadr_res[0], quadr_res[1], quadr_res[2])
+
+    return result
 
 
 def linear_regression(data: list[(float, float)], visualize: bool = False) -> (float, float):
@@ -166,7 +187,11 @@ def quadratic_regression_delta(data: dict[str, [(float, float)]]) \
 
     # ??? what is to come ???
 
-    pass
+    dict_result_offsets = dict()
+    for name, value in data.items():
+        dict_result_offsets[name] = 0
+
+    return (0, 0, 0), dict_result_offsets
 
 
 def exp_change(start_point: (float, float), change_rate: float, target_x: float) -> float:
@@ -245,10 +270,10 @@ def filter_out_nan_and_inf(data: [(float, float)]) -> [(float, float)]:
 
 
 # zip 2 lists, where they have the same x value. Works only on ascending x values!!
-def zip_on_x(a: [(float, float)], b: [(float, float)]) -> ((float, float), (float, float)):
+def _zip_on_x_generator(a: [(float, float)], b: [(float, float)]) -> ((float, float), (float, float)):
     """
     A helper function for combine_data_on_x. This is a generator, that returns one value after another.
-    Can be cast to list to apply on whole input at once and create a list as output of form [(a, b), (a, d)]
+    Can be cast to list to apply on whole preprocessing at once and create a list as output of form [(a, b), (a, d)]
 
     :param a: List 1 [(a, b)]
     :param b: List 2 [(c, d)]
@@ -270,7 +295,7 @@ def zip_on_x(a: [(float, float)], b: [(float, float)]) -> ((float, float), (floa
             continue
 
 
-def combine_data_on_x(xys1: [(float, float)], xys2: [(float, float)], ascending_x=True) \
+def zip_data_on_x(xys1: [(float, float)], xys2: [(float, float)], ascending_x=True) \
         -> [(float, float)]:
     """
     Zip the two lists of tuples on the condition that the first tuple entry matches.
@@ -285,7 +310,7 @@ def combine_data_on_x(xys1: [(float, float)], xys2: [(float, float)], ascending_
 
     if ascending_x:
         # runtime in O(n)
-        zipped = list(zip_on_x(xys1, xys2))
+        zipped = list(_zip_on_x_generator(xys1, xys2))
         res = list(map(lambda arg: (arg[0][1], arg[1][1]), zipped))
     else:
         # runtime in O(n^2)
@@ -306,7 +331,7 @@ def zip_data_on_x_and_map(xys1: [(float, float)], xys2: [(float, float)], functi
     :param function: The function that is applied. Should be of form lambda x y1 y2 -> ...
     :return: The result of the applied function.
     """
-    zipped = list(zip_on_x(xys1, xys2))
+    zipped = list(_zip_on_x_generator(xys1, xys2))
     return [function(x1, y1, y2) for ((x1, y1), (x2, y2)) in zipped]
 
 

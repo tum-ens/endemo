@@ -1,23 +1,31 @@
 from __future__ import annotations
 
+import enum
 import warnings
 
-from endemo2 import utility as uty
+from endemo2.utility import utility as uty
 from endemo2.utility import prediction_models as pm
 from endemo2.general import demand_containers as ctn
+
+
+class GroupType(enum.Enum):
+    SEPARATE = 0
+    JOINED = 1
+    JOINED_DIVERSIFIED = 2
+    EMPTY = 3
 
 
 class Population:
     """
     Holds information about a countries' population. Contains per-country data, as well as nuts2 data
 
-    :ivar PredictedTimeseries country_level_population: The timeseries containing population information and predictions
+    :ivar DataManualPrediction country_level_population: The object containing population information and predictions
         on a country level.
     :ivar NutsRegion nuts2: The root of the Nuts2 Tree for a country.
     :ivar bool nuts2_used: Decides, which type of population should be used for getters.
     """
 
-    def __init__(self, country_level_population: pm.PredictedTimeseries, nuts2: NutsRegion, nuts2_used: bool = False):
+    def __init__(self, country_level_population: pm.DataManualPrediction, nuts2: NutsRegion, nuts2_used: bool = False):
         self.country_level_population = country_level_population
         self.nuts2 = nuts2
         self.nuts2_used = nuts2_used
@@ -68,7 +76,8 @@ class NutsRegion:
 
     :ivar str region_name: The NUTS tag of the region. For example: DE, DE1, DE11, ...
     :ivar dict[str, NutsRegion] _subregions: The child regions, accessible per NUTS tag. For DE: {DE1 -> .., DE2 -> ..}
-    :ivar Timeseries _ts_population: The timeseries for the regions population. Should only be filled for leaf nodes.
+    :ivar DataAnalyzer _ts_population: The data regression object for the regions population. Should only be filled
+        for leaf nodes.
     :ivar [(float, float)] _population_historical: The historical population for this region.
         Should only be filled for leaf nodes.
     """
@@ -80,11 +89,11 @@ class NutsRegion:
         self._population_historical = historical_data
 
         if prediction_data is not None and historical_data is not None:
-            self._ts_population = pm.TimeStepSequence(historical_data, prediction_data)
+            self._ts_population = pm.DataStepSequence(historical_data, prediction_data)
         elif historical_data is not None and prediction_data is None:
             warnings.warn("For region " + self.region_name + "there was no prediction data. Using Linear Regression "
                                                              "instead.")
-            self._ts_population = pm.PredictedTimeseries(historical_data, prediction_data)
+            self._ts_population = pm.DataManualPrediction(historical_data, prediction_data)
 
     def __str__(self):
         if len(self._sub_regions.items()) < 1:
@@ -133,7 +142,7 @@ class NutsRegion:
             subregion_objs = list(self._sub_regions.values())
             result = subregion_objs[0].get_historical_data()
             for subregion_obj in subregion_objs[1:]:
-                result = list(uty.zip_on_x(result, subregion_obj.get_historical_data()))
+                result = list(uty._zip_on_x_generator(result, subregion_obj.get_historical_data()))
                 result = [(x1, y1 + y2) for ((x1, y1), (x2, y2)) in result]
             self._population_historical = result
         return self._population_historical

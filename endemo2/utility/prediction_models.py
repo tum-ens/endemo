@@ -1,30 +1,90 @@
-import collections as coll
+from __future__ import annotations
+
 import enum
+import warnings
+
 import numpy as np
 import statistics as st
 
 from endemo2.utility import utility as uty
-from endemo2.input import control_parameters as cp
 from endemo2.general import demand_containers as ctn
-
-Exp = coll.namedtuple("Exp", ["x0", "y0", "r"])  # y(x) = y0 * (1+r)^(x - x0)
-Lin = coll.namedtuple("Lin", ["k0", "k1"])
-Quadr = coll.namedtuple("Quadr", ["k0", "k1", "k2"])
+from endemo2.utility.utility_containers import ForecastMethod
 
 
 class Coef:
     """
     The container for the coefficients of different forecast methods.
 
-    :ivar (x0, y0, r) exp:
+    :ivar ((x0, y0), r) _exp:
         (x0, y0) is the start point for the exponential calculation and r is the growth rate.
-    :ivar (k0, k1) lin: Used for the calculation f(x) = k0 + k1 * x
-    :ivar (k0, k1, k2) quadr: Used for the calculation f(x) = k0 + k1 * x + k2 * x^2
+        Used for calculation y(x) = y0 * (1+r)^(x - x0)
+    :ivar (k0, k1) _lin: Used for the calculation f(x) = k0 + k1 * x
+    :ivar (k0, k1, k2) _quadr: Used for the calculation f(x) = k0 + k1 * x + k2 * x^2
+    :ivar float _offset: Additional constant offset.
+    :ivar ForecastMethod _method: Method used for calculating output.
     """
-    def __init__(self):
-        self.exp = Exp(0, 0, 0)
-        self.lin = Lin(0, 0)
-        self.quadr = Quadr(0, 0, 0)
+    def __init__(self,
+                 exp_start_point_xy: (float, float) = (0.0, 0.0), exp_growth_rate: float = 0.0,
+                 lin: (float, float) = (0.0, 0.0),
+                 quadr: (float, float, float) = (0.0, 0.0, 0.0),
+                 offset: float = 0.0,
+                 method: ForecastMethod = None):
+        self._exp = (exp_start_point_xy[0], exp_start_point_xy[1], exp_growth_rate)
+        self._lin = (lin[0], lin[1])
+        self._quadr = (quadr[0], quadr[1], quadr[2])
+        self._offset = offset
+        self._method = method
+
+    def set_method(self, method: ForecastMethod):
+        """ Setter for the forecast method. """
+        self._method = method
+
+    def set_exp(self, start_point: (float, float), exp_growth_rate: float):
+        """ Setter for the exponential coefficients. """
+        self._exp = (start_point, exp_growth_rate)
+
+    def set_lin(self, k0: float, k1: float):
+        """ Setter for the linear coefficients. """
+        self._lin = (k0, k1)
+
+    def set_quadr(self, k0: float, k1: float, k2: float):
+        """ Setter for the quadratic coefficients. """
+        self._quadr = (k0, k1, k2)
+
+    def set_offset(self, k0: float, k1: float, k2: float):
+        """ Setter for the quadratic coefficients. """
+        self._quadr = (k0, k1, k2)
+
+    def get_exp_y(self, target_x) -> float:
+        """ Returns the y-axis value of the function at the given x according to the exponential method. """
+        return uty.exp_change((self._exp[0][0], self._exp[0][1]), self._exp[1], target_x)
+
+    def get_lin_y(self, target_x) -> float:
+        """ Returns the y-axis value of the function at the given x according to the linear method. """
+        return uty.lin_prediction(self._lin, target_x)
+
+    def get_quadr_y(self, target_x) -> float:
+        """ Returns the y-axis value of the function at the given x according to the quadratic method. """
+        return uty.quadr_prediction(self._quadr, target_x)
+
+    def get_quadr_offset_y(self, target_x) -> float:
+        """ Returns the y-axis value of the function at the given x according to the quadratic offset method. """
+        quadr_offset = (self._quadr[0] + self._offset, self._quadr[1], self._quadr[2])
+        return uty.quadr_prediction(quadr_offset, target_x)
+
+    def get_function_y(self, target_x) -> float:
+        """ Returns the y-axis value of the function at the given x according to the used method. """
+        match self._method:
+            case ForecastMethod.LINEAR:
+                return self.get_lin_y(target_x)
+            case ForecastMethod.QUADRATIC:
+                return self.get_quadr_y(target_x)
+            case ForecastMethod.EXPONENTIAL:
+                return self.get_exp_y(target_x)
+            case ForecastMethod.QUADRATIC_OFFSET:
+                return self.get_quadr_offset_y(target_x)
+            case None:
+                warnings.warn("No forecast method selected for coefficients.")
 
 
 class StartPoint(enum.Enum):
@@ -36,31 +96,55 @@ class StartPoint(enum.Enum):
 
 class Timeseries:
     """
-    A Timeseries holds information about a process' values from the past and provides projections into the future.
+    A class strictly representing a value over time. This usage is a class invariant and the class should not be used
+    in any other way.
 
-    :param data: The historical data given for this timeseries.
+    :ivar [(float, float)] _data: Where the x-axis is Time and the y-axis is some value over time.
+    """
+    # TODO: make this class actually useful and used somewhere
+
+    def __init__(self, data: [(float, float)]):
+        # clean data before saving
+        self._data = uty.filter_out_nan_and_inf(data)
+
+    @classmethod
+    def merge_two_timeseries(cls, t1: Timeseries, t2: Timeseries) -> [(float, float)]:
+        d1 = t1._data
+        d2 = t2._data
+        return uty.zip_data_on_x(d1, d2)
+
+    def is_empty(self) -> bool:
+        return len(self._data) == 0
+
+
+class DataAnalyzer:
+    """
+    A DataAnalyzer holds information about a process' values from the past and provides projections into the future.
+
+    :param data: The historical data given for this DataAnalyzer.
     :param calculation_type: The forecast method, that should be used.
     :param rate_of_change: The manually given rate of change for the exponential forecast method.
 
-    :ivar [(float, float)] _data: The historical data for this timeseries.
-    :ivar Coef _coef: All the coefficients for different forecast methods.
+    :ivar [(float, float)] _data: The historical data for this DataAnalyzer.
+    :ivar Coef _coef: All the coefficients for different forecast methods contained in an object that provides
+        functions for them.
     :ivar ForecastMethod _calculation_type: The currently selected forecast method that should be used for projections.
     """
 
-    def __init__(self, data: [(float, float)], calculation_type: cp.ForecastMethod, rate_of_change=0.0):
-        self._coef = Coef()
+    def __init__(self, data: [(float, float)], calculation_type: ForecastMethod, rate_of_change=0.0):
         self._data = data
 
         if len(self._data) < 2:
             # with only one value available, no regression possible
-            self._calculation_type = cp.ForecastMethod.EXPONENTIAL
-        elif len(self._data) < 3 and calculation_type is not cp.ForecastMethod.EXPONENTIAL:
+            self._calculation_type = ForecastMethod.EXPONENTIAL
+        elif len(self._data) < 3 and calculation_type is not ForecastMethod.EXPONENTIAL:
             # quadratic regression only possible with > 2 data points
-            self._calculation_type = cp.ForecastMethod.LINEAR
+            self._calculation_type = ForecastMethod.LINEAR
         else:
             self._calculation_type = calculation_type
 
         # calculate all coefficients
+        self._coef = Coef(method=self._calculation_type)
         self._set_coef_exp(rate_of_change, StartPoint.LAST_AVAILABLE)
         self._calc_coef_lin()
         self._calc_coef_quadr()
@@ -86,18 +170,12 @@ class Timeseries:
 
     def get_prog(self, x) -> float:
         """
-        Getter for the prognosis of this timeseries.
+        Getter for the prognosis of this DataAnalyzer.
 
         :param x: The x-axis value. Example: target year for projection into the future.
         :return: The estimated y-axis value for the target x.
         """
-        match self._calculation_type:
-            case cp.ForecastMethod.EXPONENTIAL:
-                return self.get_prog_exp(x)
-            case cp.ForecastMethod.LINEAR:
-                return self.get_prog_lin(x)
-            case cp.ForecastMethod.QUADRATIC:
-                return self.get_prog_quadr(x)
+        return self._coef.get_function_y(x)
 
     def _set_coef_exp(self, rate_of_change: float, start_point: StartPoint, manual: (float, float) = (0, 0)):
         """
@@ -122,7 +200,7 @@ class Timeseries:
             case StartPoint.MANUAL:
                 (start_x, start_y) = manual
 
-        self._coef.exp = Exp(start_x, start_y, rate_of_change)
+        self._coef.set_exp(start_point=(start_x, start_y), exp_growth_rate=rate_of_change)
 
     def get_mean_y(self) -> float:
         """
@@ -136,23 +214,23 @@ class Timeseries:
         """ Calculates and sets the coefficient for the linear forecast method. """
         if len(self._data) < 2:
             if len(self._data) == 0:
-                self._coef.lin = Lin(0, 0)
+                self._coef.set_lin(0, 0)
             else:
-                self._coef.lin = Lin(self._data[0][1], 0)
+                self._coef.set_lin(self._data[0][1], 0)
             return
         lin_coef = uty.linear_regression(self._data)
-        self._coef.lin = Lin(lin_coef[0], lin_coef[1])
+        self._coef.set_lin(lin_coef[0], lin_coef[1])
 
     def _calc_coef_quadr(self):
         """ Calculates and sets the coefficient for the quadratic forecast method. """
         if len(self._data) < 3:
             if len(self._data) == 0:
-                self._coef.lin = Quadr(0, 0, 0)
+                self._coef.set_quadr(0, 0, 0)
             else:
-                self._coef.lin = Quadr(self._data[0][1], 0, 0)
+                self._coef.set_quadr(self._data[0][1], 0, 0)
             return
         quadr_coef = uty.quadratic_regression(self._data)
-        self._coef.quadr = Quadr(quadr_coef[0], quadr_coef[1], quadr_coef[2])
+        self._coef.set_quadr(quadr_coef[0], quadr_coef[1], quadr_coef[2])
 
     def get_coef(self) -> Coef:
         """ Getter for the coefficient container. """
@@ -176,7 +254,7 @@ class Timeseries:
         :param x: The target x-axis value.
         :return: The predicted y value at x-axis value x.
         """
-        return uty.exp_change((self._coef.exp.x0, self._coef.exp.y0), self._coef.exp.r, x)
+        return self._coef.get_exp_y(x)
 
     def get_prog_lin(self, x) -> float:
         """
@@ -185,7 +263,7 @@ class Timeseries:
         :param x: The target x-axis value.
         :return: The predicted y value at x-axis value x.
         """
-        return uty.lin_prediction(self._coef.lin, x)
+        return self._coef.get_lin_y(x)
 
     def get_prog_quadr(self, x) -> float:
         """
@@ -194,13 +272,13 @@ class Timeseries:
         :param x: The target x-axis value.
         :return: The predicted y value at x-axis value x.
         """
-        return uty.quadr_prediction(self._coef.lin, x)
+        return self._coef.get_quadr_y(x)
 
 
-class PredictedTimeseries(Timeseries):
+class DataManualPrediction(DataAnalyzer):
     """
-    A variant of the timeseries class, where there is a manual forecast available that is read from the input and used
-    for the forecast.
+    A variant of the DataAnalyzer class, where there is a manual forecast available that is read from the preprocessing and
+    used for the forecast.
 
     :param [(float, float)] historical_data: The historical data. Passed onto parent class.
     :param [(float, float)] prediction_data: The manual prediction data. This is saved and used for the forecast.
@@ -212,7 +290,7 @@ class PredictedTimeseries(Timeseries):
     :ivar [(float, float)] _prediction: The manual prediction, which is used for the forecast.
     """
     def __init__(self, historical_data: [(float, float)], prediction_data: [(float, float)],
-                 calculation_type: cp.ForecastMethod = cp.ForecastMethod.LINEAR, rate_of_change=0.0):
+                 calculation_type: ForecastMethod = ForecastMethod.LINEAR, rate_of_change=0.0):
         super().__init__(historical_data, calculation_type, rate_of_change)
         self._prediction = prediction_data
 
@@ -258,14 +336,14 @@ class PredictedTimeseries(Timeseries):
         return self._prediction
 
 
-class TimeStepSequence(Timeseries):
+class DataStepSequence(DataAnalyzer):
     """
-    A variant of the timeseries class, where there is a forecast given in the shape of intervals with an exponential
+    A variant of the DataAnalyzer class, where there is a forecast given in the shape of intervals with an exponential
     growth rate.
 
     :param [(float, float)] historical_data: The historical data. Passed onto parent class.
-    :param [(Interval, float)] progression_data: The manual progression data in form of an interval in combination with
-        the exponential growth rate.
+    :param [(Interval, float)] progression_data: The manual progression data in form of an x-axis interval in
+        combination with the exponential growth rate.
     :param ForecastMethod calculation_type: The forecast type, should the parent class be used instead. Is passed on to
         the parent class.
     :param float rate_of_change: The rate of change for the exponential forecast method of the parent class, should
@@ -278,7 +356,7 @@ class TimeStepSequence(Timeseries):
     """
 
     def __init__(self, historical_data: [(float, float)], progression_data: [(ctn.Interval, float)],
-                 calculation_type: cp.ForecastMethod = cp.ForecastMethod.LINEAR,
+                 calculation_type: ForecastMethod = ForecastMethod.LINEAR,
                  rate_of_change=0.0):
         super().__init__(historical_data, calculation_type, rate_of_change)
 
@@ -327,7 +405,7 @@ class TimeStepSequence(Timeseries):
                     else:
                         return b2
 
-        # calculate resulting gdp in future
+        # calculate result in future
         result = self._his_end_value[1]
         for interval_change in self._interval_changeRate:
             start = max(self._his_end_value[0], interval_change[0].start)  # cut off protruding years at start

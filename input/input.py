@@ -10,26 +10,26 @@ import pandas as pd
 
 from endemo2.general import demand_containers as ctn
 from endemo2 import utility as uty
-from endemo2.input import control_parameters as cp
+from endemo2.preprocessing import control_parameters as cp
 
 
 class Input:
     """
-    The Input class connects all types of input data, that is in the form of excel/csv sheets in the 'input' folder.
+    The Input class connects all types of preprocessing data, that is in the form of excel/csv sheets in the 'preprocessing' folder.
 
     :ivar str super_path: Path of project folder
-    :ivar str input_path: Path of input files
+    :ivar str input_path: Path of preprocessing files
     :ivar str output_path: Path for output files
-    :ivar str general_path: Path for input files in "general" folder
-    :ivar str industry_path: Path for input files in "industry" folder
+    :ivar str general_path: Path for preprocessing files in "general" folder
+    :ivar str industry_path: Path for preprocessing files in "industry" folder
 
     :ivar ControlParameters ctrl: Holds all information received from Set_and_Control_Parameters.xlsx
-    :ivar GeneralInput general_input: Holds all information of the input files from the "input/general" folder.
-    :ivar IndustryInput industry_input: Holds all information of the input files from the "input/industry" folder.
+    :ivar GeneralInput general_input: Holds all information of the preprocessing files from the "preprocessing/general" folder.
+    :ivar IndustryInput industry_input: Holds all information of the preprocessing files from the "preprocessing/industry" folder.
     """
 
     super_path = Path(os.path.abspath(''))
-    input_path = super_path / 'input'
+    input_path = super_path / 'preprocessing'
     output_path = super_path / 'output'
     general_path = input_path / 'general'
     industry_path = input_path / 'industry'
@@ -62,7 +62,7 @@ class PopulationInput:
 
     :param ControlParameters ctrl: The parsed Set_and_Control_Parameters.xlsx file.
     :param set nuts2_valid_regions: The set of nuts2 regions that are recognized.
-        They are used to filter the input data.
+        They are used to filter the preprocessing data.
     :param dict abbreviations: The countries abbreviations, used to access nuts2 data.
     :param pd.DataFrame df_country_pop_his: The sheet containing data of population history per country.
     :param pd.DataFrame df_country_pop_prog: The sheet containing the manual prognosis of population amount per country.
@@ -145,13 +145,13 @@ class PopulationInput:
 
 class GeneralInput:
     """
-    General Input contains all input that is read from the "input/general" folder.
+    General Input contains all preprocessing that is read from the "preprocessing/general" folder.
 
     :param ControlParameters ctrl: The parsed Set_and_Control_Parameters.xlsx
-    :param Path path: The path to the input/general folder
+    :param Path path: The path to the preprocessing/general folder
 
     :ivar dict[str, ("alpha2", "alpha3", "german_name")] abbreviations: The abbreviations for each country.
-    :ivar PopulationData population: All data from the population input.
+    :ivar PopulationData population: All data from the population preprocessing.
     :ivar dict[str, HisProg[[(float, float)], [Interval, float]]] gdp: The gdp for each country.
     :ivar dict[str, ("electricity", "heat")] efficiency: The efficiency for each energy carrier.
     :ivar set nuts2_valid_regions: The set of valid nuts2 regions within the selected NUTS2 code.
@@ -225,7 +225,7 @@ class GeneralInput:
 
 class ProductInput:
     """
-    The Product Input summarizes all input data, that is specific to a certain product type, but holds the
+    The Product Input summarizes all preprocessing data, that is specific to a certain product type, but holds the
     information for all countries. Example product type: steel_prim
 
     :param sc: specific_consumption_default
@@ -277,7 +277,7 @@ class ProductInput:
 
 class RestSectorInput:
     """
-    A container for the input data regarding the rest sectors.
+    A container for the preprocessing data regarding the rest sectors.
 
     :ivar dict[str, dict[DemandType, (float, float)]] rest_calc_data: Used for the calculation of the rest sector.
         It has the following structure: {country_name -> {demand_type -> (rest_sector_percent, demand_2018)}}
@@ -357,19 +357,19 @@ class FileReadingHelper:
 
 class IndustryInput:
     """
-    Industry Input denoted input that is read from the "input/industry" folder.
+    Industry Input denoted preprocessing that is read from the "preprocessing/industry" folder.
 
     :param industry_path: The path to the industry folder.
     :param industry_settings: The parsed sector-specific settings for the industry sector.
 
-    :ivar dict[str, ProductInput] active_products: Stores the product specific input for all active products.
+    :ivar dict[str, ProductInput] active_products: Stores the product specific preprocessing for all active products.
     :ivar IndustrySettings settings: Stores the sector-specific settings for industry.
     :ivar dict[str, Retrieve] product_data_access: Specify how data sheets for each product should be accessed
     :ivar dict[str, str] sc_historical_data_file_names: The file names of the files used for certain products to read
         historical information on specific consumption.
     :ivar [str] sc_historical_sheet_names: The sheet names for the files used to read
         historical information on specific consumption for certain products.
-    :ivar RestSectorInput rest_sector_input: All input data relating to the rest sector.
+    :ivar RestSectorInput rest_sector_input: All preprocessing data relating to the rest sector.
     """
 
     product_data_access = {

@@ -32,7 +32,7 @@ Whenever you change something in the code and/or the doc strings, please update 
 
 in a command line within the docs folder!
 
-When structural things (like package name) change, please use
+When structural things (like package name) change, please first delete all .rst files (excluding index.rst!) and execute
 
 .. code-block::
 

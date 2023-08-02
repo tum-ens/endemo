@@ -14,7 +14,7 @@ class FileGenerator(object):
     """
     A tool to more easily generate output files.
 
-    :ivar Input input_manager: A reference to the input_manager that holds all input.
+    :ivar Input input_manager: A reference to the input_manager that holds all preprocessing.
     :ivar pd.ExcelWriter excel_writer: The excel writer used for writing the file.
     :ivar str current_sheet_name: Keeps track of the current sheet name that new entries (add_entry) will be written to.
     :ivar dict current_out_dict: Keeps the entries that are added.
@@ -71,18 +71,18 @@ class FileGenerator(object):
 
 
 def shortcut_coef_output(fg, exp_coef, lin_coef, quadr_coef):
-    fg.add_entry("EXP Start Point", "(" + str(exp_coef.exp.x0) + ", " + str(exp_coef.exp.y0) + ")")
-    fg.add_entry("EXP Change Rate", exp_coef.exp.r)
-    fg.add_entry("L0-per Time", lin_coef.lin.k0)
-    fg.add_entry("L1-per Time", lin_coef.lin.k1)
-    fg.add_entry("Q0-per Time", lin_coef.quadr.k0)
-    fg.add_entry("Q1-per Time", lin_coef.quadr.k1)
-    fg.add_entry("Q2-per Time", lin_coef.quadr.k2)
-    fg.add_entry("L0-per GDP", quadr_coef.lin.k0)
-    fg.add_entry("L1-per GDP", quadr_coef.lin.k1)
-    fg.add_entry("Q0-per GDP", quadr_coef.quadr.k0)
-    fg.add_entry("Q1-per GDP", quadr_coef.quadr.k1)
-    fg.add_entry("Q2-per GDP", quadr_coef.quadr.k2)
+    fg.add_entry("EXP Start Point", "(" + str(exp_coef._exp[0][0]) + ", " + str(exp_coef._exp[0][1]) + ")")
+    fg.add_entry("EXP Change Rate", exp_coef._exp[1])
+    fg.add_entry("L0-per Time", lin_coef._lin[0])
+    fg.add_entry("L1-per Time", lin_coef._lin[1])
+    fg.add_entry("Q0-per Time", lin_coef._quadr[0])
+    fg.add_entry("Q1-per Time", lin_coef._quadr[1])
+    fg.add_entry("Q2-per Time", lin_coef._quadr[2])
+    fg.add_entry("L0-per GDP", quadr_coef._lin[0])
+    fg.add_entry("L1-per GDP", quadr_coef._lin[1])
+    fg.add_entry("Q0-per GDP", quadr_coef._quadr[0])
+    fg.add_entry("Q1-per GDP", quadr_coef._quadr[1])
+    fg.add_entry("Q2-per GDP", quadr_coef._quadr[2])
 
 
 def generate_coefficient_output(model: endemo.Endemo) -> None:
@@ -98,7 +98,7 @@ def generate_coefficient_output(model: endemo.Endemo) -> None:
 
     def shortcut_coef_table(fg, product, year_coef, gdp_coef):
         fg.add_entry("Production is empty", product.is_empty())
-        fg.add_entry("Last Data Entry", product.get_active_timeseries().get_last_data_entry())
+        fg.add_entry("Last Data Entry", product.get_active_data_regression_obj().get_last_data_entry())
         shortcut_coef_output(fg, year_coef, year_coef, gdp_coef)
 
     filename = out_file_prefix + "industry_coef_current_settings.xlsx"
@@ -122,8 +122,8 @@ def generate_coefficient_output(model: endemo.Endemo) -> None:
             for country in countries.values():
                 fg.add_entry("Country", country.get_name())
                 product = country.get_sector(sector.SectorIdentifier.INDUSTRY).get_product(product_name)
-                year_coef = product.get_timeseries_amount_per_year().get_coef()
-                gdp_coef = product.get_timeseries_amount_per_gdp().get_coef()
+                year_coef = product.get_data_regression_obj_amount_per_year().get_coef()
+                gdp_coef = product.get_data_regression_obj_amount_per_gdp().get_coef()
                 shortcut_coef_table(fg, product, year_coef, gdp_coef)
 
     filename = out_file_prefix + "industry_coef_per_capita.xlsx"
@@ -134,8 +134,8 @@ def generate_coefficient_output(model: endemo.Endemo) -> None:
             for country in countries.values():
                 fg.add_entry("Country", country.get_name())
                 product = country.get_sector(sector.SectorIdentifier.INDUSTRY).get_product(product_name)
-                year_coef = product.get_timeseries_amount_per_capita_per_year().get_coef()
-                gdp_coef = product.get_timeseries_amount_per_capita_per_gdp().get_coef()
+                year_coef = product.get_data_regression_obj_amount_per_capita_per_year().get_coef()
+                gdp_coef = product.get_data_regression_obj_amount_per_capita_per_gdp().get_coef()
                 shortcut_coef_table(fg, product, year_coef, gdp_coef)
 
 
@@ -217,13 +217,13 @@ def generate_amount_prognosis_output(model: endemo.Endemo):
                 product = industry_sector.get_product(product_name)
 
                 amount_per_year_proj = \
-                    product.get_timeseries_amount_per_year().get_prog(target_year)
+                    product.get_data_regression_obj_amount_per_year().get_prog(target_year)
                 amount_per_gdp_proj = \
-                    product.get_timeseries_amount_per_gdp().get_prog(target_year)
+                    product.get_data_regression_obj_amount_per_gdp().get_prog(target_year)
                 amount_per_year_per_capita_proj = \
-                    product.get_timeseries_amount_per_capita_per_year().get_prog(target_year)
+                    product.get_data_regression_obj_amount_per_capita_per_year().get_prog(target_year)
                 amount_per_gdp_per_capita_proj = \
-                    product.get_timeseries_amount_per_capita_per_year().get_prog(target_year)
+                    product.get_data_regression_obj_amount_per_capita_per_year().get_prog(target_year)
 
                 country_pop = country.get_population().get_country_prog(target_year)
 

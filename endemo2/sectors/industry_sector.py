@@ -1,12 +1,11 @@
 import warnings
 
-import endemo2.general.country_containers
 from endemo2.utility import prediction_models as pm
 from endemo2.industry import products as prd
-from endemo2.input import input
 from endemo2.sectors import sector
 from endemo2.general import demand_containers as dc
 from endemo2.general import country_containers as cc
+from endemo2.preprocessing import preprocessor as pp
 
 
 class Industry(sector.Sector):
@@ -14,8 +13,8 @@ class Industry(sector.Sector):
     The Industry class represents the industry sector of one country. It holds all products produced by this industry.
 
     :param Population population: The population object of the country.
-    :param TimeStepSequence country_gdp: The countries' GDP Timeseries
-    :param Input input_manager: The models input data from the Excel files.
+    :param DataStepSequence country_gdp: The countries' GDP DataAnalyzer
+    :param Input input_manager: The models preprocessing data from the Excel files.
 
 
     :ivar str country_name: Name of the country this industry is located in.
@@ -32,7 +31,8 @@ class Industry(sector.Sector):
     """
 
     def __init__(self, country_name: str, population: cc.Population,
-                 country_gdp: pm.TimeStepSequence, input_manager: input.Input):
+                 country_gdp: pm.DataStepSequence, preprocessor: pp.Preprocessor):
+        input_manager = preprocessor.input_manager
         self._products = dict()
         self.country_name = country_name
         self.country_population = population
@@ -40,8 +40,8 @@ class Industry(sector.Sector):
         self.nuts2_distribution_by_installed_capacities = \
             input_manager.ctrl.industry_settings.nuts2_distribution_based_on_installed_ind_capacity
 
-        for (product_name, product_input) in active_products.items():
-            self._products[product_name] = prd.Product(product_name, product_input, input_manager,
+        for (product_name, _) in active_products.items():
+            self._products[product_name] = prd.Product(product_name, preprocessor,
                                                        country_name, population, country_gdp)
 
         # store rest sector calculation parameters

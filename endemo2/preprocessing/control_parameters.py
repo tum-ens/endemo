@@ -4,23 +4,11 @@ This module contains the in-model representation of all settings found in Set_an
 
 from __future__ import annotations
 from collections import namedtuple
-from enum import Enum
 import pandas as pd
 
+from endemo2.utility.utility_containers import ForecastMethod
+
 ProductSettings = namedtuple("ProductSettings", ("active", "manual_exp_change_rate", "perc_used"))
-
-
-class ForecastMethod(Enum):
-    """
-    The ForecastMethod indicates the preferred way to extrapolate historical data.
-
-    :ivar LINEAR: The forecast method utilizing linear regression.
-    :ivar QUADRATIC: The forecast method utilizing quadratic regression.
-    :ivar EXPONENTIAL: The forecast method utilizing exponential growth.
-    """
-    LINEAR = 0
-    QUADRATIC = 1
-    EXPONENTIAL = 2
 
 
 class ControlParameters:
@@ -59,6 +47,7 @@ class IndustrySettings:
     :ivar [str] active_product_names: A list of the names of active products.
         Only for these products, calculations are performed.
     :ivar float rest_sector_growth_rate: The growth rate of the rest sector.
+    :ivar bool use_gdp_as_x: Indicates that prediction x-axis should be gdp instead of time.
     """
     forecast_map = dict({"Linear time trend": ForecastMethod.LINEAR,
                          "Linear GDP function": ForecastMethod.LINEAR,
@@ -70,6 +59,7 @@ class IndustrySettings:
         self.active_product_names = []
         forecast_method_string = ex_general[ex_general["Parameter"] == "Forecast method"].get("Value").iloc[0]
         self.forecast_method = IndustrySettings.forecast_map[forecast_method_string]
+        self.use_gdp_as_x = True if "GDP" in forecast_method_string else False
 
         self.time_trend_model_activation_quadratic = \
             ex_general[ex_general["Parameter"] == "Time trend model activation for U-shape method"].get("Value").iloc[0]
@@ -175,4 +165,4 @@ class GeneralSettings:
         except KeyError:
             KeyError(
                 "Parameter name not found. Does the parameter access string in the code match a parameter in the "
-                "Set_and_Control_Parameters.xlsx input table?")
+                "Set_and_Control_Parameters.xlsx preprocessing table?")
