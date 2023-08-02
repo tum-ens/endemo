@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import enum
 import warnings
+from typing import Any, Union
 
 from endemo2.utility import utility as uty
 from endemo2.utility import prediction_models as pm
 from endemo2.general import demand_containers as ctn
+from endemo2.utility.prediction_models import Timeseries
 
 
 class GroupType(enum.Enum):
@@ -72,46 +74,63 @@ class Population:
 class NutsRegion:
     """
     Represents one NUTS Region according to individual codes.
-    It is build as a tree structure to include sub-regions as child nodes. The leafs are NUTS2 regions.
+
+    Generally, NUTS Regions are build as a tree structure to include sub-regions as child nodes and have NUTS2 regions
+        as leafs.
+
+    :ivar str region_name: The NUTS tag of the region. For example: DE, DE1, DE11, ...
+    """
+    def __init__(self, region_name: str):
+        self.region_name = region_name
+
+
+class NutsRegionLeaf(NutsRegion):
+    """
+    Represents one NUTS2 Region according to individual codes. It is the leaf of the NUTS tree.
 
     :ivar str region_name: The NUTS tag of the region. For example: DE, DE1, DE11, ...
     :ivar dict[str, NutsRegion] _subregions: The child regions, accessible per NUTS tag. For DE: {DE1 -> .., DE2 -> ..}
-    :ivar DataAnalyzer _ts_population: The data regression object for the regions population. Should only be filled
-        for leaf nodes.
+    :ivar DataAnalyzer _ts_population: The timeseries for the value the tree is associated with.
     :ivar [(float, float)] _population_historical: The historical population for this region.
         Should only be filled for leaf nodes.
     """
-
-    def __init__(self, region_name, historical_data: [(float, float)] = None,
-                 prediction_data: (ctn.Interval, float) = None):
-        self.region_name = region_name
-        self._sub_regions = dict()
-        self._population_historical = historical_data
-
-        if prediction_data is not None and historical_data is not None:
-            self._ts_population = pm.DataStepSequence(historical_data, prediction_data)
-        elif historical_data is not None and prediction_data is None:
-            warnings.warn("For region " + self.region_name + "there was no prediction data. Using Linear Regression "
-                                                             "instead.")
-            self._ts_population = pm.DataManualPrediction(historical_data, prediction_data)
+    def __init__(self, region_name: str, data: Any):
+        super().__init__(region_name)
+        self.data = data
 
     def __str__(self):
-        if len(self._sub_regions.items()) < 1:
-            out = "[leaf: " + self.region_name + "]"
-        else:
-            out = "[root: " + self.region_name + ", children: "
-            for key, value in self._sub_regions.items():
-                out += key + ", "
-            out += "]"
-            for _, child in self._sub_regions.items():
-                out += str(child)
+        return "[leaf: " + self.region_name + "]"
+
+    def get(self):
+        return self.data
+
+
+class NutsRegionNode(NutsRegion):
+    """
+    Represents one NUTS Region according to individual codes. Not a NUTS2 region, but a node in the tree.
+
+    :ivar str region_name: The NUTS tag of the region. For example: DE, DE1, DE11, ...
+    :ivar dict[str, NutsRegion] _subregions: The child regions, accessible per NUTS tag. For DE: {DE1 -> .., DE2 -> ..}
+    """
+
+    def __init__(self, region_name: str):
+        super().__init__(region_name)
+        self._sub_regions = dict[str, Union[NutsRegionNode, NutsRegionLeaf]]()
+
+    def __str__(self):
+        out = "[root: " + self.region_name + ", children: "
+        for key, value in self._sub_regions.items():
+            out += key + ", "
+        out += "]"
+        for _, child in self._sub_regions.items():
+            out += str(child)
         return out
 
     def get_region_name(self):
         """ Getter for the region_name. """
         return self.region_name
 
-    def add_child_region(self, nuts2region_obj: NutsRegion) -> None:
+    def add_leaf_region(self, nuts2region_obj: NutsRegionLeaf) -> None:
         """
         Traverses the NUTS Tree recursively to insert region node.
 
@@ -125,12 +144,13 @@ class NutsRegion:
             for key, value in self._sub_regions.items():
                 if nuts2region_obj.region_name.startswith(key):
                     # found parent region
-                    self._sub_regions[key].add_child_region(nuts2region_obj)
+                    self._sub_regions[key].add_leaf_region(nuts2region_obj)
                     return
             # found no region, create in-between
             new_inbetween_region_name = nuts2region_obj.region_name[:len(self.region_name)+1]
-            self._sub_regions[new_inbetween_region_name] = NutsRegion(new_inbetween_region_name)
-            self._sub_regions[new_inbetween_region_name].add_child_region(nuts2region_obj)
+            new_inbetween_obj = NutsRegionNode(new_inbetween_region_name)
+            new_inbetween_obj.add_leaf_region(nuts2region_obj)
+            self._sub_regions[new_inbetween_region_name] = new_inbetween_obj
 
     def get_historical_data(self) -> [(float, float)]:
         """

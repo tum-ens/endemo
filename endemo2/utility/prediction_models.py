@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import enum
 import warnings
+from typing import Any
 
 import numpy as np
 import statistics as st
@@ -29,7 +30,7 @@ class Coef:
                  quadr: (float, float, float) = (0.0, 0.0, 0.0),
                  offset: float = 0.0,
                  method: ForecastMethod = None):
-        self._exp = (exp_start_point_xy[0], exp_start_point_xy[1], exp_growth_rate)
+        self._exp = ((exp_start_point_xy[0], exp_start_point_xy[1]), exp_growth_rate)
         self._lin = (lin[0], lin[1])
         self._quadr = (quadr[0], quadr[1], quadr[2])
         self._offset = offset
@@ -94,27 +95,104 @@ class StartPoint(enum.Enum):
     MANUAL = 2
 
 
-class Timeseries:
+class RigidTimeseries:
+    """
+    Class representing data that should be taken just like it is. Without interpolation, without coefficients,
+    only the data over time.
+
+    :ivar [(float, float)] _data: Where the x-axis is Time and the y-axis is some value over time.
+    """
+
+    def __init__(self, data: [(float, float)]):
+        # clean data before saving; also copies the input data
+        self._data = uty.filter_out_nan_and_inf(data)
+
+    def get_value_at_year(self, year: int):
+        res = [y for (x, y) in self._data if x == year]
+
+        if len(res) == 0:
+            raise ValueError("Trying to access value in RigidTimeseries at a year, where no value is present.")
+        else:
+            return res[0]
+
+
+class TwoDseries:
+    """
+    A class representing a data series [(x, y)]. Both axis can be any type of data.
+
+    :ivar [(float, float)] _data: Where the x-axis is first in tuple and the y-axis is second.
+    :ivar Coef coefficients: The coefficients for this data series.
+    """
+
+    def __init__(self, data: [(float, float)]):
+        # clean data before saving; also copies the input data
+        self._data = uty.filter_out_nan_and_inf(data)
+        self.coefficients = None
+
+    def generate_coef(self) -> Coef:
+        self.coefficients = uty.apply_all_regressions(self._data)
+        return self.coefficients
+
+    def get_coef(self) -> Coef:
+        if self.coefficients is None:
+            return self.generate_coef()
+        else:
+            return self.coefficients
+
+    def is_empty(self) -> bool:
+        return len(self._data) == 0
+
+    def get_data(self):
+        return self._data
+
+
+class Timeseries(TwoDseries):
     """
     A class strictly representing a value over time. This usage is a class invariant and the class should not be used
     in any other way.
 
     :ivar [(float, float)] _data: Where the x-axis is Time and the y-axis is some value over time.
     """
-    # TODO: make this class actually useful and used somewhere
 
     def __init__(self, data: [(float, float)]):
-        # clean data before saving
-        self._data = uty.filter_out_nan_and_inf(data)
+        super().__init__(data)
 
     @classmethod
-    def merge_two_timeseries(cls, t1: Timeseries, t2: Timeseries) -> [(float, float)]:
+    def merge_two_timeseries(cls, t1: Timeseries, t2: Timeseries) -> TwoDseries:
         d1 = t1._data
         d2 = t2._data
-        return uty.zip_data_on_x(d1, d2)
+        return TwoDseries(uty.zip_data_on_x(d1, d2))
+
+    @classmethod
+    def map_two_timeseries(cls, t1: Timeseries, t2: Timeseries, function) -> Any:
+        d1 = t1._data
+        d2 = t2._data
+        return TwoDseries(uty.zip_data_on_x_and_map(d1, d2, function))
+
+    @classmethod
+    def map_y(cls, t: Timeseries, function) -> Timeseries:
+        return Timeseries(uty.map_data_y(t._data, function))
+
+    def add(self, other_ts: Timeseries) -> Timeseries:
+        self._data = uty.zip_data_on_x_and_map(self._data, other_ts._data,
+                                               lambda x, y1, y2: (x, y1 + y2))
+        return self
+
+    def divide_by(self, other_ts: Timeseries) -> Timeseries:
+        others_data_without_zeros = [(x, y) for (x, y) in other_ts._data if y != 0]
+        self._data = uty.zip_data_on_x_and_map(self._data, others_data_without_zeros,
+                                               lambda x, y1, y2: (x, y1 / y2))
+        return self
+
+    def scale(self, scalar: float) -> Timeseries:
+        self._data = [(x, y * scalar) for (x, y) in self._data]
+        return self
 
     def is_empty(self) -> bool:
         return len(self._data) == 0
+
+    def is_zero(self) -> bool:
+        return uty.is_tuple_list_zero(self._data)
 
 
 class DataAnalyzer:
@@ -335,6 +413,58 @@ class DataManualPrediction(DataAnalyzer):
         """ Getter for the manual prediction data. """
         return self._prediction
 
+
+class IntervalForecast:
+    """
+    The class depicting a given exponential prediction with different growth rates in certain intervals.
+
+    :param [(ctn.Interval, float)] progression_data: The input progression data given as a list of intervals and their
+        corresponding growth rate. For example [(Interval(start, end), percentage_growth)].
+
+    :ivar [(ctn.Interval, float)] _interval_changeRate: The same as progression_data, just the growth rate is not in
+        percentage anymore, but percentage/100
+    """
+
+    def __init__(self, progression_data: [(ctn.Interval, float)]):
+        # map percentage to its hundredth
+        self._interval_changeRate = [(prog[0], prog[1] / 100) for prog in progression_data]
+
+    def get_forecast(self, target_x: float, start_point: (float, float)):
+        """
+        Get the prognosis of the y-axis value for a target x-axis value from the manual exponential
+        interval-growth-rate forecast.
+
+        .. math::
+            y=s_x*(1+r_{1})^{(intvl^{(1)}_{b}-s_y)}*(1+r_{2})^{(intvl^{(2)}_{b}-intvl^{(2)}_{a})}*\\text{...}*(1+r_{3})^
+            {(x-intvl^{(3)}_{a})}
+
+        :param start_point: The (x, y) Tuple, that is used as the first value for the exponential growth.
+        :param target_x: The target x-axis value.
+        :return: The predicted y value at x-axis value x.
+        """
+        if target_x <= start_point[0]:
+            # take gdp from historical data
+            for (a1, a2), (b1, b2) in zip(self._data[:-1], self._data[1:]):
+                if a1 == target_x or target_x < a1:
+                    return a2
+                elif b1 == target_x:
+                    return b2
+                elif a1 < target_x < b1:
+                    # a gap in historical data => use the closest year
+                    if target_x - a1 <= b1 - target_x:
+                        return a2
+                    else:
+                        return b2
+
+        # calculate result in future
+        result = start_point[1]
+        for interval_change in self._interval_changeRate:
+            start = max(start_point[0], interval_change[0].start)  # cut off protruding years at start
+            end = min(target_x, interval_change[0].end)  # cut off protruding years at end
+            exp = max(0, end - start)  # clamp to 0, to ignore certain intervals
+            result *= (1 + interval_change[1]) ** exp
+
+        return result
 
 class DataStepSequence(DataAnalyzer):
     """

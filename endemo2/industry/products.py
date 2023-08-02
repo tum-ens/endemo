@@ -57,72 +57,19 @@ class Product:
         Indicates whether the coefficient of the group should be used rather than self-calculated one.
     """
 
-    def __init__(self, product_name: str, preprocessor: pp.Preprocessor,
+    def __init__(self, product_name: str, product_pp: pp.ProductPreprocessed,
                  country_name: str, population: cc.Population, gdp: pm.DataStepSequence):
-        input_manager = preprocessor.input_manager
-        group_manager = preprocessor.group_manager
-        product_input = input_manager.industry_input.active_products[product_name]
         self._country_name = country_name
         self._name = product_name
-        self._heat_levels = product_input.heat_levels
-        self._perc_used = product_input.perc_used
-        self._exp_change_rate = product_input.manual_exp_change_rate
-        self._nuts2_installed_capacity = product_input.nuts2_installed_capacity[country_name]
-        self._amount_country_group_coef = group_manager.get_coef_for_country_and_product(country_name, product_name)
+        self._heat_levels = product_pp.heat_levels
+        self._perc_used = product_pp.perc_used
+        self._nuts2_installed_capacity = product_pp.nuts2_installed_capacity
 
-        # get information from industry settings
-        industry_settings = input_manager.industry_input.settings
-        self._use_per_capita = industry_settings.production_quantity_calc_per_capita
-        self._use_gdp_as_x = industry_settings.use_gdp_as_x
+        # TODO: filter what this class gets through a settings filter
 
-        # get information from group_manager
-        #self.use_group_coef = not group_manager.is_in_separate_group(country_name, product_name)
-        #self.gdp = gdp
-        #forecast_method = group_manager.get_forecast_method_country_product(country_name, product_name)
-        self.use_group_coef = False
-        forecast_method = input_manager.ctrl.industry_settings.forecast_method
+        # TODO: get coefficient for amount (by using the current settings)
 
-        # read bat consumption for product in countries industry
-        if country_name in product_input.bat.keys():
-            self._bat = product_input.bat[country_name]
-        else:
-            self._bat = product_input.bat["all"]
-
-        # read historical production data
-        if country_name in product_input.production.keys() \
-                and not uty.is_tuple_list_zero(product_input.production[country_name]):
-            self._empty = False
-            self._amount_per_year = \
-                pm.DataAnalyzer(product_input.production[country_name], forecast_method,
-                                rate_of_change=self._exp_change_rate)
-        else:
-            # warnings.warn("Country " + country_name + " has no production data for " + product_name)
-            self._empty = True
-            self._specific_consumption = SpecificConsumptionData(product_input)
-            self._amount_per_year = pm.DataAnalyzer([], forecast_method)
-            self._amount_per_capita_per_year = pm.DataAnalyzer([], forecast_method)
-            self._amount_per_gdp = pm.DataAnalyzer([], forecast_method)
-            self._amount_per_capita_per_gdp = pm.DataAnalyzer([], forecast_method)
-            return
-
-        # calculate rest of member variables
-        zipped_data = list(uty._zip_on_x_generator(self._amount_per_year.get_data(), population.get_country_historical_data()))
-        self._amount_per_capita_per_year = \
-            pm.DataAnalyzer(list(map(lambda arg: (arg[0][0], arg[0][1] / arg[1][1]), zipped_data)),
-                            forecast_method, rate_of_change=self._exp_change_rate)
-        self._amount_per_gdp = \
-            pm.DataAnalyzer(uty.zip_data_on_x(gdp.get_data(), self._amount_per_year.get_data(), ascending_x=True),
-                            forecast_method, rate_of_change=self._exp_change_rate)
-        zipped_data = list(uty._zip_on_x_generator(gdp.get_data(), population.get_country_historical_data()))
-        print(zipped_data)
-        self._amount_per_capita_per_gdp = \
-            pm.DataAnalyzer(list(map(lambda arg: (arg[0][0], arg[0][1] / arg[1][1]), zipped_data)),
-                            forecast_method, rate_of_change=self._exp_change_rate)
-
-        # read specific consumption data
-        self._specific_consumption = SpecificConsumptionData(product_amount_per_year=self._amount_per_year,
-                                                             country_name=country_name, product_input=product_input,
-                                                             input_manager=input_manager)
+        # TODO: create SC object from preprocessed data
 
     def is_empty(self) -> bool:
         """ Getter for the _empty attribute. """
@@ -292,90 +239,11 @@ class SpecificConsumptionData:
         self.country_name = country_name
         self.product_name = product_input.product_name
 
-        self.ts_his_specific_consumption = dict[dc.DemandType, pm.DataAnalyzer]()
+        # TODO: get default SC from preprocessor
 
-        if product_amount_per_year is None \
-                or country_name not in product_input.specific_consumption_historical:
-            # use default specific consumption
-            self.default_specific_consumption = product_input.specific_consumption_default["all"]
+        # TODO: get timeseries from preprocessor
 
-            self._set_to_default_sc()
-            return
-
-        self.historical_specific_consumption = dict[str, pm.DataAnalyzer]()
-        self._product_amount_per_year = product_amount_per_year
-        self._calculate_sc = input_manager.industry_input.settings.trend_calc_for_spec
-
-        # get efficiency
-        self.efficiency = input_manager.general_input.efficiency
-
-        # read default specific consumption for product in countries industry
-        if country_name in product_input.specific_consumption_default.keys():
-            self.default_specific_consumption = product_input.specific_consumption_default[country_name]
-        else:
-            self.default_specific_consumption = product_input.specific_consumption_default["all"]
-
-        # read historical specific consumption data
-        if country_name in product_input.specific_consumption_historical:
-            dict_sc_his = product_input.specific_consumption_historical[country_name]
-            first_year_for_data = int(list(dict_sc_his.values())[0][0][0])  # read year range from first entry
-            last_year_for_data = int(list(dict_sc_his.values())[0][-1][0])
-
-            electricity_demand_sum = list(zip(range(first_year_for_data, last_year_for_data + 1), itertools.repeat(0)))
-            heat_demand_sum = list(zip(range(first_year_for_data, last_year_for_data + 1), itertools.repeat(0)))
-
-            for energy_carrier_name, his_energy in dict_sc_his.items():
-                energy_carrier_efficiency_electricity = self.efficiency[energy_carrier_name].electricity
-                energy_carrier_efficiency_heat = self.efficiency[energy_carrier_name].heat
-
-                # multipy with efficiency of energy carrier to get demand
-                energy_carrier_electricity = \
-                    uty.map_data_y(his_energy,
-                                   lambda x: x * energy_carrier_efficiency_electricity * 1000)  # convert TJ->GJ
-                energy_carrier_heat = \
-                    uty.map_data_y(his_energy,
-                                   lambda x: x * energy_carrier_efficiency_heat * 1000)  # convert TJ->GJ
-
-                # sum total demand over all energy carriers
-                electricity_demand_sum = uty.zip_data_on_x_and_map(electricity_demand_sum, energy_carrier_electricity,
-                                                                   lambda x, y1, y2: (x, y1 + y2))
-                heat_demand_sum = uty.zip_data_on_x_and_map(heat_demand_sum, energy_carrier_heat,
-                                                            lambda x, y1, y2: (x, y1 + y2))
-
-            # divide by product amount to get per product consumption (sc)
-            product_amount_wo_zeros = [(x, y) for (x, y) in product_amount_per_year.get_data() if y != 0]
-
-            sc_electricity_his = \
-                uty.zip_data_on_x_and_map(electricity_demand_sum, product_amount_wo_zeros,
-                                          lambda x, y1, y2: (x, y1 / (y2 * 1000)))
-            sc_heat_his = \
-                uty.zip_data_on_x_and_map(heat_demand_sum, product_amount_wo_zeros,
-                                          lambda x, y1, y2: (x, y1 / (y2 * 1000)))
-
-            _, electricity_demand_sum_y = zip(*electricity_demand_sum)
-            _, heat_demand_sum_y = zip(*heat_demand_sum)
-            zero_electricity_demand = uty.is_zero(electricity_demand_sum_y)
-            zero_heat_demand = uty.is_zero(heat_demand_sum_y)
-
-            if not zero_electricity_demand:
-                self.ts_his_specific_consumption[dc.DemandType.ELECTRICITY] = \
-                    pm.DataAnalyzer(sc_electricity_his,
-                                    calculation_type=endemo2.utility.utility_containers.ForecastMethod.LINEAR)
-            else:
-                self.ts_his_specific_consumption[dc.DemandType.ELECTRICITY] = \
-                    pm.DataAnalyzer([], calculation_type=endemo2.utility.utility_containers.ForecastMethod.LINEAR)
-            if not zero_heat_demand:
-                self.ts_his_specific_consumption[dc.DemandType.HEAT] = \
-                    pm.DataAnalyzer(sc_heat_his,
-                                    calculation_type=endemo2.utility.utility_containers.ForecastMethod.LINEAR)
-            else:
-                self.ts_his_specific_consumption[dc.DemandType.HEAT] = \
-                    pm.DataAnalyzer([], calculation_type=endemo2.utility.utility_containers.ForecastMethod.LINEAR)
-            self.ts_his_specific_consumption[dc.DemandType.HYDROGEN] = \
-                pm.DataAnalyzer([], calculation_type=endemo2.utility.utility_containers.ForecastMethod.LINEAR)
-
-            if zero_electricity_demand and zero_heat_demand:
-                self._set_to_default_sc()
+        # TODO: get historical_sc_available from preprocessor
 
     def get__calculate_sc(self) -> bool:
         """ Getter for attribute __calculate_sc"""

@@ -2,6 +2,7 @@ from endemo2.preprocessing import input
 from endemo2.execution import output
 from endemo2.general import country
 from endemo2.preprocessing import preprocessor as pp
+from endemo2.execution import preprocessing_output as ppout
 
 
 class Endemo:
@@ -29,8 +30,8 @@ class Endemo:
         self.preprocessor = pp.Preprocessor(self.input_manager)
 
         # create countries
-        for country_name in self.input_manager.ctrl.general_settings.active_countries:
-            self.countries[country_name] = country.Country(country_name, self.preprocessor)
+        #for country_name in self.input_manager.ctrl.general_settings.active_countries:
+         #   self.countries[country_name] = country.Country(country_name, self.preprocessor)
 
         print("Input was successfully read.")
 
@@ -41,6 +42,15 @@ class Endemo:
     def save_model(self):
         """ Future todo """
         pass
+
+    def write_preprocessing_output(self):
+        """ Writes all the output that comes from preprocessing. """
+
+        ppout.generate_amount_timeseries_output(self.input_manager, self.preprocessor.countries_pp)
+        ppout.generate_amount_per_gdp_coef_output(self.input_manager, self.preprocessor.countries_pp)
+        ppout.generate_specific_consumption_output(self.input_manager, self.preprocessor.countries_pp)
+
+        print("Preprocessing output was successfully written.")
 
     def write_debug_output(self):
         """ Writes all the output that is useful for debugging, but not necessary for the results. """

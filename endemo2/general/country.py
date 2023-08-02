@@ -35,61 +35,14 @@ class Country:
         # fill abbreviations
         self._abbreviations = input_manager.general_input.abbreviations[self._name]
 
-        # create population Data object
-        country_population = \
-            pm.DataManualPrediction(
-                historical_data=input_manager.general_input.population.country_population[self._name].historical,
-                prediction_data=input_manager.general_input.population.country_population[self._name].prognosis)
+        # TODO: gets nuts2 trees from preprocessing
 
-        # create nuts2 tree
-        nuts2_data = input_manager.general_input.population.nuts2_population[self._name]
-        nuts2_root: NutsRegion
-        if self._abbreviations.alpha2 in nuts2_data.prognosis.keys():
-            nuts2_root = NutsRegion(self._abbreviations.alpha2, nuts2_data.historical[self._abbreviations.alpha2],
-                                    nuts2_data.prognosis[self._abbreviations.alpha2])
-        else:
-            nuts2_root = NutsRegion(self._abbreviations.alpha2)
+        # TODO: get country population form pp
 
-        for region_name, region_data in nuts2_data.historical.items():
-            if region_name == self._abbreviations.alpha2:
-                continue
-            # create and add subregion to root
-            subregion: NutsRegion
-            if region_name in nuts2_data.prognosis.keys():
-                subregion = NutsRegion(region_name, historical_data=region_data,
-                                       prediction_data=nuts2_data.prognosis[region_name])
-            else:
-                subregion = NutsRegion(region_name, historical_data=region_data)
-            nuts2_root.add_child_region(subregion)
+        # TODO: get gdp from pp
 
-        # fill population member variable
-        self._population = \
-            Population(country_population, nuts2_root,
-                       input_manager.ctrl.industry_settings.nuts2_distribution_based_on_installed_ind_capacity)
+        # TODO: get pp industry sector
 
-        # create gdp Data object
-        self._gdp = pm.DataStepSequence(
-            historical_data=input_manager.general_input.gdp[self._name].historical,
-            progression_data=input_manager.general_input.gdp[self._name].prognosis)
-
-        # create sectors and pass on required data
-        active_sectors = input_manager.ctrl.general_settings.get_active_sectors()
-
-        if "industry" in active_sectors:
-            self._sectors[sector.SectorIdentifier.INDUSTRY] = \
-                industry_sector.Industry(self._name, self._population, self._gdp, preprocessor)
-
-        # create warnings
-        if not self._abbreviations:
-            warnings.warn("Country " + self._name + " has an empty list of Abbreviations.")
-        if not self._population.country_level_population.get_data():
-            warnings.warn("Country " + self._name + " has an empty list of historical Population.")
-        if not self._population.country_level_population.get_prediction_raw():
-            warnings.warn("Country " + self._name + " has an empty list of prediction for Population.")
-        if not self._gdp.get_historical_data_raw():
-            warnings.warn("Country " + self._name + " has an empty list of historical gdp.")
-        if not self._gdp.get_interval_change_rate_raw():
-            warnings.warn("Country " + self._name + " has an empty list of interval_changeRate for gdp.")
 
     def calculate_total_demand(self, year: int) -> dc.Demand:
         """
