@@ -1,22 +1,37 @@
 from __future__ import annotations
 
 import collections as coll
-from enum import Enum
 from typing import Any
 
-SC = coll.namedtuple("SC", ["electricity", "heat", "hydrogen", "max_subst_h2"])
-EH = coll.namedtuple("EH", ["electricity", "heat"])
+from endemo2.enumerations import DemandType
 
-CA = coll.namedtuple("CA", ["alpha2", "alpha3", "german_name"])
-HisProg = coll.namedtuple("HisProg", ["historical", "prognosis"])
-Interval = coll.namedtuple("Interval", ["start", "end"])
+EH = coll.namedtuple("EH", ["electricity", "heat"])     # tuple for only electricity and heat
+
+CA = coll.namedtuple("CA", ["alpha2", "alpha3", "german_name"])     # abbreviation container
+HisProg = coll.namedtuple("HisProg", ["historical", "prognosis"])   # container for historical and prognosis data
+Interval = coll.namedtuple("Interval", ["start", "end"])            # representation of an interval
 
 
-class DemandType(Enum):
-    """ Enum to easily differentiate the type of demand. """
-    ELECTRICITY = 0
-    HEAT = 1
-    HYDROGEN = 2
+class SC:
+    """
+    A container for specific consumption. Offers arithmetic operations.
+
+    :ivar float electricity: Amount of electricity consumption.
+    :ivar float heat: Amount of heat consumption.
+    :ivar float hydrogen: Amount of hydrogen consumption.
+    :ivar float max_subst_h2: TODO: what is this?
+    """
+    def __init__(self, electricity, heat, hydrogen=0, max_subst_h2=0):
+        self.electricity = electricity
+        self.heat = heat
+        self.hydrogen = hydrogen
+        self.max_subst_h2 = max_subst_h2
+
+    def scale(self, scalar: float) -> None:
+        """ Scale member variables component-wise with scalar. """
+        self.electricity *= scalar
+        self.hydrogen *= scalar
+        self.heat *= scalar
 
 
 class Heat:

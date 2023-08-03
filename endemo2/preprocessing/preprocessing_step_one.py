@@ -1,11 +1,10 @@
 import itertools
-import warnings
 
-from endemo2.general.country_containers import NutsRegionNode, NutsRegionLeaf
-from endemo2.general.demand_containers import SC, DemandType, EH, HisProg
-from endemo2.utility import utility as uty
-from endemo2.utility import prediction_models as pm
-from endemo2.utility.prediction_models import Coef, Timeseries, RigidTimeseries
+from endemo2.general.nuts_tree import NutsRegionNode, NutsRegionLeaf
+from endemo2.general.demand_containers import SC, EH, HisProg
+from endemo2.enumerations import DemandType
+from endemo2 import utility as uty
+from endemo2.data_analytics.prediction_models import Coef, Timeseries, RigidTimeseries, IntervalForecast
 from input.input import Input, ProductInput, GeneralInput
 
 
@@ -48,8 +47,8 @@ class SpecificConsumptionPreprocessed:
             last_year_for_data = int(list(dict_sc_his.values())[0][-1][0])
 
             year_zero_list = list(zip(range(first_year_for_data, last_year_for_data + 1), itertools.repeat(0)))
-            electricity_demand_sum = pm.Timeseries(year_zero_list)
-            heat_demand_sum = pm.Timeseries(year_zero_list)
+            electricity_demand_sum = Timeseries(year_zero_list)
+            heat_demand_sum = Timeseries(year_zero_list)
 
             for energy_carrier_name, ec_his_am in dict_sc_his.items():
                 ts_historical_energy_carrier_amount = Timeseries(ec_his_am)
@@ -97,26 +96,21 @@ class ProductPreprocessed:
         The x-axis is time in years.
 
     :ivar SpecificConsumptionPreprocessed specific_consumption_pp: The preprocessed specific consumption data.
+    :ivar dict[str, float] _nuts2_installed_capacity:
+        The installed capacity for this product in each NUTS2 region for the country this product belongs to.
 
-    :ivar Heat _heat_levels: The heat levels, that splits the forecasted heat demand into demand at different heat
-        levels, by using fixed percentages.
-    :ivar float _perc_used: The percentage of the predicted amount used of this product. Can be configured to model new
-        technology replacing old ones.
     """
-    def __init__(self, country_name: str, product_input: ProductInput, population_historical: pm.Timeseries,
-                 gdp_historical: pm.Timeseries, general_input: GeneralInput):
-        # read from input to transfer to model later
-        self.heat_levels = product_input.heat_levels
-        self.perc_used = product_input.perc_used
+    def __init__(self, country_name: str, product_input: ProductInput, population_historical: Timeseries,
+                 gdp_historical: Timeseries, general_input: GeneralInput):
 
         # fill Timeseries and TwoDseries
-        self.amount_per_year = pm.Timeseries(product_input.production[country_name])
+        self.amount_per_year = Timeseries(product_input.production[country_name])
         self.amount_per_capita_per_year = \
-            pm.Timeseries.map_two_timeseries(self.amount_per_year, population_historical,
-                                             lambda x, y1, y2: (x, y1 / y2))
-        self.amount_per_gdp = pm.Timeseries.merge_two_timeseries(gdp_historical, self.amount_per_year)
+            Timeseries.map_two_timeseries(self.amount_per_year, population_historical,
+                                          lambda x, y1, y2: (x, y1 / y2))
+        self.amount_per_gdp = Timeseries.merge_two_timeseries(gdp_historical, self.amount_per_year)
         self.amount_per_capita_per_gdp = \
-            pm.Timeseries.merge_two_timeseries(gdp_historical, self.amount_per_capita_per_year)
+            Timeseries.merge_two_timeseries(gdp_historical, self.amount_per_capita_per_year)
 
         # calculate coefficients
         self.amount_per_year.get_coef()
@@ -127,6 +121,9 @@ class ProductPreprocessed:
         # preprocess specific consumption
         self.specific_consumption_pp = \
             SpecificConsumptionPreprocessed(country_name, product_input, general_input, self.amount_per_year)
+
+        # save nuts2 installed capacity
+        self.nuts2_installed_capacity = product_input.nuts2_installed_capacity[country_name]
 
 
 class IndustryPreprocessed:
@@ -148,18 +145,15 @@ class IndustryPreprocessed:
 
 class NUTS2Preprocessed:
     """
-    All preprocessed data relating to nuts2.
+    All preprocessed data relating to nuts2 that are general. (For product-specific nuts2 data, see ProductPreprocessed)
 
-    :ivar dict[str, float] _nuts2_installed_capacity:
-        The installed capacity for this product in each NUTS2 region for the country this product belongs to.
-    :ivar NutsRegionNode population_historical_tree_root: The nuts2 tree containing all historical population data for
+     :ivar NutsRegionNode population_historical_tree_root: The nuts2 tree containing all historical population data for
         a given country.
     :ivar NutsRegionNode population_prognosis_tree_root: The nuts2 tree containing all population prognosis data for a
         given country.
     """
 
-    def __init__(self, country_name, abbreviations, nuts2_population_data: HisProg, product_input):
-        self.nuts2_installed_capacity = product_input.nuts2_installed_capacity[country_name]
+    def __init__(self, abbreviations, nuts2_population_data: HisProg):
         self.population_historical_tree_root = NutsRegionNode(abbreviations.alpha2)
         self.population_prognosis_tree_root = NutsRegionNode(abbreviations.alpha2)
 
@@ -168,7 +162,7 @@ class NUTS2Preprocessed:
             if len(region_name) != 4:
                 continue
             # create and add leaf to root
-            region_data_ts = pm.Timeseries(region_data)
+            region_data_ts = Timeseries(region_data)
             subregion = NutsRegionLeaf(region_name, region_data_ts)
             self.population_historical_tree_root.add_leaf_region(subregion)
 
@@ -177,7 +171,7 @@ class NUTS2Preprocessed:
             if len(region_name) != 4:
                 continue
             # create and add leaf to root
-            region_data_if = pm.IntervalForecast(region_forecast)
+            region_data_if = IntervalForecast(region_forecast)
             subregion = NutsRegionLeaf(region_name, region_data_if)
             self.population_historical_tree_root.add_leaf_region(subregion)
 
@@ -193,7 +187,7 @@ class PopulationPreprocessed:
     def __init__(self, country_name, general_input):
         # fill whole country population data and prognosis
         whole_country_input = general_input.population.country_population[country_name]
-        self.population_historical_whole_country = pm.Timeseries(whole_country_input.historical)
+        self.population_historical_whole_country = Timeseries(whole_country_input.historical)
         self.population_whole_country_prognosis = RigidTimeseries(whole_country_input.prognosis)
 
 
@@ -205,8 +199,8 @@ class GDPPreprocessed:
     :ivar IntervalForecast gdp_prognosis_pp: The gdp's forecast.
     """
     def __init__(self, country_name, general_input: GeneralInput):
-        self.gdp_historical_pp = pm.Timeseries(general_input.gdp[country_name].historical)
-        self.gdp_prognosis_pp = pm.IntervalForecast(general_input.gdp[country_name].prognosis)
+        self.gdp_historical_pp = Timeseries(general_input.gdp[country_name].historical)
+        self.gdp_prognosis_pp = IntervalForecast(general_input.gdp[country_name].prognosis)
 
 
 class CountryPreprocessed:

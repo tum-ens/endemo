@@ -8,9 +8,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+import endemo2.enumerations
 from endemo2.general import demand_containers as ctn
 from endemo2 import utility as uty
-from endemo2.preprocessing import control_parameters as cp
+from endemo2.input import control_parameters as cp
 
 
 class Input:
@@ -282,7 +283,7 @@ class RestSectorInput:
     :ivar dict[str, dict[DemandType, (float, float)]] rest_calc_data: Used for the calculation of the rest sector.
         It has the following structure: {country_name -> {demand_type -> (rest_sector_percent, demand_2018)}}
     :ivar int rest_calc_basis_year: Year used as a starting point for calculating the rest sector demand.
-    :ivar (float, float, float, float) rest_sector_heat_levels: The heat levels used to separate the heat demand in the
+    :ivar Heat rest_sector_heat_levels: The heat levels used to separate the heat demand in the
         rest sector into the different heat levels.
     """
 
@@ -292,9 +293,9 @@ class RestSectorInput:
         self.rest_calc_data = dict()
         for _, row in df_rest_calc.iterrows():
             self.rest_calc_data[row["Country"]] = dict()
-            self.rest_calc_data[row["Country"]][ctn.DemandType.ELECTRICITY] = \
+            self.rest_calc_data[row["Country"]][endemo2.enumerations.DemandType.ELECTRICITY] = \
                 (row["Rest el"] / 100, row["electricity " + str(self.rest_calc_basis_year)])
-            self.rest_calc_data[row["Country"]][ctn.DemandType.HEAT] = \
+            self.rest_calc_data[row["Country"]][endemo2.enumerations.DemandType.HEAT] = \
                 (row["Rest heat"] / 100, row["heat " + str(self.rest_calc_basis_year)])
 
 

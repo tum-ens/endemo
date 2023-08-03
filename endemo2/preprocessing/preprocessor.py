@@ -13,5 +13,6 @@ class Preprocessor:
             self.countries_pp[country_name] = pp1.CountryPreprocessed(country_name, input_manager)
             
         # preprocess stage 2
+        # TODO: create country groups
         pass
 

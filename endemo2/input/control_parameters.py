@@ -6,7 +6,8 @@ from __future__ import annotations
 from collections import namedtuple
 import pandas as pd
 
-from endemo2.utility.utility_containers import ForecastMethod
+from endemo2.sectors.sector import SectorIdentifier
+from endemo2.enumerations import ForecastMethod
 
 ProductSettings = namedtuple("ProductSettings", ("active", "manual_exp_change_rate", "perc_used"))
 
@@ -125,11 +126,16 @@ class GeneralSettings:
     :ivar int target_year: This is the year, the model makes predictions for.
     :ivar [str] recognized_countries:
         This is the list of countries that are in the "Countries"-sheet of Set_and_Control_Parameters.xlsx
-    :ivar [str] active_countries: This is the list of active countries.
+    :ivar [SectorIdentifier] active_countries: This is the list of active countries.
         Only for these countries, calculations are performed.
     :ivar int nuts2_version: The version of NUTS2 used for reading the files that hold information per NUTS2 Region.
         Currently, it should be either 2016 or 2021.
     """
+
+    sector_id_map = {"Sector: industry": SectorIdentifier.INDUSTRY,
+                     "Sector: households": SectorIdentifier.HOUSEHOLDS,
+                     "Sector: transport": SectorIdentifier.TRANSPORT,
+                     "Sector: commertial, trade, services": SectorIdentifier.COMMERCIAL_TRADE_SERVICES}
 
     def __init__(self, ex_general: pd.DataFrame, ex_country: pd.DataFrame):
         self._sectors_active_values = dict()
@@ -142,7 +148,7 @@ class GeneralSettings:
         rows_it = pd.DataFrame(ex_general).itertuples()
         for row in rows_it:
             if row.Parameter.startswith('Sector: '):
-                self._sectors_active_values[row.Parameter.removeprefix('Sector: ')] = row.Value
+                self._sectors_active_values[GeneralSettings.sector_id_map[row.Parameter]] = row.Value
             else:
                 self._parameter_values[row.Parameter] = row.Value
 
@@ -150,7 +156,7 @@ class GeneralSettings:
         return ("sectors_active_values: " + str(self._sectors_active_values) + "\n" +
                 "parameter_values: " + str(self._parameter_values))
 
-    def get_active_sectors(self):
+    def get_active_sectors(self) -> [SectorIdentifier]:
         """
         :return: The list of sectors activated for calculation.
         """

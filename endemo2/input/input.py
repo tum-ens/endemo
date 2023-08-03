@@ -8,10 +8,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from endemo2.enumerations import GroupType, DemandType
 from endemo2.general import demand_containers as dc
-from endemo2.utility import utility as uty
-from endemo2.preprocessing import control_parameters as cp
-from endemo2.general import country_containers as cc
+from endemo2 import utility as uty
+from endemo2.input import control_parameters as cp
+from endemo2.general import nuts_tree as cc
+
 
 
 class Input:
@@ -297,9 +299,9 @@ class RestSectorInput:
         self.rest_calc_data = dict()
         for _, row in df_rest_calc.iterrows():
             self.rest_calc_data[row["Country"]] = dict()
-            self.rest_calc_data[row["Country"]][dc.DemandType.ELECTRICITY] = \
+            self.rest_calc_data[row["Country"]][DemandType.ELECTRICITY] = \
                 (row["Rest el"] / 100, row["electricity " + str(self.rest_calc_basis_year)])
-            self.rest_calc_data[row["Country"]][dc.DemandType.HEAT] = \
+            self.rest_calc_data[row["Country"]][DemandType.HEAT] = \
                 (row["Rest heat"] / 100, row["heat " + str(self.rest_calc_basis_year)])
 
 
@@ -546,13 +548,13 @@ class IndustryInput:
 
             # read country groups
             country_groups = dict[str, [[str]]](
-                {cc.GroupType.SEPARATE: [], cc.GroupType.JOINED: [], cc.GroupType.JOINED_DIVERSIFIED: []})
+                {GroupType.SEPARATE: [], GroupType.JOINED: [], GroupType.JOINED_DIVERSIFIED: []})
 
             df_country_groups = pd.read_excel(ex_country_groups, sheet_name="Example")  # sheet_name=product_name)
 
-            map_group_type = {"joined": cc.GroupType.JOINED,
-                              "joined_diversified": cc.GroupType.JOINED_DIVERSIFIED,
-                              "separate": cc.GroupType.SEPARATE}
+            map_group_type = {"joined": GroupType.JOINED,
+                              "joined_diversified": GroupType.JOINED_DIVERSIFIED,
+                              "separate": GroupType.SEPARATE}
 
             all_countries = active_countries
             grouped_countries = set()

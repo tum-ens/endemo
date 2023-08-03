@@ -3,7 +3,8 @@ from __future__ import annotations
 import os
 import pandas as pd
 
-from endemo2.execution import endemo
+import endemo2.enumerations
+from endemo2 import endemo
 from endemo2.sectors import industry_sector as ind, sector
 from endemo2.general import demand_containers as dc
 
@@ -280,7 +281,7 @@ def generate_specific_consumption_output(model: endemo.Endemo):
                 sc_obj = country.get_sector(sector.SectorIdentifier.INDUSTRY).get_product(product_name) \
                     .get_specific_consumption()
                 fg.add_entry("_calculate_sc", sc_obj.get__calculate_sc())
-                electricity_coef = sc_obj.get_coef(dc.DemandType.ELECTRICITY)
+                electricity_coef = sc_obj.get_coef(endemo2.enumerations.DemandType.ELECTRICITY)
                 shortcut_coef_output(fg, electricity_coef, electricity_coef, electricity_coef)
 
     filename = out_file_prefix + "specific_consumption_coef_heat.xlsx"
@@ -293,7 +294,7 @@ def generate_specific_consumption_output(model: endemo.Endemo):
                 sc_obj = country.get_sector(sector.SectorIdentifier.INDUSTRY).get_product(product_name) \
                     .get_specific_consumption()
                 fg.add_entry("_calculate_sc", sc_obj.get__calculate_sc())
-                heat_coef = sc_obj.get_coef(dc.DemandType.HEAT)
+                heat_coef = sc_obj.get_coef(endemo2.enumerations.DemandType.HEAT)
                 shortcut_coef_output(fg, heat_coef, heat_coef, heat_coef)
 
     def save_timeseries_print(fg, from_year, to_year, data: [(float, float)]):
@@ -319,14 +320,14 @@ def generate_specific_consumption_output(model: endemo.Endemo):
                 fg.add_entry("Country", country.get_name())
                 sc_obj = country.get_sector(sector.SectorIdentifier.INDUSTRY).get_product(product_name) \
                     .get_specific_consumption()
-                data = sc_obj.get_historical_specific_demand(dc.DemandType.ELECTRICITY)
+                data = sc_obj.get_historical_specific_demand(endemo2.enumerations.DemandType.ELECTRICITY)
                 save_timeseries_print(fg, 1990, 2020, data)
             fg.start_sheet(product_name + "_heat")
             for country in countries.values():
                 fg.add_entry("Country", country.get_name())
                 sc_obj = country.get_sector(sector.SectorIdentifier.INDUSTRY).get_product(product_name) \
                     .get_specific_consumption()
-                data = sc_obj.get_historical_specific_demand(dc.DemandType.HEAT)
+                data = sc_obj.get_historical_specific_demand(endemo2.enumerations.DemandType.HEAT)
                 save_timeseries_print(fg, 1990, 2020, data)
 
 

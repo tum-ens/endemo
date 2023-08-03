@@ -1,21 +1,13 @@
-import itertools
 import warnings
 
-from endemo2.general.country_containers import NutsRegionNode, NutsRegionLeaf
-from endemo2.general.demand_containers import SC, DemandType, EH, HisProg
-from endemo2.preprocessing import input
-from endemo2.preprocessing.control_parameters import IndustrySettings
-from endemo2.utility import utility as uty
-from endemo2.general import country_containers as cc
-from endemo2.utility import prediction_models as pm
-from endemo2.utility.prediction_models import Coef, Timeseries, RigidTimeseries
-from endemo2.utility.utility_containers import ForecastMethod
-from input.input import Input, ProductInput, GeneralInput
+from endemo2 import utility as uty
+from endemo2.enumerations import GroupType, ForecastMethod
+from endemo2.data_analytics.prediction_models import Coef
 
 
 class CountryGroupJoined:
     def __init__(self, group_id: int, countries: [str]):
-        self._group_type = cc.GroupType.JOINED
+        self._group_type = GroupType.JOINED
         self._group_id = group_id
         self._countries_in_group = countries
         self._calculated = False
@@ -75,10 +67,10 @@ class GroupManager:
 
             # save separate countries for easy check
             separate_countries_group = \
-                set([country for sublist in group_dict[cc.GroupType.SEPARATE] for country in sublist])  # flatten
+                set([country for sublist in group_dict[GroupType.SEPARATE] for country in sublist])  # flatten
 
             # process joined groups for this product
-            joined_groups_country_names: [[str]] = group_dict[cc.GroupType.JOINED]
+            joined_groups_country_names: [[str]] = group_dict[GroupType.JOINED]
 
             country_joined_group_map = dict()
             joined_groups: [(Coef, [str])] = []
@@ -115,7 +107,7 @@ class GroupManager:
                 joined_groups.append((result_coef, joined_group))
 
             # process joined_diversified groups for this product
-            joined_div_groups_country_names: [[str]] = group_dict[cc.GroupType.JOINED_DIVERSIFIED]
+            joined_div_groups_country_names: [[str]] = group_dict[GroupType.JOINED_DIVERSIFIED]
             joined_div_groups = dict[str, Coef]()
 
             for joined_div_group in joined_div_groups_country_names:

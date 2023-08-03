@@ -2,6 +2,8 @@ import os
 
 import pandas as pd
 
+from endemo2.data_analytics.prediction_models import Timeseries, Coef
+
 
 class FileGenerator(object):
     """
@@ -42,24 +44,72 @@ class FileGenerator(object):
         self.save_file()
 
     def start_sheet(self, name):
+        """ Start editing a new sheet with name "name". """
         if self.current_sheet_name != "":
             self.end_sheet()
         self.current_sheet_name = name
         self.current_out_dict = dict()
 
     def end_sheet(self):
+        """ Stop editing current sheet. """
         df_out = pd.DataFrame(self.current_out_dict)
         df_out.to_excel(self.excel_writer, index=False, sheet_name=self.current_sheet_name, float_format="%.12f")
         self.current_sheet_name = ""
         self.current_out_dict = dict()
 
     def add_entry(self, column_name, value):
+        """
+        Add an entry to a column. But pay attention! In the end of the sheet, all columns have to have the same length.
+        """
         if column_name not in self.current_out_dict.keys():
             self.current_out_dict[column_name] = []
         self.current_out_dict[column_name].append(value)
 
     def save_file(self):
+        """ Save the dictionary that was filled by this object to a file. """
         if self.current_sheet_name != "":
             self.end_sheet()
         self.excel_writer.close()
+
+def shortcut_coef_output(fg: FileGenerator, coef: Coef):
+    exp_coef = coef._exp
+    lin_coef = coef._lin
+    quadr_coef = coef._quadr
+    offset = coef._offset
+
+    fg.add_entry("EXP Start Point", "(" + str(exp_coef[0][0]) + ", " + str(exp_coef[0][1]) + ")")
+    fg.add_entry("EXP Change Rate", exp_coef[1])
+    fg.add_entry("L k0", lin_coef[0])
+    fg.add_entry("L k1", lin_coef[1])
+    fg.add_entry("Q k0", quadr_coef[0])
+    fg.add_entry("Q k1", quadr_coef[1])
+    fg.add_entry("Q k2", quadr_coef[2])
+    fg.add_entry("Offset", offset)
+
+
+def shortcut_save_timeseries_print(fg, from_year, to_year, data: [(float, float)]):
+    """ To correctly print, when data does potentially not cover every year."""
+
+    i = from_year
+    for (year, value) in data:
+        while i < year:
+            fg.add_entry(i, "-")
+            i += 1
+        fg.add_entry(year, value)
+        i += 1
+
+    while i <= to_year:
+        fg.add_entry(i, "-")
+        i += 1
+
+
+def generate_timeseries_output(fg: FileGenerator, ts: Timeseries, year_from: int, year_to: int):
+    # output coef
+    coef = ts.get_coef()
+    shortcut_coef_output(fg, coef)
+
+    # output data
+    shortcut_save_timeseries_print(fg, year_from, year_to, ts.get_data())
+
+
 

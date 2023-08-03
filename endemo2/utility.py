@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import math
 import pandas as pd
 
-from endemo2.utility import prediction_models as pm
+from endemo2.data_analytics import prediction_models as pm
 
 
 def str_dict(dictionary: dict):
@@ -62,11 +62,11 @@ def is_tuple_list_zero(xys: [(float, float)]) -> bool:
         return is_zero(list(zip(*xys))[1])
 
 
-def plot_data_regression(dr: pm.DataAnalyzer, title: str = "", x_label: str = "", y_label: str = "") -> None:
+def plot_timeseries_regression(dr: pm.TwoDseries, title: str = "", x_label: str = "", y_label: str = "") -> None:
     """
-    Show a DataAnalyzer plotted with different optional labels.
+    Show a TwoDseries plotted with different optional labels.
 
-    :param dr: The DataAnalyzer to be plotted.
+    :param dr: The TwoDseries to be plotted.
     :param title: The title of the plot.
     :param x_label: The label for the x-axis of the plot.
     :param y_label: The label for the y-axis of the plot.
