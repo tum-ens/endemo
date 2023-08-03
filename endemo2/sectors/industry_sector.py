@@ -1,3 +1,5 @@
+from ctypes import Union
+
 from endemo2.general.demand_containers import Demand
 from endemo2.enumerations import DemandType
 from endemo2.industry.products import Product
@@ -21,10 +23,14 @@ class Industry(Sector):
         self._country_name = country_name
 
         active_products = industry_instance_filter.get_active_product_names()
+        active_products_country = industry_instance_filter.get_active_products_for_this_country(country_name)
 
         self._products = dict[str, Product]()
         for product_name in active_products:
-            self._products[product_name] = Product(country_name, product_name, product_instance_filter)
+            if product_name in active_products_country:
+                self._products[product_name] = Product(country_name, product_name, product_instance_filter)
+            else:
+                self._products[product_name] = Product(country_name, product_name, None, is_empty=True)
 
     def get_product(self, name: str) -> Product:
         """
@@ -55,7 +61,7 @@ class Industry(Sector):
 
         result = Demand()
 
-        for demand_type, (perc_start_year, demand_start_year) in rest_calc_data:
+        for demand_type, (perc_start_year, demand_start_year) in rest_calc_data.items():
             rest_start_year = perc_start_year * demand_start_year
             rest_target_year = \
                 rest_start_year * (1 + rest_growth_rate) ** (target_year - start_year)

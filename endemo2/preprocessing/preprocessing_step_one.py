@@ -80,6 +80,10 @@ class SpecificConsumptionPreprocessed:
                 # generate coefficients
                 self.specific_consumption_historical[DemandType.ELECTRICITY].generate_coef()
                 self.specific_consumption_historical[DemandType.HEAT].generate_coef()
+
+                # create hydrogen dummy
+                self.specific_consumption_historical[DemandType.HYDROGEN] = Timeseries([])
+                self.specific_consumption_historical[DemandType.HYDROGEN].generate_coef()   # does basically nothing
         else:
             self.historical_sc_available = False
 

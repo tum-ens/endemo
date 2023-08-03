@@ -108,11 +108,13 @@ def apply_all_regressions(data: list[(float, float)]) -> pm.Coef:
     if len(data) == 0:
         return result
 
-    lin_res = linear_regression(data)
-    result.set_lin(lin_res[0], lin_res[1])
+    if len(data) >= 2:
+        lin_res = linear_regression(data)
+        result.set_lin(lin_res[0], lin_res[1])
 
-    quadr_res = quadratic_regression(data)
-    result.set_quadr(quadr_res[0], quadr_res[1], quadr_res[2])
+    if len(data) >= 3:
+        quadr_res = quadratic_regression(data)
+        result.set_quadr(quadr_res[0], quadr_res[1], quadr_res[2])
 
     return result
 

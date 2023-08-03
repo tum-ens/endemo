@@ -428,8 +428,6 @@ class IndustryInput:
 
         # read the active sectors sheets
         for product_name in self.settings.active_product_names:
-            if product_name == 'unspecified industry':
-                continue
 
             # read production data
             retrieve_prod = self.product_data_access[product_name]

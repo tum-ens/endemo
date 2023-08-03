@@ -29,7 +29,7 @@ class Country:
 
         # fill sectors
         active_sectors = country_instance_filter.get_active_sectors()
-        for SectorIdentifier.INDUSTRY in active_sectors:
+        if SectorIdentifier.INDUSTRY in active_sectors:
             self._sectors[SectorIdentifier.INDUSTRY] = Industry(country_name, iif, pif)
 
     def calculate_total_demand(self) -> Demand:

@@ -3,6 +3,7 @@ import os
 import pandas as pd
 
 from endemo2.data_analytics.prediction_models import Timeseries, Coef
+from endemo2.general.demand_containers import Demand
 
 
 class FileGenerator(object):
@@ -28,10 +29,16 @@ class FileGenerator(object):
     #        ...
 
     def __init__(self, input_manager, directory, filename):
-        if not os.path.exists(input_manager.output_path / directory):
-            os.makedirs(input_manager.output_path / directory)
+        if directory == "":
+            if not os.path.exists(input_manager.output_path):
+                os.makedirs(input_manager.output_path)
+            self.out_file_path = input_manager.output_path / filename
+        else:
+            if not os.path.exists(input_manager.output_path / directory):
+                os.makedirs(input_manager.output_path / directory)
+            self.out_file_path = input_manager.output_path / directory / filename
+
         self.input_manager = input_manager
-        self.out_file_path = input_manager.output_path / directory / filename
         self.excel_writer = pd.ExcelWriter(self.out_file_path)
         self.current_sheet_name = ""
         self.current_out_dict = dict()
@@ -92,6 +99,8 @@ def shortcut_save_timeseries_print(fg, from_year, to_year, data: [(float, float)
 
     i = from_year
     for (year, value) in data:
+        if i > year:
+            continue
         while i < year:
             fg.add_entry(i, "-")
             i += 1
@@ -101,6 +110,21 @@ def shortcut_save_timeseries_print(fg, from_year, to_year, data: [(float, float)
     while i <= to_year:
         fg.add_entry(i, "-")
         i += 1
+
+def shortcut_sc_output(fg, sc):
+    fg.add_entry("Electricity [GJ/t]", sc.electricity)
+    fg.add_entry("Heat [GJ/t]", sc.heat)
+    fg.add_entry("Hydrogen [GJ/t]", sc.hydrogen)
+    fg.add_entry("max. subst. of heat with H2 [%]", sc.max_subst_h2)
+
+def shortcut_demand_table(fg: FileGenerator, demand: Demand):
+    fg.add_entry("Electricity [TWh]", demand.electricity)
+    fg.add_entry("Heat [TWh]", demand.heat.q1 + demand.heat.q2 + demand.heat.q3 + demand.heat.q4)
+    fg.add_entry("Hydrogen [TWh]", demand.hydrogen)
+    fg.add_entry("Heat Q1 [TWh]", demand.heat.q1)
+    fg.add_entry("Heat Q2 [TWh]", demand.heat.q2)
+    fg.add_entry("Heat Q3 [TWh]", demand.heat.q3)
+    fg.add_entry("Heat Q4 [TWh]", demand.heat.q4)
 
 
 def generate_timeseries_output(fg: FileGenerator, ts: Timeseries, year_from: int, year_to: int):

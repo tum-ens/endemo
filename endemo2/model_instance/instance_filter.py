@@ -1,11 +1,12 @@
 from endemo2.general.nuts_tree import NutsRegionLeaf
 from endemo2.general.demand_containers import SC, Heat, CA
-from endemo2.enumerations import DemandType
+from endemo2.enumerations import DemandType, ForecastMethod
 from endemo2.input.control_parameters import ControlParameters
 from endemo2.preprocessing.preprocessor import Preprocessor
 from endemo2.sectors.sector import SectorIdentifier
 from endemo2.data_analytics.prediction_models import TwoDseries, RigidTimeseries, IntervalForecast
 from input.input import IndustryInput, GeneralInput
+from endemo2 import utility as uty
 
 
 class CountryInstanceFilter:
@@ -78,6 +79,13 @@ class IndustryInstanceFilter:
         self.ctrl = ctrl
         self.preprocessor = preprocessor
         self.country_instance_filter = country_instance_filter
+        self.industry_input = industry_input
+
+    def get_active_products_for_this_country(self, country_name) -> [str]:
+        dict_product_input = self.industry_input.active_products
+        return [product_name for product_name in self.ctrl.industry_settings.active_product_names
+                if country_name in dict_product_input[product_name].production.keys()
+                and not uty.is_tuple_list_zero(dict_product_input[product_name].production[country_name])]
 
     def get_nuts2_rest_sector_capacities(self, country_name) -> dict[str, float]:
         return self.country_instance_filter.get_nuts2_population_percentages(country_name)
@@ -85,7 +93,7 @@ class IndustryInstanceFilter:
     def get_target_year(self) -> int:
         return self.ctrl.general_settings.target_year
 
-    def get_active_product_names(self):
+    def get_active_product_names(self) -> [str]:
         return self.ctrl.industry_settings.active_product_names
 
     def get_rest_calc_data(self, country_name) -> dict[DemandType, (float, float)]:
@@ -105,14 +113,16 @@ class ProductInstanceFilter:
     """
     Functions as a filter between the instance settings and the model instance.
     """
-    def __init__(self, ctrl: ControlParameters, preprocessor: Preprocessor):
+    def __init__(self, ctrl: ControlParameters, preprocessor: Preprocessor, industry_input: IndustryInput):
         self.ctrl = ctrl
         self.preprocessor = preprocessor
+        self.industry_input = industry_input
 
     def get_nuts2_capacities(self, country_name, product_name) -> dict[str, float]:
         country_pp = self.preprocessor.countries_pp[country_name]
         product_pp = country_pp.industry_pp.products_pp[product_name]
-        return product_pp.nuts2_pp.nuts2_installed_capacity
+        print(product_pp.nuts2_installed_capacity)
+        return product_pp.nuts2_installed_capacity
 
     def get_specific_consumption_po(self, country_name, product_name) -> SC:
         """ Get specific consumption in TWh / t"""
@@ -127,6 +137,11 @@ class ProductInstanceFilter:
             target_year = gen_s.target_year
             sc_his = sc_pp.specific_consumption_historical
 
+            # set forecast method. For specific consumption it's linear for now.
+            for demand_type in [DemandType.ELECTRICITY, DemandType.HEAT, DemandType.HYDROGEN]:
+                sc_his[demand_type].get_coef().set_method(ForecastMethod.LINEAR)
+
+            # forecast specific consumption
             electricity = sc_his[DemandType.ELECTRICITY].get_coef().get_function_y(target_year)
             heat = sc_his[DemandType.HEAT].get_coef().get_function_y(target_year)
             hydrogen = sc_his[DemandType.HYDROGEN].get_coef().get_function_y(target_year)
@@ -146,8 +161,8 @@ class ProductInstanceFilter:
 
     def get_heat_levels(self, product_name) -> Heat:
         """ Get heat levels in perc/100. """
-        ind_s = self.ctrl.industry_settings
-        heat_levels = ind_s.product_settings[product_name].heat_levels
+        ind_input = self.industry_input
+        heat_levels = ind_input.active_products[product_name].heat_levels
         return heat_levels
 
     def get_amount(self, country_name, product_name) -> float:
@@ -193,7 +208,7 @@ class ProductInstanceFilter:
 
         # scale by population if prognosis was per capita
         if use_per_capita:
-            population_prog = country_pp.population_pp.population_whole_country_prognosis.get_prognosis(target_year)
+            population_prog = country_pp.population_pp.population_whole_country_prognosis.get_value_at_year(target_year)
             amount_result *= population_prog
 
         # convert kt to t

@@ -89,6 +89,8 @@ class IndustrySettings:
         product_list = ex_subsectors.get("Subsectors")
 
         for product in product_list:
+            if product == "unspecified industry":
+                continue
             active = \
                 ex_subsectors[ex_subsectors["Subsectors"] == product].get(
                     "Active subsectors").iloc[0]

@@ -12,18 +12,18 @@ endemo2.general.country module
    :undoc-members:
    :show-inheritance:
 
-endemo2.general.country\_containers module
-------------------------------------------
-
-.. automodule:: endemo2.general.country_containers
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 endemo2.general.demand\_containers module
 -----------------------------------------
 
 .. automodule:: endemo2.general.demand_containers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+endemo2.general.nuts\_tree module
+---------------------------------
+
+.. automodule:: endemo2.general.nuts_tree
    :members:
    :undoc-members:
    :show-inheritance:

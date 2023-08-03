@@ -1,12 +1,15 @@
-from endemo2.general.demand_containers import Demand
+from debugpy._vendored.pydevd._pydev_bundle.pydev_override import overrides
+
+from endemo2.general.demand_containers import Demand, Heat
 
 
 class Product:
 
-    def __init__(self, country_name, product_name, product_instance_filter):
+    def __init__(self, country_name, product_name, product_instance_filter, is_empty = False):
         self._product_instance_filter = product_instance_filter
         self._country_name = country_name
         self._product_name = product_name
+        self._is_empty = is_empty
 
     def calculate_demand(self) -> Demand:
         """
@@ -17,6 +20,8 @@ class Product:
 
         :return: The calculated demand.
         """
+        if self._is_empty:
+            return Demand(0, Heat(), 0)
 
         sc = self._product_instance_filter.get_specific_consumption_po(self._country_name, self._product_name)
         perc = self._product_instance_filter.get_perc_used(self._product_name)
@@ -31,7 +36,7 @@ class Product:
         heat_total = cached_perc_amount * sc.heat
 
         # split heat levels
-        heat_levels = self._product_instance_filter.get_heat_levels()
+        heat_levels = self._product_instance_filter.get_heat_levels(self._product_name)
         heat_in_levels = heat_levels.copy_multiply_scalar(heat_total)  # separate heat levels
 
         return Demand(electricity, heat_in_levels, hydrogen)
