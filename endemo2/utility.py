@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import math
 import pandas as pd
 
-from endemo2.data_analytics import prediction_models as pm
+from endemo2.data_structures import prediction_models as pm
 
 
 def str_dict(dictionary: dict):

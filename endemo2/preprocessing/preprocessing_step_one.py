@@ -1,10 +1,10 @@
 import itertools
 
-from endemo2.general.nuts_tree import NutsRegionNode, NutsRegionLeaf
-from endemo2.general.demand_containers import SC, EH, HisProg
-from endemo2.enumerations import DemandType
+from endemo2.data_structures.nuts_tree import NutsRegionNode, NutsRegionLeaf
+from endemo2.data_structures.containers import EH, HisProg
+from endemo2.data_structures.enumerations import DemandType
 from endemo2 import utility as uty
-from endemo2.data_analytics.prediction_models import Coef, Timeseries, RigidTimeseries, IntervalForecast
+from endemo2.data_structures.prediction_models import Timeseries, RigidTimeseries, IntervalForecast
 from input.input import Input, ProductInput, GeneralInput
 
 
@@ -30,7 +30,7 @@ class SpecificConsumptionPreprocessed:
         else:
             self.bat = product_input.bat["all"]
 
-        # read default specific consumption for product in countries industry
+        # read default specific consumption for product in countries_in_group industry
         if country_name in product_input.specific_consumption_default.keys():
             self.default_specific_consumption = product_input.specific_consumption_default[country_name]
         else:
@@ -81,9 +81,9 @@ class SpecificConsumptionPreprocessed:
                 self.specific_consumption_historical[DemandType.ELECTRICITY].generate_coef()
                 self.specific_consumption_historical[DemandType.HEAT].generate_coef()
 
-                # create hydrogen dummy
-                self.specific_consumption_historical[DemandType.HYDROGEN] = Timeseries([])
-                self.specific_consumption_historical[DemandType.HYDROGEN].generate_coef()   # does basically nothing
+                # create hydrogen dummy. If there is any data for hydrogen, replace this
+                self.specific_consumption_historical[DemandType.HYDROGEN] = Timeseries([(2018, 0.0)])
+                self.specific_consumption_historical[DemandType.HYDROGEN].generate_coef()
         else:
             self.historical_sc_available = False
 
@@ -93,7 +93,7 @@ class ProductPreprocessed:
     The preprocessed product information for a given country.
 
     :ivar Timeseries amount_per_year: Used to predict the product amount. The x-axis is time in years.
-    :ivar pm.TwoDseries amount_per_gdp: Used to predict the product amount. The x-axis is the countries' gdp.
+    :ivar pm.TwoDseries amount_per_gdp: Used to predict the product amount. The x-axis is the countries_in_group' gdp.
     :ivar Timeseries amount_per_capita_per_year: Used to predict the product amount per capita.
         The x-axis is time in years.
     :ivar pm.TwoDseries amount_per_capita_per_gdp: Used to predict the product amount per capita.
@@ -117,10 +117,10 @@ class ProductPreprocessed:
             Timeseries.merge_two_timeseries(gdp_historical, self.amount_per_capita_per_year)
 
         # calculate coefficients
-        self.amount_per_year.get_coef()
-        self.amount_per_gdp.get_coef()
-        self.amount_per_capita_per_year.get_coef()
-        self.amount_per_capita_per_gdp.get_coef()
+        self.amount_per_year.generate_coef()
+        self.amount_per_gdp.generate_coef()
+        self.amount_per_capita_per_year.generate_coef()
+        self.amount_per_capita_per_gdp.generate_coef()
 
         # preprocess specific consumption
         self.specific_consumption_pp = \
@@ -141,8 +141,7 @@ class IndustryPreprocessed:
         general_input = input_manager.general_input
 
         for product_name, product_input in input_manager.industry_input.active_products.items():
-            if country_name in product_input.production.keys() \
-                    and not uty.is_tuple_list_zero(product_input.production[country_name]):
+            if country_name in product_input.production.keys():
                 self.products_pp[product_name] = \
                     ProductPreprocessed(country_name, product_input, pop_his, gdp_his, general_input)
 
@@ -177,15 +176,15 @@ class NUTS2Preprocessed:
             # create and add leaf to root
             region_data_if = IntervalForecast(region_forecast)
             subregion = NutsRegionLeaf(region_name, region_data_if)
-            self.population_historical_tree_root.add_leaf_region(subregion)
+            self.population_prognosis_tree_root.add_leaf_region(subregion)
 
 
 class PopulationPreprocessed:
     """
     The preprocessed population data for a whole country.
 
-    :ivar Timeseries population_historical_whole_country: The timeseries for the countries population.
-    :ivar RigidTimeseries population_whole_country_prognosis: The manual prediction data for the countries population.
+    :ivar Timeseries population_historical_whole_country: The timeseries for the countries_in_group population.
+    :ivar RigidTimeseries population_whole_country_prognosis: The manual prediction data for the countries_in_group population.
     """
 
     def __init__(self, country_name, general_input):
@@ -227,14 +226,14 @@ class CountryPreprocessed:
         self.gdp_pp = GDPPreprocessed(country_name, general_input)
 
         # preprocess NUTS2 data if present
-        nuts2_data = general_input.population.nuts2_population[country_name]
-        self.has_nuts2 = abbreviations.alpha2 in nuts2_data.prognosis.keys()
+        self.has_nuts2 = country_name in general_input.population.nuts2_population    # TODO: also make more pretty
         if self.has_nuts2:
+            nuts2_data = general_input.population.nuts2_population[country_name]
             self.nuts2_pp = NUTS2Preprocessed(abbreviations, nuts2_data)
         else:
             self.nuts2_pp = None
 
-        # preprocess all active sectors (add other sectors here later)
+        # preprocess all active sectors_to_do (add other sectors_to_do here later)
         self.industry_pp = IndustryPreprocessed(country_name, input_manager,
                                                 self.population_pp.population_historical_whole_country,
                                                 self.gdp_pp.gdp_historical_pp)

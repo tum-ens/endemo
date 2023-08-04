@@ -2,8 +2,9 @@ import os
 
 import pandas as pd
 
-from endemo2.data_analytics.prediction_models import Timeseries, Coef
-from endemo2.general.demand_containers import Demand
+from endemo2.data_structures.prediction_models import Timeseries, Coef
+from endemo2.data_structures.containers import Demand
+from endemo2 import utility as uty
 
 
 class FileGenerator(object):
@@ -57,6 +58,16 @@ class FileGenerator(object):
         self.current_sheet_name = name
         self.current_out_dict = dict()
 
+    def print_length_of_all_entries(self):
+        """ Used for debugging purposes. """
+        for key, value in self.current_out_dict.items():
+            print(str(key) + ": " + str(len(value)))
+
+    def print_all_entries(self):
+        """ Used for debugging purposes. """
+        for key, value in self.current_out_dict.items():
+            print(str(key) + ": " + str(value))
+
     def end_sheet(self):
         """ Stop editing current sheet. """
         df_out = pd.DataFrame(self.current_out_dict)
@@ -78,37 +89,91 @@ class FileGenerator(object):
             self.end_sheet()
         self.excel_writer.close()
 
+
+def get_year_range(tss: [Timeseries]) -> (int, int):
+    min_year = None
+    max_year = None
+
+    for ts in tss:
+        if len(ts._data) > 0:
+            first_year = ts._data[0][0]
+            last_year = ts._data[-1][0]
+            if min_year is None and max_year is None:
+                min_year = first_year
+                max_year = last_year
+            else:
+                if first_year < min_year:
+                    min_year = first_year
+                elif last_year > max_year:
+                    max_year = last_year
+
+    return min_year, max_year
+
+
 def shortcut_coef_output(fg: FileGenerator, coef: Coef):
+    forecast_method = coef._method
     exp_coef = coef._exp
     lin_coef = coef._lin
     quadr_coef = coef._quadr
     offset = coef._offset
 
-    fg.add_entry("EXP Start Point", "(" + str(exp_coef[0][0]) + ", " + str(exp_coef[0][1]) + ")")
-    fg.add_entry("EXP Change Rate", exp_coef[1])
-    fg.add_entry("L k0", lin_coef[0])
-    fg.add_entry("L k1", lin_coef[1])
-    fg.add_entry("Q k0", quadr_coef[0])
-    fg.add_entry("Q k1", quadr_coef[1])
-    fg.add_entry("Q k2", quadr_coef[2])
-    fg.add_entry("Offset", offset)
+    if forecast_method is not None:
+        fg.add_entry("Selected Forecast Method", str(forecast_method))
+    else:
+        fg.add_entry("Selected Forecast Method", "")
+
+    if exp_coef is not None:
+        if exp_coef[0] is not None:
+            fg.add_entry("Exponential Start Point", "(" + str(exp_coef[0][0]) + ", " + str(exp_coef[0][1]) + ")")
+            if exp_coef[1] is not None:
+                fg.add_entry("Exponential Change Rate", exp_coef[1])
+            else:
+                fg.add_entry("Exponential Change Rate", "")
+        elif exp_coef[1] is not None:
+            fg.add_entry("Exponential Start Point", "")
+            fg.add_entry("Exponential Change Rate", exp_coef[1])
+        else:
+            fg.add_entry("Exponential Start Point", "")
+            fg.add_entry("Exponential Change Rate", "")
+    else:
+        fg.add_entry("Exponential Start Point", "")
+        fg.add_entry("Exponential Change Rate", "")
+    if lin_coef is not None:
+        fg.add_entry("Linear k0", lin_coef[0])
+        fg.add_entry("Linear k1", lin_coef[1])
+    else:
+        fg.add_entry("Linear k0", "")
+        fg.add_entry("Linear k1", "")
+    if quadr_coef is not None:
+        fg.add_entry("Quadratic k0", quadr_coef[0])
+        fg.add_entry("Quadratic k1", quadr_coef[1])
+        fg.add_entry("Quadratic k2", quadr_coef[2])
+    else:
+        fg.add_entry("Quadratic k0", "")
+        fg.add_entry("Quadratic k1", "")
+        fg.add_entry("Quadratic k2", "")
+    if offset is not None:
+        fg.add_entry("Offset", offset)
+    else:
+        fg.add_entry("Offset", "")
 
 
-def shortcut_save_timeseries_print(fg, from_year, to_year, data: [(float, float)]):
+def shortcut_save_timeseries_print(fg, range: (float, float), data: [(float, float)]):
     """ To correctly print, when data does potentially not cover every year."""
+
+    (from_year, to_year) = range
 
     i = from_year
     for (year, value) in data:
-        if i > year:
-            continue
         while i < year:
-            fg.add_entry(i, "-")
+            fg.add_entry(i, "")
             i += 1
-        fg.add_entry(year, value)
-        i += 1
+        if i == year:
+            fg.add_entry(year, value)
+            i += 1
 
     while i <= to_year:
-        fg.add_entry(i, "-")
+        fg.add_entry(i, "")
         i += 1
 
 def shortcut_sc_output(fg, sc):
@@ -127,13 +192,13 @@ def shortcut_demand_table(fg: FileGenerator, demand: Demand):
     fg.add_entry("Heat Q4 [TWh]", demand.heat.q4)
 
 
-def generate_timeseries_output(fg: FileGenerator, ts: Timeseries, year_from: int, year_to: int):
+def generate_timeseries_output(fg: FileGenerator, ts: Timeseries, year_range):
     # output coef
     coef = ts.get_coef()
     shortcut_coef_output(fg, coef)
 
     # output data
-    shortcut_save_timeseries_print(fg, year_from, year_to, ts.get_data())
+    shortcut_save_timeseries_print(fg, year_range, ts.get_data())
 
 
 

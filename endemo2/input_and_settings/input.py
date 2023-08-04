@@ -8,10 +8,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-import endemo2.data_structures.enumerations
+from endemo2.data_structures.enumerations import GroupType, DemandType
 from endemo2 import utility as uty
-from endemo2.data_structures import containers as ctn
-from endemo2.data_structures.containers import HisProg
+from endemo2.data_structures import containers as dc
 from endemo2.input_and_settings import control_parameters as cp
 
 
@@ -31,7 +30,7 @@ class Input:
     """
 
     super_path = Path(os.path.abspath(''))
-    input_path = super_path / 'preprocessing'
+    input_path = super_path / 'input'
     output_path = super_path / 'output'
     general_path = input_path / 'general'
     industry_path = input_path / 'industry'
@@ -55,7 +54,8 @@ class Input:
         self.general_input = GeneralInput(self.ctrl, self.general_path)
 
         # read industry
-        self.industry_input = IndustryInput(self.industry_path, industry_settings, self.general_input.abbreviations)
+        self.industry_input = IndustryInput(self.industry_path, industry_settings, self.general_input.abbreviations,
+                                            self.ctrl.general_settings.active_countries)
 
 
 class PopulationInput:
@@ -64,7 +64,7 @@ class PopulationInput:
 
     :param ControlParameters ctrl: The parsed Set_and_Control_Parameters.xlsx file.
     :param set nuts2_valid_regions: The set of nuts2 regions that are recognized.
-        They are used to filter the read data.
+        They are used to filter the preprocessing data.
     :param dict abbreviations: The countries_in_group abbreviations, used to access nuts2 data.
     :param pd.DataFrame df_country_pop_his: The sheet containing data of population history per country.
     :param pd.DataFrame df_country_pop_prog: The sheet containing the manual prognosis of population amount per country.
@@ -74,17 +74,15 @@ class PopulationInput:
 
     :ivar dict[str, HisProg] country_population: Data for the population of whole countries_in_group.
         It is of the form {country_name -> historical: [(float, float)], prognosis: [(float, float)]}
-    :ivar dict[str, HisProg[dict[str, [(float, float)]], dict[str, [(float, float)]]]]()
-        nuts2_population: Data for the population of NUTS2 regions.
-        It is of the form
-        {country_name -> (historical: {code ->  [(float,float)]}, prognosis: {code ->  [interval, growth rate]})}
+    :ivar dict[str, [(str, [float, float])]] nuts2_population: Data for the population of NUTS2 regions.
+        It is of the form {country_name -> (code -> (historical: [(float,float)], prognosis: [interval, growth rate]))}
     """
 
     def __init__(self, ctrl: cp.ControlParameters, nuts2_valid_regions: set, abbreviations: dict,
                  df_country_pop_his: pd.DataFrame, df_country_pop_prog: pd.DataFrame,
                  df_nuts2_pop_his: pd.DataFrame, df_nuts2_pop_prog: pd.DataFrame):
-        self.country_population = dict[str, ctn.HisProg]()
-        self.nuts2_population = dict[str, HisProg[dict[str, [(float, float)]], dict[str, [(float, float)]]]]()
+        self.country_population = dict[str, dc.HisProg]()
+        self.nuts2_population = dict[str, [(str, [float, float])]]()
 
         # preprocess country population historical data
         dict_c_pop_his = uty.convert_table_to_filtered_data_series_per_country(df_country_pop_his)
@@ -115,10 +113,10 @@ class PopulationInput:
         # preprocess nuts2 population prognosis: interval 2015-2050
         df_nuts2_pop_prog = df_nuts2_pop_prog.drop(["Region name", "for 35 years"], axis=1) \
             .rename(columns={'per year': '2015-2050'})
-        interval_conv = lambda xs: [ctn.Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
+        interval_conv = lambda xs: [dc.Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
         intervals = interval_conv(df_nuts2_pop_prog.columns[1:])
 
-        dict_nuts2_pop_prog = dict[str, dict[str, [(ctn.Interval, float)]]]()
+        dict_nuts2_pop_prog = dict[str, dict[str, [(dc.Interval, float)]]]()
         it = df_nuts2_pop_prog.itertuples()
         for row in it:
             region_name = str(row[1]).strip()
@@ -137,14 +135,14 @@ class PopulationInput:
         for country_name in ctrl.general_settings.active_countries:
             # fill country population
             self.country_population[country_name] = \
-                ctn.HisProg(dict_c_pop_his[country_name], dict_c_pop_prog[country_name])
+                dc.HisProg(dict_c_pop_his[country_name], dict_c_pop_prog[country_name])
 
             # fill nuts2 population
             if country_name not in self.nuts2_population.keys():
                 self.nuts2_population[country_name] = dict()
             abbrev = abbreviations[country_name].alpha2
             self.nuts2_population[country_name] = \
-                ctn.HisProg(dict_nuts2_pop_his[abbrev], dict_nuts2_pop_prog[abbrev])
+                dc.HisProg(dict_nuts2_pop_his[abbrev], dict_nuts2_pop_prog[abbrev])
 
 
 class GeneralInput:
@@ -162,9 +160,9 @@ class GeneralInput:
     """
 
     def __init__(self, ctrl: cp.ControlParameters, path: Path):
-        self.abbreviations = dict[str, ctn.CA]()
-        self.gdp = dict[str, ctn.HisProg[[(float, float)], [ctn.Interval, float]]]()
-        self.efficiency = dict[str, ctn.EH]()
+        self.abbreviations = dict[str, dc.CA]()
+        self.gdp = dict[str, dc.HisProg[[(float, float)], [dc.Interval, float]]]()
+        self.efficiency = dict[str, dc.EH]()
 
         df_abbr = pd.read_excel(path / "Abbreviations.xlsx")
         df_world_pop_his = pd.read_excel(path / "Population_historical_world.xls")
@@ -186,14 +184,14 @@ class GeneralInput:
         # fill efficiency
         for _, row in df_efficiency.iterrows():
             self.efficiency[row["Energy carrier"]] = \
-                ctn.EH(row["Electricity production [-]"], row["Heat production [-]"])
+                dc.EH(row["Electricity production [-]"], row["Heat production [-]"])
 
         for country_name in ctrl.general_settings.active_countries:
             # fill abbreviations
             self.abbreviations[country_name] = \
-                ctn.CA(df_abbr[df_abbr["Country_en"] == country_name].get("alpha-2").iloc[0],
-                       df_abbr[df_abbr["Country_en"] == country_name].get("alpha-3").iloc[0],
-                       df_abbr[df_abbr["Country_en"] == country_name].get("Country_de").iloc[0])
+                dc.CA(df_abbr[df_abbr["Country_en"] == country_name].get("alpha-2").iloc[0],
+                      df_abbr[df_abbr["Country_en"] == country_name].get("alpha-3").iloc[0],
+                      df_abbr[df_abbr["Country_en"] == country_name].get("Country_de").iloc[0])
 
             # read gdp historical
             years = df_gdp_his.columns[3:]
@@ -202,11 +200,11 @@ class GeneralInput:
             gdp_his = uty.filter_out_nan_and_inf(zipped)
 
             # read gdp prognosis
-            interval_conv = lambda xs: [ctn.Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
+            interval_conv = lambda xs: [dc.Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
             intervals_europa = interval_conv(df_gdp_prog_europa.columns[1:-1])
             intervals_world = interval_conv(df_gdp_prog_world.columns[1:-1])
 
-            zipped_gdp_prog: list[ctn.Interval, float]
+            zipped_gdp_prog: list[dc.Interval, float]
             if country_name in list(df_gdp_prog_europa["Country"]):
                 gdp_prog = df_gdp_prog_europa[df_gdp_prog_europa["Country"] == country_name].iloc[0][1:-1]
                 zipped_gdp_prog = list(zip(intervals_europa, gdp_prog))
@@ -219,7 +217,7 @@ class GeneralInput:
                 gdp_prog = df_gdp_prog_europa[df_gdp_prog_europa["Country"] == "all"].iloc[0][1:-1]
                 zipped_gdp_prog = list(zip(intervals_europa, gdp_prog))
 
-            self.gdp[country_name] = ctn.HisProg(gdp_his, zipped_gdp_prog)
+            self.gdp[country_name] = dc.HisProg(gdp_his, zipped_gdp_prog)
 
         # create PopulationData object
         self.population = PopulationInput(ctrl, self.nuts2_valid_regions, self.abbreviations,
@@ -255,10 +253,12 @@ class ProductInput:
         This is used to model modern technologies replacing old ones.
     :ivar dict[str, dict[str, float]]: Installed capacity in %/100 for each NUTS2 Region.
         Structure {country_name -> {nuts2_region_name -> capacity_value}}
+    :ivar dict[str, dict[str, [[str]]]] country_groups: Input from country group file,
+        structured as {group_type -> list_of_groups}.
     """
 
     def __init__(self, name, sc, bat, prod, sc_h, sc_h_active, heat_levels, manual_exp_change_rate, perc_used,
-                 nuts2_installed_capacity):
+                 nuts2_installed_capacity, country_groups):
         self.product_name = name
         self.specific_consumption_default = sc
         self.bat = bat
@@ -272,6 +272,7 @@ class ProductInput:
 
         self.perc_used = float(perc_used) if not math.isnan(float(perc_used)) else 1
         self.nuts2_installed_capacity = nuts2_installed_capacity
+        self.country_groups = country_groups
 
     def __str__(self):
         return "\n\tSpecific Consumption: " + uty.str_dict(self.specific_consumption_default) + \
@@ -286,19 +287,19 @@ class RestSectorInput:
     :ivar dict[str, dict[DemandType, (float, float)]] rest_calc_data: Used for the calculation of the rest sector.
         It has the following structure: {country_name -> {demand_type -> (rest_sector_percent, demand_2018)}}
     :ivar int rest_calc_basis_year: Year used as a starting point for calculating the rest sector demand.
-    :ivar Heat rest_sector_heat_levels: The heat levels used to separate the heat demand in the
+    :ivar (float, float, float, float) rest_sector_heat_levels: The heat levels used to separate the heat demand in the
         rest sector into the different heat levels.
     """
 
-    def __init__(self, df_rest_calc: pd.DataFrame, dict_heat_levels: dict[str, ctn.Heat]):
+    def __init__(self, df_rest_calc: pd.DataFrame, dict_heat_levels: dict[str, dc.Heat]):
         self.rest_calc_basis_year = 2018  # change here, if another year should be used for rest sector (also path)
         self.rest_sector_heat_levels = dict_heat_levels["rest"]
         self.rest_calc_data = dict()
         for _, row in df_rest_calc.iterrows():
             self.rest_calc_data[row["Country"]] = dict()
-            self.rest_calc_data[row["Country"]][endemo2.data_structures.enumerations.DemandType.ELECTRICITY] = \
+            self.rest_calc_data[row["Country"]][DemandType.ELECTRICITY] = \
                 (row["Rest el"] / 100, row["electricity " + str(self.rest_calc_basis_year)])
-            self.rest_calc_data[row["Country"]][endemo2.data_structures.enumerations.DemandType.HEAT] = \
+            self.rest_calc_data[row["Country"]][DemandType.HEAT] = \
                 (row["Rest heat"] / 100, row["heat " + str(self.rest_calc_basis_year)])
 
 
@@ -409,21 +410,23 @@ class IndustryInput:
     sc_historical_sheet_names = ["Feste fossile Brennstoffe", "Synthetische Gase", "Erdgas", "Oel",
                                  "Erneuerbare Energien", "Abfaelle", "Elektrizitaet", "Waerme"]
 
-    def __init__(self, industry_path: Path, industry_settings: cp.IndustrySettings, abbreviations: dict):
+    def __init__(self, industry_path: Path, industry_settings: cp.IndustrySettings, abbreviations: dict,
+                 active_countries: [str]):
         self.settings = industry_settings
         self.active_products = dict[str, ProductInput]()
 
         ex_spec = pd.ExcelFile(industry_path / "Specific_Consumption.xlsx")
         ex_bat = pd.ExcelFile(industry_path / "BAT_Consumption.xlsx")
         ex_nuts2_ic = pd.ExcelFile(industry_path / "Installed_capacity_NUTS2.xlsx")
+        ex_country_groups = pd.ExcelFile(industry_path / "Country_Groups.xlsx")
 
         # read heat levels
         df_heat_levels = pd.read_excel(industry_path / "Heat_levels.xlsx")
         dict_heat_levels = dict()
 
         for _, row in df_heat_levels.iterrows():
-            dict_heat_levels[row["Industry"]] = ctn.Heat(row["Q1"] / 100, row["Q2"] / 100, row["Q3"] / 100,
-                                                         row["Q4"] / 100)
+            dict_heat_levels[row["Industry"]] = dc.Heat(row["Q1"] / 100, row["Q2"] / 100, row["Q3"] / 100,
+                                                        row["Q4"] / 100)
 
         # read rest sector calculation data
         df_rest_calc = pd.read_excel(industry_path / "Ind_energy_demand_2018_Trend_Restcalcul.xlsx")
@@ -431,6 +434,8 @@ class IndustryInput:
 
         # read the active sectors_to_do sheets
         for product_name in self.settings.active_product_names:
+            if product_name == 'unspecified industry':
+                continue
 
             # read production data
             retrieve_prod = self.product_data_access[product_name]
@@ -461,10 +466,10 @@ class IndustryInput:
 
             for _, row in pd.DataFrame(prod_sc).iterrows():
                 dict_prod_sc_country[row.Country] = \
-                    ctn.SC(row["Spec electricity consumption [GJ/t]"],
-                           row["Spec heat consumption [GJ/t]"],
-                           row["Spec hydrogen consumption [GJ/t]"],
-                           row["max. subst. of heat with H2 [%]"])
+                    dc.SC(row["Spec electricity consumption [GJ/t]"],
+                          row["Spec heat consumption [GJ/t]"],
+                          row["Spec hydrogen consumption [GJ/t]"],
+                          row["max. subst. of heat with H2 [%]"])
 
             # create country_name_de -> country_name_en mapping
             dict_de_en_map = dict()
@@ -510,8 +515,8 @@ class IndustryInput:
 
             for _, row in df_prod_bat.iterrows():
                 dict_prod_bat_country[row.Country] = \
-                    ctn.EH(row["Spec electricity consumption [GJ/t]"],
-                           row["Spec heat consumption [GJ/t]"])
+                    dc.EH(row["Spec electricity consumption [GJ/t]"],
+                          row["Spec heat consumption [GJ/t]"])
 
             # create alpha2 -> country_name_en mapping
             dict_2_en_map = dict()
@@ -539,10 +544,38 @@ class IndustryInput:
                 perc_value = row[product_name_general + " %"]
                 dict_installed_capacity_nuts2[country_name_en][nuts2] = perc_value if not np.isnan(perc_value) else 0.0
 
+            # read country groups
+            country_groups = dict[str, [[str]]](
+                {GroupType.SEPARATE: [], GroupType.JOINED: [], GroupType.JOINED_DIVERSIFIED: []})
+
+            df_country_groups = pd.read_excel(ex_country_groups, sheet_name="Example")  # sheet_name=product_name)
+
+            map_group_type = {"joined": GroupType.JOINED,
+                              "joined_diversified": GroupType.JOINED_DIVERSIFIED,
+                              "separate": GroupType.SEPARATE}
+
+            all_countries = active_countries
+            grouped_countries = set()
+            all_others_group_type = None
+
+            for _, row in df_country_groups.iterrows():
+                group_type = map_group_type[row["Combination Type"]]
+                new_group = [entry for entry in row[1:] if str(entry) != "nan"]
+                if "all_others" in new_group:
+                    all_others_group_type = group_type
+                    continue
+                country_groups[group_type].append(new_group)
+                grouped_countries |= set(new_group)
+            if all_others_group_type is not None:
+                country_groups[all_others_group_type] = [country for country in all_countries if
+                                                         country not in grouped_countries]
+
             # finally store in product data class
             self.active_products[product_name] = \
                 ProductInput(product_name, dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his,
                              sc_his_calc, dict_heat_levels[product_name],
                              industry_settings.product_settings[product_name].manual_exp_change_rate,
                              industry_settings.product_settings[product_name].perc_used,
-                             dict_installed_capacity_nuts2)
+                             dict_installed_capacity_nuts2, country_groups)
+
+

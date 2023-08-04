@@ -1,26 +1,81 @@
 import warnings
 
 from endemo2 import utility as uty
-from endemo2.enumerations import GroupType, ForecastMethod
-from endemo2.data_analytics.prediction_models import Coef
+from endemo2.data_structures.enumerations import GroupType, ForecastMethod
+from endemo2.data_structures.prediction_models import Coef, TwoDseries
+from endemo2.input_and_settings.control_parameters import ControlParameters
+from endemo2.preprocessing.preprocessing_step_one import CountryPreprocessed, ProductPreprocessed
 
 
 class CountryGroupJoined:
-    def __init__(self, group_id: int, countries: [str]):
+    def __init__(self, ctrl: ControlParameters, group_id: int, product_name: str, countries_in_group: [str],
+                 countries_pp: dict[str, CountryPreprocessed]):
         self._group_type = GroupType.JOINED
         self._group_id = group_id
-        self._countries_in_group = countries
+        self._countries_in_group = countries_in_group
+        self.combined_timeseries = None
         self._calculated = False
         self._group_coef = Coef()
 
-    def _calc_coef(self):
+        # combine timeseries
+        # merge all data of countries_in_group within group
+        self.joined_data = TwoDseries([])
+        for country_name in countries_in_group:
+            country_pp: CountryPreprocessed = countries_pp[country_name]
+
+            # if country doesn't product, skip
+            if product_name not in country_pp.industry_pp.products_pp.keys():
+                continue
+
+            product_pp: ProductPreprocessed = country_pp.industry_pp.products_pp[product_name]
+
+            gdp_as_x = ctrl.industry_settings.use_gdp_as_x
+            y_per_capita = ctrl.industry_settings.production_quantity_calc_per_capita
+
+            # decide which data to use
+            if not gdp_as_x and not y_per_capita:
+                self.joined_data.append_others_data(product_pp.amount_per_year)
+            elif gdp_as_x and not y_per_capita:
+                self.joined_data.append_others_data(product_pp.amount_per_gdp)
+            elif not gdp_as_x and y_per_capita:
+                self.joined_data.append_others_data(product_pp.amount_per_capita_per_year)
+            elif gdp_as_x and y_per_capita:
+                self.joined_data.append_others_data(product_pp.amount_per_capita_per_gdp)
+
+        # calculate group coefficients and save result
+        self.group_coef = self.joined_data.get_coef()
+
+class CountryGroupJoinedDiversified:
+    def __init__(self, ctrl: ControlParameters, group_id: int, product_name: str, countries_in_group: [str],
+                 countries_pp: dict[str, CountryPreprocessed]):
         pass
 
-    def get_coef(self):
-        if not self._calculated:
-            self._calculated = True
-        pass
+class ProductCountryGroupCoefficients:
+    """
+    Holds all the group coefficients of different group types for a product.
+    """
+    def __init__(self, country_joined_group_map: dict, country_joined_div_group_map: dict,
+                 separate: set[str], joined: dict[int, CountryGroupJoined], joined_div: dict):
 
+        self.separate_countries: set[str] = separate  # {country_name}
+        self.country_joined_group_map = country_joined_group_map  # {country_name -> group_id}
+        self.country_joined_div_map = country_joined_div_group_map  # {country_name -> group_id}
+        self.joined_groups: dict[int, CountryGroupJoined] = joined  # {group_id -> CountryGroupJoined}
+        self.joined_div_groups: dict[str, CountryGroupJoinedDiversified] = joined_div  # {country_name -> CountryGroupJoinedDiversified}
+
+    def is_in_separate_group(self, country_name) -> bool:
+        return country_name in self.separate_countries
+
+    def get_group_coef_for_country(self, country_name) -> Coef:
+        if country_name in self.country_joined_group_map.keys():
+            # return joined coef
+            pass
+        if country_name in self.country_joined_div_map.keys():
+            # return joined diversified coef
+            pass
+        if country_name in self.separate_countries:
+            warnings.warn("This should not be reached! Check if a country is separate beforehand.")
+            return Coef()
 
 class GroupManager:
     """
@@ -28,32 +83,7 @@ class GroupManager:
     results. These can be obtained via calling the provided methods.
     """
 
-    class ProductGroupCoefficients:
-        """
-        Holds all the group coefficients of different group types for a product.
-        """
-
-        def __init__(self, country_joined_group_map: dict, separate: set[str], joined: [(Coef, [str])],
-                     joined_div: dict):
-
-            self._separate_countries: set[str] = separate  # {country_name}
-            self._country_joined_group_map = country_joined_group_map  # {country_name -> group_id}
-            self._joined_groups: [(Coef, [str])] = joined  # {group_id -> (Coef, [country_name])}
-            self._joined_div_groups: dict[str, (Coef, [str])] = joined_div  # {country_name -> Coef}
-
-        def is_in_separate_group(self, country_name) -> bool:
-            return country_name in self._separate_countries
-
-        def get_country_coef(self, country_name) -> Coef:
-            if country_name in self._country_joined_group_map.keys():
-                return self._joined_groups[self._country_joined_group_map[country_name]]
-            if country_name in self._joined_div_groups.keys():
-                return self._joined_div_groups[country_name]
-            if country_name in self._separate_countries:
-                warnings.warn("This should not be reached! Check if a country is separate beforehand.")
-                return Coef()
-
-    def __init__(self, input_manager):
+    def __init__(self, input_manager, countries_pp: dict[str, CountryPreprocessed]):
         self.product_groups = dict[str, self.ProductGroupCoefficients]()
 
         forecast_method = input_manager.ctrl.industry_settings.forecast_method
@@ -65,56 +95,34 @@ class GroupManager:
         for product_name, group_dict in group_input.items():
             product_input_obj = input_manager.industry_input.active_products[product_name]
 
-            # save separate countries for easy check
+            # save separate countries_in_group for easy check
             separate_countries_group = \
                 set([country for sublist in group_dict[GroupType.SEPARATE] for country in sublist])  # flatten
 
             # process joined groups for this product
             joined_groups_country_names: [[str]] = group_dict[GroupType.JOINED]
 
-            country_joined_group_map = dict()
+            res_country_joined_group_map = dict()
             joined_groups: [(Coef, [str])] = []
 
             for joined_group in joined_groups_country_names:
                 group_id = len(joined_groups)
 
-                # merge all data of countries within group
-                joined_data: [(float, float)] = []
+                CountryGroupJoined(group_id, product_name, joined_group, countries_pp)
+
                 for country_name in joined_group:
-                    # fill map to more efficiently access group from country
+                    # fill map to more efficiently access group with country_name
                     country_joined_group_map[country_name] = group_id
-
-                    # if country doesn't product, skip
-                    if country_name not in product_input_obj.production.keys():
-                        continue
-
-                    # get data from input
-                    product_his_data_of_country = product_input_obj.production[country_name]
-                    gdp_his_data_of_country = input_manager.general_input.gdp[country_name].historical
-
-                    # decide which data to use for regression
-                    if input_manager.ctrl.industry_settings.use_gdp_as_x:
-                        gdp_x_product_y = uty.zip_data_on_x(gdp_his_data_of_country, product_his_data_of_country)
-                        joined_data += gdp_x_product_y
-                    else:
-                        joined_data += product_his_data_of_country
-
-                # apply regression according to method
-                result_coef = uty.apply_all_regressions(joined_data)
-                result_coef.set_method(forecast_method)
-
-                # save results
-                joined_groups.append((result_coef, joined_group))
 
             # process joined_diversified groups for this product
             joined_div_groups_country_names: [[str]] = group_dict[GroupType.JOINED_DIVERSIFIED]
             joined_div_groups = dict[str, Coef]()
 
             for joined_div_group in joined_div_groups_country_names:
-                # merge all data of countries within group
+                # merge all data of countries_in_group within group
                 joined_div_data = dict[str, [(float, float)]]()
                 for country_name in joined_div_group:
-                    # get data from input
+                    # get data from input_and_settings
                     if country_name not in product_input_obj.production.keys():
                         continue
                     product_his_data_of_country = product_input_obj.production[country_name]
@@ -137,8 +145,8 @@ class GroupManager:
 
             # fill all groups into product object
             self.product_groups[product_name] = \
-                self.ProductGroupCoefficients(country_joined_group_map, separate_countries_group,
-                                              joined_groups, joined_div_groups)
+                ProductCountryGroupCoefficients(res_country_joined_group_map, res_separate_countries_group,
+                                              res_joined_groups, res_joined_div_groups)
 
     def is_in_separate_group(self, country_name, product_name) -> bool:
         """

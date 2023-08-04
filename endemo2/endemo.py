@@ -1,7 +1,8 @@
-from endemo2.model_instance.instance_filter import CountryInstanceFilter, IndustryInstanceFilter, ProductInstanceFilter
-from endemo2.input import input
-from endemo2.general import country
-from endemo2.output import preprocessing_output
+from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
+from endemo2.model_instance.instance_filter.industry_instance_filter \
+    import IndustryInstanceFilter, ProductInstanceFilter
+from endemo2.input_and_settings import input
+from endemo2.model_instance.model import country
 from endemo2.output.instance_output import generate_instance_output
 from endemo2.output.preprocessing_output import generate_preprocessing_output
 from endemo2.preprocessing.preprocessor import Preprocessor
@@ -11,8 +12,9 @@ class Endemo:
     """
     This is the whole program. From here we control what the model does on the highest level.
 
-    :ivar Input input_manager: holds all the processed input from the Excel sheets for the current run of the program.
-    :ivar dict[str, Country] countries: holds all the country objects, accessible by the countries english name.
+    :ivar Input input_manager: holds all the processed input_and_settings from the Excel sheets for the current run of
+        the program.
+    :ivar dict[str, Country] countries_in_group: holds all the country objects, accessible by the countries_in_group english name.
     :ivar Preprocessor preprocessor: holds an additional layer of preprocessed data, building upon the input_manager.
     """
 
@@ -20,12 +22,15 @@ class Endemo:
         self.input_manager = None
         self.countries = None
         self.preprocessor = None
+        self.country_instance_filter = None
+        self.industry_instance_filter = None
+        self.product_instance_filter = None
 
     def execute_with_preprocessing(self):
         """
         Executes the whole program from start to end.
         """
-        # read input
+        # read input_and_settings
         self.input_manager = input.Input()
         print("Input was successfully read.")
 
@@ -50,7 +55,7 @@ class Endemo:
 
     def update_settings(self):
         """ Rereads the instance settings. """
-        # read input, TODO: separate the instance settings from pre-preprocessing settings
+        # read input_and_settings, TODO: separate the instance settings from pre-preprocessing settings
         self.input_manager = input.Input()
         print("Settings were successfully updated.")
 
@@ -60,17 +65,19 @@ class Endemo:
         ctrl = self.input_manager.ctrl
         general_input = self.input_manager.general_input
         industry_input = self.input_manager.industry_input
-        country_instance_filter = CountryInstanceFilter(ctrl, general_input, prepro)
-        industry_instance_filter = IndustryInstanceFilter(ctrl, industry_input, prepro, country_instance_filter)
-        product_instance_filter = ProductInstanceFilter(ctrl, prepro, industry_input)
+        self.country_instance_filter = CountryInstanceFilter(ctrl, general_input, prepro)
+        self.industry_instance_filter = \
+            IndustryInstanceFilter(ctrl, industry_input, prepro, self.country_instance_filter)
+        self.product_instance_filter = \
+            ProductInstanceFilter(ctrl, prepro, industry_input, general_input, self.country_instance_filter)
 
         print("Instance filters were successfully created.")
 
-        # create countries
+        # create countries_in_group
         self.countries = dict[str, country.Country]()
         for country_name in self.input_manager.ctrl.general_settings.active_countries:
-            self.countries[country_name] = country.Country(country_name, country_instance_filter,
-                                                           industry_instance_filter, product_instance_filter)
+            self.countries[country_name] = country.Country(country_name, self.country_instance_filter,
+                                                           self.industry_instance_filter, self.product_instance_filter)
 
         print("Model was successfully initiated.")
 
@@ -81,7 +88,8 @@ class Endemo:
 
     def write_model_output(self, folder_name: str = ""):
         """ Writes all the output that comes from preprocessing. """
-        generate_instance_output(self.input_manager, self.countries)
+        generate_instance_output(self.input_manager, self.countries,
+                                 self.country_instance_filter, self.product_instance_filter)
         print("Model output was successfully written.")
 
     def write_output(self):
