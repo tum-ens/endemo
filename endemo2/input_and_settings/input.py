@@ -1,3 +1,8 @@
+"""
+This module is responsible for reading the input data form files.
+(except the Set_and_Control_Parameters. That would be in control_parameters.)
+"""
+
 from __future__ import annotations
 
 import math
@@ -253,7 +258,7 @@ class ProductInput:
         This is used to model modern technologies replacing old ones.
     :ivar dict[str, dict[str, float]]: Installed capacity in %/100 for each NUTS2 Region.
         Structure {country_name -> {nuts2_region_name -> capacity_value}}
-    :ivar dict[str, dict[str, [[str]]]] country_groups: Input from country group file,
+    :ivar dict[str, [[str]]] country_groups: Input from country group file,
         structured as {group_type -> list_of_groups}.
     """
 

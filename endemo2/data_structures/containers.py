@@ -1,3 +1,7 @@
+"""
+This module contains all simple data containers used in endemo.
+"""
+
 from __future__ import annotations
 
 import collections as coll
@@ -15,6 +19,11 @@ Interval = coll.namedtuple("Interval", ["start", "end"])            # representa
 class SC:
     """
     A container for specific consumption. Offers arithmetic operations.
+
+    :param float electricity: Amount of electricity consumption.
+    :param float heat: Amount of heat consumption.
+    :param float hydrogen: Amount of hydrogen consumption.
+    :param float max_subst_h2: TODO: what is this?
 
     :ivar float electricity: Amount of electricity consumption.
     :ivar float heat: Amount of heat consumption.
@@ -37,6 +46,11 @@ class SC:
 class Heat:
     """
     A container for heat split into heat levels. Offers arithmetic operations.
+
+    :param float q1: Amount for heat level Q1
+    :param float q2: Amount for heat level Q2
+    :param float q3: Amount for heat level Q3
+    :param float q4: Amount for heat level Q4
 
     :ivar float q1: Amount for heat level Q1
     :ivar float q2: Amount for heat level Q2
@@ -74,6 +88,10 @@ class Heat:
 class Demand:
     """
     A container for the amount of demand split into different categories. Provides arithmetic operations.
+
+    :param float electricity: Amount of electricity demand.
+    :param Heat heat: Amount of heat demand.
+    :param float hydrogen: Amount of hydrogen demand.
 
     :ivar float electricity: Amount of electricity demand.
     :ivar Heat heat: Amount of heat demand.

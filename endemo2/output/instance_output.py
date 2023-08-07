@@ -1,3 +1,7 @@
+"""
+This module contains all functions that generate output files from a model instance.
+"""
+
 import math
 
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
@@ -7,22 +11,25 @@ from endemo2.data_structures.containers import Demand, SC
 from endemo2.model_instance.model.industry.products import Product
 from endemo2.output.output_utility import FileGenerator, shortcut_demand_table
 from endemo2.model_instance.model.industry.industry_sector import Industry
-from endemo2.model_instance.model.sector import SectorIdentifier
+from endemo2.data_structures.enumerations import SectorIdentifier
 from input.input import Input
 
 
 def generate_instance_output(input_manager: Input, countries: dict[str, Country],
                              country_instance_filter: CountryInstanceFilter,
                              product_instance_filter: ProductInstanceFilter):
+    """
+    Calls all generate_x_output functions of this module that should be used to generate output.
+    """
     generate_demand_output(input_manager, countries)
     generate_gdp_output(input_manager, countries, country_instance_filter)
     generate_population_prognosis_output(input_manager, countries, country_instance_filter)
     generate_specific_consumption_output(input_manager, countries, product_instance_filter)
     generate_amount_output(input_manager, countries, product_instance_filter)
 
-def generate_amount_output(input_manager: Input, countries, product_instance_filter: ProductInstanceFilter):
 
-    target_year = input_manager.ctrl.general_settings.target_year
+def generate_amount_output(input_manager: Input, countries, product_instance_filter: ProductInstanceFilter):
+    """ Generates all output related to amount of a product. """
 
     filename = "ind_product_amount_prognosis.xlsx"
     fg = FileGenerator(input_manager, "", filename)
@@ -37,7 +44,9 @@ def generate_amount_output(input_manager: Input, countries, product_instance_fil
                     # country doesn't have product
                     fg.add_entry("Amount [kt]", "")
 
+
 def generate_demand_output(input_manager: Input, countries):
+    """ Generates all output related to demand of a countries. """
 
     filename = "ind_demand_projections_per_country.xlsx"
     fg = FileGenerator(input_manager, "", filename)
@@ -111,6 +120,7 @@ def generate_demand_output(input_manager: Input, countries):
 
 
 def generate_gdp_output(input_manager: Input, countries, country_instance_filter: CountryInstanceFilter):
+    """ Generates all output related to the gdp of a countries. """
     target_year = input_manager.ctrl.general_settings.target_year
 
     filename = "general_gdp_prognosis.xlsx"
@@ -123,6 +133,7 @@ def generate_gdp_output(input_manager: Input, countries, country_instance_filter
 
 
 def generate_population_prognosis_output(input_manager: Input, countries, country_instance_filter: CountryInstanceFilter):
+    """ Generates all output related to the population of a countries. """
     target_year = input_manager.ctrl.general_settings.target_year
 
     filename = "general_population_prognosis.xlsx"
@@ -135,7 +146,7 @@ def generate_population_prognosis_output(input_manager: Input, countries, countr
 
         fg.start_sheet("Country Prognosis Distributed by NUTS2 Density")
         for country_name in countries.keys():
-            regions_perc = country_instance_filter.get_nuts2_population_percentages(country_name)
+            regions_perc = country_instance_filter.get_nuts2_population_percentages_in_target_year(country_name)
             country_pop = country_instance_filter.get_country_population_in_target_year(country_name)
             for region_name, value in regions_perc.items():
                 fg.add_entry("NUTS2 Region", region_name)
@@ -156,13 +167,14 @@ def generate_population_prognosis_output(input_manager: Input, countries, countr
 
         fg.start_sheet("NUTS2 Population Density")
         for country_name in countries.keys():
-            regions_perc = country_instance_filter.get_nuts2_population_percentages(country_name)
+            regions_perc = country_instance_filter.get_nuts2_population_percentages_in_target_year(country_name)
             for region_name, value in regions_perc.items():
                 fg.add_entry("NUTS2 Region", region_name)
                 fg.add_entry(target_year, value)
 
 
 def generate_specific_consumption_output(input_manager: Input, countries, product_if: ProductInstanceFilter):
+    """ Generates all output related to the specific consumption of products. """
 
     filename = "ind_specific_consumption_prognosis.xlsx"
     fg = FileGenerator(input_manager, "", filename)

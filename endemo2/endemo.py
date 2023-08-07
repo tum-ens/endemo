@@ -60,6 +60,8 @@ class Endemo:
         print("Settings were successfully updated.")
 
     def create_instance(self):
+        """ Creates an instance of the model. """
+
         # create instance filters
         prepro = self.preprocessor
         ctrl = self.input_manager.ctrl
@@ -86,17 +88,15 @@ class Endemo:
         generate_preprocessing_output(folder_name, self.input_manager, self.preprocessor)
         print("Preprocessing output was successfully written.")
 
-    def write_model_output(self, folder_name: str = ""):
-        """ Writes all the output that comes from preprocessing. """
+    def write_model_output(self):
+        """ Writes all the output that comes from the model instance. """
         generate_instance_output(self.input_manager, self.countries,
                                  self.country_instance_filter, self.product_instance_filter)
         print("Model output was successfully written.")
 
     def write_output(self):
-        """ Writes the models' output to the output folder. """
+        """ Writes the whole output to the output folder. """
         self.write_preprocessing_output("preprocessing")
         self.write_model_output()
-        #self.write_industry_output("industry")
-        #self.write_general_output("general")
 
 

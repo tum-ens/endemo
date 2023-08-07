@@ -6,8 +6,7 @@ from __future__ import annotations
 from collections import namedtuple
 import pandas as pd
 
-from endemo2.model_instance.model.sector import SectorIdentifier
-from endemo2.data_structures.enumerations import ForecastMethod
+from endemo2.data_structures.enumerations import ForecastMethod, SectorIdentifier
 
 ProductSettings = namedtuple("ProductSettings", ("active", "manual_exp_change_rate", "perc_used"))
 

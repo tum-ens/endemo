@@ -1,5 +1,8 @@
+"""
+This module contains all functions that generate output files from the preprocessor.
+"""
+
 from endemo2.data_structures.enumerations import DemandType
-from endemo2.preprocessing import preprocessing_step_one as pp1
 from endemo2.output.output_utility import FileGenerator, generate_timeseries_output, shortcut_coef_output, \
     get_year_range
 from endemo2.data_structures.prediction_models import Coef, Timeseries
@@ -8,23 +11,29 @@ from endemo2.preprocessing.preprocessing_step_one import CountryPreprocessed, Pr
 
 
 def generate_preprocessing_output(folder_name: str, input_manager, preprocessor):
+    """
+    Calls all generate_x_output functions of this module that should be used to generate output of the preprocessor.
+    """
     generate_amount_timeseries_output(folder_name, input_manager, preprocessor.countries_pp)
     generate_amount_per_gdp_coef_output(folder_name, input_manager, preprocessor.countries_pp)
     generate_specific_consumption_output(folder_name, input_manager, preprocessor.countries_pp)
 
 
-def generate_graphics_output():
+def generate_graphical_output():
+    """ Generate graphics output of preprocessor. """
     # TODO
     pass
 
 
-def _get_all_product_pps(product_name: str, countries_pp) -> [ProductPreprocessed]:
+def _get_all_product_pps(product_name: str, countries_pp: dict[str, CountryPreprocessed]) -> [ProductPreprocessed]:
+    """ Shortcut to get all preprocessed products of all countries of a product type. """
     return [country_pp.industry_pp.products_pp[product_name]
             for country_pp in countries_pp.values()
             if product_name in country_pp.industry_pp.products_pp.keys()]
 
 
 def generate_amount_timeseries_output(folder, input_manager: input.Input, countries_pp: dict[str, CountryPreprocessed]):
+    """ Generate the output for preprocessed timeseries related to amount of products. """
 
     filename = "ind_ts_coef_product_amount_per_year.xlsx"
     fg = FileGenerator(input_manager, folder, filename)
@@ -65,7 +74,9 @@ def generate_amount_timeseries_output(folder, input_manager: input.Input, countr
                     generate_timeseries_output(fg, Timeseries([]), year_range)
 
 
-def generate_amount_per_gdp_coef_output(folder, input_manager: input.Input, countries_pp: dict[str, pp1.CountryPreprocessed]):
+def generate_amount_per_gdp_coef_output(folder, input_manager: input.Input,
+                                        countries_pp: dict[str, CountryPreprocessed]):
+    """ Generate the output of preprocessed coefficients for the product amount, with the x-axis being gdp. """
 
     filename = "ind_coef_product_amount_per_gdp.xlsx"
     fg = FileGenerator(input_manager, folder, filename)
@@ -98,6 +109,7 @@ def generate_amount_per_gdp_coef_output(folder, input_manager: input.Input, coun
 
 def generate_specific_consumption_output(folder, input_manager: input.Input,
                                          countries_pp: dict[str, CountryPreprocessed]):
+    """ Generate all output related to preprocessed specific consumption. """
     products_has_his_sc = input_manager.industry_input.sc_historical_data_file_names.keys()
 
     filename = "ind_ts_specific_consumption.xlsx"

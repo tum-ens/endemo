@@ -1,16 +1,24 @@
+"""
+This module contains all instance filters that relate to the general part of the model.
+"""
+
 import math
 
 from endemo2.data_structures.containers import CA
 from endemo2.data_structures.nuts_tree import NutsRegionLeaf
 from endemo2.data_structures.prediction_models import RigidTimeseries, IntervalForecast, Timeseries
 from endemo2.input_and_settings.control_parameters import ControlParameters
-from endemo2.model_instance.model.sector import SectorIdentifier
+from endemo2.data_structures.enumerations import SectorIdentifier
 from endemo2.preprocessing.preprocessing_step_one import NUTS2Preprocessed, GDPPreprocessed
 from endemo2.preprocessing.preprocessor import Preprocessor
 from input.input import GeneralInput
 
 
 class CountryInstanceFilter:
+    """
+    This instance filter serves as a filter between the instance settings and the actual calculation of a
+        country's demand.
+    """
 
     def __init__(self, ctrl: ControlParameters, general_input: GeneralInput, preprocessor: Preprocessor):
         self.ctrl = ctrl
@@ -18,12 +26,15 @@ class CountryInstanceFilter:
         self.preprocessor = preprocessor
 
     def get_country_abbreviations(self, country_name) -> CA:
+        """ Getter for the countries abbreviations. """
         return self.general_input.abbreviations[country_name]
 
-    def get_active_sectors(self) -> [SectorIdentifier]:
+    def get_active_sectors(self) -> list[SectorIdentifier]:
+        """ Getter for the active sectors. """
         return self.ctrl.general_settings.get_active_sectors()
 
     def get_gdp_in_target_year(self, country_name) -> float:
+        """ Getter for the gdp of a country in the target year. """
         gdp_pp = self.preprocessor.countries_pp[country_name].gdp_pp
         gdp_prognosis_pp: IntervalForecast = gdp_pp.gdp_prognosis_pp
         gdp_historical_pp: Timeseries = gdp_pp.gdp_historical_pp
@@ -39,7 +50,8 @@ class CountryInstanceFilter:
             gdp_prog: float = gdp_prognosis_pp.get_forecast(self.ctrl.general_settings.target_year, gdp_start_point)
         return gdp_prog
 
-    def get_country_population_in_target_year(self, country_name):
+    def get_country_population_in_target_year(self, country_name) -> float:
+        """ Getter for the population of a country in the target year. """
         population_pp = self.preprocessor.countries_pp[country_name].population_pp
         his_pop_country: Timeseries = population_pp.population_historical_whole_country
         prog_pop_country: RigidTimeseries = population_pp.population_whole_country_prognosis
@@ -52,6 +64,7 @@ class CountryInstanceFilter:
             return his_pop_country.get_value_at_year(target_year)
 
     def get_nuts2_population_in_target_year(self, country_name) -> dict[str, float]:
+        """ Getter for the population for each nuts2 region of a country in target year. """
         country_pp = self.preprocessor.countries_pp[country_name]
         nuts2_pp: NUTS2Preprocessed = country_pp.nuts2_pp
         if nuts2_pp is None:
@@ -91,12 +104,12 @@ class CountryInstanceFilter:
                                                     (nuts2_forecast_start_year,nuts2_population_in_start_year))
         return nuts2_population_in_target_year
 
-    def get_nuts2_population_percentages(self, country_name) -> dict[str, float]:
+    def get_nuts2_population_percentages_in_target_year(self, country_name) -> dict[str, float]:
+        """ Getter for the population density distributed into nuts2 regions of a country in the target year. """
         country_pp = self.preprocessor.countries_pp[country_name]
         nuts2_pp: NUTS2Preprocessed = country_pp.nuts2_pp
         if nuts2_pp is None:
             # country doesn't have any nuts2 data
-            print(country_name)
             return dict()
 
         nuts2_population_in_target_year = self.get_nuts2_population_in_target_year(country_name)

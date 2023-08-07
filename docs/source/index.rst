@@ -43,7 +43,7 @@ to update this documentation properly.
 
 
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 10
    :caption: Contents:
 
    endemo2

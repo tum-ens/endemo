@@ -1,15 +1,22 @@
+"""
+This module contains all instance filters that relate to the industry sector of the model.
+"""
+
 from endemo2.data_structures.containers import SC, Heat
 from endemo2.data_structures.enumerations import DemandType, ForecastMethod
 from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
 from endemo2.preprocessing.preprocessing_step_one import ProductPreprocessed, CountryPreprocessed
 from endemo2.preprocessing.preprocessor import Preprocessor
-from endemo2.data_structures.prediction_models import TwoDseries, IntervalForecast, Timeseries
+from endemo2.data_structures.prediction_models import TwoDseries
 from input.input import IndustryInput, GeneralInput
-from endemo2 import utility as uty
 
 
 class IndustryInstanceFilter:
+    """
+    This instance filter serves as a filter between the instance settings and the actual calculation of the demand
+        of the industry sectors.
+    """
 
     def __init__(self, ctrl: ControlParameters, industry_input: IndustryInput, preprocessor: Preprocessor,
                  country_instance_filter: CountryInstanceFilter):
@@ -19,36 +26,45 @@ class IndustryInstanceFilter:
         self.country_instance_filter = country_instance_filter
         self.industry_input = industry_input
 
-    def get_active_products_for_this_country(self, country_name) -> [str]:
+    def get_active_products_for_this_country(self, country_name) -> list[str]:
+        """ Getter for the active (or produced) products of a country. """
         dict_product_input = self.industry_input.active_products
         return [product_name for product_name in self.ctrl.industry_settings.active_product_names
                 if country_name in dict_product_input[product_name].production.keys()]
 
     def get_nuts2_rest_sector_capacities(self, country_name) -> dict[str, float]:
-        return self.country_instance_filter.get_nuts2_population_percentages(country_name)
+        """ Get the capacity/100 of the rest sector for each nuts2 region in given country. """
+        return self.country_instance_filter.get_nuts2_population_percentages_in_target_year(country_name)
 
     def get_target_year(self) -> int:
+        """ Getter for the target year. """
         return self.ctrl.general_settings.target_year
 
-    def get_active_product_names(self) -> [str]:
+    def get_active_product_names(self) -> list[str]:
+        """ Getter for the names of the product that are active in calculations. """
         return self.ctrl.industry_settings.active_product_names
 
     def get_rest_calc_data(self, country_name) -> dict[DemandType, (float, float)]:
+        """ Getter for the input data to calculate the rest sector demand. """
         return self.rest_sector_input.rest_calc_data[country_name]
 
     def get_rest_sector_growth_rate(self) -> float:
+        """ Getter for the growth rate of a sector specified in settings. """
         return self.ctrl.industry_settings.rest_sector_growth_rate
 
     def get_rest_basis_year(self) -> int:
+        """ Getter for the year used as the start year for the exponential growth of the rest sector. """
         return self.rest_sector_input.rest_calc_basis_year
 
     def get_rest_heat_levels(self) -> Heat:
+        """ Get the heat levels of the rest sector. """
         return self.rest_sector_input.rest_sector_heat_levels
 
 
 class ProductInstanceFilter:
     """
-    Functions as a filter between the instance settings and the model instance.
+    This instance filter serves as a filter between the instance settings and the actual calculation of the demand
+        of the different products.
     """
     def __init__(self, ctrl: ControlParameters, preprocessor: Preprocessor, industry_input: IndustryInput,
                  general_input: GeneralInput, country_instance_filter: CountryInstanceFilter):
@@ -80,7 +96,7 @@ class ProductInstanceFilter:
             return res_dict_nuts2_capacities
 
     def get_specific_consumption_po(self, country_name, product_name) -> SC:
-        """ Get specific consumption in TWh / t"""
+        """ Get specific consumption in TWh/t"""
         country_pp = self.preprocessor.countries_pp[country_name]
         product_pp = country_pp.industry_pp.products_pp[product_name]
 
@@ -111,16 +127,20 @@ class ProductInstanceFilter:
             return specific_consumption
 
     def get_perc_used(self, product_name) -> float:
+        """
+        Getter for percentage/100 used from the product amount prognosis.
+        Used for the substitution of new technologies
+        """
         return self.ctrl.industry_settings.product_settings[product_name].perc_used
 
     def get_heat_levels(self, product_name) -> Heat:
-        """ Get heat levels in perc/100. """
+        """ Get heat levels of a product in perc/100. """
         ind_input = self.industry_input
         heat_levels = ind_input.active_products[product_name].heat_levels
         return heat_levels
 
     def get_amount(self, country_name, product_name) -> float:
-        """ Get amount in t. """
+        """ Get amount of a product in a country's industry in t. """
         country_pp = self.preprocessor.countries_pp[country_name]
         product_pp = country_pp.industry_pp.products_pp[product_name]
 

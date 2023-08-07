@@ -1,9 +1,12 @@
+"""
+This module contains all classed used for the first stage of preprocessing.
+"""
+
 import itertools
 
 from endemo2.data_structures.nuts_tree import NutsRegionNode, NutsRegionLeaf
 from endemo2.data_structures.containers import EH, HisProg
 from endemo2.data_structures.enumerations import DemandType
-from endemo2 import utility as uty
 from endemo2.data_structures.prediction_models import Timeseries, RigidTimeseries, IntervalForecast
 from input.input import Input, ProductInput, GeneralInput
 
@@ -150,7 +153,7 @@ class NUTS2Preprocessed:
     """
     All preprocessed data relating to nuts2 that are general. (For product-specific nuts2 data, see ProductPreprocessed)
 
-     :ivar NutsRegionNode population_historical_tree_root: The nuts2 tree containing all historical population data for
+    :ivar NutsRegionNode population_historical_tree_root: The nuts2 tree containing all historical population data for
         a given country.
     :ivar NutsRegionNode population_prognosis_tree_root: The nuts2 tree containing all population prognosis data for a
         given country.
@@ -184,7 +187,8 @@ class PopulationPreprocessed:
     The preprocessed population data for a whole country.
 
     :ivar Timeseries population_historical_whole_country: The timeseries for the countries_in_group population.
-    :ivar RigidTimeseries population_whole_country_prognosis: The manual prediction data for the countries_in_group population.
+    :ivar RigidTimeseries population_whole_country_prognosis: The manual prediction data for the countries_in_group
+        population.
     """
 
     def __init__(self, country_name, general_input):

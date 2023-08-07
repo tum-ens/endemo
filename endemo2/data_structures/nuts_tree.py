@@ -2,13 +2,17 @@ from __future__ import annotations
 
 from typing import Any, Union
 
+"""
+This module contains everything one needs to represent NUTS regions as a tree structure. 
+The leafs are NUTS2 regions, the root is the 2-letter country code and the in-between-nodes are for navigation.
+"""
+
 
 class NutsRegion:
     """
     Represents one NUTS Region according to individual codes.
 
-    Generally, NUTS Regions are build as a tree structure to include sub-regions as child nodes and have NUTS2 regions
-        as leafs.
+    :param str region_name: The NUTS tag of the region. For example: DE, DE1, DE11, ...
 
     :ivar str region_name: The NUTS tag of the region. For example: DE, DE1, DE11, ...
     """
@@ -20,8 +24,11 @@ class NutsRegionLeaf(NutsRegion):
     """
     Represents one NUTS2 Region according to individual codes. It is the leaf of the NUTS tree.
 
-    :ivar str region_name: The NUTS tag of the region. For example: DE, DE1, DE11, ...
-    :ivar Any data: The timeseries for the value the tree is associated with.
+    :param str region_name: The NUTS tag of the region. For example: DE11, DE12 ...
+    :param Any data: The timeseries for the value the tree is associated with. This can be any type of data.
+
+    :ivar str region_name: The NUTS tag of the region. For example: DE11, DE12 ...
+    :ivar Any data: The timeseries for the value the tree is associated with. This can be any type of data.
     """
     def __init__(self, region_name: str, data: Any):
         super().__init__(region_name)
@@ -31,6 +38,7 @@ class NutsRegionLeaf(NutsRegion):
         return "[leaf: " + self.region_name + "]"
 
     def get(self):
+        """ Getter for the leaf's data. """
         return self.data
 
 
@@ -38,7 +46,9 @@ class NutsRegionNode(NutsRegion):
     """
     Represents one NUTS Region according to individual codes. Not a NUTS2 region, but a node in the tree.
 
-    :ivar str region_name: The NUTS tag of the region. For example: DE, DE1, DE11, ...
+    :param str region_name: The NUTS tag of the region. For example: DE, DE1, DE2, ...
+
+    :ivar str region_name: The NUTS tag of the region. For example: DE, DE1, DE2, ...
     :ivar dict[str, NutsRegion] _subregions: The child regions, accessible per NUTS tag. For DE: {DE1 -> .., DE2 -> ..}
     """
 
@@ -61,9 +71,9 @@ class NutsRegionNode(NutsRegion):
 
     def add_leaf_region(self, nuts2region_obj: NutsRegionLeaf) -> None:
         """
-        Traverses the NUTS Tree recursively to insert region node.
+        Traverses the NUTS Tree recursively to insert a leaf node.
 
-        :param nuts2region_obj: The NutsRegion object to insert into the tree
+        :param nuts2region_obj: The NutsRegionLeaf object to insert into the tree
         """
         if len(self.region_name) + 1 is len(nuts2region_obj.region_name):
             # region is direct subregion
@@ -98,9 +108,10 @@ class NutsRegionNode(NutsRegion):
                     # found parent region
                     return self._sub_regions[key].get_specific_node(region_code)
 
-    def get_nodes_dfs(self) -> [NutsRegion]:
+    def get_nodes_dfs(self) -> list[NutsRegion]:
         """
         Get a list of all nodes in Depth-First-Search order.
+        Used mostly for debugging purposes.
 
         :return: The list of nodes in DFS-order.
         """
@@ -114,9 +125,9 @@ class NutsRegionNode(NutsRegion):
                 nodes += subregion.get_nodes_dfs()
             return nodes
 
-    def get_all_leaf_nodes(self) -> [NutsRegionLeaf]:
+    def get_all_leaf_nodes(self) -> list[NutsRegionLeaf]:
         """
-        Get a list of all leaf nodes order.
+        Get a list of all leaf nodes.
 
         :return: The list of leaf nodes.
         """

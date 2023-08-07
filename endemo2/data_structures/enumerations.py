@@ -1,9 +1,23 @@
+"""
+This module contains all Enums of endemo.
+"""
+
 from __future__ import annotations
 
 from enum import Enum
 
 
 class GroupType(Enum):
+    """
+    Enum to differentiate different country group types.
+
+    :ivar SEPARATE: All countries in this type of group are calculated separately.
+    :ivar JOINED: The data of all countries in a group of type joined is lumped together and shared coefficients are
+        calculated.
+    :ivar JOINED_DIVERSIFIED: The data of all countries in a group of type joined_diversified is lumped together and
+        shared coefficients are calculated. But each country has a differing offset additionally.
+    :ivar EMPTY: Indicates that no group type is chosen.
+    """
     SEPARATE = 0
     JOINED = 1
     JOINED_DIVERSIFIED = 2
@@ -30,3 +44,20 @@ class DemandType(Enum):
     ELECTRICITY = 0
     HEAT = 1
     HYDROGEN = 2
+
+
+class StartPoint(Enum):
+    """ Denotes the type of start points used for the exponential forecast method. """
+    LAST_AVAILABLE = 0
+    AVERAGE_VALUE = 1
+    MANUAL = 2
+
+
+class SectorIdentifier(Enum):
+    """
+    The enum class to quickly discern sectors_to_do.
+    """
+    INDUSTRY = 0
+    HOUSEHOLDS = 1
+    TRANSPORT = 2
+    COMMERCIAL_TRADE_SERVICES = 3

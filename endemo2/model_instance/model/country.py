@@ -5,7 +5,8 @@ from endemo2.model_instance.instance_filter.general_instance_filter import Count
 from endemo2.model_instance.instance_filter.industry_instance_filter \
     import ProductInstanceFilter, IndustryInstanceFilter
 from endemo2.model_instance.model.industry.industry_sector import Industry
-from endemo2.model_instance.model.sector import SectorIdentifier, Sector
+from endemo2.model_instance.model.sector import Sector
+from endemo2.data_structures.enumerations import SectorIdentifier
 
 
 class Country:

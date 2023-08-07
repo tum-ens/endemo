@@ -1,10 +1,13 @@
+"""
+This module contains utility functions and classes to more easily generate output files.
+"""
+
 import os
 
 import pandas as pd
 
 from endemo2.data_structures.prediction_models import Timeseries, Coef
 from endemo2.data_structures.containers import Demand
-from endemo2 import utility as uty
 
 
 class FileGenerator(object):
@@ -91,13 +94,19 @@ class FileGenerator(object):
 
 
 def get_year_range(tss: [Timeseries]) -> (int, int):
+    """
+    Takes multiple timeseries and finds out in which range of years all data falls into.
+
+    :param tss: The list of timeseries.
+    :return: The year range, all data falls into.
+    """
     min_year = None
     max_year = None
 
     for ts in tss:
-        if len(ts._data) > 0:
-            first_year = ts._data[0][0]
-            last_year = ts._data[-1][0]
+        if len(ts.get_data()) > 0:
+            first_year = ts.get_data()[0][0]
+            last_year = ts.get_data()[-1][0]
             if min_year is None and max_year is None:
                 min_year = first_year
                 max_year = last_year
@@ -111,6 +120,8 @@ def get_year_range(tss: [Timeseries]) -> (int, int):
 
 
 def shortcut_coef_output(fg: FileGenerator, coef: Coef):
+    """ A shortcut to easily output the contents of a coefficient object. """
+
     forecast_method = coef._method
     exp_coef = coef._exp
     lin_coef = coef._lin
@@ -159,7 +170,7 @@ def shortcut_coef_output(fg: FileGenerator, coef: Coef):
 
 
 def shortcut_save_timeseries_print(fg, range: (float, float), data: [(float, float)]):
-    """ To correctly print, when data does potentially not cover every year."""
+    """ Shortcut to correctly output a timeseries, when data does potentially not cover every year."""
 
     (from_year, to_year) = range
 
@@ -176,13 +187,17 @@ def shortcut_save_timeseries_print(fg, range: (float, float), data: [(float, flo
         fg.add_entry(i, "")
         i += 1
 
+
 def shortcut_sc_output(fg, sc):
+    """ A shortcut to output the contents of a specific consumption object. """
     fg.add_entry("Electricity [GJ/t]", sc.electricity)
     fg.add_entry("Heat [GJ/t]", sc.heat)
     fg.add_entry("Hydrogen [GJ/t]", sc.hydrogen)
     fg.add_entry("max. subst. of heat with H2 [%]", sc.max_subst_h2)
 
+
 def shortcut_demand_table(fg: FileGenerator, demand: Demand):
+    """ A shortcut to output the contents of a Demand object. """
     fg.add_entry("Electricity [TWh]", demand.electricity)
     fg.add_entry("Heat [TWh]", demand.heat.q1 + demand.heat.q2 + demand.heat.q3 + demand.heat.q4)
     fg.add_entry("Hydrogen [TWh]", demand.hydrogen)
@@ -193,6 +208,7 @@ def shortcut_demand_table(fg: FileGenerator, demand: Demand):
 
 
 def generate_timeseries_output(fg: FileGenerator, ts: Timeseries, year_range):
+    """ Generate output for a Timeseries object. """
     # output coef
     coef = ts.get_coef()
     shortcut_coef_output(fg, coef)

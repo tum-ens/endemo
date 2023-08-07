@@ -1,11 +1,15 @@
+"""
+This module contains all classes directly representing in data series and prognosis calculations.
+"""
+
 from __future__ import annotations
 
-import enum
 import warnings
 from typing import Any, Union
 
 import statistics as st
 
+from endemo2.data_structures.containers import Interval
 from endemo2.data_structures.enumerations import ForecastMethod
 from endemo2 import utility as uty
 from endemo2.data_structures import containers as ctn
@@ -34,6 +38,7 @@ class Coef:
     def set_method(self, method: ForecastMethod, fixate=False):
         """
         Setter for the forecast method.
+
         :param method: The method that should be used from now on.
         :param fixate: If True, makes sure that method cannot be reset for this coefficient object.
         """
@@ -70,9 +75,9 @@ class Coef:
         """ Setter for the quadratic coefficients. """
         self._quadr = (k0, k1, k2)
 
-    def set_offset(self, k0: float, k1: float, k2: float):
-        """ Setter for the quadratic coefficients. """
-        self._quadr = (k0, k1, k2)
+    def set_offset(self, k0: float):
+        """ Setter for the additional offset. """
+        self._offset = k0
 
     def get_exp_y(self, target_x) -> Union[float, None]:
         """ Returns the y-axis value of the function at the given x according to the exponential method. """
@@ -116,13 +121,6 @@ class Coef:
                 return None
 
 
-class StartPoint(enum.Enum):
-    """ Denotes the type of start points used for the exponential forecast method. """
-    LAST_AVAILABLE = 0
-    AVERAGE_VALUE = 1
-    MANUAL = 2
-
-
 class RigidTimeseries:
     """
     Class representing data that should be taken just like it is. Without interpolation, without coefficients,
@@ -134,6 +132,9 @@ class RigidTimeseries:
     def __init__(self, data: [(float, float)]):
         # clean data before saving; also copies the input_and_settings data
         self._data = uty.filter_out_nan_and_inf(data)
+
+    def __str__(self):
+        return str(self._data)
 
     def get_value_at_year(self, year: int) -> float:
         """
@@ -162,6 +163,9 @@ class TwoDseries:
         # clean data before saving; also copies the input_and_settings data
         self._data = uty.filter_out_nan_and_inf(data)
         self.coefficients = None
+
+    def __str__(self):
+        return str(self._data)
 
     def generate_coef(self):
         """
@@ -212,7 +216,7 @@ class TwoDseries:
         """
         Append all data of another timeseries to self and return self.
 
-        :param other_ts: The TwoDseries, whose data should be appended.
+        :param other_tds: The TwoDseries, whose data should be appended.
         :return: self
         """
         self._data += other_tds._data
@@ -278,10 +282,9 @@ class Timeseries(TwoDseries, RigidTimeseries):
         :param other_ts: The timeseries, whose data should be appended.
         :return: self
         """
-        super().append_other_ts_data(other_ts)
+        super().append_others_data(other_ts)
         self._data.sort(key=lambda data_point: data_point[0])
         return self
-
 
     def add(self, other_ts: Timeseries) -> Timeseries:
         """
@@ -346,18 +349,18 @@ class IntervalForecast:
     """
     The class depicting a given exponential prediction with different growth rates in certain intervals.
 
-    :param [(ctn.Interval, float)] progression_data: The input_and_settings progression data given as a list of intervals and their
+    :param list[(Interval, float)] progression_data: The input_and_settings progression data given as a list of intervals and their
         corresponding growth rate. For example [(Interval(start, end), percentage_growth)].
 
-    :ivar [(ctn.Interval, float)] _interval_changeRate: The same as progression_data, just the growth rate is not in
+    :ivar list[(Interval, float)] _interval_changeRate: The same as progression_data, just the growth rate is not in
         percentage anymore, but percentage/100
     """
 
-    def __init__(self, progression_data: [(ctn.Interval, float)]):
+    def __init__(self, progression_data: list[(Interval, float)]):
         # map percentage to its hundredth
         self._interval_changeRate = [(prog[0], prog[1] / 100) for prog in progression_data]
 
-    def get_forecast(self, target_x: float, start_point: (float, float)):
+    def get_forecast(self, target_x: float, start_point: (float, float)) -> float:
         """
         Get the prognosis of the y-axis value for a target x-axis value from the manual exponential
         interval-growth-rate forecast.
