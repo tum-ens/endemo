@@ -52,11 +52,11 @@ class Industry(Sector):
         :return: The demand of the rest sector in given year rest(y).
         """
 
-        rest_calc_data = self._industry_instance_filter.get_rest_calc_data(self._country_name)
+        rest_calc_data = self._industry_instance_filter.get_rest_sector_proportion_in_basis_year(self._country_name)
         rest_growth_rate = self._industry_instance_filter.get_rest_sector_growth_rate()
-        rest_heat_levels = self._industry_instance_filter.get_rest_heat_levels()
+        rest_heat_levels = self._industry_instance_filter.get_rest_sector_heat_levels()
 
-        start_year = self._industry_instance_filter.get_rest_basis_year()
+        start_year = self._industry_instance_filter.get_rest_sector_basis_year()
         target_year = self._industry_instance_filter.get_target_year()
 
         result = Demand()
@@ -79,7 +79,7 @@ class Industry(Sector):
         :return: The dictionary of {nuts2_region -> demand}.
         """
         rest_demand = self.calculate_rest_sector_demand()
-        nuts2_capacities = self._industry_instance_filter.get_nuts2_rest_sector_capacities(self._country_name)
+        nuts2_capacities = self._industry_instance_filter.get_nuts2_rest_sector_distribution(self._country_name)
 
         resulting_distributed_demand = dict[str, Demand]()
         for region_name, capacity in nuts2_capacities.items():

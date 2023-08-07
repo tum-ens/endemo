@@ -173,7 +173,7 @@ def quadratic_regression(data: list[(float, float)], visualize: bool = False) ->
     return k0, k1, k2
 
 
-def quadratic_regression_delta(data: dict[str, [(float, float)]]) \
+def quadratic_regression_delta(data: dict[str, pm.TwoDseries]) \
         -> ((float, float, float), dict[str, float]):
     """
     :todo: implement later

@@ -16,7 +16,7 @@ HisProg = coll.namedtuple("HisProg", ["historical", "prognosis"])   # container 
 Interval = coll.namedtuple("Interval", ["start", "end"])            # representation of an interval
 
 
-class SC:
+class SpecConsum:
     """
     A container for specific consumption. Offers arithmetic operations.
 

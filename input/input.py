@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-import endemo2.data_structures.enumerations
+from endemo2.data_structures.enumerations import DemandType
 from endemo2 import utility as uty
 from endemo2.data_structures import containers as ctn
 from endemo2.data_structures.containers import HisProg
@@ -242,7 +242,7 @@ class ProductInput:
     :param perc_used: perc_used
 
     :ivar str product_name: The name of the product.
-    :ivar dict[str, containers.SC] specific_consumption_default: Default specific consumption value for this product.
+    :ivar dict[str, containers.SpecConsum] specific_consumption_default: Default specific consumption value for this product.
     :ivar dict[str, (float, float)] specific_consumption_historical: Historical specific consumption data
         for this product. Accessible per country.
     :ivar dict[str, containers.EH] bat: The best-available-technology consumption for this product.
@@ -283,7 +283,7 @@ class RestSectorInput:
     """
     A container for the preprocessing data regarding the rest sectors_to_do.
 
-    :ivar dict[str, dict[DemandType, (float, float)]] rest_calc_data: Used for the calculation of the rest sector.
+    :ivar dict[str, dict[DemandType, (float, float)]] rest_demand_proportion_basis_year: Used for the calculation of the rest sector.
         It has the following structure: {country_name -> {demand_type -> (rest_sector_percent, demand_2018)}}
     :ivar int rest_calc_basis_year: Year used as a starting point for calculating the rest sector demand.
     :ivar Heat rest_sector_heat_levels: The heat levels used to separate the heat demand in the
@@ -293,12 +293,12 @@ class RestSectorInput:
     def __init__(self, df_rest_calc: pd.DataFrame, dict_heat_levels: dict[str, ctn.Heat]):
         self.rest_calc_basis_year = 2018  # change here, if another year should be used for rest sector (also path)
         self.rest_sector_heat_levels = dict_heat_levels["rest"]
-        self.rest_calc_data = dict()
+        self.rest_demand_proportion_basis_year = dict()
         for _, row in df_rest_calc.iterrows():
-            self.rest_calc_data[row["Country"]] = dict()
-            self.rest_calc_data[row["Country"]][endemo2.data_structures.enumerations.DemandType.ELECTRICITY] = \
+            self.rest_demand_proportion_basis_year[row["Country"]] = dict()
+            self.rest_demand_proportion_basis_year[row["Country"]][endemo2.DemandType.ELECTRICITY] = \
                 (row["Rest el"] / 100, row["electricity " + str(self.rest_calc_basis_year)])
-            self.rest_calc_data[row["Country"]][endemo2.data_structures.enumerations.DemandType.HEAT] = \
+            self.rest_demand_proportion_basis_year[row["Country"]][DemandType.HEAT] = \
                 (row["Rest heat"] / 100, row["heat " + str(self.rest_calc_basis_year)])
 
 
@@ -461,10 +461,10 @@ class IndustryInput:
 
             for _, row in pd.DataFrame(prod_sc).iterrows():
                 dict_prod_sc_country[row.Country] = \
-                    ctn.SC(row["Spec electricity consumption [GJ/t]"],
-                           row["Spec heat consumption [GJ/t]"],
-                           row["Spec hydrogen consumption [GJ/t]"],
-                           row["max. subst. of heat with H2 [%]"])
+                    ctn.SpecConsum(row["Spec electricity consumption [GJ/t]"],
+                                   row["Spec heat consumption [GJ/t]"],
+                                   row["Spec hydrogen consumption [GJ/t]"],
+                                   row["max. subst. of heat with H2 [%]"])
 
             # create country_name_de -> country_name_en mapping
             dict_de_en_map = dict()

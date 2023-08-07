@@ -15,7 +15,7 @@ class SpecificConsumptionPreprocessed:
     """
     The preprocessed specific consumption for a given product.
 
-    :ivar SC default_specific_consumption: The specific consumption for a product type, that is used as default if
+    :ivar SpecConsum default_specific_consumption: The specific consumption for a product type, that is used as default if
         there is no historical data to predict the specific consumption.
     :ivar dict[DemandType, Timeseries] specific_consumption_historical:
         The dictionary holding the timeseries for each demand type's historical demand.
@@ -95,11 +95,11 @@ class ProductPreprocessed:
     """
     The preprocessed product information for a given country.
 
-    :ivar Timeseries amount_per_year: Used to predict the product amount. The x-axis is time in years.
-    :ivar pm.TwoDseries amount_per_gdp: Used to predict the product amount. The x-axis is the countries_in_group' gdp.
-    :ivar Timeseries amount_per_capita_per_year: Used to predict the product amount per capita.
+    :ivar Timeseries amount_vs_year: Used to predict the product amount. The x-axis is time in years.
+    :ivar TwoDseries amount_vs_gdp: Used to predict the product amount. The x-axis is the countries_in_group' gdp.
+    :ivar Timeseries amount_per_capita_vs_year: Used to predict the product amount per capita.
         The x-axis is time in years.
-    :ivar pm.TwoDseries amount_per_capita_per_gdp: Used to predict the product amount per capita.
+    :ivar TwoDseries amount_per_capita_vs_gdp: Used to predict the product amount per capita.
         The x-axis is time in years.
 
     :ivar SpecificConsumptionPreprocessed specific_consumption_pp: The preprocessed specific consumption data.
@@ -107,27 +107,32 @@ class ProductPreprocessed:
         The installed capacity for this product in each NUTS2 region for the country this product belongs to.
 
     """
+
     def __init__(self, country_name: str, product_input: ProductInput, population_historical: Timeseries,
                  gdp_historical: Timeseries, general_input: GeneralInput):
+        if country_name in product_input.production.keys():
+            # fill Timeseries and TwoDseries
+            self.amount_vs_year = Timeseries(product_input.production[country_name])
+        else:
+            # if country not in product tables, we know it doesn't product anything. Take any reasonable year to put 0.
+            self.amount_vs_year = Timeseries([(2000, 0.0)])
 
-        # fill Timeseries and TwoDseries
-        self.amount_per_year = Timeseries(product_input.production[country_name])
-        self.amount_per_capita_per_year = \
-            Timeseries.map_two_timeseries(self.amount_per_year, population_historical,
+        self.amount_per_capita_vs_year = \
+            Timeseries.map_two_timeseries(self.amount_vs_year, population_historical,
                                           lambda x, y1, y2: (x, y1 / y2))
-        self.amount_per_gdp = Timeseries.merge_two_timeseries(gdp_historical, self.amount_per_year)
-        self.amount_per_capita_per_gdp = \
-            Timeseries.merge_two_timeseries(gdp_historical, self.amount_per_capita_per_year)
+        self.amount_vs_gdp = Timeseries.merge_two_timeseries(gdp_historical, self.amount_vs_year)
+        self.amount_per_capita_vs_gdp = \
+            Timeseries.merge_two_timeseries(gdp_historical, self.amount_per_capita_vs_year)
 
         # calculate coefficients
-        self.amount_per_year.generate_coef()
-        self.amount_per_gdp.generate_coef()
-        self.amount_per_capita_per_year.generate_coef()
-        self.amount_per_capita_per_gdp.generate_coef()
+        self.amount_vs_year.generate_coef()
+        self.amount_vs_gdp.generate_coef()
+        self.amount_per_capita_vs_year.generate_coef()
+        self.amount_per_capita_vs_gdp.generate_coef()
 
         # preprocess specific consumption
         self.specific_consumption_pp = \
-            SpecificConsumptionPreprocessed(country_name, product_input, general_input, self.amount_per_year)
+            SpecificConsumptionPreprocessed(country_name, product_input, general_input, self.amount_vs_year)
 
         # save nuts2 installed capacity
         self.nuts2_installed_capacity = product_input.nuts2_installed_capacity[country_name]
@@ -139,14 +144,14 @@ class IndustryPreprocessed:
 
     :ivar dict[str, ProductPreprocessed] products_pp: All preprocessed products, accessible by product name.
     """
+
     def __init__(self, country_name, input_manager: Input, pop_his: Timeseries, gdp_his: Timeseries):
         self.products_pp = dict()
         general_input = input_manager.general_input
 
         for product_name, product_input in input_manager.industry_input.active_products.items():
-            if country_name in product_input.production.keys():
-                self.products_pp[product_name] = \
-                    ProductPreprocessed(country_name, product_input, pop_his, gdp_his, general_input)
+            self.products_pp[product_name] = \
+                ProductPreprocessed(country_name, product_input, pop_his, gdp_his, general_input)
 
 
 class NUTS2Preprocessed:
@@ -205,6 +210,7 @@ class GDPPreprocessed:
     :ivar Timeseries gdp_historical_pp: The timeseries for the historical gdp data.
     :ivar IntervalForecast gdp_prognosis_pp: The gdp's forecast.
     """
+
     def __init__(self, country_name, general_input: GeneralInput):
         self.gdp_historical_pp = Timeseries(general_input.gdp[country_name].historical)
         self.gdp_prognosis_pp = IntervalForecast(general_input.gdp[country_name].prognosis)
@@ -230,7 +236,7 @@ class CountryPreprocessed:
         self.gdp_pp = GDPPreprocessed(country_name, general_input)
 
         # preprocess NUTS2 data if present
-        self.has_nuts2 = country_name in general_input.population.nuts2_population    # TODO: also make more pretty
+        self.has_nuts2 = country_name in general_input.population.nuts2_population  # TODO: also make more pretty
         if self.has_nuts2:
             nuts2_data = general_input.population.nuts2_population[country_name]
             self.nuts2_pp = NUTS2Preprocessed(abbreviations, nuts2_data)

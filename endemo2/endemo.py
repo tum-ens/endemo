@@ -42,7 +42,7 @@ class Endemo:
         self.create_instance()
 
         # generate output files
-        self.write_output()
+        self.write_all_output()
 
     def execute_without_preprocessing(self):
         """
@@ -51,7 +51,7 @@ class Endemo:
         """
         self.update_settings()
         self.create_instance()
-        self.write_output()
+        self.write_model_output()
 
     def update_settings(self):
         """ Rereads the instance settings. """
@@ -83,9 +83,14 @@ class Endemo:
 
         print("Model was successfully initiated.")
 
-    def write_preprocessing_output(self, folder_name: str):
+    def write_all_output(self):
+        """ Writes the whole output to the output folder. """
+        self.write_preprocessing_output()
+        self.write_model_output()
+
+    def write_preprocessing_output(self):
         """ Writes all the output that comes from preprocessing. """
-        generate_preprocessing_output(folder_name, self.input_manager, self.preprocessor)
+        generate_preprocessing_output(self.input_manager, self.preprocessor)
         print("Preprocessing output was successfully written.")
 
     def write_model_output(self):
@@ -93,10 +98,3 @@ class Endemo:
         generate_instance_output(self.input_manager, self.countries,
                                  self.country_instance_filter, self.product_instance_filter)
         print("Model output was successfully written.")
-
-    def write_output(self):
-        """ Writes the whole output to the output folder. """
-        self.write_preprocessing_output("preprocessing")
-        self.write_model_output()
-
-

@@ -349,8 +349,8 @@ class IntervalForecast:
     """
     The class depicting a given exponential prediction with different growth rates in certain intervals.
 
-    :param list[(Interval, float)] progression_data: The input_and_settings progression data given as a list of intervals and their
-        corresponding growth rate. For example [(Interval(start, end), percentage_growth)].
+    :param list[(Interval, float)] progression_data: The input_and_settings progression data given as a list of
+        intervals and their corresponding growth rate. For example [(Interval(start, end), percentage_growth)].
 
     :ivar list[(Interval, float)] _interval_changeRate: The same as progression_data, just the growth rate is not in
         percentage anymore, but percentage/100

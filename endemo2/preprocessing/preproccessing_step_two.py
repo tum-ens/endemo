@@ -50,13 +50,13 @@ class CountryGroupJoined(CountryGroup):
 
             # decide which data to use
             if not gdp_as_x and not y_per_capita:
-                self._joined_data.append_others_data(product_pp.amount_per_year)
+                self._joined_data.append_others_data(product_pp.amount_vs_year)
             elif gdp_as_x and not y_per_capita:
-                self._joined_data.append_others_data(product_pp.amount_per_gdp)
+                self._joined_data.append_others_data(product_pp.amount_vs_gdp)
             elif not gdp_as_x and y_per_capita:
-                self._joined_data.append_others_data(product_pp.amount_per_capita_per_year)
+                self._joined_data.append_others_data(product_pp.amount_per_capita_vs_year)
             elif gdp_as_x and y_per_capita:
-                self._joined_data.append_others_data(product_pp.amount_per_capita_per_gdp)
+                self._joined_data.append_others_data(product_pp.amount_per_capita_vs_gdp)
 
         # calculate group coefficients and save result
         self._group_coef = self._joined_data.get_coef()
@@ -93,20 +93,20 @@ class CountryGroupJoinedDiversified(CountryGroup):
 
             # decide which data to use
             if not gdp_as_x and not y_per_capita:
-                self._joined_data[country_name] = product_pp.amount_per_year
+                self._joined_data[country_name] = product_pp.amount_vs_year
             elif gdp_as_x and not y_per_capita:
-                self._joined_data[country_name] = product_pp.amount_per_gdp
+                self._joined_data[country_name] = product_pp.amount_vs_gdp
 
             """
             # ??
             if not gdp_as_x and not y_per_capita:
-                self.joined_data[country_name] = product_pp.amount_per_year
+                self.joined_data[country_name] = product_pp.amount_vs_year
             elif gdp_as_x and not y_per_capita:
-                self.joined_data[country_name] = product_pp.amount_per_gdp
+                self.joined_data[country_name] = product_pp.amount_vs_gdp
             elif not gdp_as_x and y_per_capita:
-                self.joined_data[country_name] = product_pp.amount_per_capita_per_year
+                self.joined_data[country_name] = product_pp.amount_per_capita_vs_year
             elif gdp_as_x and y_per_capita:
-                self.joined_data[country_name] = product_pp.amount_per_capita_per_gdp
+                self.joined_data[country_name] = product_pp.amount_per_capita_vs_gdp
             """
 
         # calculate group coefficients and save result

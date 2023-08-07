@@ -50,7 +50,7 @@ class CountryInstanceFilter:
             gdp_prog: float = gdp_prognosis_pp.get_forecast(self.ctrl.general_settings.target_year, gdp_start_point)
         return gdp_prog
 
-    def get_country_population_in_target_year(self, country_name) -> float:
+    def get_population_country_in_target_year(self, country_name) -> float:
         """ Getter for the population of a country in the target year. """
         population_pp = self.preprocessor.countries_pp[country_name].population_pp
         his_pop_country: Timeseries = population_pp.population_historical_whole_country
@@ -63,8 +63,8 @@ class CountryInstanceFilter:
         else:
             return his_pop_country.get_value_at_year(target_year)
 
-    def get_nuts2_population_in_target_year(self, country_name) -> dict[str, float]:
-        """ Getter for the population for each nuts2 region of a country in target year. """
+    def get_population_nuts2_in_target_year(self, country_name) -> dict[str, float]:
+        """ Getter for the population for all nuts2 regions of a country in target year. """
         country_pp = self.preprocessor.countries_pp[country_name]
         nuts2_pp: NUTS2Preprocessed = country_pp.nuts2_pp
         if nuts2_pp is None:
@@ -104,7 +104,7 @@ class CountryInstanceFilter:
                                                     (nuts2_forecast_start_year,nuts2_population_in_start_year))
         return nuts2_population_in_target_year
 
-    def get_nuts2_population_percentages_in_target_year(self, country_name) -> dict[str, float]:
+    def get_population_nuts2_percentages_in_target_year(self, country_name) -> dict[str, float]:
         """ Getter for the population density distributed into nuts2 regions of a country in the target year. """
         country_pp = self.preprocessor.countries_pp[country_name]
         nuts2_pp: NUTS2Preprocessed = country_pp.nuts2_pp
@@ -112,7 +112,7 @@ class CountryInstanceFilter:
             # country doesn't have any nuts2 data
             return dict()
 
-        nuts2_population_in_target_year = self.get_nuts2_population_in_target_year(country_name)
+        nuts2_population_in_target_year = self.get_population_nuts2_in_target_year(country_name)
         country_population_in_target_year = \
             math.fsum([nuts2_pop for nuts2_pop in nuts2_population_in_target_year.values()])
 

@@ -3,6 +3,7 @@ This module contains utility functions and classes to more easily generate outpu
 """
 
 import os
+from datetime import datetime
 
 import pandas as pd
 
@@ -33,14 +34,19 @@ class FileGenerator(object):
     #        ...
 
     def __init__(self, input_manager, directory, filename):
+
+        # generate directory based on date
+        day_directory_name = "results_" + datetime.today().strftime('%Y-%m-%d')
+
+        # create directory when not present
         if directory == "":
             if not os.path.exists(input_manager.output_path):
                 os.makedirs(input_manager.output_path)
-            self.out_file_path = input_manager.output_path / filename
+            self.out_file_path = input_manager.output_path / day_directory_name / filename
         else:
-            if not os.path.exists(input_manager.output_path / directory):
-                os.makedirs(input_manager.output_path / directory)
-            self.out_file_path = input_manager.output_path / directory / filename
+            if not os.path.exists(input_manager.output_path / day_directory_name / directory):
+                os.makedirs(input_manager.output_path / day_directory_name / directory)
+            self.out_file_path = input_manager.output_path / day_directory_name / directory / filename
 
         self.input_manager = input_manager
         self.excel_writer = pd.ExcelWriter(self.out_file_path)

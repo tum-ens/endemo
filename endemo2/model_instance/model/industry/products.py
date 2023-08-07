@@ -21,7 +21,7 @@ class Product:
         if self._is_empty:
             return Demand(0, Heat(), 0)
 
-        sc = self._product_instance_filter.get_specific_consumption_po(self._country_name, self._product_name)
+        sc = self._product_instance_filter.get_specific_consumption(self._country_name, self._product_name)
         perc = self._product_instance_filter.get_perc_used(self._product_name)
 
         # choose which type of amount based on settings

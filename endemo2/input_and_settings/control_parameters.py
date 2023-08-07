@@ -25,92 +25,6 @@ class ControlParameters:
         self.industry_settings = industry_settings
 
 
-class IndustrySettings:
-    """
-    The IndustrySettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
-    IND_general and IND_subsectors sheets.
-
-    :ivar dict[str, ForecastMethod] forecast_map: Maps the forecast method string, used in the setting tables,
-        to the internal enum representation.
-    :ivar ForecastMethod forecast_method: Contains the currently selected forecast method.
-    :ivar bool time_trend_model_activation_quadratic:
-        "If the time trend model is deactivated, the traditional approach is selected"
-    :ivar bool production_quantity_calc_per_capita:
-        Decides, whether the production quantity prognosis should use per-capita projection.
-    :ivar bool trend_calc_for_spec:
-        Decides, whether specific consumption should be predicted from historical data, when available.
-    :ivar bool nuts2_distribution_based_on_installed_ind_capacity: "If false, distribution per population density."
-    :ivar [int] skip_years: Years that are skipped while reading files, to remove outliers.
-    :ivar int last_available_year: Last year that's read from historical production files (exclusive).
-    :ivar dict[str, ProductSettings] product_settings: Contains settings for each product.
-        Of the form {product_name -> product_settings_obj}
-    :ivar [str] active_product_names: A list of the names of active products.
-        Only for these products, calculations are performed.
-    :ivar float rest_sector_growth_rate: The growth rate of the rest sector.
-    :ivar bool use_gdp_as_x: Indicates that prediction x-axis should be gdp instead of time.
-    """
-    forecast_map = dict({"Linear time trend": ForecastMethod.LINEAR,
-                         "Linear GDP function": ForecastMethod.LINEAR,
-                         "Quadratic GDP function": ForecastMethod.QUADRATIC,
-                         "Exponential": ForecastMethod.EXPONENTIAL})
-
-    def __init__(self, ex_general: pd.DataFrame, ex_subsectors: pd.DataFrame):
-        self.product_settings = dict()
-        self.active_product_names = []
-        forecast_method_string = ex_general[ex_general["Parameter"] == "Forecast method"].get("Value").iloc[0]
-        self.forecast_method = IndustrySettings.forecast_map[forecast_method_string]
-        self.use_gdp_as_x = True if "GDP" in forecast_method_string else False
-
-        self.time_trend_model_activation_quadratic = \
-            ex_general[ex_general["Parameter"] == "Time trend model activation for U-shape method"].get("Value").iloc[0]
-
-        self.production_quantity_calc_per_capita = \
-            ex_general[ex_general["Parameter"] == "Production quantity calculated per capita"].get("Value").iloc[0]
-
-        self.trend_calc_for_spec = \
-            ex_general[ex_general["Parameter"] == "Trend calculation for specific energy requirements"].get(
-                "Value").iloc[0]
-
-        self.nuts2_distribution_based_on_installed_ind_capacity = \
-            ex_general[ex_general["Parameter"] == "NUTS2 distribution based on installed industrial capacity"].get(
-                "Value").iloc[0]
-
-        skip_years_string = str(ex_general[ex_general["Parameter"] == "Skip years"].get("Value").iloc[0])
-        self.skip_years = [int(i) for i in skip_years_string.split(",")]
-
-        self.last_available_year = \
-            ex_general[ex_general["Parameter"] == "Last available year"].get("Value").iloc[0]
-
-        self.rest_sector_growth_rate = \
-            ex_subsectors[ex_subsectors["Subsectors"] == "unspecified industry"].get(
-                "Parameter: production quantity change in %/year").iloc[0]
-
-        product_list = ex_subsectors.get("Subsectors")
-
-        for product in product_list:
-            if product == "unspecified industry":
-                continue
-            active = \
-                ex_subsectors[ex_subsectors["Subsectors"] == product].get(
-                    "Active subsectors").iloc[0]
-            prod_quant_change = \
-                ex_subsectors[ex_subsectors["Subsectors"] == product].get(
-                    "Parameter: production quantity change in %/year").iloc[0]
-            sub_perc_used_string = \
-                ex_subsectors[ex_subsectors["Subsectors"] == product].get(
-                    "Parameter: technology substitution in %").iloc[0]
-            try:
-                sub_perc_used_float = float(sub_perc_used_string)
-                sub_perc_used = sub_perc_used_float / 100
-            except ValueError:
-                sub_perc_used = 1
-
-            self.product_settings[product] = ProductSettings(active, prod_quant_change, sub_perc_used)
-
-            if self.product_settings[product].active:
-                self.active_product_names.append(product)
-
-
 class GeneralSettings:
     """
     The GeneralSettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
@@ -173,3 +87,89 @@ class GeneralSettings:
             KeyError(
                 "Parameter name not found. Does the parameter access string in the code match a parameter in the "
                 "Set_and_Control_Parameters.xlsx preprocessing table?")
+
+
+class IndustrySettings:
+    """
+    The IndustrySettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
+    IND_general and IND_subsectors sheets.
+
+    :ivar dict[str, ForecastMethod] forecast_map: Maps the forecast method string, used in the setting tables,
+        to the internal enum representation.
+    :ivar ForecastMethod forecast_method: Contains the currently selected forecast method.
+    :ivar bool time_trend_model_activation_quadratic:
+        "If the time trend model is deactivated, the traditional approach is selected"
+    :ivar bool production_quantity_calc_per_capita:
+        Decides, whether the production quantity prognosis should use per-capita projection.
+    :ivar bool trend_calc_for_spec:
+        Decides, whether specific consumption should be predicted from historical data, when available.
+    :ivar bool nuts2_distribution_based_on_installed_ind_capacity: "If false, distribution per population density."
+    :ivar [int] skip_years: Years that are skipped while reading files, to remove outliers.
+    :ivar int last_available_year: Last year that's read from historical production files (exclusive).
+    :ivar dict[str, ProductSettings] product_settings: Contains settings for each product.
+        Of the form {product_name -> product_settings_obj}
+    :ivar [str] active_product_names: A list of the names of active products.
+        Only for these products, calculations are performed.
+    :ivar float rest_sector_growth_rate: The growth rate of the rest sector.
+    :ivar bool use_gdp_as_x: Indicates that prediction x-axis should be gdp instead of time.
+    """
+    forecast_map = dict({"Linear time trend": ForecastMethod.LINEAR,
+                         "Linear GDP function": ForecastMethod.LINEAR,
+                         "Quadratic GDP function": ForecastMethod.QUADRATIC,
+                         "Exponential": ForecastMethod.EXPONENTIAL})
+
+    def __init__(self, df_general: pd.DataFrame, df_subsectors: pd.DataFrame):
+        self.product_settings = dict()
+        self.active_product_names = []
+        forecast_method_string = df_general[df_general["Parameter"] == "Forecast method"].get("Value").iloc[0]
+        self.forecast_method = IndustrySettings.forecast_map[forecast_method_string]
+        self.use_gdp_as_x = True if "GDP" in forecast_method_string else False
+
+        self.time_trend_model_activation_quadratic = \
+            df_general[df_general["Parameter"] == "Time trend model activation for U-shape method"].get("Value").iloc[0]
+
+        self.production_quantity_calc_per_capita = \
+            df_general[df_general["Parameter"] == "Production quantity calculated per capita"].get("Value").iloc[0]
+
+        self.trend_calc_for_spec = \
+            df_general[df_general["Parameter"] == "Trend calculation for specific energy requirements"].get(
+                "Value").iloc[0]
+
+        self.nuts2_distribution_based_on_installed_ind_capacity = \
+            df_general[df_general["Parameter"] == "NUTS2 distribution based on installed industrial capacity"].get(
+                "Value").iloc[0]
+
+        skip_years_string = str(df_general[df_general["Parameter"] == "Skip years"].get("Value").iloc[0])
+        self.skip_years = [int(i) for i in skip_years_string.split(",")]
+
+        self.last_available_year = \
+            df_general[df_general["Parameter"] == "Last available year"].get("Value").iloc[0]
+
+        self.rest_sector_growth_rate = \
+            df_subsectors[df_subsectors["Subsectors"] == "unspecified industry"].get(
+                "Parameter: production quantity change in %/year").iloc[0]
+
+        product_list = df_subsectors.get("Subsectors")
+
+        for product in product_list:
+            if product == "unspecified industry":
+                continue
+            active = \
+                df_subsectors[df_subsectors["Subsectors"] == product].get(
+                    "Active subsectors").iloc[0]
+            prod_quant_change = \
+                df_subsectors[df_subsectors["Subsectors"] == product].get(
+                    "Parameter: production quantity change in %/year").iloc[0]
+            sub_perc_used_string = \
+                df_subsectors[df_subsectors["Subsectors"] == product].get(
+                    "Parameter: technology substitution in %").iloc[0]
+            try:
+                sub_perc_used_float = float(sub_perc_used_string)
+                sub_perc_used = sub_perc_used_float / 100
+            except ValueError:
+                sub_perc_used = 1
+
+            self.product_settings[product] = ProductSettings(active, prod_quant_change, sub_perc_used)
+
+            if self.product_settings[product].active:
+                self.active_product_names.append(product)

@@ -2,7 +2,7 @@
 This module contains all instance filters that relate to the industry sector of the model.
 """
 
-from endemo2.data_structures.containers import SC, Heat
+from endemo2.data_structures.containers import SpecConsum, Heat
 from endemo2.data_structures.enumerations import DemandType, ForecastMethod
 from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
@@ -32,9 +32,9 @@ class IndustryInstanceFilter:
         return [product_name for product_name in self.ctrl.industry_settings.active_product_names
                 if country_name in dict_product_input[product_name].production.keys()]
 
-    def get_nuts2_rest_sector_capacities(self, country_name) -> dict[str, float]:
+    def get_nuts2_rest_sector_distribution(self, country_name) -> dict[str, float]:
         """ Get the capacity/100 of the rest sector for each nuts2 region in given country. """
-        return self.country_instance_filter.get_nuts2_population_percentages_in_target_year(country_name)
+        return self.country_instance_filter.get_population_nuts2_percentages_in_target_year(country_name)
 
     def get_target_year(self) -> int:
         """ Getter for the target year. """
@@ -44,19 +44,19 @@ class IndustryInstanceFilter:
         """ Getter for the names of the product that are active in calculations. """
         return self.ctrl.industry_settings.active_product_names
 
-    def get_rest_calc_data(self, country_name) -> dict[DemandType, (float, float)]:
+    def get_rest_sector_proportion_in_basis_year(self, country_name) -> dict[DemandType, (float, float)]:
         """ Getter for the input data to calculate the rest sector demand. """
-        return self.rest_sector_input.rest_calc_data[country_name]
+        return self.rest_sector_input.rest_demand_proportion_basis_year[country_name]
 
     def get_rest_sector_growth_rate(self) -> float:
         """ Getter for the growth rate of a sector specified in settings. """
         return self.ctrl.industry_settings.rest_sector_growth_rate
 
-    def get_rest_basis_year(self) -> int:
+    def get_rest_sector_basis_year(self) -> int:
         """ Getter for the year used as the start year for the exponential growth of the rest sector. """
         return self.rest_sector_input.rest_calc_basis_year
 
-    def get_rest_heat_levels(self) -> Heat:
+    def get_rest_sector_heat_levels(self) -> Heat:
         """ Get the heat levels of the rest sector. """
         return self.rest_sector_input.rest_sector_heat_levels
 
@@ -79,7 +79,7 @@ class ProductInstanceFilter:
             for product_name, product_pp  in country_pp.industry_pp.products_pp.items():
                 product_settings = self.ctrl.industry_settings.product_settings[product_name]
                 exp_growth_rate_from_settings = product_settings.manual_exp_change_rate
-                product_pp.amount_per_year.get_coef().set_exp_growth_rate(exp_growth_rate_from_settings)
+                product_pp.amount_vs_year.get_coef().set_exp_growth_rate(exp_growth_rate_from_settings)
 
     def get_nuts2_capacities(self, country_name, product_name) -> dict[str, float]:
         """ Get the nuts2 capacities for a certain product in a certain country. """
@@ -95,7 +95,7 @@ class ProductInstanceFilter:
                 res_dict_nuts2_capacities[nuts2_region_name] = 0
             return res_dict_nuts2_capacities
 
-    def get_specific_consumption_po(self, country_name, product_name) -> SC:
+    def get_specific_consumption(self, country_name, product_name) -> SpecConsum:
         """ Get specific consumption in TWh/t"""
         country_pp = self.preprocessor.countries_pp[country_name]
         product_pp = country_pp.industry_pp.products_pp[product_name]
@@ -111,18 +111,19 @@ class ProductInstanceFilter:
             # set forecast method. For specific consumption it's linear for now.
             for demand_type in [DemandType.ELECTRICITY, DemandType.HEAT, DemandType.HYDROGEN]:
                 sc_his[demand_type].get_coef().set_method(ForecastMethod.LINEAR)
+
             # forecast specific consumption
             electricity = sc_his[DemandType.ELECTRICITY].get_coef().get_function_y(target_year)
             heat = sc_his[DemandType.HEAT].get_coef().get_function_y(target_year)
             hydrogen = sc_his[DemandType.HYDROGEN].get_coef().get_function_y(target_year)
 
-            specific_consumption = SC(electricity, heat, hydrogen)
+            specific_consumption = SpecConsum(electricity, heat, hydrogen)
             specific_consumption.scale(1 / 3600000)     # convert from GJ/t to TWh/t, TODO: implement nicer
             return specific_consumption
 
         elif not sc_pp.historical_sc_available:
             default_cs = sc_pp.default_specific_consumption
-            specific_consumption = SC(default_cs.electricity, default_cs.heat, default_cs.hydrogen)
+            specific_consumption = SpecConsum(default_cs.electricity, default_cs.heat, default_cs.hydrogen)
             specific_consumption.scale(1 / 3600000)  # convert from GJ/t to TWh/t, TODO: as above
             return specific_consumption
 
@@ -154,13 +155,13 @@ class ProductInstanceFilter:
 
         # decide which preprocessed data to use, depending on instance settings
         if not use_per_capita and not use_gdp:
-            active_TwoDSeries = product_pp.amount_per_year
+            active_TwoDSeries = product_pp.amount_vs_year
         elif use_per_capita and not use_gdp:
-            active_TwoDSeries = product_pp.amount_per_capita_per_year
+            active_TwoDSeries = product_pp.amount_per_capita_vs_year
         elif not use_per_capita and use_gdp:
-            active_TwoDSeries = product_pp.amount_per_gdp
+            active_TwoDSeries = product_pp.amount_vs_gdp
         else:   # use_per_capita and use_gdp:
-            active_TwoDSeries = product_pp.amount_per_capita_per_gdp
+            active_TwoDSeries = product_pp.amount_per_capita_vs_gdp
 
         # get coefficients from preprocessed data
         coef_obj = active_TwoDSeries.get_coef()
