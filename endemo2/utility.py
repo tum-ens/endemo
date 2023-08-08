@@ -246,7 +246,6 @@ def quadratic_regression_delta(dict_series: dict[str, pm.TwoDseries]) \
                 else:
                     eq_sub_country.append(0)
 
-            import pdb; pdb.set_trace()
             equation.append(eq_sub_country)
         counter+=1
         

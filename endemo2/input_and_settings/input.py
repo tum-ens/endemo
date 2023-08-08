@@ -13,7 +13,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from endemo2.data_structures.enumerations import GroupType, DemandType
+from endemo2.data_structures.enumerations import GroupType, DemandType, SubsectorGroup
 from endemo2 import utility as uty
 from endemo2.data_structures import containers as dc
 from endemo2.input_and_settings import control_parameters as cp
@@ -414,6 +414,14 @@ class IndustryInput:
     }
     sc_historical_sheet_names = ["Feste fossile Brennstoffe", "Synthetische Gase", "Erdgas", "Oel",
                                  "Erneuerbare Energien", "Abfaelle", "Elektrizitaet", "Waerme"]
+
+    subsector_groups_map = {
+        "non_metalic_minerals": SubsectorGroup.NON_METALIC_MINERALS,
+        "chemicals_and_petrochemicals": SubsectorGroup.CHEMICALS_AND_PETROCHEMICALS,
+        "food_and_tobacco": SubsectorGroup.FOOD_AND_TOBACCO,
+        "iron_and_steel": SubsectorGroup.IRON_AND_STEEL,
+        "paper": SubsectorGroup.PAPER
+    }
 
     def __init__(self, industry_path: Path, industry_settings: cp.IndustrySettings, abbreviations: dict,
                  active_countries: [str]):

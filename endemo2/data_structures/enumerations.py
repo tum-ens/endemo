@@ -7,6 +7,17 @@ from __future__ import annotations
 from enum import Enum
 
 
+class SubsectorGroup(Enum):
+    """
+    Enum to group the industry subsectors.
+    """
+    CHEMICALS_AND_PETROCHEMICALS = 0
+    FOOD_AND_TOBACCO = 1
+    IRON_AND_STEEL = 2
+    NON_METALIC_MINERALS = 3
+    PAPER = 4
+
+
 class GroupType(Enum):
     """
     Enum to differentiate different country group types.

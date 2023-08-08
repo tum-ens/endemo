@@ -190,6 +190,8 @@ def generate_specific_consumption_output(folder, input_manager: input.Input,
                  for product_pp in _get_all_product_pps(product_name, countries_pp)
                  if DemandType.HEAT in product_pp.specific_consumption_pp.specific_consumption_historical.keys()]
             year_range = get_year_range(all_tss)
+            if year_range[0] is None or year_range[1] is None:
+                continue
 
             for country_name, country_pp in countries_pp.items():
                 fg.add_entry("Country", country_name)
@@ -204,7 +206,7 @@ def generate_specific_consumption_output(folder, input_manager: input.Input,
                         ts = Timeseries([])
                     generate_timeseries_output(fg, ts, year_range)
                 else:
-                    generate_timeseries_output(fg, Timeseries([]), year_range)
+                    generate_timeseries_output(fg, Timeseries([(0, 0)]), year_range)
 
             fg.start_sheet(product_name + "_electricity")
             for country_name, country_pp in countries_pp.items():
@@ -226,4 +228,4 @@ def generate_specific_consumption_output(folder, input_manager: input.Input,
                         ts = Timeseries([])
                     generate_timeseries_output(fg, ts, year_range)
                 else:
-                    generate_timeseries_output(fg, Timeseries([]), year_range)
+                    generate_timeseries_output(fg, Timeseries([(0, 0)]), year_range)

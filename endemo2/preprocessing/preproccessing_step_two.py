@@ -102,7 +102,7 @@ class CountryGroupJoinedDiversified(CountryGroup):
                 self._joined_data[country_name] = product_pp.amount_per_capita_vs_gdp
 
         # calculate group coefficients and save result
-        (self._coef_tuple, self._offset_dict) = uty.quadratic_regression_delta(self._joined_data)
+        # (self._coef_tuple, self._offset_dict) = uty.quadratic_regression_delta(self._joined_data)
 
     def get_coef_for_country(self, country_name) -> Coef:
         country_coef = Coef()
