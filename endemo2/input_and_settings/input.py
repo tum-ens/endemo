@@ -8,6 +8,7 @@ from __future__ import annotations
 import math
 import os
 import warnings
+from array import array
 from pathlib import Path
 
 import numpy as np
@@ -423,6 +424,16 @@ class IndustryInput:
         "paper": SubsectorGroup.PAPER
     }
 
+    subsector_groups_hotmaps_filenames = {
+        SubsectorGroup.NON_METALIC_MINERALS:
+            "hotmaps_task_2.7_load_profile_industry_non_metalic_minerals_yearlong_2018.csv",
+        SubsectorGroup.CHEMICALS_AND_PETROCHEMICALS:
+            "hotmaps_task_2.7_load_profile_industry_chemicals_and_petrochemicals_yearlong_2018.csv",
+        SubsectorGroup.FOOD_AND_TOBACCO: "hotmaps_task_2.7_load_profile_industry_food_and_tobacco_yearlong_2018.csv",
+        SubsectorGroup.IRON_AND_STEEL: "hotmaps_task_2.7_load_profile_industry_iron_and_steel_yearlong_2018.csv",
+        SubsectorGroup.PAPER: "hotmaps_task_2.7_load_profile_industry_paper_yearlong_2018.csv",
+    }
+
     def __init__(self, industry_path: Path, industry_settings: cp.IndustrySettings, abbreviations: dict,
                  active_countries: [str]):
         self.settings = industry_settings
@@ -445,7 +456,34 @@ class IndustryInput:
         df_rest_calc = pd.read_excel(industry_path / "Ind_energy_demand_2018_Trend_Restcalcul.xlsx")
         self.rest_sector_input = RestSectorInput(df_rest_calc, dict_heat_levels)
 
-        # read the active sectors_to_do sheets
+        # read subsector groups for time profile
+        df_subsector_group = pd.read_excel(industry_path / "Subsector_groups.xlsx")
+        self.subsector_to_group_map = dict(zip(df_subsector_group["Subsectors"], df_subsector_group["Group"]))
+
+        # read other files for time profile
+        df_electricity_profiles = pd.read_excel(industry_path / "IND_Elec_Loadprofile.xlsx")
+        self.dict_electricity_profiles = dict[str, [float]]()
+        for country_name in active_countries:
+            country_column_name = country_name + "-Electricity"
+            if country_name + "-Electricity" not in list(df_electricity_profiles):
+                country_column_name = "Default-Electricity"
+            country_column = list(df_electricity_profiles[country_column_name])
+            self.dict_electricity_profiles[country_name] = country_column
+
+        self.dict_heat_profiles = dict[SubsectorGroup, dict[str, [float]]]()
+        for subsec_group, filename in IndustryInput.subsector_groups_hotmaps_filenames.items():
+            df_hotmaps = pd.read_excel(industry_path / filename)
+            for row in df_hotmaps.iterrows():
+                country_abbr = row["NUTS0_code"]
+                new_value = row["load"]
+                if country_abbr not in self.dict_heat_profiles[subsec_group].keys():
+                    self.dict_heat_profiles[subsec_group][country_abbr] = []
+                self.dict_heat_profiles[subsec_group][country_abbr].append(new_value / 1000000.0)
+
+
+
+        # read the active sectors sheets
+
         for product_name in self.settings.active_product_names:
             if product_name == 'unspecified industry':
                 continue
