@@ -3,7 +3,7 @@ This module contains all things shared by the different preprocessing stages.
 """
 
 from endemo2.preprocessing.preproccessing_step_two import GroupManager
-from input.input import Input
+from endemo2.input_and_settings.input import Input
 from endemo2.preprocessing import preprocessing_step_one as pp1
 
 

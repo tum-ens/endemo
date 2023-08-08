@@ -1,31 +1,96 @@
 """
 This module contains all functions that generate output files from the preprocessor.
 """
-from datetime import datetime
+import itertools
+import os
+from pathlib import Path
 
-from endemo2.data_structures.enumerations import DemandType
+from matplotlib import pyplot as plt
+import seaborn as sns
+
+from endemo2.data_structures.enumerations import DemandType, ForecastMethod
+from endemo2.input_and_settings.input import Input
 from endemo2.output.output_utility import FileGenerator, generate_timeseries_output, shortcut_coef_output, \
-    get_year_range
-from endemo2.data_structures.prediction_models import Coef, Timeseries
+    get_year_range, save_series_plot, save_multiple_series_plot
+from endemo2.data_structures.prediction_models import Coef, Timeseries, TwoDseries
 from endemo2.input_and_settings import input
 from endemo2.preprocessing.preprocessing_step_one import CountryPreprocessed, ProductPreprocessed
+from endemo2 import utility as uty
 
 
 def generate_preprocessing_output(input_manager, preprocessor):
     """
     Calls all generate_x_output functions of this module that should be used to generate output of the preprocessor.
     """
+
     folder_name = "preprocessed"
 
     generate_amount_timeseries_output(folder_name, input_manager, preprocessor.countries_pp)
     generate_amount_per_gdp_coef_output(folder_name, input_manager, preprocessor.countries_pp)
     generate_specific_consumption_output(folder_name, input_manager, preprocessor.countries_pp)
+    # generate_visual_output(folder_name, input_manager, preprocessor.countries_pp)
 
 
-def generate_graphical_output():
-    """ Generate graphics output of preprocessor. """
-    # TODO
-    pass
+def generate_visual_output(folder, input_manager: input.Input, countries_pp: dict[str, CountryPreprocessed]):
+
+    # generate vis output specific consumption
+    for product_name in input_manager.industry_input.active_products.keys():
+        x_label = "Time"
+        y_label = "Specific Consumption"
+        directory = Path(folder) / "visual_output" / "Specific Consumption"
+        for country_name, country_pp in countries_pp.items():
+            sc_pp = country_pp.industry_pp.products_pp[product_name].specific_consumption_pp
+            if sc_pp.historical_sc_available:
+                series_el = sc_pp.specific_consumption_historical[DemandType.ELECTRICITY]
+                series_el.get_coef().set_method(ForecastMethod.LINEAR)
+                series_he = sc_pp.specific_consumption_historical[DemandType.HEAT]
+                series_he.get_coef().set_method(ForecastMethod.LINEAR)
+                series_hy = sc_pp.specific_consumption_historical[DemandType.HYDROGEN]
+                series_hy.get_coef().set_method(ForecastMethod.LINEAR)
+                save_multiple_series_plot(input_manager, directory,
+                                          [series_el, series_he, series_hy],
+                                          ["electricity", "heat", "hydrogen"],
+                                          x_label, y_label, country_name, product_name)
+
+    # generate vis output amount_vs_year
+    for product_name, product_input in input_manager.industry_input.active_products.items():
+        x_label = "Time"
+        y_label = "Amount"
+        directory = Path(folder) / "visual_output" / (y_label + "-vs-" + x_label)
+        for country_name, country_pp in countries_pp.items():
+            series = country_pp.industry_pp.products_pp[product_name].amount_vs_year
+            if not (series.is_empty() or series.is_zero()):
+                save_series_plot(input_manager, directory, series, x_label, y_label, country_name, product_name)
+
+    # generate vis output amount_per_capita_vs_year
+    for product_name, product_input in input_manager.industry_input.active_products.items():
+        x_label = "Time"
+        y_label = "Amount-per-Capita"
+        directory = Path(folder) / "visual_output" / (y_label + "-vs-" + x_label)
+        for country_name, country_pp in countries_pp.items():
+            series: TwoDseries = country_pp.industry_pp.products_pp[product_name].amount_per_capita_vs_year
+            if not (series.is_empty() or series.is_zero()):
+                save_series_plot(input_manager, directory, series, x_label, y_label, country_name, product_name)
+
+    # generate vis output amount_per_capita_vs_gdp
+    for product_name, product_input in input_manager.industry_input.active_products.items():
+        x_label = "GDP"
+        y_label = "Amount-per-Capita"
+        directory = Path(folder) / "visual_output" / (y_label + "-vs-" + x_label)
+        for country_name, country_pp in countries_pp.items():
+            series = country_pp.industry_pp.products_pp[product_name].amount_per_capita_vs_gdp
+            if not (series.is_empty() or series.is_zero()):
+                save_series_plot(input_manager, directory, series, x_label, y_label, country_name, product_name)
+
+    # generate vis output amount_vs_gdp
+    for product_name, product_input in input_manager.industry_input.active_products.items():
+        x_label = "GDP"
+        y_label = "Amount"
+        directory = Path(folder) / "visual_output" / (y_label + "-vs-" + x_label)
+        for country_name, country_pp in countries_pp.items():
+            series = country_pp.industry_pp.products_pp[product_name].amount_vs_gdp
+            if not (series.is_empty() or series.is_zero()):
+                save_series_plot(input_manager, directory, series, x_label, y_label, country_name, product_name)
 
 
 def _get_all_product_pps(product_name: str, countries_pp: dict[str, CountryPreprocessed]) -> [ProductPreprocessed]:

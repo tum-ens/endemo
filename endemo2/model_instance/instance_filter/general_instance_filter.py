@@ -11,7 +11,7 @@ from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.data_structures.enumerations import SectorIdentifier
 from endemo2.preprocessing.preprocessing_step_one import NUTS2Preprocessed, GDPPreprocessed
 from endemo2.preprocessing.preprocessor import Preprocessor
-from input.input import GeneralInput
+from endemo2.input_and_settings.input import GeneralInput
 
 
 class CountryInstanceFilter:

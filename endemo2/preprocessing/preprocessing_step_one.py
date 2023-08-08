@@ -8,7 +8,7 @@ from endemo2.data_structures.nuts_tree import NutsRegionNode, NutsRegionLeaf
 from endemo2.data_structures.containers import EH, HisProg
 from endemo2.data_structures.enumerations import DemandType
 from endemo2.data_structures.prediction_models import Timeseries, RigidTimeseries, IntervalForecast
-from input.input import Input, ProductInput, GeneralInput
+from endemo2.input_and_settings.input import Input, ProductInput, GeneralInput
 
 
 class SpecificConsumptionPreprocessed:

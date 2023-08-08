@@ -9,7 +9,7 @@ from endemo2.model_instance.instance_filter.general_instance_filter import Count
 from endemo2.preprocessing.preprocessing_step_one import ProductPreprocessed, CountryPreprocessed
 from endemo2.preprocessing.preprocessor import Preprocessor
 from endemo2.data_structures.prediction_models import TwoDseries
-from input.input import IndustryInput, GeneralInput
+from endemo2.input_and_settings.input import IndustryInput, GeneralInput
 
 
 class IndustryInstanceFilter:

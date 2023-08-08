@@ -4,7 +4,9 @@ This module contains all functions that generate output files from a model insta
 
 import math
 from datetime import datetime
+from pathlib import Path
 
+from endemo2.input_and_settings.input import Input
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
 from endemo2.model_instance.instance_filter.industry_instance_filter import ProductInstanceFilter
 from endemo2.model_instance.model.country import Country
@@ -13,7 +15,6 @@ from endemo2.model_instance.model.industry.products import Product
 from endemo2.output.output_utility import FileGenerator, shortcut_demand_table
 from endemo2.model_instance.model.industry.industry_sector import Industry
 from endemo2.data_structures.enumerations import SectorIdentifier, ForecastMethod
-from input.input import Input
 
 def generate_instance_output(input_manager: Input, countries: dict[str, Country],
                              country_instance_filter: CountryInstanceFilter,
@@ -160,6 +161,22 @@ def generate_population_prognosis_output(scenario_output_folder: str, input_mana
 
     filename = "general_population_forecast.xlsx"
     fg = FileGenerator(input_manager, scenario_output_folder, filename)
+    with fg:
+        fg.start_sheet("Country Forecast")
+        for country_name in countries.keys():
+            fg.add_entry("Country", country_name)
+            fg.add_entry(target_year, country_instance_filter.get_population_country_in_target_year(country_name))
+
+        fg.start_sheet("NUTS2 Forecast")
+        for country_name in countries.keys():
+            regions_perc = country_instance_filter.get_population_nuts2_percentages_in_target_year(country_name)
+            country_pop = country_instance_filter.get_population_country_in_target_year(country_name)
+            for region_name, value in regions_perc.items():
+                fg.add_entry("NUTS2 Region", region_name)
+                fg.add_entry(target_year, country_pop * value)
+
+    filename = "general_population_forecast.xlsx"
+    fg = FileGenerator(input_manager, scenario_output_folder / Path("details"), filename)
     with fg:
         fg.start_sheet("Country Prognosis")
         for country_name in countries.keys():
