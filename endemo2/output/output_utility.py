@@ -17,7 +17,6 @@ from endemo2 import utility as uty
 from endemo2.input_and_settings.input import Input
 
 
-
 class FileGenerator(object):
     """
     A tool to more easily generate output files.

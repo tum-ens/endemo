@@ -173,27 +173,93 @@ def quadratic_regression(data: list[(float, float)], visualize: bool = False) ->
     return k0, k1, k2
 
 
-def quadratic_regression_delta(data: dict[str, pm.TwoDseries]) \
+def quadratic_regression_delta(dict_series: dict[str, pm.TwoDseries]) \
         -> ((float, float, float), dict[str, float]):
     """
-    :todo: implement later
-
     :param dict data: The data on which linear regression is applied. It should be structured like {tag -> data list}
     :return: The calculated coefficients (k0, k1, k2) and the offset for each tag {tag -> offset}
     """
-    N = len(data)
+    
+    N=len(dict_series)
+    
+    e1 = a1 = b1 = c1 = 0
+    e2 = c2 = 0
+    e3 = c3 = 0
+    
+    for country_name, series in dict_series.items():
+        for gdp, amount in series.get_data():
+            
+            e1+= amount
+            a1 += 1 
+            b1+= gdp
+            c1+= float(gdp)**2
 
-    e_1 = a_1 = b_1 = c_1 = 0
-    e_2 = c_2 = 0
-    e_3 = c_3 = 0
+            e2+= amount * gdp
+            c2+= float(gdp)**3
 
-    # ??? what is to come ???
+            e3+= amount * (gdp)**2
+            c3+= float(gdp)**4
+     
+    a2 = b1
+    a3 = b2 = c1
+    b3 = c2
+
+    equation = [[a1, b1, c1], [a2, b2, c2], [a3, b3, c3]]
+    eq_right = [e1, e2, e3]
+
+    """
+    Calculating tag specific offsets. 
+    Calculating (for each tag) parameters which stand next to the tag specific coefficients in the equations.
+    """
+
+    counter = 0
+    for country_name, series in dict_series.items():
+        par_eq1 = par_eq2 = par_eq3 = 0
+        e_c = 0
+
+        if counter!=N-1:
+            for gdp, amount in series.get_data():
+                par_eq1 += 1
+                par_eq2 += gdp
+                par_eq3 += gdp**2
+                e_c += amount
+
+            # Extend existing equations with additional tag specific coefficients.
+            # equation elements 0-2 are partial differentials over coeff. k0-k2 set to be (per definition) equal 0.
+            equation[0].append(par_eq1) # parmeter next to tag coefficient in equation 0
+            equation[1].append(par_eq2) # parmeter next to tag coefficient in equation 1
+            equation[2].append(par_eq3) # parmeter next to tag coefficient in equation 2
+
+            # Extend number of equations.
+            eq_right.append(e_c) # parameter on the left equation side
+            eq_sub_country = [par_eq1, par_eq2, par_eq3] # parameter on the right equation side, for coeff. k0-k2
+
+            """
+            For each of additional equations each tag specific offset has a parameter next to it.
+            Country offset is unequal zero if the TwoDseries are from the corresponding country,
+            other-ways the parameter equals zero.
+            """
+            for country_name2 in dict_series.keys():
+
+                if country_name == country_name2:
+                    eq_sub_country.append(par_eq1)
+                else:
+                    eq_sub_country.append(0)
+
+            import pdb; pdb.set_trace()
+            equation.append(eq_sub_country)
+        counter+=1
+        
+    coef = np.linalg.solve(equation, eq_right)
+
 
     dict_result_offsets = dict()
-    for name, value in data.items():
-        dict_result_offsets[name] = 0
+    temp = 0
+    for name, value in dict_series.items():
+        dict_result_offsets[name] = coef[temp+3]
+        temp += 1
 
-    return (0, 0, 0), dict_result_offsets
+    return (coef[0], coef[1], coef[2]), dict_result_offsets
 
 
 def exp_change(start_point: (float, float), change_rate: float, target_x: float) -> float:

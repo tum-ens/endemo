@@ -94,24 +94,15 @@ class CountryGroupJoinedDiversified(CountryGroup):
             # decide which data to use
             if not gdp_as_x and not y_per_capita:
                 self._joined_data[country_name] = product_pp.amount_vs_year
+            elif not gdp_as_x and y_per_capita:
+                self._joined_data[country_name] = product_pp.amount_per_capita_vs_year
             elif gdp_as_x and not y_per_capita:
                 self._joined_data[country_name] = product_pp.amount_vs_gdp
-
-            """
-            # ??
-            if not gdp_as_x and not y_per_capita:
-                self.joined_data[country_name] = product_pp.amount_vs_year
-            elif gdp_as_x and not y_per_capita:
-                self.joined_data[country_name] = product_pp.amount_vs_gdp
-            elif not gdp_as_x and y_per_capita:
-                self.joined_data[country_name] = product_pp.amount_per_capita_vs_year
             elif gdp_as_x and y_per_capita:
-                self.joined_data[country_name] = product_pp.amount_per_capita_vs_gdp
-            """
+                self._joined_data[country_name] = product_pp.amount_per_capita_vs_gdp
 
         # calculate group coefficients and save result
-        # TODO
-        (self._coef_tuple, self._offset_dict) = (0, 0)  # uty.quadratic_regression_delta(self.joined_data)
+        (self._coef_tuple, self._offset_dict) = uty.quadratic_regression_delta(self._joined_data)
 
     def get_coef_for_country(self, country_name) -> Coef:
         country_coef = Coef()

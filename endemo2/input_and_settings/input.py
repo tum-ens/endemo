@@ -553,7 +553,8 @@ class IndustryInput:
             country_groups = dict[str, [[str]]](
                 {GroupType.SEPARATE: [], GroupType.JOINED: [], GroupType.JOINED_DIVERSIFIED: []})
 
-            df_country_groups = pd.read_excel(ex_country_groups, sheet_name="Example")  # sheet_name=product_name)
+            # TODO abfragen ob vorhanden ansonsten default
+            df_country_groups = pd.read_excel(ex_country_groups, sheet_name=product_name)
 
             map_group_type = {"joined": GroupType.JOINED,
                               "joined_diversified": GroupType.JOINED_DIVERSIFIED,
