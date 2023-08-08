@@ -217,7 +217,7 @@ def quadratic_regression_delta(dict_series: dict[str, pm.TwoDseries]) \
         par_eq1 = par_eq2 = par_eq3 = 0
         e_c = 0
 
-        if counter!=N-1:
+        if counter != N-1:
             for gdp, amount in series.get_data():
                 par_eq1 += 1
                 par_eq2 += gdp
@@ -230,16 +230,17 @@ def quadratic_regression_delta(dict_series: dict[str, pm.TwoDseries]) \
             equation[1].append(par_eq2) # parmeter next to tag coefficient in equation 1
             equation[2].append(par_eq3) # parmeter next to tag coefficient in equation 2
 
-            # Extend number of equations.
-            eq_right.append(e_c) # parameter on the left equation side
-            eq_sub_country = [par_eq1, par_eq2, par_eq3] # parameter on the right equation side, for coeff. k0-k2
+            # Extend number of equations
+            # (one additional equation per each tag, except for the last one, which is taken as a reference)
+            eq_right.append(e_c) # parameter on the right equation side
+            eq_sub_country = [par_eq1, par_eq2, par_eq3] # parameter on the left equation side, for coeff. k0-k2
 
             """
-            For each of additional equations each tag specific offset has a parameter next to it.
-            Country offset is unequal zero if the TwoDseries are from the corresponding country,
-            other-ways the parameter equals zero.
+            Parameter on the left equation side, for tag specific coefficients (per additional equation).
+            Parameter is unequal zero if it additional equation and tag specific coefficient are corresponding to each other 
+            (the TwoDseries are from the corresponding country), other-ways the parameter equals zero.
             """
-            for country_name2 in dict_series.keys():
+            for country_name2 in list(dict_series.keys())[:-1]:
 
                 if country_name == country_name2:
                     eq_sub_country.append(par_eq1)
@@ -247,16 +248,18 @@ def quadratic_regression_delta(dict_series: dict[str, pm.TwoDseries]) \
                     eq_sub_country.append(0)
 
             equation.append(eq_sub_country)
-        counter+=1
+            counter+=1
         
     coef = np.linalg.solve(equation, eq_right)
 
 
+    # Make a dictionary of tag specific offsets. Last offset is the reference one and therefore equals 0.
     dict_result_offsets = dict()
     temp = 0
-    for name, value in dict_series.items():
+    for name, value in list(dict_series.items())[:-1]:
         dict_result_offsets[name] = coef[temp+3]
         temp += 1
+    dict_result_offsets[list(dict_series.items())[-1]] = 0
 
     return (coef[0], coef[1], coef[2]), dict_result_offsets
 
