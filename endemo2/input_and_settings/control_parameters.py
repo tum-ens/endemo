@@ -45,6 +45,9 @@ class GeneralSettings:
         Only for these countries_in_group, calculations are performed.
     :ivar int nuts2_version: The version of NUTS2 used for reading the files that hold information per NUTS2 Region.
         Currently, it should be either 2016 or 2021.
+    :ivar bool toggle_hourly_forecast: Indicates whether to distribute demand over hours according to load profiles.
+    :ivar bool toggle_nuts2_resolution: Indicates whether to distribute demand over nuts2 regions.
+    :ivar bool toggle_graphical_output: Indicates whether to generate visual output.
     """
 
     sector_id_map = {"Sector: industry": SectorIdentifier.INDUSTRY,
@@ -59,6 +62,11 @@ class GeneralSettings:
         self.recognized_countries = ex_country.get("Country")
         self.active_countries = ex_country[ex_country["Active"] == 1].get("Country")
         self.nuts2_version = int(ex_general[ex_general["Parameter"] == "NUTS2 classification"].get("Value").iloc[0])
+
+        self.toggle_hourly_forecast = ex_general[ex_general["Parameter"] == "Timeseries forecast"].get("Value").iloc[0]
+        self.toggle_nuts2_resolution = \
+            ex_general[ex_general["Parameter"] == "NUTS2 geographical resolution"].get("Value").iloc[0]
+        self.toggle_graphical_output = ex_general[ex_general["Parameter"] == "Graphical output"].get("Value").iloc[0]
 
         rows_it = pd.DataFrame(ex_general).itertuples()
         for row in rows_it:

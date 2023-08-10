@@ -13,11 +13,13 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from pandas import ExcelFile
 
 from endemo2.data_structures.enumerations import GroupType, DemandType, SubsectorGroup
 from endemo2 import utility as uty
 from endemo2.data_structures import containers as dc
 from endemo2.input_and_settings import control_parameters as cp
+from endemo2.input_and_settings.control_parameters import ControlParameters
 
 
 class Input:
@@ -41,27 +43,36 @@ class Input:
     general_path = input_path / 'general'
     industry_path = input_path / 'industry'
 
+    ctrl_path = input_path / 'Set_and_Control_Parameters.xlsx'
+
     # Future TODO: add other sector inputs
 
     def __init__(self):
-        ctrl_ex = pd.ExcelFile(self.input_path / 'Set_and_Control_Parameters.xlsx')
 
-        # read control parameters
-        general_settings = cp.GeneralSettings(pd.read_excel(ctrl_ex, sheet_name="GeneralSettings"),
-                                              pd.read_excel(ctrl_ex, sheet_name="Countries"))
-        industry_settings = \
-            cp.IndustrySettings(
-                pd.read_excel(ctrl_ex, sheet_name="IND_general"),
-                pd.read_excel(ctrl_ex, sheet_name="IND_subsectors"))
-
-        self.ctrl = cp.ControlParameters(general_settings, industry_settings)
+        # read set and control parameters
+        self.ctrl: ControlParameters = None
+        self.update_set_and_control_parameters()
 
         # read general
-        self.general_input = GeneralInput(self.ctrl, self.general_path)
+        self.general_input = GeneralInput(self.ctrl, Input.general_path)
 
         # read industry
-        self.industry_input = IndustryInput(self.industry_path, industry_settings, self.general_input.abbreviations,
+        self.industry_input = IndustryInput(Input.industry_path, self.ctrl.industry_settings,
+                                            self.general_input.abbreviations,
                                             self.ctrl.general_settings.active_countries)
+
+    def update_set_and_control_parameters(self):
+        self.ctrl_ex = pd.ExcelFile(Input.ctrl_path)
+
+        # read control parameters
+        general_settings = cp.GeneralSettings(pd.read_excel(self.ctrl_ex, sheet_name="GeneralSettings"),
+                                              pd.read_excel(self.ctrl_ex, sheet_name="Countries"))
+        industry_settings = \
+            cp.IndustrySettings(
+                pd.read_excel(self.ctrl_ex, sheet_name="IND_general"),
+                pd.read_excel(self.ctrl_ex, sheet_name="IND_subsectors"))
+
+        self.ctrl = cp.ControlParameters(general_settings, industry_settings)
 
 
 class PopulationInput:
@@ -381,6 +392,10 @@ class IndustryInput:
     :ivar [str] sc_historical_sheet_names: The sheet names for the files used to read
         historical information on specific consumption for certain products.
     :ivar RestSectorInput rest_sector_input: All preprocessing data relating to the rest sector.
+    :ivar dict[str, [float]] dict_electricity_profiles: The hourly profiles for electricity demand for each country.
+    :ivar dict[SubsectorGroup, dict[str, [float]]] dict_heat_profiles: The hourly profiles for heat demand for each
+        subsector group and each country. Is of form {subsector_group -> {country_name -> [hourly_profile in %/100]}}
+    :ivar dict[str, SubsectorGroup] subsector_to_group_map: Maps a certain subsector to their subsector group enum.
     """
 
     product_data_access = {
@@ -416,7 +431,7 @@ class IndustryInput:
     sc_historical_sheet_names = ["Feste fossile Brennstoffe", "Synthetische Gase", "Erdgas", "Oel",
                                  "Erneuerbare Energien", "Abfaelle", "Elektrizitaet", "Waerme"]
 
-    subsector_groups_map = {
+    subsector_groups_str_to_enum_map = {
         "non_metalic_minerals": SubsectorGroup.NON_METALIC_MINERALS,
         "chemicals_and_petrochemicals": SubsectorGroup.CHEMICALS_AND_PETROCHEMICALS,
         "food_and_tobacco": SubsectorGroup.FOOD_AND_TOBACCO,
@@ -458,7 +473,13 @@ class IndustryInput:
 
         # read subsector groups for time profile
         df_subsector_group = pd.read_excel(industry_path / "Subsector_groups.xlsx")
-        self.subsector_to_group_map = dict(zip(df_subsector_group["Subsectors"], df_subsector_group["Group"]))
+        groups_as_enum = [IndustryInput.subsector_groups_str_to_enum_map[str_group] for str_group in df_subsector_group["Group"]]
+        self.subsector_to_group_map = dict(zip(df_subsector_group["Subsectors"], groups_as_enum))
+
+        # create country_abbr -> country_name_en mapping
+        dict_alpha2_en_map = dict()
+        for name_en, (alpha2, alpha3, name_de) in abbreviations.items():
+            dict_alpha2_en_map[alpha2] = name_en
 
         # read other files for time profile
         df_electricity_profiles = pd.read_excel(industry_path / "IND_Elec_Loadprofile.xlsx")
@@ -468,21 +489,25 @@ class IndustryInput:
             if country_name + "-Electricity" not in list(df_electricity_profiles):
                 country_column_name = "Default-Electricity"
             country_column = list(df_electricity_profiles[country_column_name])
-            self.dict_electricity_profiles[country_name] = country_column
+            self.dict_electricity_profiles[country_name] = country_column[1:]
 
         self.dict_heat_profiles = dict[SubsectorGroup, dict[str, [float]]]()
         for subsec_group, filename in IndustryInput.subsector_groups_hotmaps_filenames.items():
-            df_hotmaps = pd.read_excel(industry_path / filename)
-            for row in df_hotmaps.iterrows():
+            df_hotmaps = pd.read_csv(industry_path / filename)
+            for _, row in df_hotmaps.iterrows():
                 country_abbr = row["NUTS0_code"]
+                if country_abbr not in dict_alpha2_en_map.keys():
+                    # non-active country, skip
+                    continue
+                country_en = dict_alpha2_en_map[country_abbr]
                 new_value = row["load"]
-                if country_abbr not in self.dict_heat_profiles[subsec_group].keys():
-                    self.dict_heat_profiles[subsec_group][country_abbr] = []
-                self.dict_heat_profiles[subsec_group][country_abbr].append(new_value / 1000000.0)
+                if subsec_group not in self.dict_heat_profiles.keys():
+                    self.dict_heat_profiles[subsec_group] = dict()
+                if country_en not in self.dict_heat_profiles[subsec_group].keys():
+                    self.dict_heat_profiles[subsec_group][country_en] = []
+                self.dict_heat_profiles[subsec_group][country_en].append(new_value / 1000000.0)
 
-
-
-        # read the active sectors sheets
+        # read the active subsectors sheets
 
         for product_name in self.settings.active_product_names:
             if product_name == 'unspecified industry':
@@ -599,8 +624,11 @@ class IndustryInput:
             country_groups = dict[str, [[str]]](
                 {GroupType.SEPARATE: [], GroupType.JOINED: [], GroupType.JOINED_DIVERSIFIED: []})
 
-            # TODO abfragen ob vorhanden ansonsten default
-            df_country_groups = pd.read_excel(ex_country_groups, sheet_name=product_name)
+            # if product sheet exists take that, else take default
+            try:
+                df_country_groups = pd.read_excel(ex_country_groups, sheet_name=product_name)
+            except ValueError:
+                df_country_groups = pd.read_excel(ex_country_groups, sheet_name="default")
 
             map_group_type = {"joined": GroupType.JOINED,
                               "joined_diversified": GroupType.JOINED_DIVERSIFIED,

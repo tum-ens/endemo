@@ -80,6 +80,9 @@ class CountryGroupJoinedDiversified(CountryGroup):
         # combine timeseries
         self._joined_data = dict[str, TwoDseries]()
         for country_name in self._countries_in_group:
+            if country_name not in countries_pp.keys():
+                # country not active, skip
+                continue
             country_pp: CountryPreprocessed = countries_pp[country_name]
 
             # if country doesn't have product, skip

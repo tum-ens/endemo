@@ -28,7 +28,9 @@ def generate_preprocessing_output(input_manager, preprocessor):
     generate_amount_timeseries_output(folder_name, input_manager, preprocessor.countries_pp)
     generate_amount_per_gdp_coef_output(folder_name, input_manager, preprocessor.countries_pp)
     generate_specific_consumption_output(folder_name, input_manager, preprocessor.countries_pp)
-    # generate_visual_output(folder_name, input_manager, preprocessor.countries_pp)
+
+    if input_manager.ctrl.general_settings.toggle_graphical_output:
+        generate_visual_output(folder_name, input_manager, preprocessor.countries_pp)
 
 
 def generate_visual_output(folder, input_manager: input.Input, countries_pp: dict[str, CountryPreprocessed]):

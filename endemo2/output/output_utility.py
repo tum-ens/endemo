@@ -17,6 +17,23 @@ from endemo2 import utility as uty
 from endemo2.input_and_settings.input import Input
 
 
+def get_day_folder_path(input_manager: Input):
+    """ Get the path to the day folder. """
+    # generate directory based on date
+    day_directory_name = FileGenerator.get_day_directory()
+
+    # create directory when not present
+    day_folder_path = ensure_directory_exists(input_manager.output_path / day_directory_name)
+    return day_folder_path
+
+
+def ensure_directory_exists(path: Path) -> Path:
+    """ Utility function to wrap a path to a directory that creates the directory if needed. """
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return path
+
+
 class FileGenerator(object):
     """
     A tool to more easily generate output files.
@@ -70,6 +87,13 @@ class FileGenerator(object):
     def get_day_directory(cls):
         return "results_" + datetime.today().strftime('%Y-%m-%d')
 
+    def add_complete_column(self, column_name: str, column_content: list):
+        """
+        Add a complete column to sheet.
+        But pay attention! In the end of the sheet, all columns have to have the same length.
+        """
+        self.current_out_dict[column_name] = column_content
+
     def start_sheet(self, name):
         """ Start editing a new sheet with name "name". """
         if self.current_sheet_name != "":
@@ -79,8 +103,10 @@ class FileGenerator(object):
 
     def print_length_of_all_entries(self):
         """ Used for debugging purposes. """
+        print("---")
         for key, value in self.current_out_dict.items():
             print(str(key) + ": " + str(len(value)))
+        print("---")
 
     def print_all_entries(self):
         """ Used for debugging purposes. """
@@ -129,7 +155,7 @@ def get_year_range(tss: [Timeseries]) -> (int, int):
             else:
                 if first_year < min_year:
                     min_year = first_year
-                elif last_year > max_year:
+                if last_year > max_year:
                     max_year = last_year
 
     return min_year, max_year
@@ -247,8 +273,8 @@ def add_series_to_plot_detailed(series, colors, country_name):
         plt.plot(x, y, color=color, label="historical data")
 
     # get coef function
-    x_extrapol = list(x) + [x[-1] + 1]
-    coef_func = []
+    (start, end) = get_year_range([series])
+    x_extrapol = range(start, end + 2)
     if coef._lin is not None:
         color = next(colors)
         # Plot linear regression
@@ -306,7 +332,8 @@ def add_series_to_plot_simple(series, colors, label):
         plt.plot(x, y, color=color)
 
     # get coef function
-    x_extrapol = list(x) + [x[-1] + 1]
+    (start, end) = get_year_range([series])
+    x_extrapol = range(start, end + 2)
     coef_func = []
     match method:
         case ForecastMethod.LINEAR:
@@ -319,7 +346,7 @@ def add_series_to_plot_simple(series, colors, label):
             # Plot exp regression
             coef_func = [uty.exp_change((coef._exp[0][0], coef._exp[0][1]), coef._exp[1], e) for e in x_extrapol]
 
-    plt.plot(x_extrapol, coef_func, color=color, label=label)
+    plt.plot(x_extrapol, coef_func, color=color, label=label, linestyle="dashed")
 
 
 def save_multiple_series_plot(input_manager: Input, folder, tdss: [TwoDseries], labels: [str], x_label, y_label,

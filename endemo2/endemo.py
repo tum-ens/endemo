@@ -31,10 +31,12 @@ class Endemo:
         Executes the whole program from start to end.
         """
         # read input_and_settings
+        print("Reading Input ...")
         self.input_manager = input.Input()
         print("Input was successfully read.")
 
         # do preprocessing
+        print("Preprocessing Data ...")
         self.preprocessor = Preprocessor(self.input_manager)
         print("Preprocessing was successfully completed.")
 
@@ -56,13 +58,15 @@ class Endemo:
     def update_settings(self):
         """ Rereads the instance settings. """
         # read input_and_settings, TODO: separate the instance settings from pre-preprocessing settings
-        self.input_manager = input.Input()
+        print("Updating settings for new scenario...")
+        self.input_manager.update_set_and_control_parameters()
         print("Settings were successfully updated.")
 
     def create_instance(self):
         """ Creates an instance of the model. """
 
         # create instance filters
+        print("Creating instance filters...")
         prepro = self.preprocessor
         ctrl = self.input_manager.ctrl
         general_input = self.input_manager.general_input
@@ -75,6 +79,7 @@ class Endemo:
 
         print("Instance filters were successfully created.")
 
+        print("Initiating model...")
         # create countries_in_group
         self.countries = dict[str, country.Country]()
         for country_name in self.input_manager.ctrl.general_settings.active_countries:
@@ -90,11 +95,13 @@ class Endemo:
 
     def write_preprocessing_output(self):
         """ Writes all the output that comes from preprocessing. """
+        print("Writing preprocessing output...")
         generate_preprocessing_output(self.input_manager, self.preprocessor)
         print("Preprocessing output was successfully written.")
 
     def write_model_output(self):
         """ Writes all the output that comes from the model instance. """
+        print("Writing scenario output...")
         generate_instance_output(self.input_manager, self.countries,
                                  self.country_instance_filter, self.product_instance_filter)
         print("Model output was successfully written.")

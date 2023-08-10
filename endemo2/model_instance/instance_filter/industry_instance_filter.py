@@ -3,7 +3,7 @@ This module contains all instance filters that relate to the industry sector of 
 """
 
 from endemo2.data_structures.containers import SpecConsum, Heat
-from endemo2.data_structures.enumerations import DemandType, ForecastMethod
+from endemo2.data_structures.enumerations import DemandType, ForecastMethod, SubsectorGroup
 from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
 from endemo2.preprocessing.preprocessing_step_one import ProductPreprocessed, CountryPreprocessed
@@ -60,6 +60,37 @@ class IndustryInstanceFilter:
         """ Get the heat levels of the rest sector. """
         return self.rest_sector_input.rest_sector_heat_levels
 
+    def get_rest_sector_hourly_profile(self, country_name: str) -> dict[DemandType, [float]]:
+        """ Getter for the hourly profile of each demand type for a country and a subsector. """
+
+        # certain countries should be substituted for other countries. This is ugly. Please find another solution.
+        map_to_different_country = {
+            "Switzerland": "Austria",
+            "Iceland": "Austria",
+            "Albania": "North Macedonia",
+            "Bosnia and Herzegovina": "North Macedonia"
+        }
+        if country_name in map_to_different_country.keys():
+            country_name = map_to_different_country[country_name]
+        ###
+
+        subsector_group = SubsectorGroup.IRON_AND_STEEL
+
+        electricity_profile = self.industry_input.dict_electricity_profiles[country_name]
+        heat_profile = self.industry_input.dict_heat_profiles[subsector_group][country_name]
+        hydrogen_profile = heat_profile
+
+        res_dict = dict[DemandType, [float]]()
+        res_dict[DemandType.ELECTRICITY] = electricity_profile
+        res_dict[DemandType.HEAT] = heat_profile
+        res_dict[DemandType.HYDROGEN] = hydrogen_profile
+
+        return res_dict
+
+    def get_nuts2_regions(self, country_name):
+        """ Getter for nuts2 regions. """
+        return self.get_nuts2_rest_sector_distribution(country_name).keys()
+
 
 class ProductInstanceFilter:
     """
@@ -85,8 +116,11 @@ class ProductInstanceFilter:
         """ Get the nuts2 capacities for a certain product in a certain country. """
         country_pp: CountryPreprocessed = self.preprocessor.countries_pp[country_name]
         if product_name in country_pp.industry_pp.products_pp:
-            product_pp: ProductPreprocessed = country_pp.industry_pp.products_pp[product_name]
-            return product_pp.nuts2_installed_capacity
+            if self.ctrl.industry_settings.nuts2_distribution_based_on_installed_ind_capacity:
+                product_pp: ProductPreprocessed = country_pp.industry_pp.products_pp[product_name]
+                return product_pp.nuts2_installed_capacity
+            else:
+                return self.country_instance_filter.get_population_nuts2_percentages_in_target_year(country_name)
         else:
             # country doesn't have product -> zero capacities
             nuts2_regions_of_country = self.general_input.population.nuts2_population[country_name].prognosis.keys()  # TODO: make more pretty, maybe a function to get nuts2 regions for a country
@@ -104,7 +138,7 @@ class ProductInstanceFilter:
 
         sc_pp = product_pp.specific_consumption_pp
 
-        if sc_pp.historical_sc_available:
+        if sc_pp.historical_sc_available and self.ctrl.industry_settings.trend_calc_for_spec:
             target_year = gen_s.target_year
             sc_his = sc_pp.specific_consumption_historical
 
@@ -121,7 +155,7 @@ class ProductInstanceFilter:
             specific_consumption.scale(1 / 3600000)     # convert from GJ/t to TWh/t, TODO: implement nicer
             return specific_consumption
 
-        elif not sc_pp.historical_sc_available:
+        else:
             default_cs = sc_pp.default_specific_consumption
             specific_consumption = SpecConsum(default_cs.electricity, default_cs.heat, default_cs.hydrogen)
             specific_consumption.scale(1 / 3600000)  # convert from GJ/t to TWh/t, TODO: as above
@@ -141,7 +175,7 @@ class ProductInstanceFilter:
         return heat_levels
 
     def get_amount(self, country_name, product_name) -> float:
-        """ Get amount of a product in a country's industry in t. """
+        """ Get amount of a subsector in a country's industry in t. """
         country_pp = self.preprocessor.countries_pp[country_name]
         product_pp = country_pp.industry_pp.products_pp[product_name]
 
@@ -192,5 +226,33 @@ class ProductInstanceFilter:
         amount_result = max(0.0, amount_result)
 
         return amount_result
+
+    def get_hourly_profile(self, country_name: str, product_name: str) -> dict[DemandType, [float]]:
+        """ Getter for the hourly profile of each demand type for a country and a subsector. """
+
+        # certain countries should be substituted for other countries. This is ugly. Please find another solution.
+        map_to_different_country = {
+            "Switzerland": "Austria",
+            "Iceland": "Austria",
+            "Albania": "North Macedonia",
+            "Bosnia and Herzegovina": "North Macedonia"
+        }
+        if country_name in map_to_different_country.keys():
+            country_name = map_to_different_country[country_name]
+        ###
+
+        subsector_group = self.industry_input.subsector_to_group_map[product_name]
+
+        electricity_profile = self.industry_input.dict_electricity_profiles[country_name]
+        heat_profile = self.industry_input.dict_heat_profiles[subsector_group][country_name]
+        hydrogen_profile = heat_profile
+
+        res_dict = dict[DemandType, [float]]()
+        res_dict[DemandType.ELECTRICITY] = electricity_profile
+        res_dict[DemandType.HEAT] = heat_profile
+        res_dict[DemandType.HYDROGEN] = hydrogen_profile
+
+        return res_dict
+
 
 

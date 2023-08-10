@@ -1,4 +1,6 @@
-from endemo2.data_structures.containers import Demand
+from itertools import repeat
+
+from endemo2.data_structures.containers import Demand, Heat
 from endemo2.data_structures.enumerations import DemandType
 from endemo2.model_instance.model.industry.products import Product
 from endemo2.model_instance.instance_filter.industry_instance_filter \
@@ -147,5 +149,156 @@ class Industry(Sector):
             total_demand.add(rest_demand[region_name])
             result[region_name] = total_demand
         return result
+
+    def calculate_forecasted_hourly_demand(self) -> dict[DemandType, [float]]:
+        """
+        Calculate the hourly demand for this industry.
+
+        :return: The hourly demand in a list in order by demand type.
+        """
+
+        res_dict = dict[DemandType, [float]]()
+        res_dict[DemandType.ELECTRICITY] = list(repeat(0.0, 8760))
+        res_dict[DemandType.HEAT] = list(repeat(Heat(), 8760))
+        res_dict[DemandType.HYDROGEN] = list(repeat(0.0, 8760))
+
+        for product_name, product_obj in self._products.items():
+            product_hourly_demand = product_obj.calculate_hourly_demand()
+            res_dict[DemandType.ELECTRICITY] = \
+                [res_value + new_value for (res_value, new_value)
+                 in list(zip(res_dict[DemandType.ELECTRICITY], product_hourly_demand[DemandType.ELECTRICITY]))]
+            res_dict[DemandType.HEAT] = \
+                [res_value.copy_add(new_value) for (res_value, new_value)
+                 in list(zip(res_dict[DemandType.HEAT], product_hourly_demand[DemandType.HEAT]))]
+            res_dict[DemandType.HYDROGEN] = \
+                [res_value + new_value for (res_value, new_value)
+                 in list(zip(res_dict[DemandType.HYDROGEN], product_hourly_demand[DemandType.HYDROGEN]))]
+        return res_dict
+
+    def calculate_forecasted_hourly_demand_distributed_by_nuts2(self) -> dict[str, dict[DemandType, [float]]]:
+        """
+        Calculate the hourly demand for this industry distributed by NUTS2 regions.
+
+        :return: The hourly demand in a list in order by demand type.
+        """
+
+        res_dict = dict[str, dict[DemandType, [float]]]()
+
+        for region_name in self._industry_instance_filter.get_nuts2_regions(self._country_name):
+            res_dict[region_name] = dict[DemandType, [float]]()
+            res_dict[region_name][DemandType.ELECTRICITY] = list(repeat(0.0, 8760))
+            res_dict[region_name][DemandType.HEAT] = list(repeat(Heat(), 8760))
+            res_dict[region_name][DemandType.HYDROGEN] = list(repeat(0.0, 8760))
+
+            for product_name, product_obj in self._products.items():
+                product_hourly_demand = product_obj.calculate_hourly_demand_distributed_by_nuts2()
+
+                res_dict[region_name][DemandType.ELECTRICITY] = \
+                    [res_value + new_value for (res_value, new_value)
+                     in zip(res_dict[region_name][DemandType.ELECTRICITY],
+                            product_hourly_demand[region_name][DemandType.ELECTRICITY])]
+                res_dict[region_name][DemandType.HEAT] = \
+                    [res_value.copy_add(new_value) for (res_value, new_value)
+                     in zip(res_dict[region_name][DemandType.HEAT],
+                            product_hourly_demand[region_name][DemandType.HEAT])]
+                res_dict[region_name][DemandType.HYDROGEN] = \
+                    [res_value + new_value for (res_value, new_value)
+                     in zip(res_dict[region_name][DemandType.HYDROGEN],
+                            product_hourly_demand[region_name][DemandType.HYDROGEN])]
+        return res_dict
+
+    def calculate_rest_sector_hourly_demand(self) -> dict[DemandType, [float]]:
+        """
+        Calculate the hourly demand for the rest sector of this industry.
+
+        :return: The hourly demand in a list in order by demand type.
+        """
+
+        rest_demand = self.calculate_rest_sector_demand()
+        hourly_profile = self._industry_instance_filter.get_rest_sector_hourly_profile(self._country_name)
+
+        res_dict = dict[DemandType, [float]]()
+        res_dict[DemandType.ELECTRICITY] = [rest_demand.electricity * hour_perc
+                                            for hour_perc in hourly_profile[DemandType.ELECTRICITY]]
+        res_dict[DemandType.HEAT] = [rest_demand.heat.copy_multiply_scalar(hour_perc)
+                                     for hour_perc in hourly_profile[DemandType.HEAT]]
+        res_dict[DemandType.HYDROGEN] = [rest_demand.hydrogen * hour_perc
+                                         for hour_perc in hourly_profile[DemandType.HYDROGEN]]
+        return res_dict
+
+    def calculate_rest_sector_hourly_demand_distributed_by_nuts2(self) -> dict[str, dict[DemandType, [float]]]:
+        """
+        Calculate the hourly demand for the rest sector of this industry distributed.
+
+        :return: The hourly demand in a list in order by demand type.
+        """
+
+        rest_demands = self.calculate_rest_demand_distributed_by_nuts2()
+        hourly_profile = self._industry_instance_filter.get_rest_sector_hourly_profile(self._country_name)
+
+        res_dict = dict[str, dict[DemandType, [float]]]()
+
+        for region_name, region_demand in rest_demands.items():
+            res_dict[region_name] = dict[DemandType, [float]]()
+            res_dict[region_name][DemandType.ELECTRICITY] = [region_demand.electricity * hour_perc
+                                                             for hour_perc in hourly_profile[DemandType.ELECTRICITY]]
+            res_dict[region_name][DemandType.HEAT] = [region_demand.heat.copy_multiply_scalar(hour_perc)
+                                                      for hour_perc in hourly_profile[DemandType.HEAT]]
+            res_dict[region_name][DemandType.HYDROGEN] = [region_demand.hydrogen * hour_perc
+                                                          for hour_perc in hourly_profile[DemandType.HYDROGEN]]
+        return res_dict
+
+    def calculate_total_hourly_demand(self) -> dict[DemandType, [float]]:
+        """
+        Calculate total hourly demand, including the forecasted hourly demand and rest sector.
+
+        :return: The total hourly demand summed over all products in this industry and rest sector.
+        """
+        forecasted_hourly = self.calculate_forecasted_hourly_demand()
+        rest_hourly = self.calculate_rest_sector_hourly_demand()
+
+        zipped_hourly_demands = dict[DemandType, [(float, float)]]()
+        for demand_type in [DemandType.ELECTRICITY, DemandType.HEAT, DemandType.HYDROGEN]:
+            zipped_hourly_demands[demand_type] = list(zip(forecasted_hourly[demand_type], rest_hourly[demand_type]))
+
+        res_dict = dict[DemandType, [float]]()
+        res_dict[DemandType.ELECTRICITY] = [f + r for (f, r) in zipped_hourly_demands[DemandType.ELECTRICITY]]
+        res_dict[DemandType.HEAT] = [f.copy_add(r) for (f, r) in zipped_hourly_demands[DemandType.HEAT]]
+        res_dict[DemandType.HYDROGEN] = [f + r for (f, r) in zipped_hourly_demands[DemandType.HYDROGEN]]
+
+        return res_dict
+
+    def calculate_total_hourly_demand_distributes_by_nuts2(self) -> dict[str, dict[DemandType, [float]]]:
+        """
+        Calculate total hourly demand, including the forecasted hourly demand and rest sector.
+
+        :return: The total hourly demand summed over all products in this industry and rest sector.
+        """
+        forecasted_hourly = self.calculate_forecasted_hourly_demand_distributed_by_nuts2()
+        rest_hourly = self.calculate_forecasted_hourly_demand_distributed_by_nuts2()
+
+        res_dict = dict[str, dict[DemandType, [float]]]()
+
+        for region_name in forecasted_hourly.keys():
+            zipped_hourly_demands = dict[DemandType, [(float, float)]]()
+            for demand_type in [DemandType.ELECTRICITY, DemandType.HEAT, DemandType.HYDROGEN]:
+                zipped_hourly_demands[demand_type] = list(zip(forecasted_hourly[region_name][demand_type],
+                                                              rest_hourly[region_name][demand_type]))
+
+            res_dict[region_name] = dict()
+            res_dict[region_name][DemandType.ELECTRICITY] = \
+                [f + r for (f, r) in zipped_hourly_demands[DemandType.ELECTRICITY]]
+            res_dict[region_name][DemandType.HEAT] = \
+                [f.copy_add(r) for (f, r) in zipped_hourly_demands[DemandType.HEAT]]
+            res_dict[region_name][DemandType.HYDROGEN] = \
+                [f + r for (f, r) in zipped_hourly_demands[DemandType.HYDROGEN]]
+
+        return res_dict
+
+
+
+
+
+
 
 

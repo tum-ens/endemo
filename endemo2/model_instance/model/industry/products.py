@@ -1,4 +1,5 @@
 from endemo2.data_structures.containers import Demand, Heat
+from endemo2.data_structures.enumerations import DemandType
 
 
 class Product:
@@ -57,3 +58,43 @@ class Product:
 
         return distributed_demand
 
+    def calculate_hourly_demand(self) -> dict[DemandType, [float]]:
+        """
+        Calculate the hourly demand for this product.
+
+        :return: The hourly demand in a list in order by demand type.
+        """
+
+        product_demand = self.calculate_demand()
+        hourly_profile = self._product_instance_filter.get_hourly_profile(self._country_name, self._product_name)
+
+        res_dict = dict[DemandType, [float]]()
+        res_dict[DemandType.ELECTRICITY] = [product_demand.electricity * hour_perc
+                                            for hour_perc in hourly_profile[DemandType.ELECTRICITY]]
+        res_dict[DemandType.HEAT] = [product_demand.heat.copy_multiply_scalar(hour_perc)
+                                     for hour_perc in hourly_profile[DemandType.HEAT]]
+        res_dict[DemandType.HYDROGEN] = [product_demand.hydrogen * hour_perc
+                                         for hour_perc in hourly_profile[DemandType.HYDROGEN]]
+        return res_dict
+
+    def calculate_hourly_demand_distributed_by_nuts2(self) -> dict[str, dict[DemandType, [float]]]:
+        """
+        Calculate the hourly demand for this product distributed to nuts2 regions.
+
+        :return: The hourly demand in a list in order by demand type for every nuts2 region.
+        """
+
+        nuts2_demands = self.get_demand_distributed_by_nuts2()
+        hourly_profile = self._product_instance_filter.get_hourly_profile(self._country_name, self._product_name)
+
+        res_dict = dict[str, dict[DemandType, [float]]]()
+
+        for region_name, region_demand in nuts2_demands.items():
+            res_dict[region_name] = dict[DemandType, [float]]()
+            res_dict[region_name][DemandType.ELECTRICITY] = [region_demand.electricity * hour_perc
+                                                             for hour_perc in hourly_profile[DemandType.ELECTRICITY]]
+            res_dict[region_name][DemandType.HEAT] = [region_demand.heat.copy_multiply_scalar(hour_perc)
+                                                      for hour_perc in hourly_profile[DemandType.HEAT]]
+            res_dict[region_name][DemandType.HYDROGEN] = [region_demand.hydrogen * hour_perc
+                                                          for hour_perc in hourly_profile[DemandType.HYDROGEN]]
+        return res_dict
