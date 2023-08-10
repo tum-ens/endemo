@@ -9,13 +9,16 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 
 from endemo2.data_structures.enumerations import DemandType, ForecastMethod
-from endemo2.input_and_settings.input import Input
-from endemo2.output.output_utility import FileGenerator, generate_timeseries_output, shortcut_coef_output, \
-    get_year_range, save_series_plot, save_multiple_series_plot
+from endemo2.output.output_utility import FileGenerator, generate_timeseries_output, get_series_range, \
+    shortcut_coef_output
+from endemo2.output.plot_utility import save_series_plot, save_multiple_series_plot
 from endemo2.data_structures.prediction_models import Coef, Timeseries, TwoDseries
 from endemo2.input_and_settings import input
+from endemo2.preprocessing.preproccessing_step_two import GroupManager, CountryGroupJoinedDiversified, \
+    CountryGroupJoined
 from endemo2.preprocessing.preprocessing_step_one import CountryPreprocessed, ProductPreprocessed
 from endemo2 import utility as uty
+from endemo2.output.plot_utility import *
 
 
 def generate_preprocessing_output(input_manager, preprocessor):
@@ -28,9 +31,105 @@ def generate_preprocessing_output(input_manager, preprocessor):
     generate_amount_timeseries_output(folder_name, input_manager, preprocessor.countries_pp)
     generate_amount_per_gdp_coef_output(folder_name, input_manager, preprocessor.countries_pp)
     generate_specific_consumption_output(folder_name, input_manager, preprocessor.countries_pp)
+    generate_country_group_output(folder_name, input_manager, preprocessor.group_manager)
+
+    #if input_manager.ctrl.general_settings.toggle_graphical_output:
+        #generate_visual_output(folder_name, input_manager, preprocessor.countries_pp)
+
+
+def generate_country_group_output(folder, input_manager: input.Input, group_manager: GroupManager):
+
+    filename = "ind_coef_country_group.xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        for product_name in group_manager.separate_countries_group.keys():
+            fg.start_sheet(product_name)
+
+            # output joined groups
+            for joined_group in group_manager.joined_groups[product_name]:
+                str_countries_in_group = ""
+                for country_name in joined_group.get_countries_in_group():
+                    str_countries_in_group += country_name + ";"
+                group_coef = joined_group.get_coef()
+                for country_name in joined_group.get_countries_in_group():
+                    fg.add_entry("Country", country_name)
+                    fg.add_entry("Group Type", "joined")
+                    fg.add_entry("Group Members", str_countries_in_group)
+                    shortcut_coef_output(fg, group_coef)
+
+            # output diversified groups
+            for joined_div_group in group_manager.joined_div_groups[product_name]:
+                str_countries_in_group = ""
+                for country_name in joined_div_group.get_countries_in_group():
+                    str_countries_in_group += country_name + ";"
+                for country_name in joined_div_group.get_countries_in_group():
+                    fg.add_entry("Country", country_name)
+                    fg.add_entry("Group Type", "div. joined")
+                    fg.add_entry("Group Members", str_countries_in_group)
+                    country_coef = joined_div_group.get_coef_for_country(country_name)
+                    shortcut_coef_output(fg, country_coef)
 
     if input_manager.ctrl.general_settings.toggle_graphical_output:
-        generate_visual_output(folder_name, input_manager, preprocessor.countries_pp)
+        # visual output
+        for product_name in input_manager.industry_input.active_products.keys():
+            if input_manager.ctrl.industry_settings.use_gdp_as_x:
+                x_label = "GDP"
+            else:
+                x_label = "Time"
+            if input_manager.ctrl.industry_settings.production_quantity_calc_per_capita:
+                y_label = product_name + " Amount per Capita"
+            else:
+                y_label = product_name + " Amount"
+            directory = Path(folder) / "visual_output" / "Country Groups"
+
+            # output joined groups
+            group_id = 0
+            joined_groups: [CountryGroupJoined] = group_manager.joined_groups[product_name]
+            for joined_group in joined_groups:
+                historical_data = joined_group.get_all_historical_data()
+
+                colors = itertools.cycle(sns.color_palette())
+                for country_name, tds in historical_data:
+                    country_color = next(colors)
+
+                    # plot historical data for each country
+                    plot_historical_data(tds, country_color, country_name)
+
+                # plot coefficients of group
+                group_coef = joined_group.get_coef()
+                interval = get_series_range(historical_data)
+                plot_coef_in_range("Group", interval, group_coef, next(colors), next(colors), next(colors))
+
+                filename = product_name + "_Joined-Group-" + str(group_id)
+                image_label = product_name + " - Joined Group " + str(group_id)
+
+                save_plot(image_label, x_label, y_label, directory, filename)
+            group_id += 1
+
+            # output diversified groups
+            group_id = 0
+            div_groups: [CountryGroupJoinedDiversified] = group_manager.joined_div_groups[product_name]
+            for div_group in div_groups:
+                historical_data = div_group.get_all_historical_data()
+
+                colors = itertools.cycle(sns.color_palette())
+                for country_name, tds in historical_data:
+                    country_color = next(colors)
+
+                    # plot historical data
+                    interval = get_series_range([tds])
+                    plot_historical_data(tds, country_color, country_name)
+
+                    # plot coefficients of country
+                    country_coef = div_group.get_coef_for_country(country_name)
+                    plot_coef_in_range(country_name, interval, country_coef,
+                                       country_color, country_color, country_color)
+
+                filename = product_name + "_Div-Group-" + str(group_id)
+                image_label = product_name + " - Div Group " + str(group_id)
+
+                save_plot(image_label, x_label, y_label, directory, filename)
+            group_id += 1
 
 
 def generate_visual_output(folder, input_manager: input.Input, countries_pp: dict[str, CountryPreprocessed]):
@@ -57,7 +156,7 @@ def generate_visual_output(folder, input_manager: input.Input, countries_pp: dic
     # generate vis output amount_vs_year
     for product_name, product_input in input_manager.industry_input.active_products.items():
         x_label = "Time"
-        y_label = "Amount"
+        y_label = product_name + " Amount"
         directory = Path(folder) / "visual_output" / (y_label + "-vs-" + x_label)
         for country_name, country_pp in countries_pp.items():
             series = country_pp.industry_pp.products_pp[product_name].amount_vs_year
@@ -67,7 +166,7 @@ def generate_visual_output(folder, input_manager: input.Input, countries_pp: dic
     # generate vis output amount_per_capita_vs_year
     for product_name, product_input in input_manager.industry_input.active_products.items():
         x_label = "Time"
-        y_label = "Amount-per-Capita"
+        y_label = product_name + " Amount-per-Capita"
         directory = Path(folder) / "visual_output" / (y_label + "-vs-" + x_label)
         for country_name, country_pp in countries_pp.items():
             series: TwoDseries = country_pp.industry_pp.products_pp[product_name].amount_per_capita_vs_year
@@ -77,7 +176,7 @@ def generate_visual_output(folder, input_manager: input.Input, countries_pp: dic
     # generate vis output amount_per_capita_vs_gdp
     for product_name, product_input in input_manager.industry_input.active_products.items():
         x_label = "GDP"
-        y_label = "Amount-per-Capita"
+        y_label = product_name + " Amount-per-Capita"
         directory = Path(folder) / "visual_output" / (y_label + "-vs-" + x_label)
         for country_name, country_pp in countries_pp.items():
             series = country_pp.industry_pp.products_pp[product_name].amount_per_capita_vs_gdp
@@ -87,7 +186,7 @@ def generate_visual_output(folder, input_manager: input.Input, countries_pp: dic
     # generate vis output amount_vs_gdp
     for product_name, product_input in input_manager.industry_input.active_products.items():
         x_label = "GDP"
-        y_label = "Amount"
+        y_label = product_name + " Amount"
         directory = Path(folder) / "visual_output" / (y_label + "-vs-" + x_label)
         for country_name, country_pp in countries_pp.items():
             series = country_pp.industry_pp.products_pp[product_name].amount_vs_gdp
@@ -113,7 +212,7 @@ def generate_amount_timeseries_output(folder, input_manager: input.Input, countr
 
             all_tss = \
                 [product_pp.amount_vs_year for product_pp in _get_all_product_pps(product_name, countries_pp)]
-            year_range = get_year_range(all_tss)
+            year_range = get_series_range(all_tss)
 
             for country_name, country_pp in countries_pp.items():
                 fg.add_entry("Country", country_name)
@@ -132,7 +231,7 @@ def generate_amount_timeseries_output(folder, input_manager: input.Input, countr
 
             all_tss = \
                 [product_pp.amount_per_capita_vs_year for product_pp in _get_all_product_pps(product_name, countries_pp)]
-            year_range = get_year_range(all_tss)
+            year_range = get_series_range(all_tss)
 
             for country_name, country_pp in countries_pp.items():
                 fg.add_entry("Country", country_name)
@@ -191,7 +290,7 @@ def generate_specific_consumption_output(folder, input_manager: input.Input,
                 [product_pp.specific_consumption_pp.specific_consumption_historical[DemandType.HEAT]
                  for product_pp in _get_all_product_pps(product_name, countries_pp)
                  if DemandType.HEAT in product_pp.specific_consumption_pp.specific_consumption_historical.keys()]
-            year_range = get_year_range(all_tss)
+            year_range = get_series_range(all_tss)
             if year_range[0] is None or year_range[1] is None:
                 continue
 
@@ -219,7 +318,7 @@ def generate_specific_consumption_output(folder, input_manager: input.Input,
                      for product_pp in _get_all_product_pps(product_name, countries_pp)
                      if DemandType.ELECTRICITY
                      in product_pp.specific_consumption_pp.specific_consumption_historical.keys()]
-                year_range = get_year_range(all_tss)
+                year_range = get_series_range(all_tss)
 
                 if product_name in products_pp.keys():
                     sc_pp = products_pp[product_name].specific_consumption_pp

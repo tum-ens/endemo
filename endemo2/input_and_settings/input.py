@@ -57,7 +57,7 @@ class Input:
         self.general_input = GeneralInput(self.ctrl, Input.general_path)
 
         # read industry
-        self.industry_input = IndustryInput(Input.industry_path, self.ctrl.industry_settings,
+        self.industry_input = IndustryInput(self.ctrl, Input.industry_path,
                                             self.general_input.abbreviations,
                                             self.ctrl.general_settings.active_countries)
 
@@ -449,9 +449,9 @@ class IndustryInput:
         SubsectorGroup.PAPER: "hotmaps_task_2.7_load_profile_industry_paper_yearlong_2018.csv",
     }
 
-    def __init__(self, industry_path: Path, industry_settings: cp.IndustrySettings, abbreviations: dict,
+    def __init__(self, ctrl: cp.ControlParameters, industry_path: Path, abbreviations: dict,
                  active_countries: [str]):
-        self.settings = industry_settings
+        self.settings = ctrl.industry_settings
         self.active_products = dict[str, ProductInput]()
 
         ex_spec = pd.ExcelFile(industry_path / "Specific_Consumption.xlsx")
@@ -481,31 +481,32 @@ class IndustryInput:
         for name_en, (alpha2, alpha3, name_de) in abbreviations.items():
             dict_alpha2_en_map[alpha2] = name_en
 
-        # read other files for time profile
-        df_electricity_profiles = pd.read_excel(industry_path / "IND_Elec_Loadprofile.xlsx")
-        self.dict_electricity_profiles = dict[str, [float]]()
-        for country_name in active_countries:
-            country_column_name = country_name + "-Electricity"
-            if country_name + "-Electricity" not in list(df_electricity_profiles):
-                country_column_name = "Default-Electricity"
-            country_column = list(df_electricity_profiles[country_column_name])
-            self.dict_electricity_profiles[country_name] = country_column[1:]
+        if ctrl.general_settings.toggle_hourly_forecast:
+            # read other files for time profile
+            df_electricity_profiles = pd.read_excel(industry_path / "IND_Elec_Loadprofile.xlsx")
+            self.dict_electricity_profiles = dict[str, [float]]()
+            for country_name in active_countries:
+                country_column_name = country_name + "-Electricity"
+                if country_name + "-Electricity" not in list(df_electricity_profiles):
+                    country_column_name = "Default-Electricity"
+                country_column = list(df_electricity_profiles[country_column_name])
+                self.dict_electricity_profiles[country_name] = country_column[1:]
 
-        self.dict_heat_profiles = dict[SubsectorGroup, dict[str, [float]]]()
-        for subsec_group, filename in IndustryInput.subsector_groups_hotmaps_filenames.items():
-            df_hotmaps = pd.read_csv(industry_path / filename)
-            for _, row in df_hotmaps.iterrows():
-                country_abbr = row["NUTS0_code"]
-                if country_abbr not in dict_alpha2_en_map.keys():
-                    # non-active country, skip
-                    continue
-                country_en = dict_alpha2_en_map[country_abbr]
-                new_value = row["load"]
-                if subsec_group not in self.dict_heat_profiles.keys():
-                    self.dict_heat_profiles[subsec_group] = dict()
-                if country_en not in self.dict_heat_profiles[subsec_group].keys():
-                    self.dict_heat_profiles[subsec_group][country_en] = []
-                self.dict_heat_profiles[subsec_group][country_en].append(new_value / 1000000.0)
+            self.dict_heat_profiles = dict[SubsectorGroup, dict[str, [float]]]()
+            for subsec_group, filename in IndustryInput.subsector_groups_hotmaps_filenames.items():
+                df_hotmaps = pd.read_csv(industry_path / filename)
+                for _, row in df_hotmaps.iterrows():
+                    country_abbr = row["NUTS0_code"]
+                    if country_abbr not in dict_alpha2_en_map.keys():
+                        # non-active country, skip
+                        continue
+                    country_en = dict_alpha2_en_map[country_abbr]
+                    new_value = row["load"]
+                    if subsec_group not in self.dict_heat_profiles.keys():
+                        self.dict_heat_profiles[subsec_group] = dict()
+                    if country_en not in self.dict_heat_profiles[subsec_group].keys():
+                        self.dict_heat_profiles[subsec_group][country_en] = []
+                    self.dict_heat_profiles[subsec_group][country_en].append(new_value / 1000000.0)
 
         # read the active subsectors sheets
 
@@ -516,7 +517,7 @@ class IndustryInput:
             # read production data
             retrieve_prod = self.product_data_access[product_name]
             retrieve_prod.set_path_and_read(industry_path)
-            retrieve_prod.skip_years(industry_settings.skip_years)
+            retrieve_prod.skip_years(self.settings.skip_years)
             df_product_his = retrieve_prod.get()
 
             dict_prod_his = dict()
@@ -533,7 +534,7 @@ class IndustryInput:
                     continue
                 zipped = list(zip(years, data))
                 his_data = uty.filter_out_nan_and_inf(zipped)
-                his_data = uty.cut_after_x(his_data, industry_settings.last_available_year - 1)
+                his_data = uty.cut_after_x(his_data, self.settings.last_available_year - 1)
                 dict_prod_his[row.Country] = his_data
 
             # read specific consumption default data
@@ -647,15 +648,15 @@ class IndustryInput:
                 country_groups[group_type].append(new_group)
                 grouped_countries |= set(new_group)
             if all_others_group_type is not None:
-                country_groups[all_others_group_type] = [country for country in all_countries if
-                                                         country not in grouped_countries]
+                country_groups[all_others_group_type] += [[country for country in all_countries if
+                                                           country not in grouped_countries]]
 
             # finally store in product data class
             self.active_products[product_name] = \
                 ProductInput(product_name, dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his,
                              sc_his_calc, dict_heat_levels[product_name],
-                             industry_settings.product_settings[product_name].manual_exp_change_rate,
-                             industry_settings.product_settings[product_name].perc_used,
+                             self.settings.product_settings[product_name].manual_exp_change_rate,
+                             self.settings.product_settings[product_name].perc_used,
                              dict_installed_capacity_nuts2, country_groups)
 
 

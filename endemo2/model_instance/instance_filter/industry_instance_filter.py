@@ -1,6 +1,7 @@
 """
 This module contains all instance filters that relate to the industry sector of the model.
 """
+import warnings
 
 from endemo2.data_structures.containers import SpecConsum, Heat
 from endemo2.data_structures.enumerations import DemandType, ForecastMethod, SubsectorGroup
@@ -8,7 +9,7 @@ from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
 from endemo2.preprocessing.preprocessing_step_one import ProductPreprocessed, CountryPreprocessed
 from endemo2.preprocessing.preprocessor import Preprocessor
-from endemo2.data_structures.prediction_models import TwoDseries
+from endemo2.data_structures.prediction_models import TwoDseries, Coef
 from endemo2.input_and_settings.input import IndustryInput, GeneralInput
 
 
@@ -182,23 +183,33 @@ class ProductInstanceFilter:
         gen_s = self.ctrl.general_settings
         ind_s = self.ctrl.industry_settings
 
-        active_TwoDSeries: TwoDseries
+        group_manager = self.preprocessor.group_manager
 
         use_per_capita = ind_s.production_quantity_calc_per_capita
         use_gdp = ind_s.use_gdp_as_x
 
-        # decide which preprocessed data to use, depending on instance settings
-        if not use_per_capita and not use_gdp:
-            active_TwoDSeries = product_pp.amount_vs_year
-        elif use_per_capita and not use_gdp:
-            active_TwoDSeries = product_pp.amount_per_capita_vs_year
-        elif not use_per_capita and use_gdp:
-            active_TwoDSeries = product_pp.amount_vs_gdp
-        else:   # use_per_capita and use_gdp:
-            active_TwoDSeries = product_pp.amount_per_capita_vs_gdp
+        # if country in group -> use group coefficients
+        if not group_manager.is_in_separate_group(country_name, product_name):
+            coef_obj = group_manager.get_coef_for_country_and_product(country_name, product_name)
+            if ind_s.forecast_method is not ForecastMethod.QUADRATIC:
+                warnings.warn("what happens in this case?")
+        else:
+            # country not in group -> calculate separately
+            active_TwoDSeries: TwoDseries
 
-        # get coefficients from preprocessed data
-        coef_obj = active_TwoDSeries.get_coef()
+            # decide which preprocessed data to use, depending on instance settings
+            if not use_per_capita and not use_gdp:
+                active_TwoDSeries = product_pp.amount_vs_year
+            elif use_per_capita and not use_gdp:
+                active_TwoDSeries = product_pp.amount_per_capita_vs_year
+            elif not use_per_capita and use_gdp:
+                active_TwoDSeries = product_pp.amount_vs_gdp
+            else:   # use_per_capita and use_gdp:
+                active_TwoDSeries = product_pp.amount_per_capita_vs_gdp
+
+            # get coefficients from preprocessed data
+            coef_obj = active_TwoDSeries.get_coef()
+
         coef_obj.set_method(ind_s.forecast_method)
 
         # get prognosis

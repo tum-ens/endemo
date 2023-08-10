@@ -180,7 +180,7 @@ def quadratic_regression_delta(dict_series: dict[str, pm.TwoDseries]) \
     :return: The calculated coefficients (k0, k1, k2) and the offset for each tag {tag -> offset}
     """
     
-    N=len(dict_series)
+    N = len(dict_series)
     
     e1 = a1 = b1 = c1 = 0
     e2 = c2 = 0
@@ -189,16 +189,16 @@ def quadratic_regression_delta(dict_series: dict[str, pm.TwoDseries]) \
     for country_name, series in dict_series.items():
         for gdp, amount in series.get_data():
             
-            e1+= amount
+            e1 += amount
             a1 += 1 
-            b1+= gdp
-            c1+= float(gdp)**2
+            b1 += gdp
+            c1 += float(gdp)**2
 
-            e2+= amount * gdp
-            c2+= float(gdp)**3
+            e2 += amount * gdp
+            c2 += float(gdp)**3
 
-            e3+= amount * (gdp)**2
-            c3+= float(gdp)**4
+            e3 += amount * gdp**2
+            c3 += float(gdp)**4
      
     a2 = b1
     a3 = b2 = c1
@@ -226,19 +226,19 @@ def quadratic_regression_delta(dict_series: dict[str, pm.TwoDseries]) \
 
             # Extend existing equations with additional tag specific coefficients.
             # equation elements 0-2 are partial differentials over coeff. k0-k2 set to be (per definition) equal 0.
-            equation[0].append(par_eq1) # parmeter next to tag coefficient in equation 0
-            equation[1].append(par_eq2) # parmeter next to tag coefficient in equation 1
-            equation[2].append(par_eq3) # parmeter next to tag coefficient in equation 2
+            equation[0].append(par_eq1)     # parameter next to tag coefficient in equation 0
+            equation[1].append(par_eq2)     # parameter next to tag coefficient in equation 1
+            equation[2].append(par_eq3)     # parameter next to tag coefficient in equation 2
 
             # Extend number of equations
             # (one additional equation per each tag, except for the last one, which is taken as a reference)
-            eq_right.append(e_c) # parameter on the right equation side
-            eq_sub_country = [par_eq1, par_eq2, par_eq3] # parameter on the left equation side, for coeff. k0-k2
+            eq_right.append(e_c)    # parameter on the right equation side
+            eq_sub_country = [par_eq1, par_eq2, par_eq3]    # parameter on the left equation side, for coeff. k0-k2
 
             """
             Parameter on the left equation side, for tag specific coefficients (per additional equation).
-            Parameter is unequal zero if it additional equation and tag specific coefficient are corresponding to each other 
-            (the TwoDseries are from the corresponding country), other-ways the parameter equals zero.
+            Parameter is unequal zero if it additional equation and tag specific coefficient are corresponding to each 
+            other (the TwoDseries are from the corresponding country), other-ways the parameter equals zero.
             """
             for country_name2 in list(dict_series.keys())[:-1]:
 
@@ -248,10 +248,9 @@ def quadratic_regression_delta(dict_series: dict[str, pm.TwoDseries]) \
                     eq_sub_country.append(0)
 
             equation.append(eq_sub_country)
-            counter+=1
+            counter += 1
         
     coef = np.linalg.solve(equation, eq_right)
-
 
     # Make a dictionary of tag specific offsets. Last offset is the reference one and therefore equals 0.
     dict_result_offsets = dict()
@@ -259,7 +258,7 @@ def quadratic_regression_delta(dict_series: dict[str, pm.TwoDseries]) \
     for name, value in list(dict_series.items())[:-1]:
         dict_result_offsets[name] = coef[temp+3]
         temp += 1
-    dict_result_offsets[list(dict_series.items())[-1]] = 0
+    dict_result_offsets[list(dict_series.keys())[-1]] = 0
 
     return (coef[0], coef[1], coef[2]), dict_result_offsets
 

@@ -21,6 +21,11 @@ class CountryGroup:
     def __init__(self, countries_in_group: [str]):
         self._countries_in_group = countries_in_group
 
+    def get_countries_in_group(self):
+        """ Getter for the countries in group. """
+        return self._countries_in_group
+
+
 class CountryGroupJoined(CountryGroup):
     """
     Represents one country group of type "joined".
@@ -35,6 +40,7 @@ class CountryGroupJoined(CountryGroup):
 
         # combine timeseries
         # merge all data of countries_in_group within group
+        self._all_data = []
         self._joined_data = TwoDseries([])
         for country_name in self._countries_in_group:
             country_pp: CountryPreprocessed = countries_pp[country_name]
@@ -48,21 +54,31 @@ class CountryGroupJoined(CountryGroup):
             gdp_as_x = ctrl.industry_settings.use_gdp_as_x
             y_per_capita = ctrl.industry_settings.production_quantity_calc_per_capita
 
+            active_timeseries = None
+
             # decide which data to use
             if not gdp_as_x and not y_per_capita:
-                self._joined_data.append_others_data(product_pp.amount_vs_year)
+                active_timeseries = product_pp.amount_vs_year
             elif gdp_as_x and not y_per_capita:
-                self._joined_data.append_others_data(product_pp.amount_vs_gdp)
+                active_timeseries = product_pp.amount_vs_gdp
             elif not gdp_as_x and y_per_capita:
-                self._joined_data.append_others_data(product_pp.amount_per_capita_vs_year)
+                active_timeseries = product_pp.amount_per_capita_vs_year
             elif gdp_as_x and y_per_capita:
-                self._joined_data.append_others_data(product_pp.amount_per_capita_vs_gdp)
+                active_timeseries = product_pp.amount_per_capita_vs_gdp
+
+            self._all_data.append((country_name, active_timeseries))
+            self._joined_data.append_others_data(active_timeseries)
 
         # calculate group coefficients and save result
         self._group_coef = self._joined_data.get_coef()
 
     def get_coef(self) -> Coef:
+        """ Getter for the group coefficient. """
         return self._group_coef
+
+    def get_all_historical_data(self) -> [(str, TwoDseries)]:
+        """ Getter for all historical data contributing to this group. """
+        return self._all_data
 
 
 class CountryGroupJoinedDiversified(CountryGroup):
@@ -105,13 +121,19 @@ class CountryGroupJoinedDiversified(CountryGroup):
                 self._joined_data[country_name] = product_pp.amount_per_capita_vs_gdp
 
         # calculate group coefficients and save result
-        # (self._coef_tuple, self._offset_dict) = uty.quadratic_regression_delta(self._joined_data)
+        (self._coef_tuple, self._offset_dict) = uty.quadratic_regression_delta(self._joined_data)
 
     def get_coef_for_country(self, country_name) -> Coef:
+        """ Get the coefficient object for a country in this group. """
         country_coef = Coef()
         country_coef.set_quadr(self._coef_tuple[0], self._coef_tuple[1], self._coef_tuple[2])
         country_coef.set_offset(self._offset_dict[country_name])
+        country_coef.set_method(ForecastMethod.QUADRATIC_OFFSET, fixate=True)
         return country_coef
+
+    def get_all_historical_data(self) -> [(str, TwoDseries)]:
+        """ Getter for all historical data contributing to this group. """
+        return self._joined_data.items()
 
 
 class GroupManager:
@@ -136,7 +158,7 @@ class GroupManager:
         self.country_to_group_map = dict[str, dict[str, (GroupType, int)]]()
 
         forecast_method = input_manager.ctrl.industry_settings.forecast_method
-        group_input = dict[str, dict[GroupType, [[str]]]]()    # product -> {grp_type -> [grp1[cntry1, cntry2,..], grp2[cntry4,..]]}
+        group_input = dict[str, dict[GroupType, [[str]]]]()     # product -> {grp_type -> [g1[c1, c2,..], g2[c4,..]]}
         for product_name, product_input_obj in input_manager.industry_input.active_products.items():
             group_input[product_name] = product_input_obj.country_groups
 
@@ -166,12 +188,12 @@ class GroupManager:
 
             # process joined_diversified groups for this product
             in_joined_div_groups_country_names: [[str]] = group_dict[GroupType.JOINED_DIVERSIFIED]
-            res_joined_div_groups = [CountryGroupJoinedDiversified]
+            res_joined_div_groups: [CountryGroupJoinedDiversified] = []
 
             for joined_div_group in in_joined_div_groups_country_names:
                 group_id = len(res_joined_div_groups)
 
-                res_joined_groups.append(
+                res_joined_div_groups.append(
                     CountryGroupJoinedDiversified(input_manager.ctrl, product_name, joined_div_group, countries_pp))
 
                 for country_name in joined_div_group:
@@ -207,6 +229,6 @@ class GroupManager:
 
         match group_type:
             case GroupType.JOINED:
-                return self.joined_groups[group_id].get_coef()
+                return self.joined_groups[product_name][group_id].get_coef()
             case GroupType.JOINED_DIVERSIFIED:
-                return self.joined_div_groups[group_id].get_coef_for_country(country_name)
+                return self.joined_div_groups[product_name][group_id].get_coef_for_country(country_name)

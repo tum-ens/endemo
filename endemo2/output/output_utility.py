@@ -1,19 +1,14 @@
 """
 This module contains utility functions and classes to more easily generate output files.
 """
-import itertools
 import os
 from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
-from matplotlib import pyplot as plt
-import seaborn as sns
 
-from endemo2.data_structures.enumerations import ForecastMethod
 from endemo2.data_structures.prediction_models import Timeseries, Coef, TwoDseries
 from endemo2.data_structures.containers import Demand
-from endemo2 import utility as uty
 from endemo2.input_and_settings.input import Input
 
 
@@ -135,12 +130,12 @@ class FileGenerator(object):
         self.excel_writer.close()
 
 
-def get_year_range(tss: [Timeseries]) -> (int, int):
+def get_series_range(tss: [TwoDseries]) -> (int, int):
     """
     Takes multiple timeseries and finds out in which range of years all data falls into.
 
     :param tss: The list of timeseries.
-    :return: The year range, all data falls into.
+    :return: The series x-range, which all data falls into.
     """
     min_year = None
     max_year = None
@@ -157,58 +152,11 @@ def get_year_range(tss: [Timeseries]) -> (int, int):
                     min_year = first_year
                 if last_year > max_year:
                     max_year = last_year
-
-    return min_year, max_year
-
-
-def shortcut_coef_output(fg: FileGenerator, coef: Coef):
-    """ A shortcut to easily output the contents of a coefficient object. """
-
-    forecast_method = coef._method
-    exp_coef = coef._exp
-    lin_coef = coef._lin
-    quadr_coef = coef._quadr
-    offset = coef._offset
-
-    if forecast_method is not None:
-        fg.add_entry("Selected Forecast Method", str(forecast_method))
-    else:
-        fg.add_entry("Selected Forecast Method", "")
-
-    if exp_coef is not None:
-        if exp_coef[0] is not None:
-            fg.add_entry("Exponential Start Point", "(" + str(exp_coef[0][0]) + ", " + str(exp_coef[0][1]) + ")")
-            if exp_coef[1] is not None:
-                fg.add_entry("Exponential Change Rate", exp_coef[1])
-            else:
-                fg.add_entry("Exponential Change Rate", "")
-        elif exp_coef[1] is not None:
-            fg.add_entry("Exponential Start Point", "")
-            fg.add_entry("Exponential Change Rate", exp_coef[1])
-        else:
-            fg.add_entry("Exponential Start Point", "")
-            fg.add_entry("Exponential Change Rate", "")
-    else:
-        fg.add_entry("Exponential Start Point", "")
-        fg.add_entry("Exponential Change Rate", "")
-    if lin_coef is not None:
-        fg.add_entry("Linear k0", lin_coef[0])
-        fg.add_entry("Linear k1", lin_coef[1])
-    else:
-        fg.add_entry("Linear k0", "")
-        fg.add_entry("Linear k1", "")
-    if quadr_coef is not None:
-        fg.add_entry("Quadratic k0", quadr_coef[0])
-        fg.add_entry("Quadratic k1", quadr_coef[1])
-        fg.add_entry("Quadratic k2", quadr_coef[2])
-    else:
-        fg.add_entry("Quadratic k0", "")
-        fg.add_entry("Quadratic k1", "")
-        fg.add_entry("Quadratic k2", "")
-    if offset is not None:
-        fg.add_entry("Offset", offset)
-    else:
-        fg.add_entry("Offset", "")
+    if min_year is None:
+        min_year = 0
+    if max_year is None:
+        max_year = 0
+    return int(min_year), int(max_year)
 
 
 def shortcut_save_timeseries_print(fg, range: (float, float), data: [(float, float)]):
@@ -259,119 +207,51 @@ def generate_timeseries_output(fg: FileGenerator, ts: Timeseries, year_range):
     shortcut_save_timeseries_print(fg, year_range, ts.get_data())
 
 
-def add_series_to_plot_detailed(series, colors, country_name):
-    x, y = zip(*series.get_data())
+def shortcut_coef_output(fg: FileGenerator, coef: Coef):
+    """ A shortcut to easily output the contents of a coefficient object. """
 
-    coef = series.get_coef()
+    forecast_method = coef._method
+    exp_coef = coef._exp
+    lin_coef = coef._lin
+    quadr_coef = coef._quadr
+    offset = coef._offset
 
-    color = next(colors)
-
-    # Plot points
-    if len(x) < 2:
-        plt.plot(x, y, 'o', color=color, label="historical data")
+    if forecast_method is not None:
+        fg.add_entry("Selected Forecast Method", str(forecast_method))
     else:
-        plt.plot(x, y, color=color, label="historical data")
+        fg.add_entry("Selected Forecast Method", "")
 
-    # get coef function
-    (start, end) = get_year_range([series])
-    x_extrapol = range(start, end + 2)
-    if coef._lin is not None:
-        color = next(colors)
-        # Plot linear regression
-        coef_func = [uty.lin_prediction((coef._lin[0], coef._lin[1]), e) for e in x_extrapol]
-        # plot coef function
-        plt.plot(x_extrapol, coef_func, color=color, label="linear coefficients")
-    if coef._exp is not None and coef._exp[0] is not None:
-        color = next(colors)
-        # Plot exp regression
-        coef_func = [uty.exp_change((coef._exp[0][0], coef._exp[0][1]), coef._exp[1], e) for e in x_extrapol]
-        # plot coef function
-        plt.plot(x_extrapol, coef_func, color=color, label="exponential growth")
-    if coef._quadr is not None:
-        color = next(colors)
-        # Plot quadratic regression
-        coef_func = [uty.quadr_prediction((coef._quadr[0], coef._quadr[1], coef._quadr[2]), e) for e in x_extrapol]
-        # plot coef function
-        plt.plot(x_extrapol, coef_func, color=color, label="quadratic coefficients")
-
-
-def save_series_plot(input_manager: Input, folder, series: TwoDseries, x_label, y_label, country_name, product_name):
-    colors = itertools.cycle(sns.color_palette())
-
-    add_series_to_plot_detailed(series, colors, country_name)
-
-    image_label = product_name + " - " + country_name
-
-    plt.title(image_label)
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
-
-    plt.legend(loc='upper right')
-
-    directory = input_manager.output_path / FileGenerator.get_day_directory() / folder
-    file_name = product_name + "_" + y_label + "-vs-" + x_label + "_" + country_name
-
-    if not os.path.exists(Path(directory)):
-        os.makedirs(Path(directory))
-    plt.savefig(directory / str(file_name + '.png'))
-    plt.clf()
-
-
-def add_series_to_plot_simple(series, colors, label):
-    x, y = zip(*series.get_data())
-
-    coef = series.get_coef()
-    method = coef._method
-
-    color = next(colors)
-
-    # Plot points
-    if len(x) < 2:
-        plt.plot(x, y, 'o', color=color)
+    if exp_coef is not None:
+        if exp_coef[0] is not None:
+            fg.add_entry("Exponential Start Point", "(" + str(exp_coef[0][0]) + ", " + str(exp_coef[0][1]) + ")")
+            if exp_coef[1] is not None:
+                fg.add_entry("Exponential Change Rate", exp_coef[1])
+            else:
+                fg.add_entry("Exponential Change Rate", "")
+        elif exp_coef[1] is not None:
+            fg.add_entry("Exponential Start Point", "")
+            fg.add_entry("Exponential Change Rate", exp_coef[1])
+        else:
+            fg.add_entry("Exponential Start Point", "")
+            fg.add_entry("Exponential Change Rate", "")
     else:
-        plt.plot(x, y, color=color)
-
-    # get coef function
-    (start, end) = get_year_range([series])
-    x_extrapol = range(start, end + 2)
-    coef_func = []
-    match method:
-        case ForecastMethod.LINEAR:
-            # Plot linear regression
-            coef_func = [uty.lin_prediction((coef._lin[0], coef._lin[1]), e) for e in x_extrapol]
-        case ForecastMethod.QUADRATIC:
-            # Plot quadratic regression
-            coef_func = [uty.quadr_prediction((coef._quadr[0], coef._quadr[1], coef._quadr[2]), e) for e in x_extrapol]
-        case ForecastMethod.EXPONENTIAL:
-            # Plot exp regression
-            coef_func = [uty.exp_change((coef._exp[0][0], coef._exp[0][1]), coef._exp[1], e) for e in x_extrapol]
-
-    plt.plot(x_extrapol, coef_func, color=color, label=label, linestyle="dashed")
-
-
-def save_multiple_series_plot(input_manager: Input, folder, tdss: [TwoDseries], labels: [str], x_label, y_label,
-                              country_name, product_name):
-
-    colors = itertools.cycle(sns.color_palette())
-
-    for series, label in list(zip(tdss, labels)):
-        add_series_to_plot_simple(series, colors, label)
-
-    image_label = product_name + " - " + country_name
-
-    plt.title(image_label)
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
-
-    plt.legend(loc='upper right')
-
-    directory = input_manager.output_path / FileGenerator.get_day_directory() / folder
-    file_name = product_name + "_" + y_label + "-vs-" + x_label + "_" + country_name
-
-    if not os.path.exists(Path(directory)):
-        os.makedirs(Path(directory))
-    plt.savefig(directory / str(file_name + '.png'))
-    plt.clf()
-
-
-
+        fg.add_entry("Exponential Start Point", "")
+        fg.add_entry("Exponential Change Rate", "")
+    if lin_coef is not None:
+        fg.add_entry("Linear k0", lin_coef[0])
+        fg.add_entry("Linear k1", lin_coef[1])
+    else:
+        fg.add_entry("Linear k0", "")
+        fg.add_entry("Linear k1", "")
+    if quadr_coef is not None:
+        fg.add_entry("Quadratic k0", quadr_coef[0])
+        fg.add_entry("Quadratic k1", quadr_coef[1])
+        fg.add_entry("Quadratic k2", quadr_coef[2])
+    else:
+        fg.add_entry("Quadratic k0", "")
+        fg.add_entry("Quadratic k1", "")
+        fg.add_entry("Quadratic k2", "")
+    if offset is not None:
+        fg.add_entry("Offset", offset)
+    else:
+        fg.add_entry("Offset", "")

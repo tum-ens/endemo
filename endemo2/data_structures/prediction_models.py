@@ -120,6 +120,18 @@ class Coef:
                 warnings.warn("No forecast method selected for coefficients.")
                 return None
 
+    def get_lin(self) -> (float, float):
+        """ Getter for the linear coefficient. """
+        return self._lin
+
+    def get_quadr(self) -> (float, float, float):
+        """ Getter for the quadratic coefficient. """
+        return self._quadr
+
+    def get_exp(self) -> ((float, float), float):
+        """ Getter for the exponential coefficient. """
+        return self._exp
+
 
 class RigidTimeseries:
     """
