@@ -122,6 +122,8 @@ class IndustrySettings:
         Only for these products, calculations are performed.
     :ivar float rest_sector_growth_rate: The growth rate of the rest sector.
     :ivar bool use_gdp_as_x: Indicates that prediction x-axis should be gdp instead of time.
+    :ivar dict[DemandType, Heat] heat_substitution: The percentage/100 of heat that is substituted by another
+        demand type.
     """
     forecast_map = dict({"Linear time trend": ForecastMethod.LINEAR,
                          "Linear GDP function": ForecastMethod.LINEAR,
