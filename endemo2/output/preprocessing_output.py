@@ -83,7 +83,7 @@ def generate_country_group_output(folder, input_manager: input.Input, group_mana
         day_dir = get_day_folder_path(input_manager)
         directory = ensure_directory_exists(day_dir / Path(folder) / "visual_output" / "Country Groups")
 
-        for product_name in input_manager.industry_input.active_products.keys():
+        for product_name in input_manager.industry_input.dict_product_input.keys():
 
             # output joined groups
             group_id = 0
@@ -138,7 +138,7 @@ def generate_country_group_output(folder, input_manager: input.Input, group_mana
 def generate_visual_output(folder, input_manager: input.Input, countries_pp: dict[str, CountryPreprocessed]):
 
     # generate vis output specific consumption
-    for product_name in input_manager.industry_input.active_products.keys():
+    for product_name in input_manager.industry_input.dict_product_input.keys():
         x_label = "Time"
         y_label = "Specific Consumption"
         directory = Path(folder) / "visual_output" / "Specific Consumption"
@@ -157,7 +157,7 @@ def generate_visual_output(folder, input_manager: input.Input, countries_pp: dic
                                           x_label, y_label, country_name, product_name)
 
     # generate vis output amount_vs_year
-    for product_name, product_input in input_manager.industry_input.active_products.items():
+    for product_name, product_input in input_manager.industry_input.dict_product_input.items():
         x_label = "Time"
         y_label = product_name + " Amount"
         directory = Path(folder) / "visual_output" / (y_label + "-vs-" + x_label)
@@ -167,7 +167,7 @@ def generate_visual_output(folder, input_manager: input.Input, countries_pp: dic
                 save_series_plot(input_manager, directory, series, x_label, y_label, country_name, product_name)
 
     # generate vis output amount_per_capita_vs_year
-    for product_name, product_input in input_manager.industry_input.active_products.items():
+    for product_name, product_input in input_manager.industry_input.dict_product_input.items():
         x_label = "Time"
         y_label = product_name + " Amount-per-Capita"
         directory = Path(folder) / "visual_output" / (y_label + "-vs-" + x_label)
@@ -177,7 +177,7 @@ def generate_visual_output(folder, input_manager: input.Input, countries_pp: dic
                 save_series_plot(input_manager, directory, series, x_label, y_label, country_name, product_name)
 
     # generate vis output amount_per_capita_vs_gdp
-    for product_name, product_input in input_manager.industry_input.active_products.items():
+    for product_name, product_input in input_manager.industry_input.dict_product_input.items():
         x_label = "GDP"
         y_label = product_name + " Amount-per-Capita"
         directory = Path(folder) / "visual_output" / (y_label + "-vs-" + x_label)
@@ -187,7 +187,7 @@ def generate_visual_output(folder, input_manager: input.Input, countries_pp: dic
                 save_series_plot(input_manager, directory, series, x_label, y_label, country_name, product_name)
 
     # generate vis output amount_vs_gdp
-    for product_name, product_input in input_manager.industry_input.active_products.items():
+    for product_name, product_input in input_manager.industry_input.dict_product_input.items():
         x_label = "GDP"
         y_label = product_name + " Amount"
         directory = Path(folder) / "visual_output" / (y_label + "-vs-" + x_label)
@@ -210,7 +210,7 @@ def generate_amount_timeseries_output(folder, input_manager: input.Input, countr
     filename = "ind_coef_product_amount_vs_time.xlsx"
     fg = FileGenerator(input_manager, folder, filename)
     with fg:
-        for product_name, product_obj in input_manager.industry_input.active_products.items():
+        for product_name, product_obj in input_manager.industry_input.dict_product_input.items():
             fg.start_sheet(product_name)
 
             all_tss = \
@@ -229,7 +229,7 @@ def generate_amount_timeseries_output(folder, input_manager: input.Input, countr
     filename = "ind_coef_product_amount_per_capita_vs_time.xlsx"
     fg = FileGenerator(input_manager, folder, filename)
     with fg:
-        for product_name, product_obj in input_manager.industry_input.active_products.items():
+        for product_name, product_obj in input_manager.industry_input.dict_product_input.items():
             fg.start_sheet(product_name)
 
             all_tss = \
@@ -253,7 +253,7 @@ def generate_amount_per_gdp_coef_output(folder, input_manager: input.Input,
     filename = "ind_coef_product_amount_vs_gdp.xlsx"
     fg = FileGenerator(input_manager, folder, filename)
     with fg:
-        for product_name, product_obj in input_manager.industry_input.active_products.items():
+        for product_name, product_obj in input_manager.industry_input.dict_product_input.items():
             fg.start_sheet(product_name)
             for country_name, country_pp in countries_pp.items():
                 fg.add_entry("Country", country_name)
@@ -267,7 +267,7 @@ def generate_amount_per_gdp_coef_output(folder, input_manager: input.Input,
     filename = "ind_coef_product_amount_per_capita_vs_gdp.xlsx"
     fg = FileGenerator(input_manager, folder, filename)
     with fg:
-        for product_name, product_obj in input_manager.industry_input.active_products.items():
+        for product_name, product_obj in input_manager.industry_input.dict_product_input.items():
             fg.start_sheet(product_name)
             for country_name, country_pp in countries_pp.items():
                 fg.add_entry("Country", country_name)

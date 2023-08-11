@@ -9,17 +9,20 @@ import math
 import os
 import warnings
 from array import array
+from typing import Union
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from pandas import ExcelFile
 
+from endemo2.data_structures.containers import Heat
 from endemo2.data_structures.enumerations import GroupType, DemandType, SubsectorGroup
 from endemo2 import utility as uty
 from endemo2.data_structures import containers as dc
 from endemo2.input_and_settings import control_parameters as cp
-from endemo2.input_and_settings.control_parameters import ControlParameters
+from endemo2.input_and_settings.control_parameters import ControlParameters, IndustrySettings
+from endemo2.input_and_settings.input_utility import FileReadingHelper
 
 
 class Input:
@@ -48,10 +51,8 @@ class Input:
     # Future TODO: add other sector inputs
 
     def __init__(self):
-
         # read set and control parameters
-        self.ctrl: ControlParameters = None
-        self.update_set_and_control_parameters()
+        self.ctrl: ControlParameters = self.update_set_and_control_parameters()
 
         # read general
         self.general_input = GeneralInput(self.ctrl, Input.general_path)
@@ -59,20 +60,22 @@ class Input:
         # read industry
         self.industry_input = IndustryInput(self.ctrl, Input.industry_path,
                                             self.general_input.abbreviations,
+                                            self.general_input.nuts2_valid_regions,
                                             self.ctrl.general_settings.active_countries)
 
-    def update_set_and_control_parameters(self):
-        self.ctrl_ex = pd.ExcelFile(Input.ctrl_path)
+    def update_set_and_control_parameters(self) -> cp.ControlParameters:
+        """ Reads Set_and_Control_Parameters.xlsx """
+        ctrl_ex = pd.ExcelFile(Input.ctrl_path)
 
         # read control parameters
-        general_settings = cp.GeneralSettings(pd.read_excel(self.ctrl_ex, sheet_name="GeneralSettings"),
-                                              pd.read_excel(self.ctrl_ex, sheet_name="Countries"))
+        general_settings = cp.GeneralSettings(pd.read_excel(ctrl_ex, sheet_name="GeneralSettings"),
+                                              pd.read_excel(ctrl_ex, sheet_name="Countries"))
         industry_settings = \
             cp.IndustrySettings(
-                pd.read_excel(self.ctrl_ex, sheet_name="IND_general"),
-                pd.read_excel(self.ctrl_ex, sheet_name="IND_subsectors"))
+                pd.read_excel(ctrl_ex, sheet_name="IND_general"),
+                pd.read_excel(ctrl_ex, sheet_name="IND_subsectors"))
 
-        self.ctrl = cp.ControlParameters(general_settings, industry_settings)
+        return cp.ControlParameters(general_settings, industry_settings)
 
 
 class PopulationInput:
@@ -95,7 +98,7 @@ class PopulationInput:
         It is of the form {country_name -> (code -> (historical: [(float,float)], prognosis: [interval, growth rate]))}
     """
 
-    def __init__(self, ctrl: cp.ControlParameters, nuts2_valid_regions: set, abbreviations: dict,
+    def __init__(self, ctrl: cp.ControlParameters, nuts2_valid_regions: set, abbreviations: dict[str, dc.CA],
                  df_country_pop_his: pd.DataFrame, df_country_pop_prog: pd.DataFrame,
                  df_nuts2_pop_his: pd.DataFrame, df_nuts2_pop_prog: pd.DataFrame):
         self.country_population = dict[str, dc.HisProg]()
@@ -244,17 +247,22 @@ class GeneralInput:
 
 class ProductInput:
     """
-    The Product Input summarizes all preprocessing data, that is specific to a certain product type, but holds the
-    information for all countries_in_group. Example product type: steel_prim
+    The ProductInput holds all input data that is specific to a subsector. Most of the input is also read within this
+    class, except input that is more efficient to be read for all products at once. That input is read in the
+    IndustryInput class.
 
-    :param sc: specific_consumption_default
-    :param bat: bat
-    :param prod: production
-    :param sc_h: specific_consumption_historical
-    :param sc_h_active: Indicates whether specific consumption should be calculated from historical data.
-    :param heat_levels: heat_levels
-    :param manual_exp_change_rate: manual_exp_change_rate
-    :param perc_used: perc_used
+    :param str product_name: The name of the product this input is for.
+    :param Path industry_path: The path to the industry input folder.
+    :param IndustrySettings industry_settings: The settings for the industry sector.
+    :param ExcelFile ex_specific_consumption: The Excel sheet for specific consumption default values.
+    :param ExcelFile ex_bat: The Excel sheet for best available technology.
+    :param ExcelFile ex_nuts2_ic: The Excel sheet for nuts2 installed capacities.
+    :param ExcelFile ex_country_groups: The Excel sheet of the country groups.
+    :param [str] active_countries: The list of english names of the active countries.
+    :param dict[str, Heat] dict_heat_levels: The dictionary holding the heat levels for all products.
+        Of form {product_name -> heat_levels}
+    :param dict[str, str] dict_de_en_map: A mapping from a countries german name to the english name.
+    :param dict[str, str] dict_alpha2_en_map: A mapping from a countries two-letter-abbreviation to the english name.
 
     :ivar str product_name: The name of the product.
     :ivar dict[str, containers.SpecConsum] specific_consumption_default: Default specific consumption value for this product.
@@ -274,32 +282,245 @@ class ProductInput:
         structured as {group_type -> list_of_groups}.
     """
 
-    def __init__(self, name, sc, bat, prod, sc_h, sc_h_active, heat_levels, manual_exp_change_rate, perc_used,
-                 nuts2_installed_capacity, country_groups):
-        self.product_name = name
-        self.specific_consumption_default = sc
-        self.bat = bat
-        self.production = prod
-        if sc_h_active:
-            self.specific_consumption_historical = sc_h
-        else:
-            self.specific_consumption_historical = dict()
-        self.heat_levels = heat_levels
-        self.manual_exp_change_rate = manual_exp_change_rate
+    def __init__(self, product_name: str, industry_path: Path, industry_settings: IndustrySettings,
+                 ex_specific_consumption: pd.ExcelFile, ex_bat: pd.ExcelFile, ex_nuts2_ic: pd.ExcelFile,
+                 ex_country_groups: pd.ExcelFile, active_countries, dict_heat_levels: dict[str, Heat],
+                 dict_de_en_map: dict[str, str], dict_alpha2_en_map: dict[str, str], nuts2_valid_regions: set[str]):
+        self.product_name = product_name
 
-        self.perc_used = float(perc_used) if not math.isnan(float(perc_used)) else 1
-        self.nuts2_installed_capacity = nuts2_installed_capacity
-        self.country_groups = country_groups
+        # read product input from industry dictionaries
+        self.heat_levels = dict_heat_levels[self.product_name]
+
+        # read production data
+        self.production = self.read_production_data(industry_path, industry_settings)
+
+        # read specific consumption default data
+        self.specific_consumption_default = self.read_specific_consumption_default(ex_specific_consumption)
+
+        # read specific demand historical data
+        if industry_settings.trend_calc_for_spec:
+            self.specific_consumption_historical = \
+                self.read_energy_carrier_consumption_historical(industry_path, dict_de_en_map)
+        else:
+            self.specific_consumption_historical = None
+
+        # read bat consumption data
+        self.bat = self.read_best_available_technology(ex_bat)
+
+        # read NUTS2 installed capacity
+        self.nuts2_installed_capacity = \
+            self.read_nuts2_installed_capacities(ex_nuts2_ic, dict_alpha2_en_map, nuts2_valid_regions)
+
+        # read country groups
+        self.country_groups = self.read_country_groups(ex_country_groups, active_countries)
 
     def __str__(self):
         return "\n\tSpecific Consumption: " + uty.str_dict(self.specific_consumption_default) + \
             "\n\t BAT: " + uty.str_dict(self.bat) + \
             "\n\t Historical: " + uty.str_dict(self.production) + "\n"
 
+    def read_specific_consumption_default(self, ex_specific_consumption: pd.ExcelFile) -> dict[str, dc.SpecConsum]:
+        """
+        Reads the default specific consumption data for this subsector.
+
+        :param ex_specific_consumption: The Excel sheet for specific consumption default values.
+        :return: The default specific consumptions for this subsector. Of form: {country_name -> specific_consumption}
+        """
+        prod_sc = pd.read_excel(ex_specific_consumption, sheet_name=self.product_name)
+        dict_prod_sc_country = dict[str, dc.SpecConsum]()
+
+        for _, row in pd.DataFrame(prod_sc).iterrows():
+            dict_prod_sc_country[row.Country] = \
+                dc.SpecConsum(row["Spec electricity consumption [GJ/t]"],
+                              row["Spec heat consumption [GJ/t]"],
+                              row["Spec hydrogen consumption [GJ/t]"],
+                              row["max. subst. of heat with H2 [%]"])
+
+        return dict_prod_sc_country
+
+    def read_energy_carrier_consumption_historical(self, industry_path: Path, dict_de_en_map: dict[str, str]) \
+            -> Union[None, dict[str, [(float, float)]]]:
+        """
+        Reads the historical consumption data for this subsector split by energy carriers.
+
+        :param industry_path: The path to the industry input folder.
+        :param dict_de_en_map: A mapping from the german name of a country to the english name.
+        :return: If present, the historical quantity of energy carrier in subsector.
+            Of form: {country_name -> {energy_carrier -> [(float, float)]}}
+        """
+
+        if self.product_name not in IndustryInput.sc_historical_data_file_names.keys():
+            return None
+
+        dict_sc_his = dict[str, dict[str, [(float, float)]]]()
+
+        sc_his_file_name = IndustryInput.sc_historical_data_file_names[self.product_name]
+        ex_sc_his = pd.ExcelFile(industry_path / sc_his_file_name)
+
+        for sheet_name in IndustryInput.sc_historical_sheet_names:
+            df_sc = pd.read_excel(ex_sc_his, sheet_name)
+            for _, row in df_sc.iterrows():
+                country_name_de = row["GEO/TIME"]
+                years = df_sc.columns[1:]
+                data = df_sc[df_sc["GEO/TIME"] == country_name_de].iloc[0][1:]
+
+                # convert country name to model-intern english representation
+                if country_name_de in dict_de_en_map.keys():
+                    country_name_en = dict_de_en_map[country_name_de]
+                else:
+                    continue
+
+                if not uty.is_zero(data):
+                    # data exists -> fill into dictionary
+                    zipped = list(zip(years, data))
+                    his_data = uty.filter_out_nan_and_inf(zipped)
+                    # his_data = uty.cut_after_x(his_data, industry_settings.last_available_year)
+
+                    if country_name_en not in dict_sc_his.keys():
+                        dict_sc_his[country_name_en] = dict()
+
+                    dict_sc_his[country_name_en][sheet_name] = his_data
+
+        return dict_sc_his
+
+    def read_production_data(self, industry_path: Path, industry_settings: IndustrySettings) \
+            -> dict[str, [(float, float)]]:
+        """
+        Reads historical production quantities for this subsector.
+
+        :param industry_path: The path to the industry input folder.
+        :param industry_settings: The industry settings.
+        :return: The historical production data of all subsectors for all countries.
+        """
+        retrieve_prod = IndustryInput.product_data_access[self.product_name]
+        retrieve_prod.set_path_and_read(industry_path)
+        retrieve_prod.skip_years(industry_settings.skip_years)
+        df_product_his = retrieve_prod.get()
+
+        dict_prod_his = dict[str, [(float, float)]]()
+
+        production_it = pd.DataFrame(df_product_his).itertuples()
+        for row in production_it:
+            if str(row.Country) == 'nan':
+                continue
+            years = df_product_his.columns[1:]
+            data = df_product_his[df_product_his["Country"] == row.Country].iloc[0][1:]
+            if uty.is_zero(data):
+                # country did not product this product at all => skip product for this country
+                # print("skipped " + product_name + " for country " + row.Country)
+                continue
+            zipped = list(zip(years, data))
+            his_data = uty.filter_out_nan_and_inf(zipped)
+            his_data = uty.cut_after_x(his_data, industry_settings.last_available_year - 1)
+            dict_prod_his[row.Country] = his_data
+
+        return dict_prod_his
+
+    def read_nuts2_installed_capacities(self, ex_nuts2_ic: pd.ExcelFile, dict_alpha2_en_map: dict[str, str],
+                                        nuts2_valid_regions: set[str]) -> dict[str, dict[str, float]]:
+        """
+        Reads all the installed capacities for the nuts2 regions.
+
+        :param ex_nuts2_ic: The Excel sheet holding the installed capacities percentages.
+        :param dict_alpha2_en_map: A mapping from a countries two-letter-abbreviation to the english name.
+        :param set[str] nuts2_valid_regions: The valid nuts2 regions according to the currently chosen nuts2 version.
+        :return: The installed capacities for all nuts2 regions in an active country.
+            Is of form: {country_name -> {nuts2_region_name -> installed_capacity}}
+        """
+        dict_installed_capacity_nuts2 = dict[str, dict[str, float]]()
+
+        product_name_general = self.product_name
+        if product_name_general.endswith("_classic"):
+            product_name_general = product_name_general.removesuffix("_classic")
+
+        if product_name_general in ["steel_prim", "steel_sec"]:
+            # PLACEHOLDER until steel is finished in sheets. TODO: remove when steel is correct in sheet
+            product_name_general = "steel"
+
+        df_nuts2_ic = pd.read_excel(ex_nuts2_ic, product_name_general)
+        for _, row in df_nuts2_ic.iterrows():
+            nuts2 = row["NUTS2"]
+            alpha2 = nuts2[:2]
+            if nuts2 not in nuts2_valid_regions:
+                # not the currently chosen nuts2 code version
+                continue
+            if alpha2 not in dict_alpha2_en_map.keys():
+                # country not active
+                continue
+
+            country_name_en = dict_alpha2_en_map[nuts2[:2]]
+            if country_name_en not in dict_installed_capacity_nuts2.keys():
+                dict_installed_capacity_nuts2[country_name_en] = dict[str, float]()
+
+            perc_value = row[product_name_general + " %"] # automatically %/100
+            dict_installed_capacity_nuts2[country_name_en][nuts2] = perc_value if not np.isnan(perc_value) else 0.0
+
+        return dict_installed_capacity_nuts2
+
+    def read_best_available_technology(self, ex_bat: pd.ExcelFile) -> dict[str, dc.EH]:
+        """
+        Reads the specific consumption input of the best available technology.
+
+        :param ex_bat: The Excel file of the best available technology.
+        :return: The bat consumption for each country. Of the form: {country_name -> EH}
+        """
+        df_prod_bat = pd.read_excel(ex_bat, sheet_name=self.product_name)
+        dict_prod_bat_country = dict()
+
+        for _, row in df_prod_bat.iterrows():
+            dict_prod_bat_country[row.Country] = \
+                dc.EH(row["Spec electricity consumption [GJ/t]"],
+                      row["Spec heat consumption [GJ/t]"])
+
+        return dict_prod_bat_country
+
+    def read_country_groups(self, ex_country_groups: pd.ExcelFile, active_countries: [str]) -> dict[GroupType, [[str]]]:
+        """
+        Reads the input for the country groups.
+
+        :param ex_country_groups: The Excel file that gives the country groups.
+        :param active_countries: The list of active countries.
+        :return: The country groups of form: {group_type -> [ grp1[country1, country2, ...], grp2[country4, ...], ... ]}
+        """
+
+        country_groups = dict[GroupType, [[str]]](
+            {GroupType.SEPARATE: [], GroupType.JOINED: [], GroupType.JOINED_DIVERSIFIED: []})
+
+        # if product sheet exists take that, else take default
+        try:
+            df_country_groups = pd.read_excel(ex_country_groups, sheet_name=self.product_name)
+        except ValueError:
+            df_country_groups = pd.read_excel(ex_country_groups, sheet_name="default")
+
+        map_group_type = {"joined": GroupType.JOINED,
+                          "joined_diversified": GroupType.JOINED_DIVERSIFIED,
+                          "separate": GroupType.SEPARATE}
+
+        all_countries = active_countries
+        grouped_countries = set()
+        all_others_group_type = None
+
+        for _, row in df_country_groups.iterrows():
+            group_type = map_group_type[row["Combination Type"]]
+            new_group = [entry for entry in row[1:] if str(entry) != "nan"]
+            if "all_others" in new_group:
+                all_others_group_type = group_type
+                continue
+            country_groups[group_type].append(new_group)
+            grouped_countries |= set(new_group)
+        if all_others_group_type is not None:
+            country_groups[all_others_group_type] += [[country for country in all_countries if
+                                                       country not in grouped_countries]]
+
+        return country_groups
+
 
 class RestSectorInput:
     """
     A container for the preprocessing data regarding the rest sectors_to_do.
+
+    :param Path industry_path: The path to the industry input folder.
+    :param dict[str, dc.Heat] dict_heat_levels: The heat levels.
 
     :ivar dict[str, dict[DemandType, (float, float)]] rest_demand_proportion_basis_year: Used for the calculation of the rest sector.
         It has the following structure: {country_name -> {demand_type -> (rest_sector_percent, demand_2018)}}
@@ -308,7 +529,8 @@ class RestSectorInput:
         rest sector into the different heat levels.
     """
 
-    def __init__(self, df_rest_calc: pd.DataFrame, dict_heat_levels: dict[str, dc.Heat]):
+    def __init__(self, industry_path: Path, dict_heat_levels: dict[str, dc.Heat]):
+        df_rest_calc = pd.read_excel(industry_path / "Ind_energy_demand_2018_Trend_Restcalcul.xlsx")
         self.rest_calc_basis_year = 2018  # change here, if another year should be used for rest sector (also path)
         self.rest_sector_heat_levels = dict_heat_levels["rest"]
         self.rest_demand_proportion_basis_year = dict()
@@ -320,72 +542,17 @@ class RestSectorInput:
                 (row["Rest heat"] / 100, row["heat " + str(self.rest_calc_basis_year)])
 
 
-class FileReadingHelper:
-    """
-    A helper class to read products historical data. It provides some fixed transformation operations.
-
-    :ivar str file_name: The files name, relative to the path variable.
-    :ivar str sheet_name: The name of the sheet that is to be read from the file.
-    :ivar [int] skip_rows: These rows(!) will be skipped when reading the dataframe. Done by numerical index.
-    :ivar lambda[pd.Dataframe -> pd.Dataframe] sheet_transform: A transformation operation on the dataframe
-    :ivar pd.Dataframe df: The current dataframe.
-    :ivar Path path: The path to the folder, where the file is.
-        It can to be set after constructing the FileReadingHelper Object.
-    """
-
-    def __init__(self, file_name: str, sheet_name: str, skip_rows: [int], sheet_transform):
-        self.file_name = file_name
-        self.sheet_name = sheet_name
-        self.skip_rows = skip_rows
-        self.sheet_transform = sheet_transform
-        self.df = None
-        self.path = None
-
-    def set_path_and_read(self, path: Path) -> None:
-        """
-        Sets the path variable and reads the file with name self.file_name in the path folder.
-
-        :param path: The path, where the file lies.
-        """
-        self.path = path
-        self.df = self.sheet_transform(pd.read_excel(self.path / self.file_name, self.sheet_name,
-                                                     skiprows=self.skip_rows))
-
-    def skip_years(self, skip_years: [int]) -> None:
-        """
-        Filters the skip years from the current dataframe.
-
-        :param skip_years: The list of years to skip.
-        """
-        if self.df is None:
-            warnings.warn("Trying to skip years in products historical data without having called set_path_and_read"
-                          " on the Retrieve object.")
-        # skip years
-        for skip_year in skip_years:
-            if skip_year in self.df.columns:
-                self.df.drop(skip_year, axis=1, inplace=True)
-
-    def get(self) -> pd.DataFrame:
-        """
-        Getter for the dataframe.
-
-        :return: The current dataframe, which is filtered depending on previous function calls on this class.
-        """
-        if self.df is None:
-            warnings.warn("Trying to retrieve products historical data without having called set_path_and_read on "
-                          "the Retrieve object.")
-        return self.df
-
-
 class IndustryInput:
     """
     Industry Input denoted preprocessing that is read from the "preprocessing/industry" folder.
 
-    :param industry_path: The path to the industry folder.
-    :param industry_settings: The parsed sector-specific settings for the industry sector.
+    :param ctrl: ControlSettings object.
+    :param industry_path: The path to the industry input folder.
+    :param dict[str, dc.CA] abbreviations: The abbreviations for all countries.
+    :param nuts2_valid_regions: The valid nuts2 regions of set version.
+    :param active_countries: The currently active countries.
 
-    :ivar dict[str, ProductInput] active_products: Stores the product specific preprocessing for all active products.
-    :ivar IndustrySettings settings: Stores the sector-specific settings for industry.
+    :ivar dict[str, ProductInput] dict_product_input: Stores the product specific preprocessing for all active products.
     :ivar dict[str, Retrieve] product_data_access: Specify how data sheets for each product should be accessed
     :ivar dict[str, str] sc_historical_data_file_names: The file names of the files used for certain products to read
         historical information on specific consumption.
@@ -449,214 +616,103 @@ class IndustryInput:
         SubsectorGroup.PAPER: "hotmaps_task_2.7_load_profile_industry_paper_yearlong_2018.csv",
     }
 
-    def __init__(self, ctrl: cp.ControlParameters, industry_path: Path, abbreviations: dict,
-                 active_countries: [str]):
-        self.settings = ctrl.industry_settings
-        self.active_products = dict[str, ProductInput]()
-
-        ex_spec = pd.ExcelFile(industry_path / "Specific_Consumption.xlsx")
-        ex_bat = pd.ExcelFile(industry_path / "BAT_Consumption.xlsx")
-        ex_nuts2_ic = pd.ExcelFile(industry_path / "Installed_capacity_NUTS2.xlsx")
-        ex_country_groups = pd.ExcelFile(industry_path / "Country_Groups.xlsx")
-
-        # read heat levels
-        df_heat_levels = pd.read_excel(industry_path / "Heat_levels.xlsx")
-        dict_heat_levels = dict()
-
-        for _, row in df_heat_levels.iterrows():
-            dict_heat_levels[row["Industry"]] = dc.Heat(row["Q1"] / 100, row["Q2"] / 100, row["Q3"] / 100,
-                                                        row["Q4"] / 100)
-
-        # read rest sector calculation data
-        df_rest_calc = pd.read_excel(industry_path / "Ind_energy_demand_2018_Trend_Restcalcul.xlsx")
-        self.rest_sector_input = RestSectorInput(df_rest_calc, dict_heat_levels)
-
-        # read subsector groups for time profile
-        df_subsector_group = pd.read_excel(industry_path / "Subsector_groups.xlsx")
-        groups_as_enum = [IndustryInput.subsector_groups_str_to_enum_map[str_group] for str_group in df_subsector_group["Group"]]
-        self.subsector_to_group_map = dict(zip(df_subsector_group["Subsectors"], groups_as_enum))
+    def __init__(self, ctrl: cp.ControlParameters, industry_path: Path, abbreviations: dict[str, dc.CA],
+                 nuts2_valid_regions: set[str], active_countries: [str]):
+        self.dict_product_input = dict[str, ProductInput]()
 
         # create country_abbr -> country_name_en mapping
         dict_alpha2_en_map = dict()
         for name_en, (alpha2, alpha3, name_de) in abbreviations.items():
             dict_alpha2_en_map[alpha2] = name_en
 
+        # create country_name_de -> country_name_en mapping
+        dict_de_en_map = dict()
+        for name_en, (alpha2, alpha3, name_de) in abbreviations.items():
+            dict_de_en_map[name_de] = name_en
+
+        # read heat levels
+        dict_heat_levels = IndustryInput.read_heat_levels(industry_path)
+
+        # read rest sector calculation data
+        self.rest_sector_input = RestSectorInput(industry_path, dict_heat_levels)
+
+        # read subsector groups for time profile
+        self.subsector_to_group_map = IndustryInput.read_subsector_groups(industry_path)
+
         if ctrl.general_settings.toggle_hourly_forecast:
             # read other files for time profile
-            df_electricity_profiles = pd.read_excel(industry_path / "IND_Elec_Loadprofile.xlsx")
-            self.dict_electricity_profiles = dict[str, [float]]()
-            for country_name in active_countries:
-                country_column_name = country_name + "-Electricity"
-                if country_name + "-Electricity" not in list(df_electricity_profiles):
-                    country_column_name = "Default-Electricity"
-                country_column = list(df_electricity_profiles[country_column_name])
-                self.dict_electricity_profiles[country_name] = country_column[1:]
+            (electricity_profiles, heat_profiles) = \
+                IndustryInput.read_load_timeseries(industry_path, active_countries, dict_alpha2_en_map)
+            self.dict_electricity_profiles = electricity_profiles
+            self.dict_heat_profiles = heat_profiles
+        else:
+            self.dict_electricity_profiles = None
+            self.dict_heat_profiles = None
 
-            self.dict_heat_profiles = dict[SubsectorGroup, dict[str, [float]]]()
-            for subsec_group, filename in IndustryInput.subsector_groups_hotmaps_filenames.items():
-                df_hotmaps = pd.read_csv(industry_path / filename)
-                for _, row in df_hotmaps.iterrows():
-                    country_abbr = row["NUTS0_code"]
-                    if country_abbr not in dict_alpha2_en_map.keys():
-                        # non-active country, skip
-                        continue
-                    country_en = dict_alpha2_en_map[country_abbr]
-                    new_value = row["load"]
-                    if subsec_group not in self.dict_heat_profiles.keys():
-                        self.dict_heat_profiles[subsec_group] = dict()
-                    if country_en not in self.dict_heat_profiles[subsec_group].keys():
-                        self.dict_heat_profiles[subsec_group][country_en] = []
-                    self.dict_heat_profiles[subsec_group][country_en].append(new_value / 1000000.0)
+        # read files for the product input (faster to read only once for all products)
+        ex_spec = pd.ExcelFile(industry_path / "Specific_Consumption.xlsx")
+        ex_bat = pd.ExcelFile(industry_path / "BAT_Consumption.xlsx")
+        ex_nuts2_ic = pd.ExcelFile(industry_path / "Installed_capacity_NUTS2.xlsx")
+        ex_country_groups = pd.ExcelFile(industry_path / "Country_Groups.xlsx")
 
         # read the active subsectors sheets
-
-        for product_name in self.settings.active_product_names:
+        for product_name in ctrl.industry_settings.active_product_names:
             if product_name == 'unspecified industry':
                 continue
 
-            # read production data
-            retrieve_prod = self.product_data_access[product_name]
-            retrieve_prod.set_path_and_read(industry_path)
-            retrieve_prod.skip_years(self.settings.skip_years)
-            df_product_his = retrieve_prod.get()
-
-            dict_prod_his = dict()
-
-            production_it = pd.DataFrame(df_product_his).itertuples()
-            for row in production_it:
-                if str(row.Country) == 'nan':
-                    continue
-                years = df_product_his.columns[1:]
-                data = df_product_his[df_product_his["Country"] == row.Country].iloc[0][1:]
-                if uty.is_zero(data):
-                    # country did not product this product at all => skip product for this country
-                    # print("skipped " + product_name + " for country " + row.Country)
-                    continue
-                zipped = list(zip(years, data))
-                his_data = uty.filter_out_nan_and_inf(zipped)
-                his_data = uty.cut_after_x(his_data, self.settings.last_available_year - 1)
-                dict_prod_his[row.Country] = his_data
-
-            # read specific consumption default data
-            prod_sc = pd.read_excel(ex_spec, sheet_name=product_name)
-            dict_prod_sc_country = dict()
-
-            for _, row in pd.DataFrame(prod_sc).iterrows():
-                dict_prod_sc_country[row.Country] = \
-                    dc.SpecConsum(row["Spec electricity consumption [GJ/t]"],
-                                  row["Spec heat consumption [GJ/t]"],
-                                  row["Spec hydrogen consumption [GJ/t]"],
-                                  row["max. subst. of heat with H2 [%]"])
-
-            # create country_name_de -> country_name_en mapping
-            dict_de_en_map = dict()
-            for name_en, (alpha2, alpha3, name_de) in abbreviations.items():
-                dict_de_en_map[name_de] = name_en
-
-            # read specific demand historical data
-            dict_sc_his = dict()
-            sc_his_calc = False
-            if product_name in self.sc_historical_data_file_names.keys():
-                sc_his_calc = True
-
-                sc_his_file_name = self.sc_historical_data_file_names[product_name]
-                ex_sc_his = pd.ExcelFile(industry_path / sc_his_file_name)
-
-                for sheet_name in self.sc_historical_sheet_names:
-                    df_sc = pd.read_excel(ex_sc_his, sheet_name)
-                    for _, row in df_sc.iterrows():
-                        country_name_de = row["GEO/TIME"]
-                        years = df_sc.columns[1:]
-                        data = df_sc[df_sc["GEO/TIME"] == country_name_de].iloc[0][1:]
-
-                        # convert country name to model-intern english representation
-                        if country_name_de in dict_de_en_map.keys():
-                            country_name_en = dict_de_en_map[country_name_de]
-                        else:
-                            continue
-
-                        if not uty.is_zero(data):
-                            # data exists -> fill into dictionary
-                            zipped = list(zip(years, data))
-                            his_data = uty.filter_out_nan_and_inf(zipped)
-                            # his_data = uty.cut_after_x(his_data, industry_settings.last_available_year)
-
-                            if country_name_en not in dict_sc_his.keys():
-                                dict_sc_his[country_name_en] = dict()
-
-                            dict_sc_his[country_name_en][sheet_name] = his_data
-
-            # read bat consumption data
-            df_prod_bat = pd.read_excel(ex_bat, sheet_name=product_name)
-            dict_prod_bat_country = dict()
-
-            for _, row in df_prod_bat.iterrows():
-                dict_prod_bat_country[row.Country] = \
-                    dc.EH(row["Spec electricity consumption [GJ/t]"],
-                          row["Spec heat consumption [GJ/t]"])
-
-            # create alpha2 -> country_name_en mapping
-            dict_2_en_map = dict()
-            for name_en, (alpha2, alpha3, name_de) in abbreviations.items():
-                dict_2_en_map[alpha2] = name_en
-
-            # read NUTS2 installed capacity
-            dict_installed_capacity_nuts2 = dict[str, dict[str, float]]()
-
-            product_name_general = product_name
-            if product_name_general.endswith("_classic"):
-                product_name_general = product_name_general.removesuffix("_classic")
-            if product_name_general in ["steel_prim", "steel_sec"]:
-                # PLACEHOLDER until steel is finished in sheets. TODO: remove when steel is correct in sheet
-                product_name_general = "steel"
-            df_nuts2_ic = pd.read_excel(ex_nuts2_ic, product_name_general)
-            for _, row in df_nuts2_ic.iterrows():
-                nuts2 = row["NUTS2"]
-                alpha2 = nuts2[:2]
-                if alpha2 not in dict_2_en_map.keys():
-                    continue
-                country_name_en = dict_2_en_map[nuts2[:2]]
-                if country_name_en not in dict_installed_capacity_nuts2.keys():
-                    dict_installed_capacity_nuts2[country_name_en] = dict[str, float]()
-                perc_value = row[product_name_general + " %"]
-                dict_installed_capacity_nuts2[country_name_en][nuts2] = perc_value if not np.isnan(perc_value) else 0.0
-
-            # read country groups
-            country_groups = dict[str, [[str]]](
-                {GroupType.SEPARATE: [], GroupType.JOINED: [], GroupType.JOINED_DIVERSIFIED: []})
-
-            # if product sheet exists take that, else take default
-            try:
-                df_country_groups = pd.read_excel(ex_country_groups, sheet_name=product_name)
-            except ValueError:
-                df_country_groups = pd.read_excel(ex_country_groups, sheet_name="default")
-
-            map_group_type = {"joined": GroupType.JOINED,
-                              "joined_diversified": GroupType.JOINED_DIVERSIFIED,
-                              "separate": GroupType.SEPARATE}
-
-            all_countries = active_countries
-            grouped_countries = set()
-            all_others_group_type = None
-
-            for _, row in df_country_groups.iterrows():
-                group_type = map_group_type[row["Combination Type"]]
-                new_group = [entry for entry in row[1:] if str(entry) != "nan"]
-                if "all_others" in new_group:
-                    all_others_group_type = group_type
-                    continue
-                country_groups[group_type].append(new_group)
-                grouped_countries |= set(new_group)
-            if all_others_group_type is not None:
-                country_groups[all_others_group_type] += [[country for country in all_countries if
-                                                           country not in grouped_countries]]
-
             # finally store in product data class
-            self.active_products[product_name] = \
-                ProductInput(product_name, dict_prod_sc_country, dict_prod_bat_country, dict_prod_his, dict_sc_his,
-                             sc_his_calc, dict_heat_levels[product_name],
-                             self.settings.product_settings[product_name].manual_exp_change_rate,
-                             self.settings.product_settings[product_name].perc_used,
-                             dict_installed_capacity_nuts2, country_groups)
+            self.dict_product_input[product_name] = \
+                ProductInput(product_name, industry_path, ctrl.industry_settings,
+                             ex_spec, ex_bat, ex_nuts2_ic, ex_country_groups,
+                             active_countries, dict_heat_levels, dict_de_en_map, dict_alpha2_en_map,
+                             nuts2_valid_regions)
 
+    @classmethod
+    def read_heat_levels(cls, industry_path: Path) -> dict[str, Heat]:
+        df_heat_levels = pd.read_excel(industry_path / "Heat_levels.xlsx")
+        dict_heat_levels = dict[str, Heat]()
 
+        for _, row in df_heat_levels.iterrows():
+            dict_heat_levels[row["Industry"]] = Heat(row["Q1"] / 100, row["Q2"] / 100, row["Q3"] / 100,
+                                                     row["Q4"] / 100)
+        return dict_heat_levels
+
+    @classmethod
+    def read_subsector_groups(cls, industry_path: Path) -> dict[str, SubsectorGroup]:
+        df_subsector_group = pd.read_excel(industry_path / "Subsector_groups.xlsx")
+        groups_as_enum = [IndustryInput.subsector_groups_str_to_enum_map[str_group] for str_group in
+                          df_subsector_group["Group"]]
+        return dict(zip(df_subsector_group["Subsectors"], groups_as_enum))
+
+    @classmethod
+    def read_load_timeseries(cls, industry_path: Path, active_countries: [str], dict_alpha2_en_map: dict[str, str]) \
+            -> (dict[str, [float]], dict[SubsectorGroup, dict[str, [float]]]):
+
+        # read electricity profiles
+        df_electricity_profiles = pd.read_excel(industry_path / "IND_Elec_Loadprofile.xlsx")
+        dict_electricity_profiles = dict[str, [float]]()
+        for country_name in active_countries:
+            country_column_name = country_name + "-Electricity"
+            if country_name + "-Electricity" not in list(df_electricity_profiles):
+                country_column_name = "Default-Electricity"
+            country_column = list(df_electricity_profiles[country_column_name])
+            dict_electricity_profiles[country_name] = country_column[1:]
+
+        # read heat profiles
+        dict_heat_profiles = dict[SubsectorGroup, dict[str, [float]]]()
+        for subsec_group, filename in IndustryInput.subsector_groups_hotmaps_filenames.items():
+            df_hotmaps = pd.read_csv(industry_path / filename)
+            for _, row in df_hotmaps.iterrows():
+                country_abbr = row["NUTS0_code"]
+                if country_abbr not in dict_alpha2_en_map.keys():
+                    # non-active country, skip
+                    continue
+                country_en = dict_alpha2_en_map[country_abbr]
+                new_value = row["load"]
+                if subsec_group not in dict_heat_profiles.keys():
+                    dict_heat_profiles[subsec_group] = dict()
+                if country_en not in dict_heat_profiles[subsec_group].keys():
+                    dict_heat_profiles[subsec_group][country_en] = []
+                dict_heat_profiles[subsec_group][country_en].append(new_value / 1000000.0)
+
+        return dict_electricity_profiles, dict_heat_profiles

@@ -71,7 +71,7 @@ def generate_amount_output(scenario_output_folder: str, input_manager: Input, co
     filename = "ind_product_amount_forecast.xlsx"
     fg = FileGenerator(input_manager, scenario_output_folder, filename)
     with fg:
-        for product_name, product_obj in input_manager.industry_input.active_products.items():
+        for product_name, product_obj in input_manager.industry_input.dict_product_input.items():
             fg.start_sheet(product_name)
             for country_name, country in countries.items():
                 fg.add_entry("Country", country_name)
@@ -89,7 +89,7 @@ def generate_demand_output(scenario_output_folder: str, input_manager: Input, co
         filename = "ind_demand_forecast_per_country.xlsx"
         fg = FileGenerator(input_manager, scenario_output_folder, filename)
         with fg:
-            for product_name, product_obj in input_manager.industry_input.active_products.items():
+            for product_name, product_obj in input_manager.industry_input.dict_product_input.items():
                 fg.start_sheet(product_name)
                 for country_name, country in countries.items():
                     fg.add_entry("Country", country_name)
@@ -123,7 +123,7 @@ def generate_demand_output(scenario_output_folder: str, input_manager: Input, co
         filename = "ind_demand_forecast_per_nuts2.xlsx"
         fg = FileGenerator(input_manager, scenario_output_folder, filename)
         with fg:
-            for product_name, product_obj in input_manager.industry_input.active_products.items():
+            for product_name, product_obj in input_manager.industry_input.dict_product_input.items():
                 fg.start_sheet(product_name)
                 for country in countries.values():
                     industry: Industry = country.get_sector(SectorIdentifier.INDUSTRY)
@@ -273,7 +273,7 @@ def generate_specific_consumption_output(scenario_output_folder: str, input_mana
     filename = "ind_specific_consumption_forecast.xlsx"
     fg = FileGenerator(input_manager, scenario_output_folder, filename)
     with fg:
-        for product_name, product_obj in input_manager.industry_input.active_products.items():
+        for product_name, product_obj in input_manager.industry_input.dict_product_input.items():
             fg.start_sheet(product_name)
             for country_name in countries.keys():
                 fg.add_entry("Country", country_name)

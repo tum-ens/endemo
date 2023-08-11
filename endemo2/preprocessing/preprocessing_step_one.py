@@ -44,7 +44,8 @@ class SpecificConsumptionPreprocessed:
 
         # read historical specific consumption data
         self.specific_consumption_historical = dict[DemandType, Timeseries]()
-        if country_name in product_input.specific_consumption_historical:
+        if product_input.specific_consumption_historical is not None \
+                and country_name in product_input.specific_consumption_historical:
             dict_sc_his = product_input.specific_consumption_historical[country_name]
             first_year_for_data = int(list(dict_sc_his.values())[0][0][0])  # read year range from first entry
             last_year_for_data = int(list(dict_sc_his.values())[0][-1][0])
@@ -149,7 +150,7 @@ class IndustryPreprocessed:
         self.products_pp = dict()
         general_input = input_manager.general_input
 
-        for product_name, product_input in input_manager.industry_input.active_products.items():
+        for product_name, product_input in input_manager.industry_input.dict_product_input.items():
             self.products_pp[product_name] = \
                 ProductPreprocessed(country_name, product_input, pop_his, gdp_his, general_input)
 

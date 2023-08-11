@@ -29,7 +29,7 @@ class IndustryInstanceFilter:
 
     def get_active_products_for_this_country(self, country_name) -> list[str]:
         """ Getter for the active (or produced) products of a country. """
-        dict_product_input = self.industry_input.active_products
+        dict_product_input = self.industry_input.dict_product_input
         return [product_name for product_name in self.ctrl.industry_settings.active_product_names
                 if country_name in dict_product_input[product_name].production.keys()]
 
@@ -108,7 +108,7 @@ class ProductInstanceFilter:
 
         # modify preprocessed product coefficients to include the product settings
         for country_name, country_pp in self.preprocessor.countries_pp.items():
-            for product_name, product_pp  in country_pp.industry_pp.products_pp.items():
+            for product_name, product_pp in country_pp.industry_pp.products_pp.items():
                 product_settings = self.ctrl.industry_settings.product_settings[product_name]
                 exp_growth_rate_from_settings = product_settings.manual_exp_change_rate
                 product_pp.amount_vs_year.get_coef().set_exp_growth_rate(exp_growth_rate_from_settings)
@@ -118,9 +118,11 @@ class ProductInstanceFilter:
         country_pp: CountryPreprocessed = self.preprocessor.countries_pp[country_name]
         if product_name in country_pp.industry_pp.products_pp:
             if self.ctrl.industry_settings.nuts2_distribution_based_on_installed_ind_capacity:
+                # installed capacities active
                 product_pp: ProductPreprocessed = country_pp.industry_pp.products_pp[product_name]
                 return product_pp.nuts2_installed_capacity
             else:
+                # instead use population percentages
                 return self.country_instance_filter.get_population_nuts2_percentages_in_target_year(country_name)
         else:
             # country doesn't have product -> zero capacities
@@ -172,7 +174,7 @@ class ProductInstanceFilter:
     def get_heat_levels(self, product_name) -> Heat:
         """ Get heat levels of a product in perc/100. """
         ind_input = self.industry_input
-        heat_levels = ind_input.active_products[product_name].heat_levels
+        heat_levels = ind_input.dict_product_input[product_name].heat_levels
         return heat_levels
 
     def get_amount(self, country_name, product_name) -> float:

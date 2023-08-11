@@ -158,7 +158,7 @@ class GroupManager:
         self.country_to_group_map = dict[str, dict[str, (GroupType, int)]]()
 
         group_input = dict[str, dict[GroupType, [[str]]]]()     # product -> {grp_type -> [g1[c1, c2,..], g2[c4,..]]}
-        for product_name, product_input_obj in input_manager.industry_input.active_products.items():
+        for product_name, product_input_obj in input_manager.industry_input.dict_product_input.items():
             group_input[product_name] = product_input_obj.country_groups
 
         # create all groups
