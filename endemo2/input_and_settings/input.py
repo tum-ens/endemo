@@ -412,6 +412,7 @@ class ProductInput:
             zipped = list(zip(years, data))
             his_data = uty.filter_out_nan_and_inf(zipped)
             his_data = uty.cut_after_x(his_data, industry_settings.last_available_year - 1)
+            his_data = uty.map_data_y(his_data, lambda x: x * 1000)     # convert kt to t
             dict_prod_his[row.Country] = his_data
 
         return dict_prod_his
@@ -506,11 +507,16 @@ class ProductInput:
             if "all_others" in new_group:
                 all_others_group_type = group_type
                 continue
-            country_groups[group_type].append(new_group)
-            grouped_countries |= set(new_group)
+            new_group_only_active_countries = [country for country in new_group if country in active_countries]
+            if len(new_group_only_active_countries) > 0:
+                country_groups[group_type].append(new_group_only_active_countries)
+            grouped_countries |= set(new_group_only_active_countries)
+
         if all_others_group_type is not None:
-            country_groups[all_others_group_type] += [[country for country in all_countries if
-                                                       country not in grouped_countries]]
+            rest_countries = [country for country in all_countries if country not in grouped_countries]
+            if len(rest_countries) > 0:
+                # empty groups lead to errors
+                country_groups[all_others_group_type] += [rest_countries]
 
         return country_groups
 

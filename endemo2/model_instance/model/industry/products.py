@@ -38,6 +38,16 @@ class Product:
         heat_levels = self._product_instance_filter.get_heat_levels(self._product_name)
         heat_in_levels = heat_levels.copy_multiply_scalar(heat_total)  # separate heat levels
 
+        # substitution
+        substitution_perc: dict[DemandType, Heat] = self._product_instance_filter.get_heat_substitution()
+        electricity_subst_amount = substitution_perc[DemandType.ELECTRICITY].copy_multiply(heat_in_levels)
+        hydrogen_subst_amount = substitution_perc[DemandType.HYDROGEN].copy_multiply(heat_in_levels)
+
+        heat_in_levels.mutable_sub(electricity_subst_amount)
+        heat_in_levels.mutable_sub(hydrogen_subst_amount)
+        electricity += electricity_subst_amount.get_sum()
+        hydrogen += hydrogen_subst_amount.get_sum()
+
         return Demand(electricity, heat_in_levels, hydrogen)
 
     def get_demand_distributed_by_nuts2(self) -> dict[str, Demand]:
@@ -75,6 +85,7 @@ class Product:
                                      for hour_perc in hourly_profile[DemandType.HEAT]]
         res_dict[DemandType.HYDROGEN] = [product_demand.hydrogen * hour_perc
                                          for hour_perc in hourly_profile[DemandType.HYDROGEN]]
+
         return res_dict
 
     def calculate_hourly_demand_distributed_by_nuts2(self) -> dict[str, dict[DemandType, [float]]]:

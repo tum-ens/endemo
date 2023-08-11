@@ -3,7 +3,7 @@ This module contains all instance filters that relate to the industry sector of 
 """
 import warnings
 
-from endemo2.data_structures.containers import SpecConsum, Heat
+from endemo2.data_structures.containers import SpecConsum, Heat, EH
 from endemo2.data_structures.enumerations import DemandType, ForecastMethod, SubsectorGroup
 from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
@@ -141,8 +141,11 @@ class ProductInstanceFilter:
 
         sc_pp = product_pp.specific_consumption_pp
 
+        target_year = gen_s.target_year
+        fuel_efficiency = self.general_input.efficiency["Brennstoff allgemein"].heat
+
         if sc_pp.historical_sc_available and self.ctrl.industry_settings.trend_calc_for_spec:
-            target_year = gen_s.target_year
+
             sc_his = sc_pp.specific_consumption_historical
 
             # set forecast method. For specific consumption it's linear for now.
@@ -155,14 +158,33 @@ class ProductInstanceFilter:
             hydrogen = sc_his[DemandType.HYDROGEN].get_coef().get_function_y(target_year)
 
             specific_consumption = SpecConsum(electricity, heat, hydrogen)
-            specific_consumption.scale(1 / 3600000)     # convert from GJ/t to TWh/t, TODO: implement nicer
-            return specific_consumption
 
         else:
             default_cs = sc_pp.default_specific_consumption
             specific_consumption = SpecConsum(default_cs.electricity, default_cs.heat, default_cs.hydrogen)
-            specific_consumption.scale(1 / 3600000)  # convert from GJ/t to TWh/t, TODO: as above
-            return specific_consumption
+
+            # do easy manual forecast
+            basis_year = self.ctrl.industry_settings.last_available_year + 1
+            change_rate = self.ctrl.industry_settings.product_settings[product_name].efficiency_improvement
+            forecast_scalar = (1 - change_rate)**(target_year - basis_year)
+            specific_consumption.scale(forecast_scalar)   # forecast
+
+        # efficiency scale fuel
+        specific_consumption.heat = specific_consumption.heat * fuel_efficiency
+
+        # specific consumption cannot get better than the best available technology
+        specific_consumption.cap_at_bat(self.get_bat(country_name, product_name))
+
+        specific_consumption.scale(1 / 3600000)  # convert from GJ/t to TWh/t, TODO: make more pretty
+        return specific_consumption
+
+    def get_bat(self, country_name, product_name) -> EH:
+        """ Getter for BAT consumption. """
+        product_input = self.industry_input.dict_product_input[product_name]
+        if country_name in product_input.bat:
+            return product_input.bat[country_name]
+        else:
+            return product_input.bat["all"]
 
     def get_perc_used(self, product_name) -> float:
         """
@@ -232,9 +254,6 @@ class ProductInstanceFilter:
             population_prog = country_pp.population_pp.population_whole_country_prognosis.get_value_at_year(target_year)
             amount_result *= population_prog
 
-        # convert kt to t
-        amount_result *= 1000
-
         # clamp to 0
         amount_result = max(0.0, amount_result)
 
@@ -266,6 +285,10 @@ class ProductInstanceFilter:
         res_dict[DemandType.HYDROGEN] = hydrogen_profile
 
         return res_dict
+
+    def get_heat_substitution(self) -> dict[DemandType, Heat]:
+        """ Getter for the substitution of heat with electricity and hydrogen. """
+        return self.ctrl.industry_settings.heat_substitution
 
 
 

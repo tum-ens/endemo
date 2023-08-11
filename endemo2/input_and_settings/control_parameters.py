@@ -6,9 +6,11 @@ from __future__ import annotations
 from collections import namedtuple
 import pandas as pd
 
-from endemo2.data_structures.enumerations import ForecastMethod, SectorIdentifier
+from endemo2.data_structures.containers import Heat
+from endemo2.data_structures.enumerations import ForecastMethod, SectorIdentifier, DemandType
 
-ProductSettings = namedtuple("ProductSettings", ("active", "manual_exp_change_rate", "perc_used"))
+ProductSettings = \
+    namedtuple("ProductSettings", ("active", "manual_exp_change_rate", "perc_used", "efficiency_improvement"))
 
 
 class ControlParameters:
@@ -41,7 +43,7 @@ class GeneralSettings:
     :ivar int target_year: This is the year, the model makes predictions for.
     :ivar [str] recognized_countries:
         This is the list of countries_in_group that are in the "Countries"-sheet of Set_and_Control_Parameters.xlsx
-    :ivar [SectorIdentifier] active_countries: This is the list of active countries_in_group.
+    :ivar [str] active_countries: This is the list of active countries_in_group.
         Only for these countries_in_group, calculations are performed.
     :ivar int nuts2_version: The version of NUTS2 used for reading the files that hold information per NUTS2 Region.
         Currently, it should be either 2016 or 2021.
@@ -60,7 +62,7 @@ class GeneralSettings:
         self._parameter_values = dict()
         self.target_year = int(ex_general[ex_general["Parameter"] == "Forecast year"].get("Value").iloc[0])
         self.recognized_countries = ex_country.get("Country")
-        self.active_countries = ex_country[ex_country["Active"] == 1].get("Country")
+        self.active_countries = list(ex_country[ex_country["Active"] == 1].get("Country"))
         self.nuts2_version = int(ex_general[ex_general["Parameter"] == "NUTS2 classification"].get("Value").iloc[0])
 
         self.toggle_hourly_forecast = ex_general[ex_general["Parameter"] == "Timeseries forecast"].get("Value").iloc[0]
@@ -157,8 +159,25 @@ class IndustrySettings:
             df_subsectors[df_subsectors["Subsectors"] == "unspecified industry"].get(
                 "Parameter: production quantity change in %/year").iloc[0]
 
-        product_list = df_subsectors.get("Subsectors")
+        # read substitution of heat by electricity and hydrogen
+        self.heat_substitution = dict[DemandType, Heat]()
+        str1 = "Proportion of "
+        str2 = " usage for heat supply at "
+        str3 = " level"
+        str_electricity = str1 + "electricity" + str2
+        self.heat_substitution[DemandType.ELECTRICITY] = \
+            Heat(df_general[df_general["Parameter"] == str_electricity + "Q1" + str3].get("Value").iloc[0],
+                 df_general[df_general["Parameter"] == str_electricity + "Q2" + str3].get("Value").iloc[0],
+                 df_general[df_general["Parameter"] == str_electricity + "Q3" + str3].get("Value").iloc[0],
+                 df_general[df_general["Parameter"] == str_electricity + "Q4" + str3].get("Value").iloc[0])
+        str_hydrogen = str1 + "hydrogen" + str2
+        self.heat_substitution[DemandType.HYDROGEN] = \
+            Heat(df_general[df_general["Parameter"] == str_hydrogen + "Q1" + str3].get("Value").iloc[0],
+                 df_general[df_general["Parameter"] == str_hydrogen + "Q2" + str3].get("Value").iloc[0],
+                 df_general[df_general["Parameter"] == str_hydrogen + "Q3" + str3].get("Value").iloc[0],
+                 df_general[df_general["Parameter"] == str_hydrogen + "Q4" + str3].get("Value").iloc[0])
 
+        product_list = df_subsectors.get("Subsectors")
         for product in product_list:
             if product == "unspecified industry":
                 continue
@@ -176,8 +195,17 @@ class IndustrySettings:
                 sub_perc_used = sub_perc_used_float / 100
             except ValueError:
                 sub_perc_used = 1
+            efficiency_improvement_string = \
+                df_subsectors[df_subsectors["Subsectors"] == product].get(
+                    "Parameter: efficiency improvement in %/year").iloc[0]
+            try:
+                efficiency_improvement_float = float(efficiency_improvement_string)
+                efficiency_improvement = efficiency_improvement_float / 100
+            except ValueError:
+                efficiency_improvement = 1
 
-            self.product_settings[product] = ProductSettings(active, prod_quant_change, sub_perc_used)
+            self.product_settings[product] = \
+                ProductSettings(active, prod_quant_change, sub_perc_used, efficiency_improvement)
 
             if self.product_settings[product].active:
                 self.active_product_names.append(product)

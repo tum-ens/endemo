@@ -249,7 +249,7 @@ def quadratic_regression_delta(dict_series: dict[str, pm.TwoDseries]) \
 
             equation.append(eq_sub_country)
             counter += 1
-        
+
     coef = np.linalg.solve(equation, eq_right)
 
     # Make a dictionary of tag specific offsets. Last offset is the reference one and therefore equals 0.

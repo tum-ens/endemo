@@ -36,11 +36,20 @@ class SpecConsum:
         self.hydrogen = hydrogen
         self.max_subst_h2 = max_subst_h2
 
+    def __str__(self):
+        return "SC(" + str(self.electricity) + ", " + str(self.heat) + ", " + str(self.hydrogen) + ")"
+
     def scale(self, scalar: float) -> None:
         """ Scale member variables component-wise with scalar. """
         self.electricity *= scalar
         self.heat *= scalar
         self.hydrogen *= scalar
+
+    def cap_at_bat(self, bat: EH):
+        """ Used maximum operation between object values and best available technology. """
+        self.electricity = max(bat.electricity, self.electricity)
+        self.heat = max(bat.heat, self.heat)
+        self.hydrogen = max(0.0, self.hydrogen)
 
 
 class Heat:
@@ -72,6 +81,12 @@ class Heat:
         self.q3 += heat.q3
         self.q4 += heat.q4
 
+    def mutable_sub(self, heat: Heat):
+        self.q1 -= heat.q1
+        self.q2 -= heat.q2
+        self.q3 -= heat.q3
+        self.q4 -= heat.q4
+
     def copy_add(self, heat: Heat) -> Heat:
         return Heat(self.q1 + heat.q1, self.q2 + heat.q2, self.q3 + heat.q3, self.q4 + heat.q4)
 
@@ -81,8 +96,14 @@ class Heat:
         self.q3 *= scalar
         self.q4 *= scalar
 
+    def copy_multiply(self, heat: Heat):
+        return Heat(self.q1 * heat.q1, self.q2 * heat.q2, self.q3 * heat.q3, self.q4 * heat.q4)
+
     def copy_multiply_scalar(self, scalar: float) -> Heat:
         return Heat(self.q1 * scalar, self.q2 * scalar, self.q3 * scalar, self.q4 * scalar)
+
+    def get_sum(self) -> float:
+        return self.q1 + self.q2 + self.q3 + self.q4
 
 
 class Demand:

@@ -24,7 +24,7 @@ class SpecificConsumptionPreprocessed:
     :ivar EH bat: The specific consumption of the best available technology.
     """
 
-    def __init__(self, country_name: str, product_input: ProductInput, general_input,
+    def __init__(self, country_name: str, product_input: ProductInput, general_input: GeneralInput,
                  product_amount_per_year: Timeseries):
 
         # read bat consumption
@@ -40,7 +40,7 @@ class SpecificConsumptionPreprocessed:
             self.default_specific_consumption = product_input.specific_consumption_default["all"]
 
         # get efficiency
-        efficiency: EH = general_input.efficiency
+        efficiency: dict[str, EH] = general_input.efficiency
 
         # read historical specific consumption data
         self.specific_consumption_historical = dict[DemandType, Timeseries]()

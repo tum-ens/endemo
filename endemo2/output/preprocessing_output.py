@@ -91,6 +91,8 @@ def generate_country_group_output(folder, input_manager: input.Input, group_mana
             for joined_group in joined_groups:
                 historical_data = joined_group.get_all_historical_data()
 
+                historical_tds = [tds for (_, tds) in historical_data]
+
                 colors = itertools.cycle(sns.color_palette())
                 for country_name, tds in historical_data:
                     country_color = next(colors)
@@ -100,7 +102,7 @@ def generate_country_group_output(folder, input_manager: input.Input, group_mana
 
                 # plot coefficients of group
                 group_coef = joined_group.get_coef()
-                interval = get_series_range(historical_data)
+                interval = get_series_range(historical_tds)
                 plot_coef_in_range("Group", interval, group_coef, next(colors), next(colors), next(colors))
 
                 filename = product_name + "_Joined-Group-" + str(group_id)
