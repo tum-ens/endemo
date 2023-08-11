@@ -10,7 +10,7 @@ import seaborn as sns
 
 from endemo2.data_structures.enumerations import DemandType, ForecastMethod
 from endemo2.output.output_utility import FileGenerator, generate_timeseries_output, get_series_range, \
-    shortcut_coef_output
+    shortcut_coef_output, get_day_folder_path, ensure_directory_exists
 from endemo2.output.plot_utility import save_series_plot, save_multiple_series_plot
 from endemo2.data_structures.prediction_models import Coef, Timeseries, TwoDseries
 from endemo2.input_and_settings import input
@@ -71,16 +71,19 @@ def generate_country_group_output(folder, input_manager: input.Input, group_mana
 
     if input_manager.ctrl.general_settings.toggle_graphical_output:
         # visual output
+        if input_manager.ctrl.industry_settings.use_gdp_as_x:
+            x_label = "GDP"
+        else:
+            x_label = "Time"
+        if input_manager.ctrl.industry_settings.production_quantity_calc_per_capita:
+            y_label = product_name + " Amount per Capita"
+        else:
+            y_label = product_name + " Amount"
+
+        day_dir = get_day_folder_path(input_manager)
+        directory = ensure_directory_exists(day_dir / Path(folder) / "visual_output" / "Country Groups")
+
         for product_name in input_manager.industry_input.active_products.keys():
-            if input_manager.ctrl.industry_settings.use_gdp_as_x:
-                x_label = "GDP"
-            else:
-                x_label = "Time"
-            if input_manager.ctrl.industry_settings.production_quantity_calc_per_capita:
-                y_label = product_name + " Amount per Capita"
-            else:
-                y_label = product_name + " Amount"
-            directory = Path(folder) / "visual_output" / "Country Groups"
 
             # output joined groups
             group_id = 0

@@ -132,6 +132,10 @@ class Coef:
         """ Getter for the exponential coefficient. """
         return self._exp
 
+    def get_offset(self) -> float:
+        """ Getter for the offset. """
+        return self._offset
+
 
 class RigidTimeseries:
     """

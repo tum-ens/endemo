@@ -157,11 +157,11 @@ class GroupManager:
         self.joined_div_groups = dict[str, [CountryGroupJoinedDiversified]]()
         self.country_to_group_map = dict[str, dict[str, (GroupType, int)]]()
 
-        forecast_method = input_manager.ctrl.industry_settings.forecast_method
         group_input = dict[str, dict[GroupType, [[str]]]]()     # product -> {grp_type -> [g1[c1, c2,..], g2[c4,..]]}
         for product_name, product_input_obj in input_manager.industry_input.active_products.items():
             group_input[product_name] = product_input_obj.country_groups
 
+        # create all groups
         for product_name, group_dict in group_input.items():
             self.country_to_group_map[product_name] = dict[str, (GroupType, int)]()
 
