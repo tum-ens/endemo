@@ -11,12 +11,23 @@ from endemo2.data_structures.prediction_models import Timeseries, RigidTimeserie
 from endemo2.input_and_settings.input import Input, ProductInput, GeneralInput
 
 
+class CtsPreprocessed:
+
+    def __init__(self):
+        pass
+        #self.specific_consumption_pp =
+        #for country_name in active_countries:
+            # preprocess specific consumption
+           # self.specific_consumption_pp[country_name] = \
+             #   SpecificConsumptionPreprocessed(country_name, product_input, general_input, self.amount_vs_year)
+
+
 class SpecificConsumptionPreprocessed:
     """
     The preprocessed specific consumption for a given product.
 
-    :ivar SpecConsum default_specific_consumption: The specific consumption for a product type, that is used as default if
-        there is no historical data to predict the specific consumption.
+    :ivar SpecConsum default_specific_consumption: The specific consumption for a product type, that is used as default
+        if there is no historical data to predict the specific consumption.
     :ivar dict[DemandType, Timeseries] specific_consumption_historical:
         The dictionary holding the timeseries for each demand type's historical demand.
     :ivar bool historical_sc_available: Indicates whether there is any historical data for the given product in the
@@ -25,8 +36,10 @@ class SpecificConsumptionPreprocessed:
     """
 
     def __init__(self, country_name: str, product_input: ProductInput, general_input: GeneralInput,
-                 product_amount_per_year: Timeseries):
+                 quantity_per_year: Timeseries):
 
+        #self.bat = bat
+        #self.default_specific_consumption = default_specific_consumption
         # read bat consumption
         if country_name in product_input.bat.keys():
             self.bat = product_input.bat[country_name]
@@ -73,9 +86,9 @@ class SpecificConsumptionPreprocessed:
 
             # divide by product amount to get per product consumption (sc)
             self.specific_consumption_historical[DemandType.ELECTRICITY] = electricity_demand_sum.divide_by(
-                product_amount_per_year).scale(1 / 1000)
+                quantity_per_year).scale(1 / 1000)
             self.specific_consumption_historical[DemandType.HEAT] = heat_demand_sum.divide_by(
-                product_amount_per_year).scale(1 / 1000)
+                quantity_per_year).scale(1 / 1000)
 
             if electricity_demand_sum.is_zero() and heat_demand_sum.is_zero():
                 self.historical_sc_available = False

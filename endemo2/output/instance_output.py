@@ -3,12 +3,8 @@ This module contains all functions that generate output files from a model insta
 """
 
 import math
-import os
 import shutil
-from datetime import datetime
 from pathlib import Path
-
-import pandas as pd
 
 from endemo2.input_and_settings.input import Input
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
@@ -44,8 +40,16 @@ def generate_instance_output(input_manager: Input, countries: dict[str, Country]
         case False:
             x_axis = "time"
 
+    geo_res = ""
+    match input_manager.ctrl.general_settings.toggle_nuts2_resolution:
+        case True:
+            geo_res = "nuts2"
+        case False:
+            geo_res = "country"
+
     str_target_year = str(input_manager.ctrl.general_settings.target_year)
-    scenario_output_folder_name = "scenario_" + str_target_year + "_ind_" + str_forecast_method + "_" + x_axis
+    scenario_output_folder_name = \
+        "scenario_" + str_target_year + "_ind_" + str_forecast_method + "front_label" + x_axis + "front_label" + geo_res
 
     # copy instance settings to output folder
     day_folder = get_day_folder_path(input_manager)

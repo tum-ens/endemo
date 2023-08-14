@@ -40,13 +40,21 @@ class SpecConsum:
         return "SC(" + str(self.electricity) + ", " + str(self.heat) + ", " + str(self.hydrogen) + ")"
 
     def scale(self, scalar: float) -> None:
-        """ Scale member variables component-wise with scalar. """
+        """
+        Scales member variables component-wise with scalar.
+
+        :param scalar: The scalar to scale the components.
+        """
         self.electricity *= scalar
         self.heat *= scalar
         self.hydrogen *= scalar
 
-    def cap_at_bat(self, bat: EH):
-        """ Used maximum operation between object values and best available technology. """
+    def cap_at_bat(self, bat: EH) -> None:
+        """
+        Caps the specific consumption, as it cannot be better than the best available technology.
+
+        :param bat: The best available technology consumption to cap this specific consumption.
+        """
         self.electricity = max(bat.electricity, self.electricity)
         self.heat = max(bat.heat, self.heat)
         self.hydrogen = max(0.0, self.hydrogen)
@@ -75,34 +83,71 @@ class Heat:
     def __str__(self):
         return "Heat:[" + str(self.q1) + ", " + str(self.q2) + ", " + str(self.q3) + ", " + str(self.q4) + ")"
 
-    def mutable_add(self, heat: Heat):
+    def mutable_add(self, heat: Heat) -> None:
+        """
+        Adds the parameter heat component-wise to self.
+
+        :param heat: The heat that is added to self.
+        """
         self.q1 += heat.q1
         self.q2 += heat.q2
         self.q3 += heat.q3
         self.q4 += heat.q4
 
-    def mutable_sub(self, heat: Heat):
+    def copy_add(self, heat: Heat) -> Heat:
+        """
+        Performs addition between self and parameter heat and returns the result as a fresh object.
+        Does not change self.
+
+        :param heat: The other heat that is part of the addition.
+        :return: The result of the addition.
+        """
+        return Heat(self.q1 + heat.q1, self.q2 + heat.q2, self.q3 + heat.q3, self.q4 + heat.q4)
+
+    def mutable_sub(self, heat: Heat) -> None:
+        """
+        Subtracts the parameter heat component-wise from self.
+
+        :param heat: The heat that is subtracted from self.
+        """
         self.q1 -= heat.q1
         self.q2 -= heat.q2
         self.q3 -= heat.q3
         self.q4 -= heat.q4
 
-    def copy_add(self, heat: Heat) -> Heat:
-        return Heat(self.q1 + heat.q1, self.q2 + heat.q2, self.q3 + heat.q3, self.q4 + heat.q4)
+    def mutable_multiply_scalar(self, scalar: float) -> None:
+        """
+        Scales the heat by a scalar.
 
-    def mutable_multiply_scalar(self, scalar: float):
+        :param scalar: The scalar to scale the heat.
+        """
         self.q1 *= scalar
         self.q2 *= scalar
         self.q3 *= scalar
         self.q4 *= scalar
 
-    def copy_multiply(self, heat: Heat):
-        return Heat(self.q1 * heat.q1, self.q2 * heat.q2, self.q3 * heat.q3, self.q4 * heat.q4)
-
     def copy_multiply_scalar(self, scalar: float) -> Heat:
+        """
+        Performs scaling between self and parameter scalar and returns the result as a fresh object.
+        Does not change self.
+
+        :param scalar: The scalar to scale the heat.
+        :return: The result of the scaling.
+        """
         return Heat(self.q1 * scalar, self.q2 * scalar, self.q3 * scalar, self.q4 * scalar)
 
+    def copy_multiply(self, heat: Heat) -> Heat:
+        """
+        Performs multiplication between self and parameter heat and returns the result as a fresh object.
+        Does not change self.
+
+        :param heat: The other heat that is part of the multiplication.
+        :return: The result of the multiplication.
+        """
+        return Heat(self.q1 * heat.q1, self.q2 * heat.q2, self.q3 * heat.q3, self.q4 * heat.q4)
+
     def get_sum(self) -> float:
+        """ Sums all heat levels and returns the result. """
         return self.q1 + self.q2 + self.q3 + self.q4
 
 

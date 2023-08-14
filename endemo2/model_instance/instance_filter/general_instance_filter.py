@@ -17,7 +17,7 @@ from endemo2.input_and_settings.input import GeneralInput
 class CountryInstanceFilter:
     """
     This instance filter serves as a filter between the instance settings and the actual calculation of a
-        country's demand.
+    country's demand.
     """
 
     def __init__(self, ctrl: ControlParameters, general_input: GeneralInput, preprocessor: Preprocessor):

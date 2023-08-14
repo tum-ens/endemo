@@ -52,7 +52,7 @@ class Input:
 
     def __init__(self):
         # read set and control parameters
-        self.ctrl: ControlParameters = self.update_set_and_control_parameters()
+        self.ctrl: ControlParameters = Input.read_set_and_control_parameters()
 
         # read general
         self.general_input = GeneralInput(self.ctrl, Input.general_path)
@@ -63,7 +63,22 @@ class Input:
                                             self.general_input.nuts2_valid_regions,
                                             self.ctrl.general_settings.active_countries)
 
-    def update_set_and_control_parameters(self) -> cp.ControlParameters:
+    def update_set_and_control_parameters(self):
+        """ Updates Set_and_Control_Parameters.xlsx """
+        ctrl_ex = pd.ExcelFile(Input.ctrl_path)
+
+        # read control parameters
+        general_settings = cp.GeneralSettings(pd.read_excel(ctrl_ex, sheet_name="GeneralSettings"),
+                                              pd.read_excel(ctrl_ex, sheet_name="Countries"))
+        industry_settings = \
+            cp.IndustrySettings(
+                pd.read_excel(ctrl_ex, sheet_name="IND_general"),
+                pd.read_excel(ctrl_ex, sheet_name="IND_subsectors"))
+
+        self.ctrl = cp.ControlParameters(general_settings, industry_settings)
+
+    @classmethod
+    def read_set_and_control_parameters(cls) -> cp.ControlParameters:
         """ Reads Set_and_Control_Parameters.xlsx """
         ctrl_ex = pd.ExcelFile(Input.ctrl_path)
 
@@ -93,9 +108,9 @@ class PopulationInput:
         The sheet containing the prognosis intervals and growth rate for nuts2 regions.
 
     :ivar dict[str, HisProg] country_population: Data for the population of whole countries_in_group.
-        It is of the form {country_name -> historical: [(float, float)], prognosis: [(float, float)]}
+        It is of the form {back_label -> historical: [(float, float)], prognosis: [(float, float)]}
     :ivar dict[str, [(str, [float, float])]] nuts2_population: Data for the population of NUTS2 regions.
-        It is of the form {country_name -> (code -> (historical: [(float,float)], prognosis: [interval, growth rate]))}
+        It is of the form {back_label -> (code -> (historical: [(float,float)], prognosis: [interval, growth rate]))}
     """
 
     def __init__(self, ctrl: cp.ControlParameters, nuts2_valid_regions: set, abbreviations: dict[str, dc.CA],
@@ -260,11 +275,11 @@ class ProductInput:
     :param ExcelFile ex_country_groups: The Excel sheet of the country groups.
     :param [str] active_countries: The list of english names of the active countries.
     :param dict[str, Heat] dict_heat_levels: The dictionary holding the heat levels for all products.
-        Of form {product_name -> heat_levels}
+        Of form {front_label -> heat_levels}
     :param dict[str, str] dict_de_en_map: A mapping from a countries german name to the english name.
     :param dict[str, str] dict_alpha2_en_map: A mapping from a countries two-letter-abbreviation to the english name.
 
-    :ivar str product_name: The name of the product.
+    :ivar str front_label: The name of the product.
     :ivar dict[str, containers.SpecConsum] specific_consumption_default: Default specific consumption value for this product.
     :ivar dict[str, (float, float)] specific_consumption_historical: Historical specific consumption data
         for this product. Accessible per country.
@@ -277,7 +292,7 @@ class ProductInput:
     :ivar float perc_used: A scalar for the amount of a product.
         This is used to model modern technologies replacing old ones.
     :ivar dict[str, dict[str, float]]: Installed capacity in %/100 for each NUTS2 Region.
-        Structure {country_name -> {nuts2_region_name -> capacity_value}}
+        Structure {back_label -> {nuts2_region_name -> capacity_value}}
     :ivar dict[str, [[str]]] country_groups: Input from country group file,
         structured as {group_type -> list_of_groups}.
     """
@@ -324,7 +339,7 @@ class ProductInput:
         Reads the default specific consumption data for this subsector.
 
         :param ex_specific_consumption: The Excel sheet for specific consumption default values.
-        :return: The default specific consumptions for this subsector. Of form: {country_name -> specific_consumption}
+        :return: The default specific consumptions for this subsector. Of form: {back_label -> specific_consumption}
         """
         prod_sc = pd.read_excel(ex_specific_consumption, sheet_name=self.product_name)
         dict_prod_sc_country = dict[str, dc.SpecConsum]()
@@ -346,7 +361,7 @@ class ProductInput:
         :param industry_path: The path to the industry input folder.
         :param dict_de_en_map: A mapping from the german name of a country to the english name.
         :return: If present, the historical quantity of energy carrier in subsector.
-            Of form: {country_name -> {energy_carrier -> [(float, float)]}}
+            Of form: {back_label -> {energy_carrier -> [(float, float)]}}
         """
 
         if self.product_name not in IndustryInput.sc_historical_data_file_names.keys():
@@ -407,7 +422,7 @@ class ProductInput:
             data = df_product_his[df_product_his["Country"] == row.Country].iloc[0][1:]
             if uty.is_zero(data):
                 # country did not product this product at all => skip product for this country
-                # print("skipped " + product_name + " for country " + row.Country)
+                # print("skipped " + front_label + " for country " + row.Country)
                 continue
             zipped = list(zip(years, data))
             his_data = uty.filter_out_nan_and_inf(zipped)
@@ -426,7 +441,7 @@ class ProductInput:
         :param dict_alpha2_en_map: A mapping from a countries two-letter-abbreviation to the english name.
         :param set[str] nuts2_valid_regions: The valid nuts2 regions according to the currently chosen nuts2 version.
         :return: The installed capacities for all nuts2 regions in an active country.
-            Is of form: {country_name -> {nuts2_region_name -> installed_capacity}}
+            Is of form: {back_label -> {nuts2_region_name -> installed_capacity}}
         """
         dict_installed_capacity_nuts2 = dict[str, dict[str, float]]()
 
@@ -463,7 +478,7 @@ class ProductInput:
         Reads the specific consumption input of the best available technology.
 
         :param ex_bat: The Excel file of the best available technology.
-        :return: The bat consumption for each country. Of the form: {country_name -> EH}
+        :return: The bat consumption for each country. Of the form: {back_label -> EH}
         """
         df_prod_bat = pd.read_excel(ex_bat, sheet_name=self.product_name)
         dict_prod_bat_country = dict()
@@ -529,7 +544,7 @@ class RestSectorInput:
     :param dict[str, dc.Heat] dict_heat_levels: The heat levels.
 
     :ivar dict[str, dict[DemandType, (float, float)]] rest_demand_proportion_basis_year: Used for the calculation of the rest sector.
-        It has the following structure: {country_name -> {demand_type -> (rest_sector_percent, demand_2018)}}
+        It has the following structure: {back_label -> {demand_type -> (rest_sector_percent, demand_2018)}}
     :ivar int rest_calc_basis_year: Year used as a starting point for calculating the rest sector demand.
     :ivar (float, float, float, float) rest_sector_heat_levels: The heat levels used to separate the heat demand in the
         rest sector into the different heat levels.
@@ -567,7 +582,7 @@ class IndustryInput:
     :ivar RestSectorInput rest_sector_input: All preprocessing data relating to the rest sector.
     :ivar dict[str, [float]] dict_electricity_profiles: The hourly profiles for electricity demand for each country.
     :ivar dict[SubsectorGroup, dict[str, [float]]] dict_heat_profiles: The hourly profiles for heat demand for each
-        subsector group and each country. Is of form {subsector_group -> {country_name -> [hourly_profile in %/100]}}
+        subsector group and each country. Is of form {subsector_group -> {back_label -> [hourly_profile in %/100]}}
     :ivar dict[str, SubsectorGroup] subsector_to_group_map: Maps a certain subsector to their subsector group enum.
     """
 

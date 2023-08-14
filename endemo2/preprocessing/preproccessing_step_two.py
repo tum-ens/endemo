@@ -142,13 +142,13 @@ class GroupManager:
     results. These can be obtained via calling the provided methods.
 
     :ivar dict[str, set[str]] separate_countries_group: The countries calculated seperately for each product.
-        Is of the form {product_name -> [separate countries]}.
+        Is of the form {front_label -> [separate countries]}.
     :ivar dict[str, [CountryGroupJoined]] joined_groups: The dictionary containing all joined groups for a product.
-        Is of form {product_name -> [grp1, grp2, ...]}
+        Is of form {front_label -> [grp1, grp2, ...]}
     :ivar dict[str, [CountryGroupJoinedDiversified]] joined_groups: The dictionary containing all joined_diversified
-        groups for a product. Is of form {product_name -> [grp1, grp2, ...]}
+        groups for a product. Is of form {front_label -> [grp1, grp2, ...]}
     :ivar dict[str, dict[str, (GroupType, int)]] country_to_group_map: A dictionary that for each products maps a
-        country name to its group_id and group_type. Is of form {product_name -> country_name -> (group_type, group_id)}
+        country name to its group_id and group_type. Is of form {front_label -> back_label -> (group_type, group_id)}
     """
 
     def __init__(self, input_manager, countries_pp: dict[str, CountryPreprocessed]):
@@ -180,7 +180,7 @@ class GroupManager:
                     CountryGroupJoined(input_manager.ctrl, product_name, joined_group, countries_pp))
 
                 for country_name in joined_group:
-                    # fill map to more efficiently access group with country_name
+                    # fill map to more efficiently access group with back_label
                     self.country_to_group_map[product_name][country_name] = (GroupType.JOINED, group_id)
 
             # save joined groups for this product
@@ -197,7 +197,7 @@ class GroupManager:
                     CountryGroupJoinedDiversified(input_manager.ctrl, product_name, joined_div_group, countries_pp))
 
                 for country_name in joined_div_group:
-                    # fill map to more efficiently access group with country_name
+                    # fill map to more efficiently access group with back_label
                     self.country_to_group_map[product_name][country_name] = (GroupType.JOINED_DIVERSIFIED, group_id)
 
             # save joined groups for this product

@@ -4,6 +4,8 @@ This module contains the in-model representation of all settings found in Set_an
 
 from __future__ import annotations
 from collections import namedtuple
+from typing import Any
+
 import pandas as pd
 
 from endemo2.data_structures.containers import Heat
@@ -67,7 +69,7 @@ class GeneralSettings:
 
         self.toggle_hourly_forecast = ex_general[ex_general["Parameter"] == "Timeseries forecast"].get("Value").iloc[0]
         self.toggle_nuts2_resolution = \
-            ex_general[ex_general["Parameter"] == "NUTS2 geographical resolution"].get("Value").iloc[0]
+            bool(ex_general[ex_general["Parameter"] == "NUTS2 geographical resolution"].get("Value").iloc[0])
         self.toggle_graphical_output = ex_general[ex_general["Parameter"] == "Graphical output"].get("Value").iloc[0]
 
         rows_it = pd.DataFrame(ex_general).itertuples()
@@ -87,8 +89,9 @@ class GeneralSettings:
         """
         return [sector for (sector, isActive) in self._sectors_active_values.items() if isActive]
 
-    def get_parameter(self, name: str):
+    def get_parameter(self, name: str) -> Any:
         """
+        :ivar name: The parameter name in the table.
         :return: The parameter value by parameter name with meaningful error message.
         """
         try:
@@ -117,13 +120,13 @@ class IndustrySettings:
     :ivar [int] skip_years: Years that are skipped while reading files, to remove outliers.
     :ivar int last_available_year: Last year that's read from historical production files (exclusive).
     :ivar dict[str, ProductSettings] product_settings: Contains settings for each product.
-        Of the form {product_name -> product_settings_obj}
+        Of the form {front_label -> product_settings_obj}
     :ivar [str] active_product_names: A list of the names of active products.
         Only for these products, calculations are performed.
     :ivar float rest_sector_growth_rate: The growth rate of the rest sector.
     :ivar bool use_gdp_as_x: Indicates that prediction x-axis should be gdp instead of time.
     :ivar dict[DemandType, Heat] heat_substitution: The percentage/100 of heat that is substituted by another
-        demand type.
+        demand type. Is of form {demand_type -> heat_substitution}.
     """
     forecast_map = dict({"Linear time trend": ForecastMethod.LINEAR,
                          "Linear GDP function": ForecastMethod.LINEAR,

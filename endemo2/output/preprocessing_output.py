@@ -1,23 +1,15 @@
 """
 This module contains all functions that generate output files from the preprocessor.
 """
-import itertools
-import os
-from pathlib import Path
-
-from matplotlib import pyplot as plt
-import seaborn as sns
 
 from endemo2.data_structures.enumerations import DemandType, ForecastMethod
-from endemo2.output.output_utility import FileGenerator, generate_timeseries_output, get_series_range, \
+from endemo2.output.output_utility import generate_timeseries_output, \
     shortcut_coef_output, get_day_folder_path, ensure_directory_exists
-from endemo2.output.plot_utility import save_series_plot, save_multiple_series_plot
-from endemo2.data_structures.prediction_models import Coef, Timeseries, TwoDseries
+from endemo2.data_structures.prediction_models import Timeseries
 from endemo2.input_and_settings import input
 from endemo2.preprocessing.preproccessing_step_two import GroupManager, CountryGroupJoinedDiversified, \
     CountryGroupJoined
 from endemo2.preprocessing.preprocessing_step_one import CountryPreprocessed, ProductPreprocessed
-from endemo2 import utility as uty
 from endemo2.output.plot_utility import *
 
 
@@ -33,8 +25,8 @@ def generate_preprocessing_output(input_manager, preprocessor):
     generate_specific_consumption_output(folder_name, input_manager, preprocessor.countries_pp)
     generate_country_group_output(folder_name, input_manager, preprocessor.group_manager)
 
-    #if input_manager.ctrl.general_settings.toggle_graphical_output:
-        #generate_visual_output(folder_name, input_manager, preprocessor.countries_pp)
+    if input_manager.ctrl.general_settings.toggle_graphical_output:
+        generate_visual_output(folder_name, input_manager, preprocessor.countries_pp)
 
 
 def generate_country_group_output(folder, input_manager: input.Input, group_manager: GroupManager):
@@ -54,7 +46,6 @@ def generate_country_group_output(folder, input_manager: input.Input, group_mana
                 for country_name in joined_group.get_countries_in_group():
                     fg.add_entry("Country", country_name)
                     fg.add_entry("Group Type", "joined")
-                    fg.add_entry("Group Members", str_countries_in_group)
                     shortcut_coef_output(fg, group_coef)
 
             # output diversified groups
@@ -65,76 +56,74 @@ def generate_country_group_output(folder, input_manager: input.Input, group_mana
                 for country_name in joined_div_group.get_countries_in_group():
                     fg.add_entry("Country", country_name)
                     fg.add_entry("Group Type", "div. joined")
-                    fg.add_entry("Group Members", str_countries_in_group)
                     country_coef = joined_div_group.get_coef_for_country(country_name)
                     shortcut_coef_output(fg, country_coef)
 
-    if input_manager.ctrl.general_settings.toggle_graphical_output:
-        # visual output
-        if input_manager.ctrl.industry_settings.use_gdp_as_x:
-            x_label = "GDP"
-        else:
-            x_label = "Time"
-        if input_manager.ctrl.industry_settings.production_quantity_calc_per_capita:
-            y_label = product_name + " Amount per Capita"
-        else:
-            y_label = product_name + " Amount"
+    # visual output; do anyway, regardless of the visual output toggle in settings.
+    if input_manager.ctrl.industry_settings.use_gdp_as_x:
+        x_label = "GDP"
+    else:
+        x_label = "Time"
+    if input_manager.ctrl.industry_settings.production_quantity_calc_per_capita:
+        y_label = product_name + " Amount per Capita"
+    else:
+        y_label = product_name + " Amount"
 
-        day_dir = get_day_folder_path(input_manager)
-        directory = ensure_directory_exists(day_dir / Path(folder) / "visual_output" / "Country Groups")
+    day_dir = get_day_folder_path(input_manager)
+    directory = ensure_directory_exists(day_dir / Path(folder) / "visual_output" / "Country Groups")
 
-        for product_name in input_manager.industry_input.dict_product_input.keys():
+    for product_name in input_manager.industry_input.dict_product_input.keys():
 
-            # output joined groups
-            group_id = 0
-            joined_groups: [CountryGroupJoined] = group_manager.joined_groups[product_name]
-            for joined_group in joined_groups:
-                historical_data = joined_group.get_all_historical_data()
+        # output joined groups
+        group_id = 0
+        joined_groups: [CountryGroupJoined] = group_manager.joined_groups[product_name]
+        for joined_group in joined_groups:
+            historical_data = joined_group.get_all_historical_data()
 
-                historical_tds = [tds for (_, tds) in historical_data]
+            historical_tds = [tds for (_, tds) in historical_data]
 
-                colors = itertools.cycle(sns.color_palette())
-                for country_name, tds in historical_data:
-                    country_color = next(colors)
+            colors = itertools.cycle(sns.color_palette())
+            for country_name, tds in historical_data:
+                country_color = next(colors)
 
-                    # plot historical data for each country
-                    plot_historical_data(tds, country_color, country_name)
+                # plot historical data for each country
+                plot_historical_data(tds, country_color, country_name)
 
-                # plot coefficients of group
-                group_coef = joined_group.get_coef()
-                interval = get_series_range(historical_tds)
-                plot_coef_in_range("Group", interval, group_coef, next(colors), next(colors), next(colors))
+            # plot coefficients of group
+            group_coef = joined_group.get_coef()
+            interval = get_series_range(historical_tds)
+            plot_coef_in_range("Group", interval, group_coef, next(colors), next(colors), next(colors))
 
-                filename = product_name + "_Joined-Group-" + str(group_id)
-                image_label = product_name + " - Joined Group " + str(group_id)
+            filename = product_name + "_Joined-Group-" + str(group_id)
+            image_label = product_name + " - Joined Group " + str(group_id)
 
-                save_plot(image_label, x_label, y_label, directory, filename)
-            group_id += 1
+            save_plot(image_label, x_label, y_label, directory, filename)
+        group_id += 1
 
-            # output diversified groups
-            group_id = 0
-            div_groups: [CountryGroupJoinedDiversified] = group_manager.joined_div_groups[product_name]
-            for div_group in div_groups:
-                historical_data = div_group.get_all_historical_data()
+        # output diversified groups
+        group_id = 0
+        div_groups: [CountryGroupJoinedDiversified] = group_manager.joined_div_groups[product_name]
+        for div_group in div_groups:
+            historical_data = div_group.get_all_historical_data()
 
-                colors = itertools.cycle(sns.color_palette())
-                for country_name, tds in historical_data:
-                    country_color = next(colors)
+            colors = itertools.cycle(sns.color_palette())
+            for country_name, tds in historical_data:
+                country_color = next(colors)
 
-                    # plot historical data
-                    interval = get_series_range([tds])
-                    plot_historical_data(tds, country_color, country_name)
+                # plot historical data
+                interval = get_series_range([tds])
+                plot_historical_data(tds, country_color, country_name)
 
-                    # plot coefficients of country
-                    country_coef = div_group.get_coef_for_country(country_name)
-                    plot_coef_in_range(country_name, interval, country_coef,
-                                       country_color, country_color, country_color)
+                # plot coefficients of country
+                country_coef = div_group.get_coef_for_country(country_name)
+                plot_coef_in_range(country_name, interval, country_coef,
+                                   country_color, country_color, country_color)
 
-                filename = product_name + "_Div-Group-" + str(group_id)
-                image_label = product_name + " - Div Group " + str(group_id)
+            filename = product_name + "_Div-Group-" + str(group_id)
+            image_label = product_name + " - Div Group " + str(group_id)
 
-                save_plot(image_label, x_label, y_label, directory, filename)
-            group_id += 1
+            save_plot(image_label, x_label, y_label, directory, filename)
+        group_id += 1
 
 
 def generate_visual_output(folder, input_manager: input.Input, countries_pp: dict[str, CountryPreprocessed]):

@@ -12,7 +12,7 @@ class Industry(Sector):
     """
     The Industry class represents the industry sector of one country. It holds all products produced by this industry.
 
-    :ivar str country_name: Name of the country this industry is located in.
+    :ivar str back_label: Name of the country this industry is located in.
     :ivar dict[str, Product] _products: All products in this industry.
     """
 

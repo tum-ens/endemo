@@ -26,6 +26,8 @@ class Coef:
     :ivar (k0, k1, k2) _quadr: Used for the calculation f(x) = k0 + k1 * x + k2 * x^2
     :ivar float _offset: Additional constant offset.
     :ivar ForecastMethod _method: Method used for calculating output.
+    :ivar bool _fixed_forecast_method: indicates that the method should not be changed anymore for this coefficient
+        object. Example: Is used when setting the exponential forecast method for timeseries with only one data point.
     """
     def __init__(self):
         self._exp: ((float, float), float) = None
@@ -48,7 +50,11 @@ class Coef:
             self._fixed_forecast_method = fixate
 
     def set_exp_start_point(self, start_point: (float, float)):
-        """ Setter for the exponential start point. """
+        """
+        Setter for the exponential start point.
+
+        :param start_point: The new start point for the exponential forecast method.
+        """
         if self._exp is not None:
             prior_growth_rate = self._exp[1]
             self._exp = (start_point, prior_growth_rate)
@@ -56,7 +62,11 @@ class Coef:
             self._exp = (start_point, 0.0)
 
     def set_exp_growth_rate(self, exp_growth_rate: float):
-        """ Setter for the exponential growth rate. """
+        """
+        Setter for the exponential growth rate.
+
+        :param exp_growth_rate: The new growth rate for the exponential forecast method.
+        """
         if self._exp is not None:
             prior_start_point = self._exp[0]
             self._exp = (prior_start_point, exp_growth_rate)
@@ -64,49 +74,97 @@ class Coef:
             self._exp = (None, exp_growth_rate)
 
     def set_exp(self, start_point: (float, float), exp_growth_rate: float):
-        """ Setter for the exponential coefficients. """
+        """
+        Setter for the exponential coefficients.
+
+        :param start_point: The new start point for the exponential forecast method.
+        :param exp_growth_rate: The new growth rate for the exponential forecast method.
+        """
         self._exp = (start_point, exp_growth_rate)
 
     def set_lin(self, k0: float, k1: float):
-        """ Setter for the linear coefficients. """
+        """
+        Setter for the linear coefficients.
+
+        :param k0: The constant coefficient.
+        :param k1: The linear coefficient.
+        """
         self._lin = (k0, k1)
 
     def set_quadr(self, k0: float, k1: float, k2: float):
-        """ Setter for the quadratic coefficients. """
+        """
+        Setter for the quadratic coefficients.
+
+        :param k0: The constant coefficient.
+        :param k1: The linear coefficient.
+        :param k2: The quadratic coefficient.
+        """
         self._quadr = (k0, k1, k2)
 
     def set_offset(self, k0: float):
-        """ Setter for the additional offset. """
+        """
+        Setter for the additional offset.
+
+        :param k0: The additional constant offset.
+        """
         self._offset = k0
 
     def get_exp_y(self, target_x) -> Union[float, None]:
-        """ Returns the y-axis value of the function at the given x according to the exponential method. """
+        """
+        Returns the y-axis value of the function at the given x according to the exponential method.
+
+        :param target_x: The x_axis value the function should be applied on.
+        :return: The according y-axis value if exponential start point and growth rate is set, otherwise None.
+        """
         if self._exp is not None and self._exp[0] is not None:
             return uty.exp_change((self._exp[0][0], self._exp[0][1]), self._exp[1], target_x)
         else:
             return None
 
     def get_lin_y(self, target_x) -> Union[float, None]:
-        """ Returns the y-axis value of the function at the given x according to the linear method. """
+        """
+        Returns the y-axis value of the function at the given x according to the linear method.
+
+        :param target_x: The x_axis value the function should be applied on.
+        :return: The according y-axis value if the linear coefficients are set, otherwise None.
+        """
         if self._lin is not None:
             return uty.lin_prediction(self._lin, target_x)
         else:
             return None
 
     def get_quadr_y(self, target_x) -> Union[float, None]:
-        """ Returns the y-axis value of the function at the given x according to the quadratic method. """
+        """
+        Returns the y-axis value of the function at the given x according to the quadratic method.
+
+        :param target_x: The x_axis value the function should be applied on.
+        :return: The according y-axis value if the quadratic coefficients are set, otherwise None.
+        """
         if self._quadr is not None:
             return uty.quadr_prediction(self._quadr, target_x)
         else:
             return None
 
-    def get_quadr_offset_y(self, target_x) -> float:
-        """ Returns the y-axis value of the function at the given x according to the quadratic offset method. """
-        quadr_offset = (self._quadr[0] + self._offset, self._quadr[1], self._quadr[2])
-        return uty.quadr_prediction(quadr_offset, target_x)
+    def get_quadr_offset_y(self, target_x) -> Union[float, None]:
+        """
+        Returns the y-axis value of the function at the given x according to the quadratic offset method.
+
+        :param target_x: The x_axis value the function should be applied on.
+        :return: The according y-axis value if the quadratic coefficients and offset are set, otherwise None.
+        """
+        if self._offset is not None and self._quadr is not None:
+            quadr_offset = (self._quadr[0] + self._offset, self._quadr[1], self._quadr[2])
+            return uty.quadr_prediction(quadr_offset, target_x)
+        else:
+            return None
 
     def get_function_y(self, target_x) -> Union[float, None]:
-        """ Returns the y-axis value of the function at the given x according to the used method. """
+        """
+        Returns the y-axis value of the function at the given x according to the used method.
+
+        :param target_x: The x_axis value the function should be applied on.
+        :return: The according y-axis value if everything of the chosen method (and the method) is set, otherwise None.
+        """
         match self._method:
             case ForecastMethod.LINEAR:
                 return self.get_lin_y(target_x)
@@ -121,19 +179,35 @@ class Coef:
                 return None
 
     def get_lin(self) -> (float, float):
-        """ Getter for the linear coefficient. """
+        """
+        Getter for the linear coefficient.
+
+        :return: The linear coefficient of form (k0, k1).
+        """
         return self._lin
 
     def get_quadr(self) -> (float, float, float):
-        """ Getter for the quadratic coefficient. """
+        """
+        Getter for the quadratic coefficient.
+
+        :return: The quadratic coefficient of form (k0, k1, k2).
+        """
         return self._quadr
 
     def get_exp(self) -> ((float, float), float):
-        """ Getter for the exponential coefficient. """
+        """
+        Getter for the exponential coefficient.
+
+        :return: The exponential execution variables of form ((start_x, start_y), growth_rate)
+        """
         return self._exp
 
     def get_offset(self) -> float:
-        """ Getter for the offset. """
+        """
+        Getter for the additional offset.
+
+        :return: The additional offset
+        """
         return self._offset
 
 
@@ -142,7 +216,11 @@ class RigidTimeseries:
     Class representing data that should be taken just like it is. Without interpolation, without coefficients,
     only the data over time.
 
-    :ivar [(float, float)] _data: Where the x-axis is Time and the y-axis is some value over time.
+    :param data: The timeseries data, where the x-axis is Time and the y-axis is some value over time.
+        Can contain NaN and Inf values.
+
+    :ivar [(float, float)] _data: The timeseries data, where the x-axis is Time and the y-axis is some value over time.
+        Filtered to not contain any NaN or Inf values.
     """
 
     def __init__(self, data: [(float, float)]):
@@ -157,6 +235,7 @@ class RigidTimeseries:
         Returns the value of the RigidTimeseries at the given year, if present. If the value is not present, throws an
         error.
 
+        :param year: The year the value should be taken from.
         :return: The value of the timeseries at year.
         """
         res = [y for (x, y) in self._data if x == year]
@@ -171,6 +250,9 @@ class TwoDseries:
     """
     A class representing a data series [(x, y)]. Both axis can be any type of data.
 
+    :param [(float, float)] data: The TwoDseries data, where the x-axis and the y-axis can be any floating point values.
+        Can contain NaN and Inf values.
+
     :ivar [(float, float)] _data: Where the x-axis is first in tuple and the y-axis is second.
     :ivar Coef coefficients: The coefficients for this data series.
     """
@@ -183,7 +265,7 @@ class TwoDseries:
     def __str__(self):
         return str(self._data)
 
-    def generate_coef(self):
+    def generate_coef(self) -> Coef:
         """
         Generate and save the coefficients of all regression methods.
 
@@ -209,20 +291,29 @@ class TwoDseries:
             return self.coefficients
 
     def is_empty(self) -> bool:
-        """ Indicates whether there is no data present. """
+        """
+        Indicates whether there is no data present.
+
+        :return: True if data is empty, False otherwise.
+        """
         return len(self._data) == 0
 
     def is_zero(self) -> bool:
-        """ Indicates whether the data on the y-axis has only zeroes. """
+        """
+        Indicates whether the data on the y-axis has only zeroes.
+
+        :return: True if data's y-axis only contains zeros, False otherwise.
+        """
         return uty.is_tuple_list_zero(self._data)
 
     def get_data(self) -> [(float, float)]:
-        """ Getter for the data. """
+        """ Getter for the data attribute. """
         return self._data
 
     def get_mean_y(self) -> float:
         """
         Get mean of all values on the y-axis of the data.
+
         :return: The mean of all y values of the data.
         """
         only_y = [y for (x, y) in self._data]
@@ -244,6 +335,9 @@ class Timeseries(TwoDseries, RigidTimeseries):
     A class strictly representing a value over time. This usage is a class invariant and the class should not be used
     in any other way.
 
+    :param [(float, float)] data: The timeseries data, where the x-axis is Time and the y-axis is some value over time.
+        Can contain NaN and Inf values.
+
     :ivar [(float, float)] _data: Where the x-axis is Time and the y-axis is some value over time.
     """
 
@@ -258,7 +352,6 @@ class Timeseries(TwoDseries, RigidTimeseries):
 
         :param t1: Timeseries to zip t1 [(a,b)]
         :param t2: Timeseries to zip t2 [(c, d)]
-
         :return: The zipped TwoDseries in format [(b, d)] for where a == c.
         """
         d1 = t1._data
@@ -351,6 +444,7 @@ class Timeseries(TwoDseries, RigidTimeseries):
         Returns the value of the RigidTimeseries at the given year, if present. If the value is not present, throws an
         error.
 
+        :param year: The year, the data should be taken from.
         :return: The value of the timeseries at year.
         """
         res = [y for (x, y) in self._data if x == year]
@@ -382,8 +476,8 @@ class IntervalForecast:
         interval-growth-rate forecast.
 
         .. math::
-            y=s_x*(1+r_{1})^{(intvl^{(1)}_{b}-s_y)}*(1+r_{2})^{(intvl^{(2)}_{b}-intvl^{(2)}_{a})}*\\text{...}*(1+r_{3})^
-            {(x-intvl^{(3)}_{a})}
+            y=s_x*(1+r_{1})^{(intvl^{(1)}front_label{b}-s_y)}*(1+r_{2})^{(intvl^{(2)}front_label{b}-intvl^{(2)}front_label{a})}*\\text{...}*(1+r_{3})^
+            {(x-intvl^{(3)}front_label{a})}
 
         :param start_point: The (x, y) Tuple, that is used as the first value for the exponential growth.
         :param target_x: The target x-axis value.
