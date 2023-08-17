@@ -112,6 +112,9 @@ def apply_all_regressions(data: list[(float, float)]) -> pm.Coef:
         lin_res = linear_regression(data)
         result.set_lin(lin_res[0], lin_res[1])
 
+        log_res = logarithmic_regression(data)
+        result.set_log(log_res[0], log_res[1])
+
     if len(data) >= 3:
         quadr_res = quadratic_regression(data)
         result.set_quadr(quadr_res[0], quadr_res[1], quadr_res[2])
@@ -119,11 +122,28 @@ def apply_all_regressions(data: list[(float, float)]) -> pm.Coef:
     return result
 
 
+def logarithmic_regression(data: list[(float, float)]) -> (float, float):
+    """
+    Apply logarithmic regression on data and return the coefficients.
+
+    :param data: The data on which logarithmic regression is applied on.
+    :return: The calculated coefficients (k0, k1)
+    """
+    # Unzip data List
+    x, y = zip(*data)
+
+    # Use numpy logarithmic regression
+    ks = np.polyfit(np.log(x), y, 1)
+    (k0, k1) = (float(ks[1]), float(ks[0]))
+
+    return k0, k1
+
+
 def linear_regression(data: list[(float, float)], visualize: bool = False) -> (float, float):
     """
     Apply linear regression on data and return the coefficients.
 
-    :param data: The data on which linear regression is applied.
+    :param data: The data on which linear regression is applied on.
     :param visualize: Indicate, whether the result should be immediately plotted.
     :return: The calculated coefficients (k0, k1)
     """
@@ -232,7 +252,7 @@ def quadratic_regression_delta(dict_series: dict[str, pm.TwoDseries]) \
 
             # Extend number of equations
             # (one additional equation per each tag, except for the last one, which is taken as a reference)
-            eq_right.append(e_c)    # parameter on the right equation side
+            eq_right.append(e_c)                            # parameter on the right equation side
             eq_sub_country = [par_eq1, par_eq2, par_eq3]    # parameter on the left equation side, for coeff. k0-k2
 
             """
@@ -280,7 +300,23 @@ def exp_change(start_point: (float, float), change_rate: float, target_x: float)
     return result
 
 
-def lin_prediction(coef: (float, float), target_x: float):
+def log_prediction(coef: (float, float), target_x: float) -> float:
+    """
+    Calculates the result of a logarithmic function according to given coefficients.
+
+    .. math::
+        f(x)=k_0+k_1*ln(x)
+
+    :param coef: (k_0, k_1)
+    :param target_x: x
+    :return: f(x)
+    """
+    k0 = coef[0]
+    k1 = coef[1]
+    return k0 + k1 * np.log(target_x)
+
+
+def lin_prediction(coef: (float, float), target_x: float) -> float:
     """
     Calculates the result of a linear function according to given coefficients.
 
@@ -296,7 +332,7 @@ def lin_prediction(coef: (float, float), target_x: float):
     return k0 + k1 * target_x
 
 
-def quadr_prediction(coef: (float, float, float), target_x: float):
+def quadr_prediction(coef: (float, float, float), target_x: float) -> float:
     """
     Calculates the result of a quadratic function according to given coefficients.
 
@@ -313,7 +349,7 @@ def quadr_prediction(coef: (float, float, float), target_x: float):
     return k0 + k1 * target_x + k2 * target_x ** 2
 
 
-def is_permissible_float(x: str):
+def is_permissible_float(x: str) -> bool:
     """
     Checks if a string could be converted to a float that is not NaN or Inf, without throwing an exception.
 

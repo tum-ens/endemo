@@ -9,7 +9,7 @@ from enum import Enum
 
 class SubsectorGroup(Enum):
     """
-    Enum to group the industry subsectors.
+    Enum to group the industry _subsectors.
     """
     CHEMICALS_AND_PETROCHEMICALS = 0
     FOOD_AND_TOBACCO = 1
@@ -48,6 +48,15 @@ class ForecastMethod(Enum):
     QUADRATIC = 1
     EXPONENTIAL = 2
     QUADRATIC_OFFSET = 3
+    LOGARITHMIC = 4
+
+
+class ScForecastMethod(Enum):
+    """ The ScForecastMethod indicates type of forecast for specific consumption, primarily in the CTS sector. """
+    LINEAR = 0
+    LOGARITHMIC = 1
+    CONST_MEAN = 2
+    CONST_LAST = 3
 
 
 class DemandType(Enum):

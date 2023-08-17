@@ -1,25 +1,102 @@
 """
 This module contains all classed used for the first stage of preprocessing.
 """
-
-import itertools
+from __future__ import annotations
 
 from endemo2.data_structures.nuts_tree import NutsRegionNode, NutsRegionLeaf
 from endemo2.data_structures.containers import EH, HisProg
 from endemo2.data_structures.enumerations import DemandType
 from endemo2.data_structures.prediction_models import Timeseries, RigidTimeseries, IntervalForecast
-from endemo2.input_and_settings.input import Input, ProductInput, GeneralInput
+from endemo2.input_and_settings.input import Input, ProductInput, GeneralInput, CtsInput, Abbreviations
+from endemo2.preprocessing.preprocessing_utility import energy_carrier_to_energy_consumption
 
 
 class CtsPreprocessed:
+    """
+    Preprocesses everything of the cts sector.
 
-    def __init__(self):
-        pass
-        #self.specific_consumption_pp =
-        #for country_name in active_countries:
-            # preprocess specific consumption
-           # self.specific_consumption_pp[country_name] = \
-             #   SpecificConsumptionPreprocessed(country_name, product_input, general_input, self.amount_vs_year)
+    :ivar dict[DemandType, Timeseries] specific_consumption: The specific consumption timeseries for each demand type
+        of form {demand_type -> timeseries}.
+    :ivar dict[str, Timeseries] employee_share_in_subsector_country: The timeseries of the share of the population that
+        is an employee in a certain subsector. Is of form {country_name -> timeseries}
+    :ivar dict[str, dict[str, Timeseries]] employee_share_in_subsector_nuts2: The timeseries of the share of the
+        population of a nuts2 region that is an employee in a certain subsector.
+        Is of form {country_name -> {region_name -> timeseries}}
+    """
+
+    def __init__(self, country_name: str, general_input: GeneralInput, cts_input: CtsInput, pop_his: Timeseries,
+                 pop_nuts2_his: NutsRegionNode):
+
+        # preprocess specific consumption; demand_type -> timeseries
+        self.specific_consumption = \
+            CtsPreprocessed.preprocess_specific_consumption(country_name, general_input, cts_input)
+
+        # preprocess subsector number of employees per country; subsector_name -> num_employees_timeseries
+        self.employee_share_in_subsector_country = dict[str, Timeseries]()
+        for subsector_name, num_employees_data in cts_input.dict_employee_number_country[country_name].items():
+            # put data into timeseries object
+            ts_num_employees = Timeseries(num_employees_data)
+
+            # calculate share of population
+            ts_num_employees.divide_by(pop_his)
+
+            # generate coefficients
+            ts_num_employees.generate_coef()
+
+            # save
+            self.employee_share_in_subsector_country[subsector_name] = ts_num_employees
+
+        # preprocess subsector number of employees per nuts2; nuts2_region -> subsector_name -> num_employees_timeseries
+        self.employee_share_in_subsector_nuts2 = dict[str, dict[str, Timeseries]]()
+        for region_name, dict_subsector_employee in cts_input.dict_employee_number_nuts2[country_name].items():
+            dict_nuts2_pop_his = dict([(leaf.region_name, leaf.data) for leaf in pop_nuts2_his.get_all_leaf_nodes()])
+            for subsector_name, num_employees_data in dict_subsector_employee.items():
+                # put data into timeseries object
+                ts_num_employees = Timeseries(num_employees_data)
+
+                # calculate share of population
+                ts_num_employees.divide_by(dict_nuts2_pop_his[region_name])
+
+                # generate coefficients
+                ts_num_employees.generate_coef()
+
+                # save
+                if region_name not in self.employee_share_in_subsector_nuts2.keys():
+                    self.employee_share_in_subsector_nuts2[region_name] = dict()
+                self.employee_share_in_subsector_nuts2[region_name][subsector_name] = ts_num_employees
+
+    @classmethod
+    def preprocess_specific_consumption(cls, country_name: str, general_input: GeneralInput, cts_input: CtsInput) \
+            -> dict[DemandType, Timeseries]:
+        """
+        Preprocesses the specific consumption of the cts sector.
+
+        :param country_name: The name of the country to preprocess the specific consumption for
+        :param general_input: The general input object.
+        :param cts_input: The cts sector input object.
+        :return: The specific consumption timeseries for each demand type of form {demand_type -> timeseries}.
+        """
+        # get data from input
+        dict_ec_his: dict[str, [(float, float)]] = cts_input.energy_carrier_consumption[country_name]
+        efficiency = general_input.efficiency
+
+        # calculate demand from energy carriers with efficiency
+        electricity_demand_sum, heat_demand_sum = energy_carrier_to_energy_consumption(efficiency, dict_ec_his)
+
+        # get number of employees per year in cts sector historical
+        number_of_employees_ts = Timeseries(cts_input.dict_employee_number_country_cts[country_name])
+
+        # divide by number of employees to get specific consumption
+        res_specific_consumption = dict[DemandType, Timeseries]()  # demand_type -> Timeseries
+        res_specific_consumption[DemandType.ELECTRICITY] = electricity_demand_sum.divide_by(number_of_employees_ts)
+        res_specific_consumption[DemandType.HEAT] = heat_demand_sum.divide_by(number_of_employees_ts)
+        res_specific_consumption[DemandType.HYDROGEN] = Timeseries([(2018, 0.0)])
+
+        # generate coefficients
+        for demand_type in [DemandType.ELECTRICITY, DemandType.HEAT, DemandType.HYDROGEN]:
+            res_specific_consumption[demand_type].generate_coef()
+
+        return res_specific_consumption
 
 
 class SpecificConsumptionPreprocessed:
@@ -38,8 +115,6 @@ class SpecificConsumptionPreprocessed:
     def __init__(self, country_name: str, product_input: ProductInput, general_input: GeneralInput,
                  quantity_per_year: Timeseries):
 
-        #self.bat = bat
-        #self.default_specific_consumption = default_specific_consumption
         # read bat consumption
         if country_name in product_input.bat.keys():
             self.bat = product_input.bat[country_name]
@@ -60,35 +135,14 @@ class SpecificConsumptionPreprocessed:
         if product_input.specific_consumption_historical is not None \
                 and country_name in product_input.specific_consumption_historical:
             dict_sc_his = product_input.specific_consumption_historical[country_name]
-            first_year_for_data = int(list(dict_sc_his.values())[0][0][0])  # read year range from first entry
-            last_year_for_data = int(list(dict_sc_his.values())[0][-1][0])
 
-            year_zero_list = list(zip(range(first_year_for_data, last_year_for_data + 1), itertools.repeat(0)))
-            electricity_demand_sum = Timeseries(year_zero_list)
-            heat_demand_sum = Timeseries(year_zero_list)
-
-            for energy_carrier_name, ec_his_am in dict_sc_his.items():
-                ts_historical_energy_carrier_amount = Timeseries(ec_his_am)
-                energy_carrier_efficiency_electricity = efficiency[energy_carrier_name].electricity
-                energy_carrier_efficiency_heat = efficiency[energy_carrier_name].heat
-
-                # multipy with efficiency of energy carrier to get demand
-                energy_carrier_electricity = \
-                    Timeseries.map_y(ts_historical_energy_carrier_amount,
-                                     lambda x: x * energy_carrier_efficiency_electricity * 1000)  # convert TJ->GJ
-                energy_carrier_heat = \
-                    Timeseries.map_y(ts_historical_energy_carrier_amount,
-                                     lambda x: x * energy_carrier_efficiency_heat * 1000)  # convert TJ->GJ
-
-                # sum total demand over all energy carriers
-                electricity_demand_sum.add(energy_carrier_electricity)
-                heat_demand_sum.add(energy_carrier_heat)
+            electricity_demand_sum, heat_demand_sum = energy_carrier_to_energy_consumption(efficiency, dict_sc_his)
 
             # divide by product amount to get per product consumption (sc)
             self.specific_consumption_historical[DemandType.ELECTRICITY] = electricity_demand_sum.divide_by(
-                quantity_per_year).scale(1 / 1000)
+                quantity_per_year).scale(1 / 1000).scale(1000)  # kt -> t; TJ/t -> GJ/t
             self.specific_consumption_historical[DemandType.HEAT] = heat_demand_sum.divide_by(
-                quantity_per_year).scale(1 / 1000)
+                quantity_per_year).scale(1 / 1000).scale(1000)  # kt -> t; TJ/t -> GJ/t
 
             if electricity_demand_sum.is_zero() and heat_demand_sum.is_zero():
                 self.historical_sc_available = False
@@ -178,9 +232,10 @@ class NUTS2Preprocessed:
         given country.
     """
 
-    def __init__(self, abbreviations, nuts2_population_data: HisProg):
-        self.population_historical_tree_root = NutsRegionNode(abbreviations.alpha2)
-        self.population_prognosis_tree_root = NutsRegionNode(abbreviations.alpha2)
+    def __init__(self, country_name, nuts2_population_data: HisProg):
+        abbrev = Abbreviations.dict_en_alpha2_map[country_name]
+        self.population_historical_tree_root = NutsRegionNode(abbrev)
+        self.population_prognosis_tree_root = NutsRegionNode(abbrev)
 
         # fill nuts historical tree
         for region_name, region_data in nuts2_population_data.historical.items():
@@ -243,7 +298,6 @@ class CountryPreprocessed:
 
     def __init__(self, country_name, input_manager: Input):
         general_input = input_manager.general_input
-        abbreviations = general_input.abbreviations[country_name]
 
         # preprocess general country attributes
         self.population_pp = PopulationPreprocessed(country_name, general_input)
@@ -253,7 +307,7 @@ class CountryPreprocessed:
         self.has_nuts2 = country_name in general_input.population.nuts2_population  # TODO: also make more pretty
         if self.has_nuts2:
             nuts2_data = general_input.population.nuts2_population[country_name]
-            self.nuts2_pp = NUTS2Preprocessed(abbreviations, nuts2_data)
+            self.nuts2_pp = NUTS2Preprocessed(country_name, nuts2_data)
         else:
             self.nuts2_pp = None
 
@@ -261,3 +315,6 @@ class CountryPreprocessed:
         self.industry_pp = IndustryPreprocessed(country_name, input_manager,
                                                 self.population_pp.population_historical_whole_country,
                                                 self.gdp_pp.gdp_historical_pp)
+        self.cts_pp = CtsPreprocessed(country_name, input_manager.general_input, input_manager.cts_input,
+                                      self.population_pp.population_historical_whole_country,
+                                      self.nuts2_pp.population_historical_tree_root)

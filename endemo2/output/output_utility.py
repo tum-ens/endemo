@@ -105,8 +105,10 @@ class FileGenerator(object):
 
     def print_all_entries(self):
         """ Used for debugging purposes. """
+        print("---")
         for key, value in self.current_out_dict.items():
             print(str(key) + ": " + str(value))
+        print("---")
 
     def end_sheet(self):
         """ Stop editing current sheet. """

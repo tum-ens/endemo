@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from endemo2.data_structures.containers import Demand
+from endemo2.model_instance.instance_filter.cts_instance_filter import CtsInstanceFilter
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
 from endemo2.model_instance.instance_filter.industry_instance_filter \
     import ProductInstanceFilter, IndustryInstanceFilter
+from endemo2.model_instance.model.cts.commercial_trade_services_sector import CommercialTradeServices
 from endemo2.model_instance.model.industry.industry_sector import Industry
 from endemo2.model_instance.model.sector import Sector
 from endemo2.data_structures.enumerations import SectorIdentifier
@@ -25,7 +27,7 @@ class Country:
 
     def __init__(self, country_name: str,
                  country_instance_filter: CountryInstanceFilter,
-                 iif: IndustryInstanceFilter, pif: ProductInstanceFilter):
+                 iif: IndustryInstanceFilter, pif: ProductInstanceFilter, ctsif: CtsInstanceFilter):
 
         self._country_name = country_name
         self._sectors = dict[SectorIdentifier, Sector]()
@@ -34,6 +36,9 @@ class Country:
         active_sectors = country_instance_filter.get_active_sectors()
         if SectorIdentifier.INDUSTRY in active_sectors:
             self._sectors[SectorIdentifier.INDUSTRY] = Industry(country_name, iif, pif)
+
+        if SectorIdentifier.COMMERCIAL_TRADE_SERVICES in active_sectors:
+            self._sectors[SectorIdentifier.COMMERCIAL_TRADE_SERVICES] = CommercialTradeServices(country_name, ctsif)
 
     def calculate_total_demand(self) -> Demand:
         """

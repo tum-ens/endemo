@@ -31,6 +31,7 @@ class Coef:
     """
     def __init__(self):
         self._exp: ((float, float), float) = None
+        self._log: (float, float) = None
         self._lin: (float, float) = None
         self._quadr: (float, float, float) = None
         self._offset: Union[float, None] = None
@@ -82,6 +83,15 @@ class Coef:
         """
         self._exp = (start_point, exp_growth_rate)
 
+    def set_log(self, k0: float, k1: float):
+        """
+        Setter for the logarithmic coefficients.
+
+        :param k0: The constant coefficient.
+        :param k1: The logarithmic coefficient.
+        """
+        self._log = (k0, k1)
+
     def set_lin(self, k0: float, k1: float):
         """
         Setter for the linear coefficients.
@@ -118,6 +128,18 @@ class Coef:
         """
         if self._exp is not None and self._exp[0] is not None:
             return uty.exp_change((self._exp[0][0], self._exp[0][1]), self._exp[1], target_x)
+        else:
+            return None
+
+    def get_log_y(self, target_x) -> Union[float, None]:
+        """
+        Returns the y-axis value of the function at the given x according to the logarithmic method.
+
+        :param target_x: The x_axis value the function should be applied on.
+        :return: The according y-axis value if the logarithmic coefficients are set, otherwise None.
+        """
+        if self._log is not None:
+            return uty.log_prediction(self._log, target_x)
         else:
             return None
 
@@ -174,9 +196,19 @@ class Coef:
                 return self.get_exp_y(target_x)
             case ForecastMethod.QUADRATIC_OFFSET:
                 return self.get_quadr_offset_y(target_x)
+            case ForecastMethod.LOGARITHMIC:
+                return self.get_log_y(target_x)
             case None:
                 warnings.warn("No forecast method selected for coefficients.")
                 return None
+
+    def get_log(self) -> (float, float):
+        """
+        Getter for the logarithmic coefficient.
+
+        :return: The logarithmic coefficient of form (k0, k1).
+        """
+        return self._log
 
     def get_lin(self) -> (float, float):
         """

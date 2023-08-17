@@ -7,6 +7,8 @@ from __future__ import annotations
 import collections as coll
 from typing import Any
 
+import numpy as np
+
 from endemo2.data_structures.enumerations import DemandType
 
 EH = coll.namedtuple("EH", ["electricity", "heat"])     # tuple for only electricity and heat
@@ -55,6 +57,10 @@ class SpecConsum:
 
         :param bat: The best available technology consumption to cap this specific consumption.
         """
+        if np.isnan(bat.electricity) or np.isnan(bat.heat):
+            self.electricity = max(0.0, self.electricity)
+            self.heat = max(0.0, self.heat)
+            self.hydrogen = max(0.0, self.hydrogen)
         self.electricity = max(bat.electricity, self.electricity)
         self.heat = max(bat.heat, self.heat)
         self.hydrogen = max(0.0, self.hydrogen)

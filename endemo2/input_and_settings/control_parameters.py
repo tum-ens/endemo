@@ -6,10 +6,11 @@ from __future__ import annotations
 from collections import namedtuple
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from endemo2.data_structures.containers import Heat
-from endemo2.data_structures.enumerations import ForecastMethod, SectorIdentifier, DemandType
+from endemo2.data_structures.enumerations import ForecastMethod, SectorIdentifier, DemandType, ScForecastMethod
 
 ProductSettings = \
     namedtuple("ProductSettings", ("active", "manual_exp_change_rate", "perc_used", "efficiency_improvement"))
@@ -24,9 +25,11 @@ class ControlParameters:
     :ivar IndustrySettings industry_settings: The settings contained in the "IND_*"-sheets.
     """
 
-    def __init__(self, general_settings: GeneralSettings, industry_settings: IndustrySettings):
+    def __init__(self, general_settings: GeneralSettings, industry_settings: IndustrySettings,
+                 cts_settings: CtsSettings):
         self.general_settings = general_settings
         self.industry_settings = industry_settings
+        self.cts_settings = cts_settings
 
 
 class GeneralSettings:
@@ -155,7 +158,7 @@ class IndustrySettings:
                 "Value").iloc[0]
 
         skip_years_string = str(df_general[df_general["Parameter"] == "Skip years"].get("Value").iloc[0])
-        self.skip_years = [int(i) for i in skip_years_string.split(",")]
+        self.skip_years = [int(i) for i in skip_years_string.split(",") if not np.isnan(float(i))]
 
         self.last_available_year = \
             df_general[df_general["Parameter"] == "Last available year"].get("Value").iloc[0]
@@ -214,3 +217,70 @@ class IndustrySettings:
 
             if self.product_settings[product].active:
                 self.active_product_names.append(product)
+
+
+class CtsSettings:
+    """
+    The CtsSettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
+    CTS sheet.
+
+    :param DataFrame df_cts: The CTS sheet of Set_and_Control_Parameters.xlsx
+
+    :ivar ScForecastMethod trend_calc_for_spec: Sets the forecast method to extrapolate the specific consumption in the
+        cts sector.
+    :ivar bool nuts2_distribution_per_pop_density: Indicates whether the nuts2 distribution should be done by population
+        density or employee percentages.
+    :ivar [int] skip_years: These years are skipped in historical data.
+    :ivar int last_available_year: Years after that are not included in calculations.
+    :ivar Heat heat_levels: How heat should be distributed among different heat levels.
+    :ivar dict[DemandType, Heat] heat_substitution: The amount of heat that can be substituted by electricity or
+        hydrogen.
+    """
+
+    map_sc_forecast_method = {
+        "1": ScForecastMethod.LINEAR,
+        "2": ScForecastMethod.LOGARITHMIC,
+        "0": ScForecastMethod.CONST_MEAN,
+        "3": ScForecastMethod.CONST_LAST
+    }
+
+    def __init__(self, df_cts: pd.DataFrame):
+
+        # read parameters
+        str_trend_calc_for_spec = \
+            str(int(df_cts[df_cts["Parameter"] == "Trend calculation for specific energy requirements"]
+                    .get("Value").iloc[0]))
+        self.trend_calc_for_spec = CtsSettings.map_sc_forecast_method[str_trend_calc_for_spec]
+
+        self.nuts2_distribution_per_pop_density = bool(
+            df_cts[df_cts["Parameter"] == "NUTS2 distribution based on population"].get("Value").iloc[0])
+
+        skip_years_string = str(df_cts[df_cts["Parameter"] == "Skip years"].get("Value").iloc[0])
+        self.skip_years = [int(i) for i in skip_years_string.split(",") if not np.isnan(float(i))]
+
+        self.last_available_year = int(df_cts[df_cts["Parameter"] == "Last available year"].get("Value").iloc[0])
+
+        heat_level_q1 = \
+            df_cts[df_cts["Parameter"] == "Predefined ratio of Q1 heat level (below 60°C)"].get("Value").iloc[0]
+        self.heat_levels = Heat(heat_level_q1, 1 - heat_level_q1, 0, 0)
+
+        self.heat_substitution = dict[DemandType, float]()
+        self.heat_substitution[DemandType.ELECTRICITY] = \
+            float(df_cts[df_cts["Parameter"] == "Proportion of electricity usage for heat supply"].get("Value").iloc[0])
+        self.heat_substitution[DemandType.HYDROGEN] = \
+            float(df_cts[df_cts["Parameter"] == "Proportion of hydrogen usage for heat supply"].get("Value").iloc[0])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

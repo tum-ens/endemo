@@ -4,6 +4,12 @@ from pathlib import Path
 import pandas as pd
 
 
+def skip_years_in_df(df: pd.DataFrame, skip_years: [int]):
+    for skip_year in skip_years:
+        if skip_year in df.columns:
+            df.drop(skip_year, axis=1, inplace=True)
+
+
 class FileReadingHelper:
     """
     A helper class to read products historical data. It provides some fixed transformation operations.
@@ -44,10 +50,7 @@ class FileReadingHelper:
         if self.df is None:
             warnings.warn("Trying to skip years in products historical data without having called set_path_and_read"
                           " on the Retrieve object.")
-        # skip years
-        for skip_year in skip_years:
-            if skip_year in self.df.columns:
-                self.df.drop(skip_year, axis=1, inplace=True)
+        skip_years_in_df(self.df, skip_years)
 
     def get(self) -> pd.DataFrame:
         """

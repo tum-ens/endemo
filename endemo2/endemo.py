@@ -1,3 +1,4 @@
+from endemo2.model_instance.instance_filter.cts_instance_filter import CtsInstanceFilter
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
 from endemo2.model_instance.instance_filter.industry_instance_filter \
     import IndustryInstanceFilter, ProductInstanceFilter
@@ -25,6 +26,7 @@ class Endemo:
         self.country_instance_filter = None
         self.industry_instance_filter = None
         self.product_instance_filter = None
+        self.cts_instance_filter = None
 
     def execute_with_preprocessing(self):
         """
@@ -71,22 +73,25 @@ class Endemo:
         ctrl = self.input_manager.ctrl
         general_input = self.input_manager.general_input
         industry_input = self.input_manager.industry_input
+        cts_input = self.input_manager.cts_input
         self.country_instance_filter = CountryInstanceFilter(ctrl, general_input, prepro)
         self.industry_instance_filter = \
             IndustryInstanceFilter(ctrl, industry_input, prepro, self.country_instance_filter)
         self.product_instance_filter = \
             ProductInstanceFilter(ctrl, prepro, industry_input, general_input, self.country_instance_filter)
+        self.cts_instance_filter = CtsInstanceFilter(ctrl, cts_input, prepro.countries_pp, self.country_instance_filter)
 
         print("Instance filters were successfully created.")
 
-        print("Initiating model...")
+        print("Initiating model scenario...")
         # create countries_in_group
         self.countries = dict[str, country.Country]()
         for country_name in self.input_manager.ctrl.general_settings.active_countries:
             self.countries[country_name] = country.Country(country_name, self.country_instance_filter,
-                                                           self.industry_instance_filter, self.product_instance_filter)
+                                                           self.industry_instance_filter, self.product_instance_filter,
+                                                           self.cts_instance_filter)
 
-        print("Model was successfully initiated.")
+        print("Model scenario was successfully initiated.")
 
     def write_all_output(self):
         """ Writes the whole output to the output folder. """
@@ -103,5 +108,5 @@ class Endemo:
         """ Writes all the output that comes from the model instance. """
         print("Writing scenario output...")
         generate_instance_output(self.input_manager, self.countries,
-                                 self.country_instance_filter, self.product_instance_filter)
+                                 self.country_instance_filter, self.product_instance_filter, self.cts_instance_filter)
         print("Model output was successfully written.")

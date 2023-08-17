@@ -9,7 +9,7 @@ import math
 import os
 import warnings
 from array import array
-from typing import Union
+from typing import Union, Any
 from pathlib import Path
 
 import numpy as np
@@ -22,7 +22,16 @@ from endemo2 import utility as uty
 from endemo2.data_structures import containers as dc
 from endemo2.input_and_settings import control_parameters as cp
 from endemo2.input_and_settings.control_parameters import ControlParameters, IndustrySettings
-from endemo2.input_and_settings.input_utility import FileReadingHelper
+from endemo2.input_and_settings.input_utility import FileReadingHelper, skip_years_in_df
+
+
+class Abbreviations:
+    # create country_abbr -> country_name_en mapping
+    dict_alpha2_en_map = dict[str, str]()
+    # create country_name_de -> country_name_en mapping
+    dict_de_en_map = dict[str, str]()
+    # create country_name_en -> country_abbr mapping
+    dict_en_alpha2_map = dict[str, str]()
 
 
 class Input:
@@ -45,6 +54,7 @@ class Input:
     output_path = super_path / 'output'
     general_path = input_path / 'general'
     industry_path = input_path / 'industry'
+    cts_path = input_path / 'commercial_trade_and_services'
 
     ctrl_path = input_path / 'Set_and_Control_Parameters.xlsx'
 
@@ -59,23 +69,15 @@ class Input:
 
         # read industry
         self.industry_input = IndustryInput(self.ctrl, Input.industry_path,
-                                            self.general_input.abbreviations,
                                             self.general_input.nuts2_valid_regions,
                                             self.ctrl.general_settings.active_countries)
 
+        # read commercial_trade_and_services
+        self.cts_input = CtsInput(self.ctrl, Input.cts_path)
+
     def update_set_and_control_parameters(self):
         """ Updates Set_and_Control_Parameters.xlsx """
-        ctrl_ex = pd.ExcelFile(Input.ctrl_path)
-
-        # read control parameters
-        general_settings = cp.GeneralSettings(pd.read_excel(ctrl_ex, sheet_name="GeneralSettings"),
-                                              pd.read_excel(ctrl_ex, sheet_name="Countries"))
-        industry_settings = \
-            cp.IndustrySettings(
-                pd.read_excel(ctrl_ex, sheet_name="IND_general"),
-                pd.read_excel(ctrl_ex, sheet_name="IND_subsectors"))
-
-        self.ctrl = cp.ControlParameters(general_settings, industry_settings)
+        self.ctrl = Input.read_set_and_control_parameters()
 
     @classmethod
     def read_set_and_control_parameters(cls) -> cp.ControlParameters:
@@ -90,7 +92,9 @@ class Input:
                 pd.read_excel(ctrl_ex, sheet_name="IND_general"),
                 pd.read_excel(ctrl_ex, sheet_name="IND_subsectors"))
 
-        return cp.ControlParameters(general_settings, industry_settings)
+        cts_settings = cp.CtsSettings(pd.read_excel(ctrl_ex, sheet_name="CTS"))
+
+        return cp.ControlParameters(general_settings, industry_settings, cts_settings)
 
 
 class PopulationInput:
@@ -108,9 +112,9 @@ class PopulationInput:
         The sheet containing the prognosis intervals and growth rate for nuts2 regions.
 
     :ivar dict[str, HisProg] country_population: Data for the population of whole countries_in_group.
-        It is of the form {back_label -> historical: [(float, float)], prognosis: [(float, float)]}
+        It is of the form historical:{country_name -> [(float, float)]}, prognosis:{country_name -> [(float, float)]}
     :ivar dict[str, [(str, [float, float])]] nuts2_population: Data for the population of NUTS2 regions.
-        It is of the form {back_label -> (code -> (historical: [(float,float)], prognosis: [interval, growth rate]))}
+        It is of the form {country_name -> (code -> (historical: [(float,float)], prognosis: [interval, growth rate]))}
     """
 
     def __init__(self, ctrl: cp.ControlParameters, nuts2_valid_regions: set, abbreviations: dict[str, dc.CA],
@@ -175,7 +179,7 @@ class PopulationInput:
             # fill nuts2 population
             if country_name not in self.nuts2_population.keys():
                 self.nuts2_population[country_name] = dict()
-            abbrev = abbreviations[country_name].alpha2
+            abbrev = Abbreviations.dict_en_alpha2_map[country_name]
             self.nuts2_population[country_name] = \
                 dc.HisProg(dict_nuts2_pop_his[abbrev], dict_nuts2_pop_prog[abbrev])
 
@@ -187,7 +191,6 @@ class GeneralInput:
     :param ControlParameters ctrl: The parsed Set_and_Control_Parameters.xlsx
     :param Path path: The path to the preprocessing/general folder
 
-    :ivar dict[str, ("alpha2", "alpha3", "german_name")] abbreviations: The abbreviations for each country.
     :ivar PopulationData population: All data from the population preprocessing.
     :ivar dict[str, HisProg[[(float, float)], [Interval, float]]] gdp: The gdp for each country.
     :ivar dict[str, ("electricity", "heat")] efficiency: The efficiency for each energy carrier.
@@ -222,15 +225,17 @@ class GeneralInput:
                 dc.EH(row["Electricity production [-]"], row["Heat production [-]"])
 
         for country_name in ctrl.general_settings.active_countries:
-            # fill abbreviations
-            self.abbreviations[country_name] = \
-                dc.CA(df_abbr[df_abbr["Country_en"] == country_name].get("alpha-2").iloc[0],
-                      df_abbr[df_abbr["Country_en"] == country_name].get("alpha-3").iloc[0],
-                      df_abbr[df_abbr["Country_en"] == country_name].get("Country_de").iloc[0])
+            # fill abbreviations class for easy access from anywhere
+            alpha2 = df_abbr[df_abbr["Country_en"] == country_name].get("alpha-2").iloc[0]
+            german_name = df_abbr[df_abbr["Country_en"] == country_name].get("Country_de").iloc[0]
+            alpha3 = df_abbr[df_abbr["Country_en"] == country_name].get("alpha-3").iloc[0]
+            Abbreviations.dict_alpha2_en_map[alpha2] = country_name
+            Abbreviations.dict_de_en_map[german_name] = country_name
+            Abbreviations.dict_en_alpha2_map[country_name] = alpha2
 
             # read gdp historical
             years = df_gdp_his.columns[3:]
-            gdp_data = df_gdp_his[df_gdp_his["Country Code"] == self.abbreviations[country_name].alpha3].iloc[0][3:]
+            gdp_data = df_gdp_his[df_gdp_his["Country Code"] == alpha3].iloc[0][3:]
             zipped = list(zip(years, gdp_data))
             gdp_his = uty.filter_out_nan_and_inf(zipped)
 
@@ -275,12 +280,11 @@ class ProductInput:
     :param ExcelFile ex_country_groups: The Excel sheet of the country groups.
     :param [str] active_countries: The list of english names of the active countries.
     :param dict[str, Heat] dict_heat_levels: The dictionary holding the heat levels for all products.
-        Of form {front_label -> heat_levels}
-    :param dict[str, str] dict_de_en_map: A mapping from a countries german name to the english name.
-    :param dict[str, str] dict_alpha2_en_map: A mapping from a countries two-letter-abbreviation to the english name.
+        Of form {front_label -> heat_levels}.
 
     :ivar str front_label: The name of the product.
-    :ivar dict[str, containers.SpecConsum] specific_consumption_default: Default specific consumption value for this product.
+    :ivar dict[str, containers.SpecConsum] specific_consumption_default: Default specific consumption value for this
+        product.
     :ivar dict[str, (float, float)] specific_consumption_historical: Historical specific consumption data
         for this product. Accessible per country.
     :ivar dict[str, containers.EH] bat: The best-available-technology consumption for this product.
@@ -300,7 +304,7 @@ class ProductInput:
     def __init__(self, product_name: str, industry_path: Path, industry_settings: IndustrySettings,
                  ex_specific_consumption: pd.ExcelFile, ex_bat: pd.ExcelFile, ex_nuts2_ic: pd.ExcelFile,
                  ex_country_groups: pd.ExcelFile, active_countries, dict_heat_levels: dict[str, Heat],
-                 dict_de_en_map: dict[str, str], dict_alpha2_en_map: dict[str, str], nuts2_valid_regions: set[str]):
+                 nuts2_valid_regions: set[str]):
         self.product_name = product_name
 
         # read product input from industry dictionaries
@@ -315,7 +319,7 @@ class ProductInput:
         # read specific demand historical data
         if industry_settings.trend_calc_for_spec:
             self.specific_consumption_historical = \
-                self.read_energy_carrier_consumption_historical(industry_path, dict_de_en_map)
+                self.read_energy_carrier_consumption_historical(industry_path)
         else:
             self.specific_consumption_historical = None
 
@@ -324,7 +328,7 @@ class ProductInput:
 
         # read NUTS2 installed capacity
         self.nuts2_installed_capacity = \
-            self.read_nuts2_installed_capacities(ex_nuts2_ic, dict_alpha2_en_map, nuts2_valid_regions)
+            self.read_nuts2_installed_capacities(ex_nuts2_ic, nuts2_valid_regions)
 
         # read country groups
         self.country_groups = self.read_country_groups(ex_country_groups, active_countries)
@@ -353,50 +357,21 @@ class ProductInput:
 
         return dict_prod_sc_country
 
-    def read_energy_carrier_consumption_historical(self, industry_path: Path, dict_de_en_map: dict[str, str]) \
+    def read_energy_carrier_consumption_historical(self, industry_path: Path) \
             -> Union[None, dict[str, [(float, float)]]]:
         """
         Reads the historical consumption data for this subsector split by energy carriers.
 
         :param industry_path: The path to the industry input folder.
-        :param dict_de_en_map: A mapping from the german name of a country to the english name.
         :return: If present, the historical quantity of energy carrier in subsector.
-            Of form: {back_label -> {energy_carrier -> [(float, float)]}}
+            Of form: {country_name -> {energy_carrier -> [(float, float)]}}
         """
 
         if self.product_name not in IndustryInput.sc_historical_data_file_names.keys():
             return None
 
-        dict_sc_his = dict[str, dict[str, [(float, float)]]]()
-
         sc_his_file_name = IndustryInput.sc_historical_data_file_names[self.product_name]
-        ex_sc_his = pd.ExcelFile(industry_path / sc_his_file_name)
-
-        for sheet_name in IndustryInput.sc_historical_sheet_names:
-            df_sc = pd.read_excel(ex_sc_his, sheet_name)
-            for _, row in df_sc.iterrows():
-                country_name_de = row["GEO/TIME"]
-                years = df_sc.columns[1:]
-                data = df_sc[df_sc["GEO/TIME"] == country_name_de].iloc[0][1:]
-
-                # convert country name to model-intern english representation
-                if country_name_de in dict_de_en_map.keys():
-                    country_name_en = dict_de_en_map[country_name_de]
-                else:
-                    continue
-
-                if not uty.is_zero(data):
-                    # data exists -> fill into dictionary
-                    zipped = list(zip(years, data))
-                    his_data = uty.filter_out_nan_and_inf(zipped)
-                    # his_data = uty.cut_after_x(his_data, industry_settings.last_available_year)
-
-                    if country_name_en not in dict_sc_his.keys():
-                        dict_sc_his[country_name_en] = dict()
-
-                    dict_sc_his[country_name_en][sheet_name] = his_data
-
-        return dict_sc_his
+        return CtsInput.read_energy_carrier_consumption_historical(industry_path, sc_his_file_name)
 
     def read_production_data(self, industry_path: Path, industry_settings: IndustrySettings) \
             -> dict[str, [(float, float)]]:
@@ -405,7 +380,7 @@ class ProductInput:
 
         :param industry_path: The path to the industry input folder.
         :param industry_settings: The industry settings.
-        :return: The historical production data of all subsectors for all countries.
+        :return: The historical production data of all _subsectors for all countries.
         """
         retrieve_prod = IndustryInput.product_data_access[self.product_name]
         retrieve_prod.set_path_and_read(industry_path)
@@ -427,18 +402,17 @@ class ProductInput:
             zipped = list(zip(years, data))
             his_data = uty.filter_out_nan_and_inf(zipped)
             his_data = uty.cut_after_x(his_data, industry_settings.last_available_year - 1)
-            his_data = uty.map_data_y(his_data, lambda x: x * 1000)     # convert kt to t
+            his_data = uty.map_data_y(his_data, lambda x: x * 1000)  # convert kt to t
             dict_prod_his[row.Country] = his_data
 
         return dict_prod_his
 
-    def read_nuts2_installed_capacities(self, ex_nuts2_ic: pd.ExcelFile, dict_alpha2_en_map: dict[str, str],
+    def read_nuts2_installed_capacities(self, ex_nuts2_ic: pd.ExcelFile,
                                         nuts2_valid_regions: set[str]) -> dict[str, dict[str, float]]:
         """
         Reads all the installed capacities for the nuts2 regions.
 
         :param ex_nuts2_ic: The Excel sheet holding the installed capacities percentages.
-        :param dict_alpha2_en_map: A mapping from a countries two-letter-abbreviation to the english name.
         :param set[str] nuts2_valid_regions: The valid nuts2 regions according to the currently chosen nuts2 version.
         :return: The installed capacities for all nuts2 regions in an active country.
             Is of form: {back_label -> {nuts2_region_name -> installed_capacity}}
@@ -460,15 +434,15 @@ class ProductInput:
             if nuts2 not in nuts2_valid_regions:
                 # not the currently chosen nuts2 code version
                 continue
-            if alpha2 not in dict_alpha2_en_map.keys():
+            if alpha2 not in Abbreviations.dict_alpha2_en_map.keys():
                 # country not active
                 continue
 
-            country_name_en = dict_alpha2_en_map[nuts2[:2]]
+            country_name_en = Abbreviations.dict_alpha2_en_map[nuts2[:2]]
             if country_name_en not in dict_installed_capacity_nuts2.keys():
                 dict_installed_capacity_nuts2[country_name_en] = dict[str, float]()
 
-            perc_value = row[product_name_general + " %"] # automatically %/100
+            perc_value = row[product_name_general + " %"]  # automatically %/100
             dict_installed_capacity_nuts2[country_name_en][nuts2] = perc_value if not np.isnan(perc_value) else 0.0
 
         return dict_installed_capacity_nuts2
@@ -565,11 +539,10 @@ class RestSectorInput:
 
 class IndustryInput:
     """
-    Industry Input denoted preprocessing that is read from the "preprocessing/industry" folder.
+    Industry Input denoted input that is read from the "input/industry" folder.
 
     :param ctrl: ControlSettings object.
     :param industry_path: The path to the industry input folder.
-    :param dict[str, dc.CA] abbreviations: The abbreviations for all countries.
     :param nuts2_valid_regions: The valid nuts2 regions of set version.
     :param active_countries: The currently active countries.
 
@@ -637,19 +610,9 @@ class IndustryInput:
         SubsectorGroup.PAPER: "hotmaps_task_2.7_load_profile_industry_paper_yearlong_2018.csv",
     }
 
-    def __init__(self, ctrl: cp.ControlParameters, industry_path: Path, abbreviations: dict[str, dc.CA],
+    def __init__(self, ctrl: cp.ControlParameters, industry_path: Path,
                  nuts2_valid_regions: set[str], active_countries: [str]):
         self.dict_product_input = dict[str, ProductInput]()
-
-        # create country_abbr -> country_name_en mapping
-        dict_alpha2_en_map = dict()
-        for name_en, (alpha2, alpha3, name_de) in abbreviations.items():
-            dict_alpha2_en_map[alpha2] = name_en
-
-        # create country_name_de -> country_name_en mapping
-        dict_de_en_map = dict()
-        for name_en, (alpha2, alpha3, name_de) in abbreviations.items():
-            dict_de_en_map[name_de] = name_en
 
         # read heat levels
         dict_heat_levels = IndustryInput.read_heat_levels(industry_path)
@@ -663,7 +626,7 @@ class IndustryInput:
         if ctrl.general_settings.toggle_hourly_forecast:
             # read other files for time profile
             (electricity_profiles, heat_profiles) = \
-                IndustryInput.read_load_timeseries(industry_path, active_countries, dict_alpha2_en_map)
+                IndustryInput.read_load_timeseries(industry_path, active_countries)
             self.dict_electricity_profiles = electricity_profiles
             self.dict_heat_profiles = heat_profiles
         else:
@@ -676,7 +639,7 @@ class IndustryInput:
         ex_nuts2_ic = pd.ExcelFile(industry_path / "Installed_capacity_NUTS2.xlsx")
         ex_country_groups = pd.ExcelFile(industry_path / "Country_Groups.xlsx")
 
-        # read the active subsectors sheets
+        # read the active _subsectors sheets
         for product_name in ctrl.industry_settings.active_product_names:
             if product_name == 'unspecified industry':
                 continue
@@ -685,8 +648,7 @@ class IndustryInput:
             self.dict_product_input[product_name] = \
                 ProductInput(product_name, industry_path, ctrl.industry_settings,
                              ex_spec, ex_bat, ex_nuts2_ic, ex_country_groups,
-                             active_countries, dict_heat_levels, dict_de_en_map, dict_alpha2_en_map,
-                             nuts2_valid_regions)
+                             active_countries, dict_heat_levels, nuts2_valid_regions)
 
     @classmethod
     def read_heat_levels(cls, industry_path: Path) -> dict[str, Heat]:
@@ -706,7 +668,7 @@ class IndustryInput:
         return dict(zip(df_subsector_group["Subsectors"], groups_as_enum))
 
     @classmethod
-    def read_load_timeseries(cls, industry_path: Path, active_countries: [str], dict_alpha2_en_map: dict[str, str]) \
+    def read_load_timeseries(cls, industry_path: Path, active_countries: [str]) \
             -> (dict[str, [float]], dict[SubsectorGroup, dict[str, [float]]]):
 
         # read electricity profiles
@@ -725,10 +687,10 @@ class IndustryInput:
             df_hotmaps = pd.read_csv(industry_path / filename)
             for _, row in df_hotmaps.iterrows():
                 country_abbr = row["NUTS0_code"]
-                if country_abbr not in dict_alpha2_en_map.keys():
+                if country_abbr not in Abbreviations.dict_alpha2_en_map.keys():
                     # non-active country, skip
                     continue
-                country_en = dict_alpha2_en_map[country_abbr]
+                country_en = Abbreviations.dict_alpha2_en_map[country_abbr]
                 new_value = row["load"]
                 if subsec_group not in dict_heat_profiles.keys():
                     dict_heat_profiles[subsec_group] = dict()
@@ -737,3 +699,199 @@ class IndustryInput:
                 dict_heat_profiles[subsec_group][country_en].append(new_value / 1000000.0)
 
         return dict_electricity_profiles, dict_heat_profiles
+
+
+class CtsInput:
+    """
+    CtsInput denoted input that is read from the "input/industry" folder.
+
+    :param ControlParameters ctrl: The control parameters object.
+    :param Path cts_path: The path to the input files for the CTS sector.
+
+    :ivar dict[str, dict[str, [(float, float)] dict_employee_number_country: Contains the number ob employees per
+        subsector for every country. Is of form {country_name -> {subsector -> [(float, float)]}}
+    :ivar dict[str, dict[str, dict[str, [(float, float)]] dict_employee_number_nuts2: Contains the number ob employees
+        per subsector for every NUTS2 region. Is of form
+        {country_name -> {nuts2_region -> {subsector -> [(float, float)]}}}
+    :ivar dict[str, [(float, float)]] dict_employee_number_country_cts: Contains the number of employees in the whole
+        cts sector.
+    :ivar dict[str, [(float, float)]] energy_carrier_consumption: The historical quantity of energy carrier in
+        subsector. Of form: {country_name -> {energy_carrier -> [(float, float)]}}
+    :ivar dict[DemandType, Any] load_profile: The load profile for the cts sector.
+    """
+
+    subsector_names = [#"Land- und Forstwirtschaft, Fischerei", ???
+                       "Groß- und Einzelhandel",
+                       "Private Büros",
+                       "Hotel und Restaurants",
+                       "Öffentliche Büros",
+                       "Gesundheits- und Sozialwesen",
+                       "Bildung",
+                       "Sonstige"]
+
+    def __init__(self, ctrl: ControlParameters, cts_path: Path):
+
+        # read per country per subsector employee numbers
+        self.dict_employee_number_country = \
+            dict([(Abbreviations.dict_alpha2_en_map[code], content) for (code, content) in
+                  self.read_employee_per_subsector(ctrl,
+                                                   cts_path / "Employee_Nuts0.xlsx", "Employee_per_sector").items()
+                  if code in Abbreviations.dict_alpha2_en_map.keys()])  # if code is from an active country
+
+        # read per nuts2 region per subsector employee numbers
+        dict_employee_number_nuts2_unstructured = \
+            self.read_employee_per_subsector(ctrl, cts_path / "Employee_Nuts2.xlsx", "Employee_per_sector")
+        self.dict_employee_number_nuts2 = \
+            dict[str, dict[str, dict[str]]]()  # country_name -> nuts2_region -> subsector -> [(float, float)]
+        for region_name, dict_subsec_data in dict_employee_number_nuts2_unstructured.items():
+            if region_name[:2] not in Abbreviations.dict_alpha2_en_map.keys():
+                # skip inactive countries
+                continue
+            country_name = Abbreviations.dict_alpha2_en_map[region_name[:2]]
+            if country_name not in self.dict_employee_number_nuts2.keys():
+                self.dict_employee_number_nuts2[country_name] = dict()
+            self.dict_employee_number_nuts2[country_name][region_name] = dict_subsec_data
+
+        # read total number of employees per country (for specific consumption calculation)
+        self.dict_employee_number_country_cts = \
+            CtsInput.read_number_employees_cts(ctrl, cts_path / "Employee_Nuts0.xlsx", "Raw data Eurostat")
+
+        # read energy carrier historical data
+        self.energy_carrier_consumption = \
+            self.read_energy_carrier_consumption_historical(cts_path, "nrg_bal_s_GHD.xls")
+
+        # read load profile
+        if ctrl.general_settings.toggle_hourly_forecast:
+            df_load_profile = pd.read_excel(cts_path / "CTS_Loadprofile.xlsx", sheet_name="Data")
+
+            electricity = list(df_load_profile["Elec"])[1:]
+            heat_q1 = list(df_load_profile["Heat_Q1"])[1:]
+            heat_q2 = list(df_load_profile["Heat_Q2"])[1:]
+            h2 = list(df_load_profile["H2"])[1:]
+
+            self.load_profile = dict[DemandType, Any]()
+            self.load_profile[DemandType.ELECTRICITY] = electricity
+            self.load_profile[DemandType.HEAT] = [Heat(q1, q2) for q1, q2 in zip(heat_q1, heat_q2)]
+            self.load_profile[DemandType.HYDROGEN] = h2
+        else:
+            self.load_profile = None
+
+    @classmethod
+    def read_number_employees_cts(cls, ctrl: ControlParameters, path_to_file: Path, sheet_name: str) \
+            -> dict[str, [(float, float)]]:
+        """
+        Reads employees per subsector from the eurostats input sheets.
+
+        :param ctrl: The control Parameters
+        :param path_to_file: Path of the file that should be read.
+        :param sheet_name: The name of the sheet that should be read.
+        :return: The data on number of employees (in thousands) in the whole cts sector of a country.
+            Is of form {country_name -> data}.
+        """
+        df_employee_num = pd.read_excel(path_to_file, sheet_name)
+
+        # skip years
+        skip_years_in_df(df_employee_num, ctrl.cts_settings.skip_years)
+
+        dict_employee_number = dict[str, dict[str]]()  # country_name -> subsector -> [(float, float)]
+        years = df_employee_num.columns[2:]
+        for _, row in df_employee_num.iterrows():
+            # only take the GUD lines and skip everything else
+            if row["NACE_R2 (Codes)"] != "GHD":
+                continue
+            alpha2 = row["Country"].strip()
+            if alpha2 not in Abbreviations.dict_alpha2_en_map.keys():
+                # inactive country, skip
+                continue
+            country_name = Abbreviations.dict_alpha2_en_map[row["Country"].strip()]
+
+            # get values over time
+            data = row[2:]
+            zipped = list(zip(years, data))
+            his_data = uty.filter_out_nan_and_inf(zipped)
+            his_data = uty.cut_after_x(his_data, ctrl.cts_settings.last_available_year - 1)
+
+            # save
+            dict_employee_number[country_name] = his_data
+
+        return dict_employee_number
+
+    @classmethod
+    def read_employee_per_subsector(cls, ctrl, path_to_file: Path, sheet_name: str) \
+            -> dict[str, dict[str]]():
+        """
+        Reads employees per subsector from the Employee...xlsx input sheets
+
+        :param ctrl: The control Parameters
+        :param path_to_file: Path of the file that should be read.
+        :param sheet_name: The name of the sheet that should be read.
+        :return: The data on number of employees in each subsector of form {region_name -> {subsector_name -> data}},
+            where region_name can be a country or a nuts2 region, depending on input file.
+        """
+        df_employee_num_per_subsector = pd.read_excel(path_to_file, sheet_name)
+
+        # skip years
+        skip_years_in_df(df_employee_num_per_subsector, ctrl.cts_settings.skip_years)
+
+        dict_employee_number = dict[str, dict[str]]()  # country_name -> subsector -> [(float, float)]
+        years = df_employee_num_per_subsector.columns[4:]
+        for _, row in df_employee_num_per_subsector.iterrows():
+            region_column = "Land" if "Land" in df_employee_num_per_subsector.columns else "NUTS2"
+            region_name = row[region_column].strip()
+            subsector = row["Sektor"]
+
+            # get values over time
+            data = row[4:]
+            zipped = list(zip(years, data))
+            his_data = uty.filter_out_nan_and_inf(zipped)
+            his_data = uty.map_data_y(his_data, lambda x: x * 1000)
+            his_data = uty.cut_after_x(his_data, ctrl.cts_settings.last_available_year - 1)
+
+            # save
+            if region_name not in dict_employee_number.keys():
+                dict_employee_number[region_name] = dict()
+            dict_employee_number[region_name][subsector] = his_data
+
+        return dict_employee_number
+
+    @classmethod
+    def read_energy_carrier_consumption_historical(cls, path: Path, filename: str) \
+            -> dict[str, [(float, float)]]:
+        """
+        Reads the historical consumption data split by energy carriers from a nrg_bal file.
+
+        :todo: put this in a spot in the code base that makes sense.
+        :param path: The path to the folder of the file
+        :param filename: The filename of the file to read.
+
+        :return: If present, the historical quantity of energy carrier in subsector.
+            Of form: {country_name -> {energy_carrier -> [(float, float)]}}
+        """
+
+        dict_sc_his = dict[str, dict[str, [(float, float)]]]()
+
+        ex_sc_his = pd.ExcelFile(path / filename)
+
+        for sheet_name in IndustryInput.sc_historical_sheet_names:
+            df_sc = pd.read_excel(ex_sc_his, sheet_name)
+            for _, row in df_sc.iterrows():
+                country_name_de = row["GEO/TIME"]
+                years = df_sc.columns[1:]
+                data = df_sc[df_sc["GEO/TIME"] == country_name_de].iloc[0][1:]
+
+                # convert country name to model-intern english representation
+                if country_name_de in Abbreviations.dict_de_en_map.keys():
+                    country_name_en = Abbreviations.dict_de_en_map[country_name_de]
+                else:
+                    continue
+
+                if not uty.is_zero(data):
+                    # data exists -> fill into dictionary
+                    zipped = list(zip(years, data))
+                    his_data = uty.filter_out_nan_and_inf(zipped)
+                    if country_name_en not in dict_sc_his.keys():
+                        dict_sc_his[country_name_en] = dict()
+
+                    dict_sc_his[country_name_en][sheet_name] = his_data
+
+        return dict_sc_his
