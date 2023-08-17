@@ -9,10 +9,10 @@ import pandas as pd
 
 from endemo2.data_structures.prediction_models import Timeseries, Coef, TwoDseries
 from endemo2.data_structures.containers import Demand
-from endemo2.input_and_settings.input import Input
+from endemo2.input_and_settings.input_manager import InputManager
 
 
-def get_day_folder_path(input_manager: Input):
+def get_day_folder_path(input_manager: InputManager):
     """ Get the path to the day folder. """
     # generate directory based on date
     day_directory_name = FileGenerator.get_day_directory()

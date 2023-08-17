@@ -3,11 +3,55 @@ from pathlib import Path
 
 import pandas as pd
 
+from endemo2.input_and_settings.input_general import Abbreviations, GeneralInput
+from endemo2 import utility as uty
+
 
 def skip_years_in_df(df: pd.DataFrame, skip_years: [int]):
     for skip_year in skip_years:
         if skip_year in df.columns:
             df.drop(skip_year, axis=1, inplace=True)
+
+
+def read_energy_carrier_consumption_historical(path: Path, filename: str) \
+        -> dict[str, [(float, float)]]:
+    """
+    Reads the historical consumption data split by energy carriers from a nrg_bal file.
+
+    :param path: The path to the folder of the file
+    :param filename: The filename of the file to read.
+
+    :return: If present, the historical quantity of energy carrier in subsector.
+        Of form: {country_name -> {energy_carrier -> [(float, float)]}}
+    """
+
+    dict_sc_his = dict[str, dict[str, [(float, float)]]]()
+
+    ex_sc_his = pd.ExcelFile(path / filename)
+
+    for sheet_name in GeneralInput.sc_historical_sheet_names:
+        df_sc = pd.read_excel(ex_sc_his, sheet_name)
+        for _, row in df_sc.iterrows():
+            country_name_de = row["GEO/TIME"]
+            years = df_sc.columns[1:]
+            data = df_sc[df_sc["GEO/TIME"] == country_name_de].iloc[0][1:]
+
+            # convert country name to model-intern english representation
+            if country_name_de in Abbreviations.dict_de_en_map.keys():
+                country_name_en = Abbreviations.dict_de_en_map[country_name_de]
+            else:
+                continue
+
+            if not uty.is_zero(data):
+                # data exists -> fill into dictionary
+                zipped = list(zip(years, data))
+                his_data = uty.filter_out_nan_and_inf(zipped)
+                if country_name_en not in dict_sc_his.keys():
+                    dict_sc_his[country_name_en] = dict()
+
+                dict_sc_his[country_name_en][sheet_name] = his_data
+
+    return dict_sc_his
 
 
 class FileReadingHelper:

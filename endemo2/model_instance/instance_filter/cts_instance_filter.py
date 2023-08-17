@@ -2,21 +2,22 @@ from endemo2.data_structures.containers import SpecConsum, Heat, Demand
 from endemo2.data_structures.enumerations import DemandType, ScForecastMethod, ForecastMethod
 from endemo2.data_structures.prediction_models import Coef, Timeseries
 from endemo2.input_and_settings.control_parameters import ControlParameters
-from endemo2.input_and_settings.input import CtsInput
+from endemo2.input_and_settings.input_cts import CtsInput
+from endemo2.input_and_settings.input_general import GeneralInput
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
-from endemo2.preprocessing.preprocessing_step_one import CountryPreprocessed, CtsPreprocessed, PopulationPreprocessed, \
-    NUTS2Preprocessed
+from endemo2.preprocessing.preprocessing_step_one import CountryPreprocessed, CtsPreprocessed
 
 
 class CtsInstanceFilter:
     """ The instance filter for the CTS sector. """
 
-    def __init__(self, ctrl: ControlParameters, cts_input: CtsInput, countries_pp: [CountryPreprocessed],
-                 country_if: CountryInstanceFilter):
+    def __init__(self, ctrl: ControlParameters, general_input: GeneralInput, cts_input: CtsInput,
+                 countries_pp: [CountryPreprocessed], country_if: CountryInstanceFilter):
         self.ctrl = ctrl
         self.cts_input = cts_input
         self.country_if = country_if
         self.countries_pp = countries_pp
+        self.general_input = general_input
 
     def get_cts_subsector_names(self) -> [str]:
         """ Get the names of all _subsectors of the cts sector. """
@@ -54,7 +55,12 @@ class CtsInstanceFilter:
             sc[demand_type] = max(0.0, sc_coef.get_function_y(target_year))
 
         specific_consumption = SpecConsum(sc[DemandType.ELECTRICITY], sc[DemandType.HEAT], sc[DemandType.HYDROGEN])
-        specific_consumption.scale(1 / 1000)  # convert from GWh/thousand employee to TWh/thousand employee, TODO: make more pretty
+
+        # efficiency scale fuel todo: should this be done later? reference says no
+
+        # convert from GWh/thousand employee to TWh/thousand employee, TODO: make more pretty
+        specific_consumption.scale(1 / 1000)
+
         return specific_consumption
 
     def get_heat_levels(self) -> Heat:
@@ -73,11 +79,16 @@ class CtsInstanceFilter:
         target_year = self.ctrl.general_settings.target_year
 
         # get coef from preprocessing
-        coef = cts_pp.employee_share_in_subsector_country[subsector_name].get_coef()
-        coef.set_method(ForecastMethod.LOGARITHMIC)
+        ts_employee_share: Timeseries = cts_pp.employee_share_in_subsector_country[subsector_name]
+        coef = ts_employee_share.get_coef()
+        coef.set_method(ForecastMethod.LINEAR)
 
         # predict
-        return max(0.0, coef.get_function_y(target_year))
+        value_in_2018 = ts_employee_share.get_value_at_year(2018)
+        prediction = max(0.0, coef.get_function_y(target_year))  # cannot be smaller than 0
+        prediction = min(prediction, value_in_2018 * 1.15)  # cap it. todo: maybe this can be done better?
+
+        return prediction
 
     def get_employee_share_of_population_nuts2(self, country_name, subsector_name) -> dict[str, float]:
         """ Get the share of population in a nuts2 region that is employed in a certain subsector. """
@@ -87,13 +98,17 @@ class CtsInstanceFilter:
         target_year = self.ctrl.general_settings.target_year
 
         dict_res = dict[str, float]()
-        for region_name, ts in cts_pp.employee_share_in_subsector_nuts2.items():
+        for region_name, dict_subsector_employee_share in cts_pp.employee_share_in_subsector_nuts2.items():
             # get coef from preprocessing
-            coef = cts_pp.employee_share_in_subsector_country[subsector_name].get_coef()
-            coef.set_method(ForecastMethod.LOGARITHMIC)
+            ts_employee_share = dict_subsector_employee_share[subsector_name]
+            coef = ts_employee_share.get_coef()
+            coef.set_method(ForecastMethod.LINEAR)
 
             # predict
-            dict_res[region_name] = max(0.0, coef.get_function_y(target_year))
+            value_in_2018 = ts_employee_share.get_value_at_year(2018)
+            prediction = max(0.0, coef.get_function_y(target_year))     # cannot be smaller than 0
+            prediction = min(prediction, value_in_2018 * 1.15)          # cap it. todo: maybe this can be done better?
+            dict_res[region_name] = prediction
 
         return dict_res
 

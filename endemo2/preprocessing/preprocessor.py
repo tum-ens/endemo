@@ -3,7 +3,7 @@ This module contains all things shared by the different preprocessing stages.
 """
 
 from endemo2.preprocessing.preproccessing_step_two import GroupManager
-from endemo2.input_and_settings.input import Input
+from endemo2.input_and_settings.input_manager import InputManager
 from endemo2.preprocessing import preprocessing_step_one as pp1
 
 
@@ -12,7 +12,7 @@ class Preprocessor:
     The preprocessor controls the execution of the different preprocessing stages.
     """
 
-    def __init__(self, input_manager: Input):
+    def __init__(self, input_manager: InputManager):
 
         self.countries_pp = dict[str, pp1.CountryPreprocessed]()
 

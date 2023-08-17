@@ -7,7 +7,10 @@ from endemo2.data_structures.nuts_tree import NutsRegionNode, NutsRegionLeaf
 from endemo2.data_structures.containers import EH, HisProg
 from endemo2.data_structures.enumerations import DemandType
 from endemo2.data_structures.prediction_models import Timeseries, RigidTimeseries, IntervalForecast
-from endemo2.input_and_settings.input import Input, ProductInput, GeneralInput, CtsInput, Abbreviations
+from endemo2.input_and_settings.input_general import GeneralInput, Abbreviations
+from endemo2.input_and_settings.input_manager import InputManager
+from endemo2.input_and_settings.input_cts import CtsInput
+from endemo2.input_and_settings.input_industry import ProductInput
 from endemo2.preprocessing.preprocessing_utility import energy_carrier_to_energy_consumption
 
 
@@ -213,7 +216,7 @@ class IndustryPreprocessed:
     :ivar dict[str, ProductPreprocessed] products_pp: All preprocessed products, accessible by product name.
     """
 
-    def __init__(self, country_name, input_manager: Input, pop_his: Timeseries, gdp_his: Timeseries):
+    def __init__(self, country_name, input_manager: InputManager, pop_his: Timeseries, gdp_his: Timeseries):
         self.products_pp = dict()
         general_input = input_manager.general_input
 
@@ -296,7 +299,7 @@ class CountryPreprocessed:
     :ivar IndustryPreprocessed industry_pp: The preprocessed industry data.
     """
 
-    def __init__(self, country_name, input_manager: Input):
+    def __init__(self, country_name, input_manager: InputManager):
         general_input = input_manager.general_input
 
         # preprocess general country attributes

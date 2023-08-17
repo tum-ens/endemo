@@ -11,7 +11,7 @@ from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.data_structures.enumerations import SectorIdentifier
 from endemo2.preprocessing.preprocessing_step_one import NUTS2Preprocessed, GDPPreprocessed
 from endemo2.preprocessing.preprocessor import Preprocessor
-from endemo2.input_and_settings.input import GeneralInput
+from endemo2.input_and_settings.input_general import GeneralInput
 
 
 class CountryInstanceFilter:
@@ -88,20 +88,18 @@ class CountryInstanceFilter:
         else:
             # use prediction data
             nuts2_leafs: [NutsRegionLeaf] = prognosis_nuts2_population_data.get_all_leaf_nodes()
-            nuts2_forecast_start_year = self.ctrl.industry_settings.last_available_year    # TODO: maybe use other year?
 
             for nuts2_leaf in nuts2_leafs:
                 region_name = nuts2_leaf.region_name
 
-                # get start point for prediction data
+                # get start point for prediction data -> take last available historical data; todo: is this correct?
                 his_start_year_ts: RigidTimeseries = historical_nuts2_population_data.get_specific_node(region_name).get()
-                nuts2_population_in_start_year: float = his_start_year_ts.get_value_at_year(nuts2_forecast_start_year)
+                nuts2_last_available_population_data_point: float = his_start_year_ts.get_last_available_year()
 
                 # do forecast for nuts2 region
                 nuts2_pop_forecast: IntervalForecast = nuts2_leaf.get()
                 nuts2_population_in_target_year[region_name] = \
-                    nuts2_pop_forecast.get_forecast(target_year,
-                                                    (nuts2_forecast_start_year,nuts2_population_in_start_year))
+                    nuts2_pop_forecast.get_forecast(target_year, nuts2_last_available_population_data_point)
         return nuts2_population_in_target_year
 
     def get_population_nuts2_percentages_in_target_year(self, country_name) -> dict[str, float]:

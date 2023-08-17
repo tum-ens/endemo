@@ -1,8 +1,9 @@
+import endemo2.input_and_settings.input_manager
 from endemo2.model_instance.instance_filter.cts_instance_filter import CtsInstanceFilter
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
 from endemo2.model_instance.instance_filter.industry_instance_filter \
     import IndustryInstanceFilter, ProductInstanceFilter
-from endemo2.input_and_settings import input
+from endemo2.input_and_settings import input_general
 from endemo2.model_instance.model import country
 from endemo2.output.instance_output import generate_instance_output
 from endemo2.output.preprocessing_output import generate_preprocessing_output
@@ -34,7 +35,7 @@ class Endemo:
         """
         # read input_and_settings
         print("Reading Input ...")
-        self.input_manager = input.Input()
+        self.input_manager = endemo2.input_and_settings.input_manager.InputManager()
         print("Input was successfully read.")
 
         # do preprocessing
@@ -79,7 +80,8 @@ class Endemo:
             IndustryInstanceFilter(ctrl, industry_input, prepro, self.country_instance_filter)
         self.product_instance_filter = \
             ProductInstanceFilter(ctrl, prepro, industry_input, general_input, self.country_instance_filter)
-        self.cts_instance_filter = CtsInstanceFilter(ctrl, cts_input, prepro.countries_pp, self.country_instance_filter)
+        self.cts_instance_filter = CtsInstanceFilter(ctrl, general_input, cts_input, prepro.countries_pp,
+                                                     self.country_instance_filter)
 
         print("Instance filters were successfully created.")
 

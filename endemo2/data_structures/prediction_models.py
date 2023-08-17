@@ -262,6 +262,13 @@ class RigidTimeseries:
     def __str__(self):
         return str(self._data)
 
+    def get_last_available_year(self) -> float:
+        """ Returns the last data entry in the timeseries data if present, else 0.0. """
+        if len(self._data) == 0:
+            return 0.0
+        else:
+            return self._data[-1]
+
     def get_value_at_year(self, year: int) -> float:
         """
         Returns the value of the RigidTimeseries at the given year, if present. If the value is not present, throws an
@@ -508,8 +515,8 @@ class IntervalForecast:
         interval-growth-rate forecast.
 
         .. math::
-            y=s_x*(1+r_{1})^{(intvl^{(1)}front_label{b}-s_y)}*(1+r_{2})^{(intvl^{(2)}front_label{b}-intvl^{(2)}front_label{a})}*\\text{...}*(1+r_{3})^
-            {(x-intvl^{(3)}front_label{a})}
+            y=s_x*(1+r_{1})^{(intvl^{(1)}_{b}-s_y)}*(1+r_{2})^{(intvl^{(2)}_{b}-intvl^{(2)}_{a})}*\\text{...}*(1+r_{3})^
+            {(x-intvl^{(3)}_{a})}
 
         :param start_point: The (x, y) Tuple, that is used as the first value for the exponential growth.
         :param target_x: The target x-axis value.

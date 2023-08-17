@@ -84,7 +84,7 @@ class CtsSubsector:
             res_dict[region_name] = dict[DemandType, [float]]()
             res_dict[region_name][DemandType.ELECTRICITY] = [region_demand.electricity * hour_perc
                                                              for hour_perc in hourly_profile[DemandType.ELECTRICITY]]
-            res_dict[region_name][DemandType.HEAT] = [region_demand.heat.copy_multiply_scalar(hour_perc)
+            res_dict[region_name][DemandType.HEAT] = [region_demand.heat.copy_multiply(hour_perc)
                                                       for hour_perc in hourly_profile[DemandType.HEAT]]
             res_dict[region_name][DemandType.HYDROGEN] = [region_demand.hydrogen * hour_perc
                                                           for hour_perc in hourly_profile[DemandType.HYDROGEN]]

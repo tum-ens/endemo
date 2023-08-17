@@ -2,12 +2,13 @@
 This module contains all functions that generate output files from the preprocessor.
 """
 from __future__ import  annotations
-from endemo2.data_structures.enumerations import DemandType, ForecastMethod, ScForecastMethod
-from endemo2.input_and_settings.input import CtsInput
+
+import endemo2.input_and_settings.input_manager
+from endemo2.data_structures.enumerations import DemandType, ScForecastMethod
+from endemo2.input_and_settings.input_cts import CtsInput
 from endemo2.output.output_utility import generate_timeseries_output, \
     shortcut_coef_output, get_day_folder_path, ensure_directory_exists
 from endemo2.data_structures.prediction_models import Timeseries
-from endemo2.input_and_settings import input
 from endemo2.preprocessing.preproccessing_step_two import GroupManager, CountryGroupJoinedDiversified, \
     CountryGroupJoined
 from endemo2.preprocessing.preprocessing_step_one import CountryPreprocessed, ProductPreprocessed
@@ -16,10 +17,10 @@ from endemo2.preprocessing.preprocessor import Preprocessor
 
 # additional output settings, maybe get them from an excel file later
 TOGGLE_IND_PRODUCT_AMOUNT_VISUAL_OUTPUT = False
-TOGGLE_IND_COUNTRY_GROUP_VISUAL_OUTPUT = True
-TOGGLE_IND_SPECIFIC_CONSUMPTION_VISUAL_OUTPUT = True
-TOGGLE_CTS_SPECIFIC_CONSUMPTION_VISUAL_OUTPUT = True
-TOGGLE_CTS_EMPLOYEE_COUNTRY_VISUAL_OUTPUT = True
+TOGGLE_IND_COUNTRY_GROUP_VISUAL_OUTPUT = False
+TOGGLE_IND_SPECIFIC_CONSUMPTION_VISUAL_OUTPUT = False
+TOGGLE_CTS_SPECIFIC_CONSUMPTION_VISUAL_OUTPUT = False
+TOGGLE_CTS_EMPLOYEE_COUNTRY_VISUAL_OUTPUT = False
 TOGGLE_CTS_EMPLOYEE_NUTS2_VISUAL_OUTPUT = False
 
 # map, todo: place somewhere else
@@ -28,7 +29,7 @@ map_demand_to_string = {DemandType.ELECTRICITY: "electricity",
                         DemandType.HYDROGEN: "hydrogen"}
 
 
-def generate_preprocessing_output(input_manager: Input, preprocessor: Preprocessor):
+def generate_preprocessing_output(input_manager: InputManager, preprocessor: Preprocessor):
     """
     Calls all generate_x_output functions of this module that should be used to generate output of the preprocessor.
     """
@@ -61,7 +62,7 @@ def generate_preprocessing_output(input_manager: Input, preprocessor: Preprocess
         output_cts_employee_number_visual_nuts2(preprocessing_folder, input_manager, countries_pp)
 
 
-def output_ind_country_group(folder, input_manager: input.Input, group_manager: GroupManager):
+def output_ind_country_group(folder, input_manager: endemo2.input_and_settings.input_manager.InputManager, group_manager: GroupManager):
     """ Generate industry group coefficient output. """
 
     filename = "ind_coef_country_group.xlsx"
@@ -93,7 +94,7 @@ def output_ind_country_group(folder, input_manager: input.Input, group_manager: 
                     shortcut_coef_output(fg, country_coef)
 
 
-def output_ind_country_group_visual(folder: Path, input_manager: input.Input, group_manager: GroupManager):
+def output_ind_country_group_visual(folder: Path, input_manager: endemo2.input_and_settings.input_manager.InputManager, group_manager: GroupManager):
     """ Creates the visual output of country groups in the industry sector. """
 
     country_groups_folder = ensure_directory_exists(folder / "visual_output" / "Country Groups")
@@ -162,7 +163,7 @@ def output_ind_country_group_visual(folder: Path, input_manager: input.Input, gr
         group_id += 1
 
 
-def output_ind_product_amount_visual(folder, input_manager: input.Input, countries_pp: dict[str, CountryPreprocessed]):
+def output_ind_product_amount_visual(folder, input_manager: endemo2.input_and_settings.input_manager.InputManager, countries_pp: dict[str, CountryPreprocessed]):
     """ Generate visual output for product amount in the industry sector. """
     # generate vis output amount_vs_year
     for product_name, product_input in input_manager.industry_input.dict_product_input.items():
@@ -205,7 +206,7 @@ def output_ind_product_amount_visual(folder, input_manager: input.Input, countri
                 save_series_plot(input_manager, directory, series, x_label, y_label, country_name, product_name)
 
 
-def output_ind_specific_consumption_visual(folder: Path, input_manager: input.Input,
+def output_ind_specific_consumption_visual(folder: Path, input_manager: input.InputManager,
                                            countries_pp: dict[str, CountryPreprocessed]):
     """ Generate visual output for specific consumption in the industry sector. """
     for product_name in input_manager.industry_input.dict_product_input.keys():
@@ -226,7 +227,7 @@ def output_ind_specific_consumption_visual(folder: Path, input_manager: input.In
                                           x_label, y_label, country_name, product_name)
 
 
-def output_cts_specific_consumption_visual(folder: Path, input_manager: input.Input,
+def output_cts_specific_consumption_visual(folder: Path, input_manager: endemo2.input_and_settings.input_manager.InputManager,
                                            countries_pp: dict[str, CountryPreprocessed]):
     """ Generate visual output for specific consumption in the cts sector. """
     for subsector in CtsInput.subsector_names:
@@ -259,7 +260,7 @@ def output_cts_specific_consumption_visual(folder: Path, input_manager: input.In
                                       x_label, y_label, country_name, subsector)
 
 
-def output_cts_employee_number_visual_country(folder: Path, input_manager: input.Input,
+def output_cts_employee_number_visual_country(folder: Path, input_manager: input.InputManager,
                                               countries_pp: dict[str, CountryPreprocessed]):
     """ Generate visual output for the number of employees in the cts sector per country. """
     for subsector in CtsInput.subsector_names:
@@ -272,7 +273,7 @@ def output_cts_employee_number_visual_country(folder: Path, input_manager: input
                 save_series_plot(input_manager, directory, series, x_label, y_label, country_name, subsector)
 
 
-def output_cts_employee_number_visual_nuts2(folder: Path, input_manager: input.Input,
+def output_cts_employee_number_visual_nuts2(folder: Path, input_manager: endemo2.input_and_settings.input_manager.InputManager,
                                             countries_pp: dict[str, CountryPreprocessed]):
     """ Generate visual output for the number of employees in the cts sector per nuts2 region. """
     for subsector in CtsInput.subsector_names:
@@ -294,7 +295,7 @@ def _get_all_product_pps(product_name: str, countries_pp: dict[str, CountryPrepr
             if product_name in country_pp.industry_pp.products_pp.keys()]
 
 
-def output_ind_coef_product_amount(folder, input_manager: input.Input, countries_pp: dict[str, CountryPreprocessed]):
+def output_ind_coef_product_amount(folder, input_manager: endemo2.input_and_settings.input_manager.InputManager, countries_pp: dict[str, CountryPreprocessed]):
     """ Generate the output for preprocessed coefficients related to amount of products. """
 
     filename = "ind_coef_product_amount_vs_time.xlsx"
@@ -365,7 +366,7 @@ def output_ind_coef_product_amount(folder, input_manager: input.Input, countries
                     shortcut_coef_output(fg, Coef())
 
 
-def output_ind_specific_consumption(folder, input_manager: input.Input,
+def output_ind_specific_consumption(folder, input_manager: endemo2.input_and_settings.input_manager.InputManager,
                                     countries_pp: dict[str, CountryPreprocessed]):
     """ Generate all output related to preprocessed specific consumption of the industry sector. """
     products_has_his_sc = input_manager.industry_input.sc_historical_data_file_names.keys()
@@ -421,7 +422,7 @@ def output_ind_specific_consumption(folder, input_manager: input.Input,
                     generate_timeseries_output(fg, Timeseries([(0, 0)]), year_range)
 
 
-def output_cts_specific_consumption(folder, input_manager: input.Input,
+def output_cts_specific_consumption(folder, input_manager: endemo2.input_and_settings.input_manager.InputManager,
                                     countries_pp: dict[str, CountryPreprocessed]):
     """ Generate all output related to preprocessed specific consumption of the cts sector. """
 
@@ -462,7 +463,7 @@ def output_cts_specific_consumption(folder, input_manager: input.Input,
             fg.add_entry("Mean specific demand [GWh/tsd. employees]", ts.get_mean_y())
 
 
-def output_cts_coef_employee_number(folder, input_manager: input.Input, countries_pp: dict[str, CountryPreprocessed]):
+def output_cts_coef_employee_number(folder, input_manager: endemo2.input_and_settings.input_manager.InputManager, countries_pp: dict[str, CountryPreprocessed]):
     """ Generates coefficient output for the number of employees in the cts sector. """
 
     filename = "cts_coef_employee_number_country.xlsx"

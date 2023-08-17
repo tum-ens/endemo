@@ -7,7 +7,7 @@ import math
 import shutil
 from pathlib import Path
 
-from endemo2.input_and_settings.input import Input
+from endemo2.input_and_settings.input_manager import InputManager
 from endemo2.model_instance.instance_filter.cts_instance_filter import CtsInstanceFilter
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
 from endemo2.model_instance.instance_filter.industry_instance_filter import ProductInstanceFilter
@@ -29,7 +29,7 @@ TOGGLE_GEN_OUTPUT = True
 TOGGLE_DETAILED_OUTPUT = True
 
 
-def generate_instance_output(input_manager: Input, countries: dict[str, Country],
+def generate_instance_output(input_manager: InputManager, countries: dict[str, Country],
                              country_instance_filter: CountryInstanceFilter,
                              product_instance_filter: ProductInstanceFilter,
                              cts_instance_filter: CtsInstanceFilter):
@@ -70,7 +70,7 @@ def generate_instance_output(input_manager: Input, countries: dict[str, Country]
         details_folder = ensure_directory_exists(scenario_folder / "details")
 
     # copy Set_and_Control_Parameters that lead to this instance output to output folder
-    shutil.copy(Input.ctrl_path, scenario_folder / "Set_and_Control_Parameters.xlsx")
+    shutil.copy(InputManager.ctrl_path, scenario_folder / "Set_and_Control_Parameters.xlsx")
 
     # shortcut toggles
     toggle_nuts2 = input_manager.ctrl.general_settings.toggle_nuts2_resolution
@@ -105,7 +105,7 @@ def generate_instance_output(input_manager: Input, countries: dict[str, Country]
             output_cts_specific_consumption(details_folder, input_manager, countries, cts_instance_filter)
 
 
-def output_ind_product_amount(folder: Path, input_manager: Input, countries,
+def output_ind_product_amount(folder: Path, input_manager: InputManager, countries,
                               product_instance_filter: ProductInstanceFilter):
     """ Generates all output related to amount of a subsector. """
 
@@ -124,7 +124,7 @@ def output_ind_product_amount(folder: Path, input_manager: Input, countries,
                     fg.add_entry("Amount [kt]", "")
 
 
-def output_cts_employee_number(folder: Path, input_manager: Input, countries,
+def output_cts_employee_number(folder: Path, input_manager: InputManager, countries,
                                cts_instance_filter: CtsInstanceFilter):
     """ Generates output for the number of employees in the cts sector. """
 
@@ -162,7 +162,7 @@ def output_cts_employee_number(folder: Path, input_manager: Input, countries,
                 fg.add_entry("Employees total", employee_sum)
 
 
-def output_ind_demand_country(folder: Path, input_manager: Input, countries):
+def output_ind_demand_country(folder: Path, input_manager: InputManager, countries):
     """ Generates industry demand output of a countries. """
 
     filename = "ind_demand_forecast_per_country.xlsx"
@@ -199,7 +199,7 @@ def output_ind_demand_country(folder: Path, input_manager: Input, countries):
             shortcut_demand_table(fg, demand)
 
 
-def output_ind_demand_nuts2(folder: Path, input_manager: Input, countries):
+def output_ind_demand_nuts2(folder: Path, input_manager: InputManager, countries):
     """ Generates industry demand output for nuts2 regions. """
 
     filename = "ind_demand_forecast_per_nuts2.xlsx"
@@ -240,7 +240,7 @@ def output_ind_demand_nuts2(folder: Path, input_manager: Input, countries):
                     shortcut_demand_table(fg, demand)
 
 
-def output_cts_demand_country_and_nuts2(folder: Path, input_manager: Input, countries):
+def output_cts_demand_country_and_nuts2(folder: Path, input_manager: InputManager, countries):
     """ Generates all demand output for the cts sector. """
 
     filename = "cts_demand_forecast.xlsx"
@@ -262,7 +262,7 @@ def output_cts_demand_country_and_nuts2(folder: Path, input_manager: Input, coun
                 shortcut_demand_table(fg, demand)
 
 
-def output_ind_demand_hourly_country(folder: Path, input_manager: Input, countries):
+def output_ind_demand_hourly_country(folder: Path, input_manager: InputManager, countries):
     """ Generates the output that splits the demand into the hourly timeseries for each country. """
 
     filename = "ind_demand_forecast_hourly_per_country.xlsx"
@@ -280,7 +280,7 @@ def output_ind_demand_hourly_country(folder: Path, input_manager: Input, countri
             fg.add_complete_column(country_name + ".Hydro", hourly_demand[DemandType.HYDROGEN])
 
 
-def output_ind_demand_hourly_nuts2(folder: Path, input_manager: Input, countries):
+def output_ind_demand_hourly_nuts2(folder: Path, input_manager: InputManager, countries):
     """ Generates the output that splits the demand into the hourly timeseries for nuts2 regions. """
 
     filename = "ind_demand_forecast_hourly_per_nuts2.xlsx"
@@ -301,7 +301,7 @@ def output_ind_demand_hourly_nuts2(folder: Path, input_manager: Input, countries
                 fg.add_complete_column(region_name + ".Hydro", hourly_demand[DemandType.HYDROGEN])
 
 
-def output_cts_demand_hourly_country(folder: Path, input_manager: Input, countries):
+def output_cts_demand_hourly_country(folder: Path, input_manager: InputManager, countries):
     """ Generates the output that splits the demand into the hourly timeseries for each country. """
 
     filename = "cts_demand_forecast_hourly_per_country.xlsx"
@@ -318,7 +318,7 @@ def output_cts_demand_hourly_country(folder: Path, input_manager: Input, countri
             fg.add_complete_column(country_name + ".Hydro", hourly_demand[DemandType.HYDROGEN])
 
 
-def output_cts_demand_hourly_nuts2(folder: Path, input_manager: Input, countries):
+def output_cts_demand_hourly_nuts2(folder: Path, input_manager: InputManager, countries):
     """ Generates the output that splits the demand into the hourly timeseries for nuts2 regions. """
 
     filename = "cts_demand_forecast_hourly_per_nuts2.xlsx"
@@ -328,7 +328,7 @@ def output_cts_demand_hourly_nuts2(folder: Path, input_manager: Input, countries
         fg.add_complete_column("t", list(range(1, 8760 + 1)))
         for country_name, country in countries.items():
             hourly_demand_nuts2 = country.get_sector(SectorIdentifier.COMMERCIAL_TRADE_SERVICES) \
-                .calculate_hourly_demand_distributes_by_nuts2()
+                .calculate_hourly_demand_distributed_by_nuts2()
             for region_name, hourly_demand in hourly_demand_nuts2.items():
                 fg.add_complete_column(region_name + ".Elec", hourly_demand[DemandType.ELECTRICITY])
                 fg.add_complete_column(region_name + ".Q1", [h.q1 for h in hourly_demand[DemandType.HEAT]])
@@ -336,7 +336,7 @@ def output_cts_demand_hourly_nuts2(folder: Path, input_manager: Input, countries
                 fg.add_complete_column(region_name + ".Hydro", hourly_demand[DemandType.HYDROGEN])
 
 
-def output_gen_gdp(folder: Path, input_manager: Input, countries,
+def output_gen_gdp(folder: Path, input_manager: InputManager, countries,
                    country_instance_filter: CountryInstanceFilter):
     """ Generates all output related to the gdp of a countries. """
     target_year = input_manager.ctrl.general_settings.target_year
@@ -350,7 +350,7 @@ def output_gen_gdp(folder: Path, input_manager: Input, countries,
             fg.add_entry(target_year, country_instance_filter.get_gdp_in_target_year(country_name))
 
 
-def output_gen_population_forecast(folder: Path, input_manager: Input, countries,
+def output_gen_population_forecast(folder: Path, input_manager: InputManager, countries,
                                    country_instance_filter: CountryInstanceFilter):
     """ Generates all output related to the population of a countries. """
     target_year = input_manager.ctrl.general_settings.target_year
@@ -372,7 +372,7 @@ def output_gen_population_forecast(folder: Path, input_manager: Input, countries
                 fg.add_entry(target_year, country_pop * value)
 
 
-def output_gen_population_forecast_details(folder: Path, input_manager: Input, countries,
+def output_gen_population_forecast_details(folder: Path, input_manager: InputManager, countries,
                                            country_instance_filter: CountryInstanceFilter):
     """ Generates all output related to the population of a countries. """
     target_year = input_manager.ctrl.general_settings.target_year
@@ -414,7 +414,7 @@ def output_gen_population_forecast_details(folder: Path, input_manager: Input, c
                 fg.add_entry(target_year, value)
 
 
-def output_ind_specific_consumption(folder: Path, input_manager: Input, countries,
+def output_ind_specific_consumption(folder: Path, input_manager: InputManager, countries,
                                     product_if: ProductInstanceFilter):
     """ Generates all output related to the specific consumption of products. """
 
@@ -439,7 +439,7 @@ def output_ind_specific_consumption(folder: Path, input_manager: Input, countrie
                     fg.add_entry("max. subst. of heat with H2 [%]", "")
 
 
-def output_cts_specific_consumption(folder: Path, input_manager: Input, countries,
+def output_cts_specific_consumption(folder: Path, input_manager: InputManager, countries,
                                     cts_if: CtsInstanceFilter):
     """ Generates all output related to the specific consumption of employees. """
 
