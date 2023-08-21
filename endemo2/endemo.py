@@ -1,6 +1,9 @@
 import endemo2.input_and_settings.input_manager
+from endemo2.data_structures.enumerations import SectorIdentifier
+from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.model_instance.instance_filter.cts_instance_filter import CtsInstanceFilter
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
+from endemo2.model_instance.instance_filter.households_instance_filter import HouseholdsInstanceFilter
 from endemo2.model_instance.instance_filter.industry_instance_filter \
     import IndustryInstanceFilter, ProductInstanceFilter
 from endemo2.input_and_settings import input_general
@@ -28,6 +31,7 @@ class Endemo:
         self.industry_instance_filter = None
         self.product_instance_filter = None
         self.cts_instance_filter = None
+        self.hh_instance_filter = None
 
     def execute_with_preprocessing(self):
         """
@@ -71,17 +75,30 @@ class Endemo:
         # create instance filters
         print("Creating instance filters...")
         prepro = self.preprocessor
-        ctrl = self.input_manager.ctrl
+
+        ctrl: ControlParameters = self.input_manager.ctrl
         general_input = self.input_manager.general_input
-        industry_input = self.input_manager.industry_input
-        cts_input = self.input_manager.cts_input
+
         self.country_instance_filter = CountryInstanceFilter(ctrl, general_input, prepro)
-        self.industry_instance_filter = \
-            IndustryInstanceFilter(ctrl, industry_input, prepro, self.country_instance_filter)
-        self.product_instance_filter = \
-            ProductInstanceFilter(ctrl, prepro, industry_input, general_input, self.country_instance_filter)
-        self.cts_instance_filter = CtsInstanceFilter(ctrl, general_input, cts_input, prepro.countries_pp,
-                                                     self.country_instance_filter)
+
+        # create instances for active sectors
+        active_subsectors = ctrl.general_settings.get_active_sectors()
+        if SectorIdentifier.INDUSTRY in active_subsectors:
+            industry_input = self.input_manager.industry_input
+            self.industry_instance_filter = \
+                IndustryInstanceFilter(ctrl, industry_input, prepro, self.country_instance_filter)
+            self.product_instance_filter = \
+                ProductInstanceFilter(ctrl, prepro, industry_input, general_input, self.country_instance_filter)
+
+        if SectorIdentifier.COMMERCIAL_TRADE_SERVICES in active_subsectors:
+            cts_input = self.input_manager.cts_input
+            self.cts_instance_filter = CtsInstanceFilter(ctrl, general_input, cts_input, prepro.countries_pp,
+                                                         self.country_instance_filter)
+
+        if SectorIdentifier.HOUSEHOLDS in active_subsectors:
+            hh_input = self.input_manager.hh_input
+            self.hh_instance_filter = HouseholdsInstanceFilter(ctrl, general_input, hh_input, prepro.countries_pp,
+                                                               self.country_instance_filter)
 
         print("Instance filters were successfully created.")
 
@@ -91,7 +108,7 @@ class Endemo:
         for country_name in self.input_manager.ctrl.general_settings.active_countries:
             self.countries[country_name] = country.Country(country_name, self.country_instance_filter,
                                                            self.industry_instance_filter, self.product_instance_filter,
-                                                           self.cts_instance_filter)
+                                                           self.cts_instance_filter, self.hh_instance_filter)
 
         print("Model scenario was successfully initiated.")
 
@@ -110,5 +127,6 @@ class Endemo:
         """ Writes all the output that comes from the model instance. """
         print("Writing scenario output...")
         generate_instance_output(self.input_manager, self.countries,
-                                 self.country_instance_filter, self.product_instance_filter, self.cts_instance_filter)
+                                 self.country_instance_filter, self.product_instance_filter,
+                                 self.cts_instance_filter, self.hh_instance_filter)
         print("Model output was successfully written.")

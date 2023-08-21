@@ -119,6 +119,8 @@ class GeneralInput:
     :ivar PopulationData population: All data from the population preprocessing.
     :ivar dict[str, HisProg[[(float, float)], [Interval, float]]] gdp: The gdp for each country.
     :ivar dict[str, ("electricity", "heat")] efficiency: The efficiency for each energy carrier.
+    :ivar dict[str, ("electricity", "heat")] efficiency_hh: The efficiency for each energy carrier using the households
+        names.
     :ivar set nuts2_valid_regions: The set of valid nuts2 regions within the selected NUTS2 code.
     """
 
@@ -129,6 +131,7 @@ class GeneralInput:
         self.abbreviations = dict[str, dc.CA]()
         self.gdp = dict[str, dc.HisProg[[(float, float)], [dc.Interval, float]]]()
         self.efficiency = dict[str, dc.EH]()
+        self.efficiency_hh = dict[str, dc.EH]()
 
         df_abbr = pd.read_excel(path / "Abbreviations.xlsx")
         df_world_pop_his = pd.read_excel(path / "Population_historical_world.xls")
@@ -140,7 +143,7 @@ class GeneralInput:
         df_gdp_his = pd.read_excel(path / "GDP_per_capita_historical.xlsx", sheet_name="constant 2015 USD")
         df_gdp_prog_europa = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data")
         df_gdp_prog_world = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data_world")
-        df_efficiency = pd.read_excel(path / "Efficiency_Combustion.xlsx")
+        df_efficiency = pd.read_excel(path / "Efficiency_Combustion.xlsx", sheet_name="Data")
         df_nuts2_labels = pd.read_excel(path / "NUTS2_from_Model.xlsx")
 
         # fill nuts2 valid regions
@@ -150,6 +153,8 @@ class GeneralInput:
         # fill efficiency
         for _, row in df_efficiency.iterrows():
             self.efficiency[row["Energy carrier"]] = \
+                dc.EH(row["Electricity production [-]"], row["Heat production [-]"])
+            self.efficiency_hh[row["Energy carrier HH"]] = \
                 dc.EH(row["Electricity production [-]"], row["Heat production [-]"])
 
         for country_name in ctrl.general_settings.active_countries:

@@ -26,10 +26,11 @@ class ControlParameters:
     """
 
     def __init__(self, general_settings: GeneralSettings, industry_settings: IndustrySettings,
-                 cts_settings: CtsSettings):
+                 cts_settings: CtsSettings, hh_settings: HouseholdSettings):
         self.general_settings = general_settings
         self.industry_settings = industry_settings
         self.cts_settings = cts_settings
+        self.hh_settings = hh_settings
 
 
 class GeneralSettings:
@@ -271,6 +272,17 @@ class CtsSettings:
             float(df_cts[df_cts["Parameter"] == "Proportion of hydrogen usage for heat supply"].get("Value").iloc[0])
 
 
+class HouseholdSettings:
+    def __init__(self, df_hh: pd.DataFrame):
+
+        # read heat levels
+        heat_level_q1 = \
+            df_hh[df_hh["Parameter"] == "Predefined ratio of Q1 heat level (below 60°C)"].get("Value").iloc[0]
+        self.heat_levels = Heat(heat_level_q1, 1 - heat_level_q1, 0, 0)
+
+        # read single household share compared to multiple households
+        self.single_households_share = \
+            df_hh[df_hh["Parameter"] == "Predefined ratio of single households"].get("Value").iloc[0]
 
 
 

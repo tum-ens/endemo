@@ -106,8 +106,8 @@ class CtsInstanceFilter:
 
             # predict
             value_in_2018 = ts_employee_share.get_value_at_year(2018)
-            prediction = max(0.0, coef.get_function_y(target_year))     # cannot be smaller than 0
-            prediction = min(prediction, value_in_2018 * 1.15)          # cap it. todo: maybe this can be done better?
+            prediction = max(0.0, coef.get_function_y(target_year))  # cannot be smaller than 0
+            prediction = min(prediction, value_in_2018 * 1.15)  # cap it. todo: maybe this can be done better?
             dict_res[region_name] = prediction
 
         return dict_res
@@ -134,4 +134,8 @@ class CtsInstanceFilter:
 
     def get_nuts2_regions(self, country_name) -> [str]:
         """ Get the nuts2 regions for a country. """
-        return self.country_if.get_population_nuts2_in_target_year(country_name).keys()     # todo: make more pretty
+        return self.country_if.get_population_nuts2_in_target_year(country_name).keys()  # todo: make more pretty
+
+    def get_heat_substitution(self) -> dict[DemandType, float]:
+        """ Get the heat substitution variables from settings. """
+        return self.ctrl.cts_settings.heat_substitution

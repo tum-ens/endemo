@@ -3,9 +3,11 @@ from pathlib import Path
 
 import pandas as pd
 
+from endemo2.data_structures.enumerations import SectorIdentifier
 from endemo2.input_and_settings import control_parameters as cp
 from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.input_and_settings.input_cts import CtsInput
+from endemo2.input_and_settings.input_households import HouseholdsInput
 from endemo2.input_and_settings.input_industry import IndustryInput
 from endemo2.input_and_settings.input_general import GeneralInput
 
@@ -34,10 +36,9 @@ class InputManager:
     general_path = input_path / 'general'
     industry_path = input_path / 'industry'
     cts_path = input_path / 'commercial_trade_and_services'
+    hh_path = input_path / 'households'
 
     ctrl_path = input_path / 'Set_and_Control_Parameters.xlsx'
-
-    # Future TODO: add other sector inputs
 
     def __init__(self):
         # read set and control parameters
@@ -46,13 +47,22 @@ class InputManager:
         # read general
         self.general_input = GeneralInput(self.ctrl, InputManager.general_path)
 
-        # read industry
-        self.industry_input = IndustryInput(self.ctrl, InputManager.industry_path,
-                                            self.general_input.nuts2_valid_regions,
-                                            self.ctrl.general_settings.active_countries)
+        # only read active sectors
+        active_sectors = self.ctrl.general_settings.get_active_sectors()
 
-        # read commercial_trade_and_services
-        self.cts_input = CtsInput(self.ctrl, InputManager.cts_path)
+        if SectorIdentifier.INDUSTRY in active_sectors:
+            # read industry
+            self.industry_input = IndustryInput(self.ctrl, InputManager.industry_path,
+                                                self.general_input.nuts2_valid_regions,
+                                                self.ctrl.general_settings.active_countries)
+
+        if SectorIdentifier.COMMERCIAL_TRADE_SERVICES in active_sectors:
+            # read commercial_trade_and_services
+            self.cts_input = CtsInput(self.ctrl, InputManager.cts_path)
+
+        if SectorIdentifier.HOUSEHOLDS in active_sectors:
+            # read households
+            self.hh_input = HouseholdsInput(self.ctrl, InputManager.hh_path)
 
     def update_set_and_control_parameters(self):
         """ Updates Set_and_Control_Parameters.xlsx """
@@ -73,4 +83,6 @@ class InputManager:
 
         cts_settings = cp.CtsSettings(pd.read_excel(ctrl_ex, sheet_name="CTS"))
 
-        return cp.ControlParameters(general_settings, industry_settings, cts_settings)
+        hh_settings = cp.HouseholdSettings(pd.read_excel(ctrl_ex, sheet_name="HH"))
+
+        return cp.ControlParameters(general_settings, industry_settings, cts_settings, hh_settings)

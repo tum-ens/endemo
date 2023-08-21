@@ -3,9 +3,11 @@ from __future__ import annotations
 from endemo2.data_structures.containers import Demand
 from endemo2.model_instance.instance_filter.cts_instance_filter import CtsInstanceFilter
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
+from endemo2.model_instance.instance_filter.households_instance_filter import HouseholdsInstanceFilter
 from endemo2.model_instance.instance_filter.industry_instance_filter \
     import ProductInstanceFilter, IndustryInstanceFilter
-from endemo2.model_instance.model.cts.commercial_trade_services_sector import CommercialTradeServices
+from endemo2.model_instance.model.cts.cts_sector import CommercialTradeServices
+from endemo2.model_instance.model.households.household_sector import Households
 from endemo2.model_instance.model.industry.industry_sector import Industry
 from endemo2.model_instance.model.sector import Sector
 from endemo2.data_structures.enumerations import SectorIdentifier
@@ -17,8 +19,8 @@ class Country:
 
     :param str country_name: Name of the country.
     :param CountryInstanceFilter country_instance_filter: The instance filter for the country.
-    :param IndustryInstanceFilter iif: The instance filter for the industry. Is passed on to the industry object.
-    :param ProductInstanceFilter pif: The instance filter for the products. Is passed on to the industry object.
+    :param IndustryInstanceFilter ind_if: The instance filter for the industry. Is passed on to the industry object.
+    :param ProductInstanceFilter prod_if: The instance filter for the products. Is passed on to the industry object.
 
     :ivar str _country_name: The name of the country (en).
     :ivar dict[SectorIdentifier, Sector] _sectors: The sector objects for this country, accessible by the sector
@@ -27,7 +29,8 @@ class Country:
 
     def __init__(self, country_name: str,
                  country_instance_filter: CountryInstanceFilter,
-                 iif: IndustryInstanceFilter, pif: ProductInstanceFilter, ctsif: CtsInstanceFilter):
+                 ind_if: IndustryInstanceFilter, prod_if: ProductInstanceFilter, cts_if: CtsInstanceFilter,
+                 hh_if: HouseholdsInstanceFilter):
 
         self._country_name = country_name
         self._sectors = dict[SectorIdentifier, Sector]()
@@ -35,10 +38,13 @@ class Country:
         # fill sectors_to_do
         active_sectors = country_instance_filter.get_active_sectors()
         if SectorIdentifier.INDUSTRY in active_sectors:
-            self._sectors[SectorIdentifier.INDUSTRY] = Industry(country_name, iif, pif)
+            self._sectors[SectorIdentifier.INDUSTRY] = Industry(country_name, ind_if, prod_if)
 
         if SectorIdentifier.COMMERCIAL_TRADE_SERVICES in active_sectors:
-            self._sectors[SectorIdentifier.COMMERCIAL_TRADE_SERVICES] = CommercialTradeServices(country_name, ctsif)
+            self._sectors[SectorIdentifier.COMMERCIAL_TRADE_SERVICES] = CommercialTradeServices(country_name, cts_if)
+
+        if SectorIdentifier.HOUSEHOLDS in active_sectors:
+            self._sectors[SectorIdentifier.HOUSEHOLDS] = Households(country_name, hh_if)
 
     def calculate_total_demand(self) -> Demand:
         """

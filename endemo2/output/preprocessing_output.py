@@ -4,8 +4,9 @@ This module contains all functions that generate output files from the preproces
 from __future__ import  annotations
 
 import endemo2.input_and_settings.input_manager
-from endemo2.data_structures.enumerations import DemandType, ScForecastMethod
+from endemo2.data_structures.enumerations import DemandType, ScForecastMethod, SectorIdentifier
 from endemo2.input_and_settings.input_cts import CtsInput
+from endemo2.input_and_settings.input_households import HouseholdsSubsectorId
 from endemo2.output.output_utility import generate_timeseries_output, \
     shortcut_coef_output, get_day_folder_path, ensure_directory_exists
 from endemo2.data_structures.prediction_models import Timeseries
@@ -14,11 +15,13 @@ from endemo2.preprocessing.preproccessing_step_two import GroupManager, CountryG
 from endemo2.preprocessing.preprocessing_step_one import CountryPreprocessed, ProductPreprocessed
 from endemo2.output.plot_utility import *
 from endemo2.preprocessing.preprocessor import Preprocessor
+from endemo2.utility import get_series_range
 
 # additional output settings, maybe get them from an excel file later
 TOGGLE_IND_PRODUCT_AMOUNT_VISUAL_OUTPUT = False
 TOGGLE_IND_COUNTRY_GROUP_VISUAL_OUTPUT = False
 TOGGLE_IND_SPECIFIC_CONSUMPTION_VISUAL_OUTPUT = False
+
 TOGGLE_CTS_SPECIFIC_CONSUMPTION_VISUAL_OUTPUT = False
 TOGGLE_CTS_EMPLOYEE_COUNTRY_VISUAL_OUTPUT = False
 TOGGLE_CTS_EMPLOYEE_NUTS2_VISUAL_OUTPUT = False
@@ -27,6 +30,14 @@ TOGGLE_CTS_EMPLOYEE_NUTS2_VISUAL_OUTPUT = False
 map_demand_to_string = {DemandType.ELECTRICITY: "electricity",
                         DemandType.HEAT: "heat",
                         DemandType.HYDROGEN: "hydrogen"}
+
+map_hh_subsector_to_string = {
+    HouseholdsSubsectorId.SPACE_HEATING: "space_heating",
+    HouseholdsSubsectorId.SPACE_COOLING: "space_cooling",
+    HouseholdsSubsectorId.WATER_HEATING: "water_heating",
+    HouseholdsSubsectorId.COOKING: "cooking",
+    HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES: "light_and_appliances"
+                              }
 
 
 def generate_preprocessing_output(input_manager: InputManager, preprocessor: Preprocessor):
@@ -37,29 +48,37 @@ def generate_preprocessing_output(input_manager: InputManager, preprocessor: Pre
     preprocessing_folder = day_folder / "preprocessed"
 
     # shortcut variables
-    group_manager = preprocessor.group_manager
     countries_pp = preprocessor.countries_pp
+    active_sectors = input_manager.ctrl.general_settings.get_active_sectors()
 
-    # files output
-    output_ind_country_group(preprocessing_folder, input_manager, group_manager)
-    output_ind_coef_product_amount(preprocessing_folder, input_manager, countries_pp)
-    output_ind_specific_consumption(preprocessing_folder, input_manager, countries_pp)
-    output_cts_specific_consumption(preprocessing_folder, input_manager, countries_pp)
-    output_cts_coef_employee_number(preprocessing_folder, input_manager, countries_pp)
+    # files output for active sectors
+    if SectorIdentifier.INDUSTRY in active_sectors:
+        output_ind_country_group(preprocessing_folder, input_manager, preprocessor.group_manager)
+        output_ind_coef_product_amount(preprocessing_folder, input_manager, countries_pp)
+        output_ind_specific_consumption(preprocessing_folder, input_manager, countries_pp)
+    if SectorIdentifier.COMMERCIAL_TRADE_SERVICES in active_sectors:
+        output_cts_specific_consumption(preprocessing_folder, input_manager, countries_pp)
+        output_cts_coef_employee_number(preprocessing_folder, input_manager, countries_pp)
+    if SectorIdentifier.HOUSEHOLDS in active_sectors:
+        output_hh_coef_historical_consumption(preprocessing_folder, input_manager, countries_pp)
+        output_hh_demand_historical_2018(preprocessing_folder, input_manager, countries_pp)
 
     # visual output
-    if TOGGLE_IND_COUNTRY_GROUP_VISUAL_OUTPUT:
-        output_ind_country_group_visual(preprocessing_folder, input_manager, group_manager)
-    if TOGGLE_IND_PRODUCT_AMOUNT_VISUAL_OUTPUT:
-        output_ind_product_amount_visual(preprocessing_folder, input_manager, countries_pp)
-    if TOGGLE_IND_SPECIFIC_CONSUMPTION_VISUAL_OUTPUT:
-        output_ind_specific_consumption_visual(preprocessing_folder, input_manager, countries_pp)
-    if TOGGLE_CTS_SPECIFIC_CONSUMPTION_VISUAL_OUTPUT:
-        output_cts_specific_consumption_visual(preprocessing_folder, input_manager, countries_pp)
-    if TOGGLE_CTS_EMPLOYEE_COUNTRY_VISUAL_OUTPUT:
-        output_cts_employee_number_visual_country(preprocessing_folder, input_manager, countries_pp)
-    if TOGGLE_CTS_EMPLOYEE_NUTS2_VISUAL_OUTPUT:
-        output_cts_employee_number_visual_nuts2(preprocessing_folder, input_manager, countries_pp)
+    if SectorIdentifier.INDUSTRY in active_sectors:
+        if TOGGLE_IND_COUNTRY_GROUP_VISUAL_OUTPUT:
+            output_ind_country_group_visual(preprocessing_folder, input_manager, preprocessor.group_manager)
+        if TOGGLE_IND_PRODUCT_AMOUNT_VISUAL_OUTPUT:
+            output_ind_product_amount_visual(preprocessing_folder, input_manager, countries_pp)
+        if TOGGLE_IND_SPECIFIC_CONSUMPTION_VISUAL_OUTPUT:
+            output_ind_specific_consumption_visual(preprocessing_folder, input_manager, countries_pp)
+
+    if SectorIdentifier.COMMERCIAL_TRADE_SERVICES in active_sectors:
+        if TOGGLE_CTS_SPECIFIC_CONSUMPTION_VISUAL_OUTPUT:
+            output_cts_specific_consumption_visual(preprocessing_folder, input_manager, countries_pp)
+        if TOGGLE_CTS_EMPLOYEE_COUNTRY_VISUAL_OUTPUT:
+            output_cts_employee_number_visual_country(preprocessing_folder, input_manager, countries_pp)
+        if TOGGLE_CTS_EMPLOYEE_NUTS2_VISUAL_OUTPUT:
+            output_cts_employee_number_visual_nuts2(preprocessing_folder, input_manager, countries_pp)
 
 
 def output_ind_country_group(folder, input_manager: endemo2.input_and_settings.input_manager.InputManager, group_manager: GroupManager):
@@ -463,7 +482,7 @@ def output_cts_specific_consumption(folder, input_manager: endemo2.input_and_set
             fg.add_entry("Mean specific demand [GWh/tsd. employees]", ts.get_mean_y())
 
 
-def output_cts_coef_employee_number(folder, input_manager: endemo2.input_and_settings.input_manager.InputManager, countries_pp: dict[str, CountryPreprocessed]):
+def output_cts_coef_employee_number(folder, input_manager: InputManager, countries_pp: dict[str, CountryPreprocessed]):
     """ Generates coefficient output for the number of employees in the cts sector. """
 
     filename = "cts_coef_employee_number_country.xlsx"
@@ -496,3 +515,54 @@ def output_cts_coef_employee_number(folder, input_manager: endemo2.input_and_set
                     fg.add_entry("NUTS2", region_name)
                     employee_share_nuts2 = dict_employee_share[subsector]
                     generate_timeseries_output(fg, employee_share_nuts2, year_range)
+
+
+def output_hh_coef_historical_consumption(folder, input_manager: InputManager,
+                                          countries_pp: dict[str, CountryPreprocessed]):
+    """ Generates coefficient output for the historical consumption of the households sector. """
+
+    filename = "hh_coef_historical_consumption.xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        for subsector_id in input_manager.hh_input.hh_subsectors:
+            str_subsector = map_hh_subsector_to_string[subsector_id]
+            for demand_type in [DemandType.ELECTRICITY, DemandType.HEAT, DemandType.HYDROGEN]:
+                str_demand_type = map_demand_to_string[demand_type]
+                fg.start_sheet(str_subsector + "_" + str_demand_type)
+
+                all_tss = [country_pp.households_pp.sectors_pp[subsector_id][demand_type]
+                           for _, country_pp in countries_pp.items()]
+                year_range = get_series_range(all_tss)
+
+                for country_name, country_pp in countries_pp.items():
+                    fg.add_entry("Country", country_name)
+                    hh_pp = country_pp.households_pp
+                    ts_historical = hh_pp.sectors_pp[subsector_id][demand_type]
+                    generate_timeseries_output(fg, ts_historical, year_range)
+
+
+def output_hh_demand_historical_2018(folder, input_manager: InputManager,
+                                     countries_pp: dict[str, CountryPreprocessed]):
+    """ Generates historical demand output for 2018. """
+    target_year = 2018
+
+    filename = "hh_subsectors_energy_demand_2018.xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        for subsector_id in input_manager.hh_input.hh_subsectors:
+            str_subsector = map_hh_subsector_to_string[subsector_id]
+            fg.start_sheet(str_subsector)
+
+            for country_name, country_pp in countries_pp.items():
+                fg.add_entry("Country", country_name)
+                subsector_pp = country_pp.households_pp.sectors_pp[subsector_id]
+                demand_sum = 0
+                for demand_type in [DemandType.ELECTRICITY, DemandType.HEAT, DemandType.HYDROGEN]:
+                    demand_sum += subsector_pp[demand_type].get_value_at_year_else_zero(target_year)
+                fg.add_entry("Consumption 2018 [TWh]", demand_sum)
+
+
+
+
+
+

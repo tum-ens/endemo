@@ -17,6 +17,8 @@ CA = coll.namedtuple("CA", ["alpha2", "alpha3", "german_name"])     # abbreviati
 HisProg = coll.namedtuple("HisProg", ["historical", "prognosis"])   # container for historical and prognosis data
 Interval = coll.namedtuple("Interval", ["start", "end"])            # representation of an interval
 
+Datapoint = coll.namedtuple("Datapoint", ["x", "y"])    # todo: put everywhere
+
 
 class SpecConsum:
     """
@@ -228,3 +230,7 @@ class Demand:
     def copy_scale(self, scalar: float) -> Demand:
         """ Create a new Demand object, that is the scaled version of self. """
         return Demand(self.electricity * scalar, self.heat.copy_multiply_scalar(scalar), self.hydrogen * scalar)
+
+    def get_sum(self) -> float:
+        """ Returns energy demand sum. """
+        return self.electricity + self.heat.get_sum() + self.hydrogen

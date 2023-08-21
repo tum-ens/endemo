@@ -7,19 +7,22 @@ import math
 import shutil
 from pathlib import Path
 
+from endemo2.input_and_settings.input_households import HouseholdsSubsectorId
 from endemo2.input_and_settings.input_manager import InputManager
 from endemo2.model_instance.instance_filter.cts_instance_filter import CtsInstanceFilter
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
+from endemo2.model_instance.instance_filter.households_instance_filter import HouseholdsInstanceFilter
 from endemo2.model_instance.instance_filter.industry_instance_filter import ProductInstanceFilter
 from endemo2.model_instance.model.country import Country
 from endemo2.data_structures.containers import Demand, SpecConsum
-from endemo2.model_instance.model.cts.commercial_trade_services_sector import CommercialTradeServices
+from endemo2.model_instance.model.cts.cts_sector import CommercialTradeServices
+from endemo2.model_instance.model.households.household_sector import Households
 from endemo2.model_instance.model.industry.products import Product
 from endemo2.output.output_utility import FileGenerator, shortcut_demand_table, get_day_folder_path, \
     ensure_directory_exists
 from endemo2.model_instance.model.industry.industry_sector import Industry
 from endemo2.data_structures.enumerations import SectorIdentifier, ForecastMethod, DemandType
-
+from endemo2.output.preprocessing_output import map_hh_subsector_to_string
 
 # toggles to further control which output is written, maybe adapt them into settings later
 IND_HOURLY_DEMAND_DISABLE = False
@@ -32,7 +35,8 @@ TOGGLE_DETAILED_OUTPUT = True
 def generate_instance_output(input_manager: InputManager, countries: dict[str, Country],
                              country_instance_filter: CountryInstanceFilter,
                              product_instance_filter: ProductInstanceFilter,
-                             cts_instance_filter: CtsInstanceFilter):
+                             cts_instance_filter: CtsInstanceFilter,
+                             hh_instance_filter: HouseholdsInstanceFilter):
     """
     Calls all generate_x_output functions of this module that should be used to generate output.
     """
@@ -75,14 +79,15 @@ def generate_instance_output(input_manager: InputManager, countries: dict[str, C
     # shortcut toggles
     toggle_nuts2 = input_manager.ctrl.general_settings.toggle_nuts2_resolution
     toggle_hourly = input_manager.ctrl.general_settings.toggle_hourly_forecast
+    active_sectors = input_manager.ctrl.general_settings.get_active_sectors()
 
     # generate all outputs according to settings
-    if not TOGGLE_GEN_OUTPUT:
+    if TOGGLE_GEN_OUTPUT:
         output_gen_gdp(scenario_folder, input_manager, countries, country_instance_filter)
         output_gen_population_forecast(scenario_folder, input_manager, countries, country_instance_filter)
         if TOGGLE_DETAILED_OUTPUT:
             output_gen_population_forecast_details(details_folder, input_manager, countries, country_instance_filter)
-    if SectorIdentifier.INDUSTRY in input_manager.ctrl.general_settings.get_active_sectors():
+    if SectorIdentifier.INDUSTRY in active_sectors:
         if not toggle_nuts2:
             output_ind_demand_country(scenario_folder, input_manager, countries)
         if toggle_nuts2:
@@ -94,7 +99,7 @@ def generate_instance_output(input_manager: InputManager, countries: dict[str, C
         if TOGGLE_DETAILED_OUTPUT:
             output_ind_product_amount(details_folder, input_manager, countries, product_instance_filter)
             output_ind_specific_consumption(details_folder, input_manager, countries, product_instance_filter)
-    if SectorIdentifier.COMMERCIAL_TRADE_SERVICES in input_manager.ctrl.general_settings.get_active_sectors():
+    if SectorIdentifier.COMMERCIAL_TRADE_SERVICES in active_sectors:
         output_cts_demand_country_and_nuts2(scenario_folder, input_manager, countries)
         if toggle_hourly and not toggle_nuts2 and not CTS_HOURLY_DEMAND_DISABLE:
             output_cts_demand_hourly_country(scenario_folder, input_manager, countries)
@@ -103,6 +108,10 @@ def generate_instance_output(input_manager: InputManager, countries: dict[str, C
         if TOGGLE_DETAILED_OUTPUT:
             output_cts_employee_number(details_folder, input_manager, countries, cts_instance_filter)
             output_cts_specific_consumption(details_folder, input_manager, countries, cts_instance_filter)
+    if SectorIdentifier.HOUSEHOLDS in active_sectors:
+        if TOGGLE_DETAILED_OUTPUT:
+            output_hh_characteristics(details_folder, input_manager, countries, hh_instance_filter)
+            output_hh_subsectors_demand(details_folder, input_manager, countries, hh_instance_filter)
 
 
 def output_ind_product_amount(folder: Path, input_manager: InputManager, countries,
@@ -461,3 +470,73 @@ def output_cts_specific_consumption(folder: Path, input_manager: InputManager, c
                 fg.add_entry("Heat [TWh/t]", "")
                 fg.add_entry("Hydrogen [TWh/t]", "")
                 fg.add_entry("max. subst. of heat with H2 [%]", "")
+
+
+def output_hh_characteristics(folder: Path, input_manager: InputManager, countries, hh_if: HouseholdsInstanceFilter):
+    """ Generates the households characteristics output. """
+    filename = "hh_characteristics.xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        fg.start_sheet("Pers per Household")
+        for country_name in countries.keys():
+            fg.add_entry("Country", country_name)
+            pers_per_household = hh_if.get_avg_persons_per_household_in_target_year(country_name)
+            fg.add_entry("Person per Household [Pers./Household]", pers_per_household)
+
+        fg.start_sheet("Area per Household")
+        for country_name in countries.keys():
+            fg.add_entry("Country", country_name)
+            area_per_household = hh_if.get_area_per_household_in_target_year(country_name)
+            fg.add_entry("Area per Household [m^2/Household]", area_per_household)
+
+        fg.start_sheet("Specific energy consumption")
+        for country_name in countries.keys():
+            fg.add_entry("Country", country_name)
+            spec_energy = hh_if.get_space_heating_specific_heat_in_target_year(country_name)
+            fg.add_entry("Specific energy consumption [kWh/m^2]", spec_energy * 10 ** 9)    # TWh -> kWh
+
+        fg.start_sheet("Living area total")
+        for country_name in countries.keys():
+            fg.add_entry("Country", country_name)
+            population = hh_if.get_population_in_target_year(country_name)
+            avg_num_person_per_household = hh_if.get_avg_persons_per_household_in_target_year(country_name)
+            num_households = population / avg_num_person_per_household
+            area_total = hh_if.get_area_per_household_in_target_year(country_name) * num_households
+            fg.add_entry("Living area total [m^2]", area_total)
+
+
+def output_hh_subsectors_demand(folder: Path, input_manager: InputManager, countries, hh_if: HouseholdsInstanceFilter):
+    """ Generates the simplified demand output of the subsectors. """
+    filename = "hh_subsectors_energy_demand.xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        fg.start_sheet("Energy_PerSubsector")
+        for country_name, country_obj in countries.items():
+            fg.add_entry("Country", country_name)
+
+            households_sector: Households = country_obj.get_sector(SectorIdentifier.HOUSEHOLDS)
+
+            total_demand = 0
+            for subsector_id in hh_if.get_subsectors():
+                subsector_name = map_hh_subsector_to_string[subsector_id].replace("_", " ")
+
+                subsector_demand = households_sector.subsectors[subsector_id].calculate_demand()
+                energy_demand = subsector_demand.get_sum()
+
+                fg.add_entry(subsector_name + " [TWh]", energy_demand)
+                total_demand += energy_demand
+
+            fg.add_entry("total [TWh]", total_demand)
+
+        fg.start_sheet("Energy_Useful_Total")
+        for country_name, country_obj in countries.items():
+            fg.add_entry("Country", country_name)
+
+            households_sector: Households = country_obj.get_sector(SectorIdentifier.HOUSEHOLDS)
+            households_demand = households_sector.calculate_demand()
+
+            fg.add_entry("Electricity [TWh]", households_demand.electricity)
+            fg.add_entry("Heat [TWh]", households_demand.heat.get_sum())
+            fg.add_entry("Hydrogen [TWh", households_demand.hydrogen)   # todo: leave here?
+            fg.add_entry("Total [TWh]", households_demand.get_sum())
+

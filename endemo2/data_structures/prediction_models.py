@@ -441,7 +441,9 @@ class Timeseries(TwoDseries, RigidTimeseries):
         :param other_ts: The timeseries, whose data should be added to self.
         :return: A reference to self.
         """
-        self._data = uty.zip_data_on_x_and_map(self._data, other_ts._data,
+        other_ts_with_zeroes = \
+            Timeseries.fill_empty_years_with_value(other_ts, Interval(self._data[0][0], self._data[-1][0]), 0.0)
+        self._data = uty.zip_data_on_x_and_map(self._data, other_ts_with_zeroes._data,
                                                lambda x, y1, y2: (x, y1 + y2))
         return self
 
@@ -492,6 +494,48 @@ class Timeseries(TwoDseries, RigidTimeseries):
             raise ValueError("Trying to access value in RigidTimeseries at a year, where no value is present.")
         else:
             return res[0]
+
+    def get_value_at_year_else_zero(self, year: int) -> float:
+        """
+        Returns the value of the RigidTimeseries at the given year, if present. If the value is not present, returns
+        zero.
+
+        :param year: The year, the data should be taken from.
+        :return: The value of the timeseries at year, or zero if no data is present.
+        """
+        res = [y for (x, y) in self._data if x == year]
+
+        if len(res) == 0:
+            return 0.0
+        else:
+            return res[0]
+
+    @classmethod
+    def fill_empty_years_with_value(cls, ts: Timeseries, interval: Interval, fill_value: float) -> Timeseries:
+        """
+        Create a timeseries that has data for each year in interval. Take value from given timeseries if present, else
+        fill with given value.
+
+        :param ts: The given timeseries, which values are copied.
+        :param interval: The interval in which data has to be present for every year.
+        :param fill_value: Value with which gaps in the data should be filled.
+        :return: The created timeseries with values from ts and filled gaps with given value.
+        """
+
+        result = []
+        current_year = interval.start
+        for year, value in ts._data:
+            # add zeros before the next year that is in timeseries to fill gaps
+            while current_year < year:
+                result.append((current_year, fill_value))
+                current_year += 1
+            result.append((year, value))
+
+        while current_year <= interval.end:
+            result.append((current_year, fill_value))
+            current_year += 1
+
+        return Timeseries(result)
 
 
 class IntervalForecast:

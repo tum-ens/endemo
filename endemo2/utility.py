@@ -8,6 +8,7 @@ import math
 import pandas as pd
 
 from endemo2.data_structures import prediction_models as pm
+from endemo2.data_structures.prediction_models import TwoDseries, Timeseries
 
 
 def str_dict(dictionary: dict):
@@ -74,18 +75,21 @@ def plot_timeseries_regression(dr: pm.TwoDseries, title: str = "", x_label: str 
     x, y = zip(*dr.get_data())
 
     coef = dr.get_coef()
+    lin = coef.get_lin()
+    exp = coef.get_exp()
+    quadr = coef.get_quadr()
 
     # Plot points
     plt.plot(x, y, 'o', color="grey", label="data points")
 
     # Plot exp regression
-    plt.plot(x, [exp_change((coef._exp.x0, coef._exp.y0), coef._exp.r, e) for e in x], color="purple", label="exponential")
+    plt.plot(x, [exp_change((exp.x0, exp.y0), exp.r, e) for e in x], color="purple", label="exponential")
 
     # Plot linear regression
-    plt.plot(x, [lin_prediction((coef._lin.k0, coef._lin.k1), e) for e in x], color="orange", label="linear")
+    plt.plot(x, [lin_prediction((lin.k0, lin.k1), e) for e in x], color="orange", label="linear")
 
     # Plot quadratic regression
-    plt.plot(x, [quadr_prediction((coef._quadr.k0, coef._quadr.k1, coef._quadr.k2), e) for e in x], color="blue",
+    plt.plot(x, [quadr_prediction((quadr.k0, quadr.k1, quadr.k2), e) for e in x], color="blue",
              label="quadratic")
 
     plt.title(title)
@@ -487,3 +491,31 @@ def convert_table_to_filtered_data_series_per_country(df: pd.DataFrame) -> dict:
         dict_out[country_name] = his_data
     return dict_out
 
+
+def get_series_range(tss: [TwoDseries]) -> (int, int):
+    """
+    Takes multiple timeseries and finds out in which range of years all data falls into.
+
+    :param tss: The list of timeseries.
+    :return: The series x-range, which all data falls into.
+    """
+    min_year = None
+    max_year = None
+
+    for ts in tss:
+        if len(ts.get_data()) > 0:
+            first_year = ts.get_data()[0][0]
+            last_year = ts.get_data()[-1][0]
+            if min_year is None and max_year is None:
+                min_year = first_year
+                max_year = last_year
+            else:
+                if first_year < min_year:
+                    min_year = first_year
+                if last_year > max_year:
+                    max_year = last_year
+    if min_year is None:
+        min_year = 0
+    if max_year is None:
+        max_year = 0
+    return int(min_year), int(max_year)

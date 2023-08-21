@@ -5,13 +5,36 @@ from __future__ import annotations
 
 from endemo2.data_structures.nuts_tree import NutsRegionNode, NutsRegionLeaf
 from endemo2.data_structures.containers import EH, HisProg
-from endemo2.data_structures.enumerations import DemandType
+from endemo2.data_structures.enumerations import DemandType, SectorIdentifier
 from endemo2.data_structures.prediction_models import Timeseries, RigidTimeseries, IntervalForecast
 from endemo2.input_and_settings.input_general import GeneralInput, Abbreviations
+from endemo2.input_and_settings.input_households import HouseholdsInput, HouseholdsSubsectorId
 from endemo2.input_and_settings.input_manager import InputManager
 from endemo2.input_and_settings.input_cts import CtsInput
 from endemo2.input_and_settings.input_industry import ProductInput
 from endemo2.preprocessing.preprocessing_utility import energy_carrier_to_energy_consumption
+
+
+class HouseholdsPreprocessed:
+    def __init__(self, country_name: str, general_input: GeneralInput, households_input: HouseholdsInput):
+
+        # create timeseries out of historical energy carrier data
+        dict_subsector_energy_carrier_his = households_input.historical_consumption[country_name]
+        efficiency_hh = general_input.efficiency_hh
+
+        # enum_subsector -> str_energy_carrier -> [(float, float)]
+        self.sectors_pp = dict[HouseholdsSubsectorId, dict[DemandType, Timeseries]]()
+        for subsector, dict_energy_carrier_his in dict_subsector_energy_carrier_his.items():
+            ts_electricity, ts_heat = energy_carrier_to_energy_consumption(efficiency_hh, dict_energy_carrier_his)
+
+            self.sectors_pp[subsector] = dict[DemandType, Timeseries]()
+            self.sectors_pp[subsector][DemandType.ELECTRICITY] = ts_electricity
+            self.sectors_pp[subsector][DemandType.HEAT] = ts_heat
+            self.sectors_pp[subsector][DemandType.HYDROGEN] = Timeseries([(2018, 0.0)])
+
+            # generate coefficients
+            for demand_type in [DemandType.ELECTRICITY, DemandType.HEAT, DemandType.HYDROGEN]:
+                self.sectors_pp[subsector][demand_type].generate_coef()
 
 
 class CtsPreprocessed:
@@ -314,10 +337,15 @@ class CountryPreprocessed:
         else:
             self.nuts2_pp = None
 
-        # preprocess all active sectors_to_do (add other sectors_to_do here later)
-        self.industry_pp = IndustryPreprocessed(country_name, input_manager,
-                                                self.population_pp.population_historical_whole_country,
-                                                self.gdp_pp.gdp_historical_pp)
-        self.cts_pp = CtsPreprocessed(country_name, input_manager.general_input, input_manager.cts_input,
-                                      self.population_pp.population_historical_whole_country,
-                                      self.nuts2_pp.population_historical_tree_root)
+        # preprocess all active sectors
+        active_sectors = input_manager.ctrl.general_settings.get_active_sectors()
+        if SectorIdentifier.INDUSTRY in active_sectors:
+            self.industry_pp = IndustryPreprocessed(country_name, input_manager,
+                                                    self.population_pp.population_historical_whole_country,
+                                                    self.gdp_pp.gdp_historical_pp)
+        if SectorIdentifier.COMMERCIAL_TRADE_SERVICES in active_sectors:
+            self.cts_pp = CtsPreprocessed(country_name, input_manager.general_input, input_manager.cts_input,
+                                          self.population_pp.population_historical_whole_country,
+                                          self.nuts2_pp.population_historical_tree_root)
+        if SectorIdentifier.HOUSEHOLDS in active_sectors:
+            self.households_pp = HouseholdsPreprocessed(country_name, input_manager.general_input, input_manager.hh_input)

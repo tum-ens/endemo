@@ -24,12 +24,23 @@ class CtsSubsector:
         employees = employees_perc_of_population * population_country
         electricity = employees * specific_consumption.electricity
         heat = employees * specific_consumption.heat
+        hydrogen = 0.0
+
+        # substitution
+        substitution_perc: dict[DemandType, float] = self._cts_if.get_heat_substitution()
+        electricity_subst_amount = heat * substitution_perc[DemandType.ELECTRICITY]
+        hydrogen_subst_amount = heat * substitution_perc[DemandType.HYDROGEN]
+
+        heat -= electricity_subst_amount
+        heat -= hydrogen_subst_amount
+        electricity += electricity_subst_amount
+        hydrogen += hydrogen_subst_amount
 
         # split heat levels
         heat = heat_levels.copy_multiply_scalar(heat)
 
         # final demand
-        demand = Demand(electricity, heat, 0.0)
+        demand = Demand(electricity, heat, hydrogen)
 
         return demand
 

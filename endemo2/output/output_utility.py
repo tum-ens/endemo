@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from endemo2.data_structures.prediction_models import Timeseries, Coef, TwoDseries
+from endemo2.data_structures.prediction_models import Timeseries, Coef
 from endemo2.data_structures.containers import Demand
 from endemo2.input_and_settings.input_manager import InputManager
 
@@ -132,39 +132,10 @@ class FileGenerator(object):
         self.excel_writer.close()
 
 
-def get_series_range(tss: [TwoDseries]) -> (int, int):
-    """
-    Takes multiple timeseries and finds out in which range of years all data falls into.
-
-    :param tss: The list of timeseries.
-    :return: The series x-range, which all data falls into.
-    """
-    min_year = None
-    max_year = None
-
-    for ts in tss:
-        if len(ts.get_data()) > 0:
-            first_year = ts.get_data()[0][0]
-            last_year = ts.get_data()[-1][0]
-            if min_year is None and max_year is None:
-                min_year = first_year
-                max_year = last_year
-            else:
-                if first_year < min_year:
-                    min_year = first_year
-                if last_year > max_year:
-                    max_year = last_year
-    if min_year is None:
-        min_year = 0
-    if max_year is None:
-        max_year = 0
-    return int(min_year), int(max_year)
-
-
-def shortcut_save_timeseries_print(fg, range: (float, float), data: [(float, float)]):
+def shortcut_save_timeseries_print(fg, interval: (float, float), data: [(float, float)]):
     """ Shortcut to correctly output a timeseries, when data does potentially not cover every year."""
 
-    (from_year, to_year) = range
+    (from_year, to_year) = interval
 
     i = from_year
     for (year, value) in data:
