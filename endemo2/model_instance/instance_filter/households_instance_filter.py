@@ -11,6 +11,7 @@ from endemo2.preprocessing.preprocessing_step_one import CountryPreprocessed
 
 
 class HouseholdsInstanceFilter:
+    """ The instance filter for the Households sector. """
 
     def __init__(self, ctrl: ControlParameters, general_input: GeneralInput, hh_input: HouseholdsInput,
                  countries_pp: [CountryPreprocessed], country_if: CountryInstanceFilter):
@@ -21,10 +22,12 @@ class HouseholdsInstanceFilter:
         self.country_if = country_if
 
     def get_subsectors(self) -> [HouseholdsSubsectorId]:
+        """ Get a list of the Households sector's subsectors. """
         return self.hh_input.hh_subsectors
 
     def get_energy_consumption_in_target_year(self, country_name, subsector_id: HouseholdsSubsectorId) \
             -> (float, float, float):
+        """ Get the linear time trend forecast for a subsector in a country. """
         subsector_pp: dict[DemandType, Timeseries] = \
             self.countries_pp[country_name].households_pp.sectors_pp[subsector_id]
 
@@ -39,31 +42,38 @@ class HouseholdsInstanceFilter:
         return dict_demand[DemandType.ELECTRICITY], dict_demand[DemandType.HEAT], dict_demand[DemandType.HYDROGEN]
 
     def get_hot_water_liter_per_capita(self, country_name) -> float:
+        """ Get the amount of hot water per person in a year in m^3. """
         hot_water_per_person = self.hh_input.hw_dict_hot_water_per_person_per_day[country_name]
         hot_water_per_person *= 365     # per year
         hot_water_per_person /= 1000    # liter -> m^3
         return hot_water_per_person
 
     def get_hot_water_specific_capacity(self) -> float:
+        """ Get the specific capacity for hot water. """
         return self.hh_input.hw_specific_capacity
 
     def get_hot_water_inlet_temperature(self, country_name) -> float:
+        """ Get the inlet temperature of hot water in a given country. """
         return self.hh_input.hw_inlet_temperature[country_name]
 
     def get_hot_water_outlet_temperature(self) -> float:
+        """ Get the outlet temperature of water. """
         return self.hh_input.hw_outlet_temperature
 
     def get_hot_water_calibration_factor(self, country_name) -> float:
+        """ Get the hot water calibration factor for a given country. """
         return self.hh_input.hw_dict_hot_water_calibration[country_name]
 
     def get_population_in_target_year(self, country_name) -> float:
-        return self.country_if.get_population_country_in_target_year(country_name) #todo: change after testing
-        #return self.country_if.get_population_nuts2_sum(country_name)
+        """ Get the population of a country in the target year. """
+        return self.country_if.get_population_country_in_target_year(country_name)
 
     def get_heat_levels(self) -> Heat:
+        """ Get the heat levels of the household sector. """
         return self.ctrl.hh_settings.heat_levels
 
     def get_area_per_household_in_target_year(self, country_name) -> float:
+        """ Get the area per household in target year for a given country. """
         start_point, change_rate = self.hh_input.sh_area_per_household[country_name]
         target_year = self.ctrl.general_settings.target_year
 
@@ -74,6 +84,7 @@ class HouseholdsInstanceFilter:
         return forecast_coef.get_function_y(target_year)
 
     def get_avg_persons_per_household_in_target_year(self, country_name) -> float:
+        """ Get average number of persons per household in target year for a given country. """
         person_per_household = self.hh_input.sh_persons_per_household
         target_year = self.ctrl.general_settings.target_year
 
@@ -121,6 +132,7 @@ class HouseholdsInstanceFilter:
         return forecast_coef.get_function_y(target_year)
 
     def get_space_heating_specific_heat_in_target_year(self, country_name) -> float:
+        """ Get the amount of specific heat for space heating in a given country in TWh. """
         start_point, change_rate = self.hh_input.sh_specific_heat[country_name]
         target_year = self.ctrl.general_settings.target_year
 
@@ -137,16 +149,21 @@ class HouseholdsInstanceFilter:
         return forecasted_specific_demand
 
     def get_space_heating_calibration_factor(self, country_name) -> float:
+        """ ??? todo"""
         return self.hh_input.hw_dict_hot_water_calibration[country_name]  # TODO: is this correct?
 
     def get_nuts2_distribution(self, country_name) -> dict[str, float]:
+        """ Get the distribution percentages/100 for the nuts2 regions. """
         return self.country_if.get_population_nuts2_percentages_in_target_year(country_name)
 
     def get_single_household_share(self) -> float:
+        """ Get the percentage/100 of the share of single person households."""
         return self.ctrl.hh_settings.single_households_share
 
     def get_load_profile_efh(self) -> dict[DemandType, [float]]:
+        """ Get the load profile for the single person households. """
         return self.hh_input.load_profile_single_households
 
     def get_load_profile_mfh(self) -> dict[DemandType, [float]]:
+        """ Get the load profile for the multiple person households. """
         return self.hh_input.load_profile_multiple_households

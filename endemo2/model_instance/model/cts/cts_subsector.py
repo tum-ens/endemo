@@ -4,6 +4,13 @@ from endemo2.model_instance.instance_filter.cts_instance_filter import CtsInstan
 
 
 class CtsSubsector:
+    """
+    The CtsSubsector represents a subsector of the Commercial Trades and Services sector.
+
+    :ivar str _country_name: The name of the country this subsector belongs to.
+    :ivar str _subsector_name: The name of the subsector.
+    :ivar CtsInstanceFilter _cts_if: The instance filter of the cts sector.
+    """
 
     def __init__(self, country_name, subsector_name: str, cts_instance_filter: CtsInstanceFilter):
         self._country_name = country_name

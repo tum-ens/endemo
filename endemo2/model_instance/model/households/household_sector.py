@@ -10,66 +10,67 @@ from endemo2 import utility as uty
 
 
 class Households(Sector):
+    """
+    The CommercialTradeServices class represents the cts sector of one country. It holds als subsectors.
+
+    :ivar str _country_name: Name of the country this sector is located in.
+    :ivar HouseholdsInstanceFilter _hh_if: The instance filter for the households sector.
+    :ivar dict[str, HouseholdsSubsector] _subsectors: All subsectors in this cts sector.
+    """
 
     def __init__(self, country_name: str, households_instance_filter: HouseholdsInstanceFilter):
         super().__init__()
 
-        self.hh_if = households_instance_filter
-        self.country_name = country_name
+        self._hh_if = households_instance_filter
+        self._country_name = country_name
 
         # create subsectors
         subsector_ids = households_instance_filter.get_subsectors()
 
-        self.subsectors = dict[HouseholdsSubsectorId, HouseholdsSubsector]()
+        self._subsectors = dict[HouseholdsSubsectorId, HouseholdsSubsector]()
         for subsector_id in subsector_ids:
             if subsector_id in [HouseholdsSubsectorId.SPACE_COOLING,
                                 HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES,
                                 HouseholdsSubsectorId.COOKING]:
-                self.subsectors[subsector_id] = \
+                self._subsectors[subsector_id] = \
                     HouseholdsSubsector(country_name, subsector_id, households_instance_filter)
             if subsector_id == HouseholdsSubsectorId.WATER_HEATING:
-                self.subsectors[subsector_id] = HotWater(country_name, subsector_id, households_instance_filter)
+                self._subsectors[subsector_id] = HotWater(country_name, subsector_id, households_instance_filter)
             if subsector_id == HouseholdsSubsectorId.SPACE_HEATING:
-                self.subsectors[subsector_id] = SpaceHeating(country_name, subsector_id, households_instance_filter)
+                self._subsectors[subsector_id] = SpaceHeating(country_name, subsector_id, households_instance_filter)
 
     def calculate_demand(self) -> Demand:
+        """
+        Calculate demand of the households sector.
 
+        :return: The demand summed over all _subsectors in this households sector.
+        """
         demand = Demand()
 
         # sum over all subsectors
-        for subsector_id, subsector_obj in self.subsectors.items():
+        for subsector_id, subsector_obj in self._subsectors.items():
             demand.add(subsector_obj.calculate_demand())
 
         return demand
 
     def calculate_demand_distributed_by_nuts2(self) -> dict[str, Demand]:
+        """
+        Calculate demand distributed by nuts2 regions.
 
+        :return: The demand summed over all subsector in this households sector, split by nuts2 regions.
+        """
         demand = self.calculate_demand()
-        nuts2_distribution = self.hh_if.get_nuts2_distribution(self.country_name)
+        nuts2_distribution = self._hh_if.get_nuts2_distribution(self._country_name)
         return uty.multiply_dictionary_with_demand(nuts2_distribution, demand)
 
     def calculate_hourly_demand_efh(self) -> dict[DemandType, [float]]:
-        """ per subsectors, but isnt this super iefficient? todo
-        res_dict = dict[DemandType, [float]]()
-        res_dict[DemandType.ELECTRICITY] = list(repeat(0.0, 8760))
-        res_dict[DemandType.HEAT] = list(repeat(Heat(), 8760))
-        res_dict[DemandType.HYDROGEN] = list(repeat(0.0, 8760))
-
-        for subsector_name, subsector in self.subsectors.items():
-            subsector_hourly_demand = subsector.calculate_hourly_demand_efh()
-            res_dict[DemandType.ELECTRICITY] = \
-                [res_value + new_value for (res_value, new_value)
-                 in list(zip(res_dict[DemandType.ELECTRICITY], subsector_hourly_demand[DemandType.ELECTRICITY]))]
-            res_dict[DemandType.HEAT] = \
-                [res_value.copy_add(new_value) for (res_value, new_value)
-                 in list(zip(res_dict[DemandType.HEAT], subsector_hourly_demand[DemandType.HEAT]))]
-            res_dict[DemandType.HYDROGEN] = \
-                [res_value + new_value for (res_value, new_value)
-                 in list(zip(res_dict[DemandType.HYDROGEN], subsector_hourly_demand[DemandType.HYDROGEN]))]
-        return res_dict
         """
-        efh_share = self.hh_if.get_single_household_share()
-        hourly_profile: dict[DemandType, [float]] = self.hh_if.get_load_profile_efh()
+        Calculate the hourly demand for the single person households in this sector.
+
+        :return: The hourly demand in a list in order by demand type.
+        """
+        efh_share = self._hh_if.get_single_household_share()
+        hourly_profile: dict[DemandType, [float]] = self._hh_if.get_load_profile_efh()
         demand_efh = self.calculate_demand().copy_scale(efh_share)
 
         res_dict = dict[DemandType, [float]]()
@@ -82,27 +83,13 @@ class Households(Sector):
         return res_dict
 
     def calculate_hourly_demand_mfh(self) -> dict[DemandType, [float]]:
-        """ todo
-        res_dict = dict[DemandType, [float]]()
-        res_dict[DemandType.ELECTRICITY] = list(repeat(0.0, 8760))
-        res_dict[DemandType.HEAT] = list(repeat(Heat(), 8760))
-        res_dict[DemandType.HYDROGEN] = list(repeat(0.0, 8760))
-
-        for subsector_name, subsector in self.subsectors.items():
-            subsector_hourly_demand = subsector.calculate_hourly_demand_mfh()
-            res_dict[DemandType.ELECTRICITY] = \
-                [res_value + new_value for (res_value, new_value)
-                 in list(zip(res_dict[DemandType.ELECTRICITY], subsector_hourly_demand[DemandType.ELECTRICITY]))]
-            res_dict[DemandType.HEAT] = \
-                [res_value.copy_add(new_value) for (res_value, new_value)
-                 in list(zip(res_dict[DemandType.HEAT], subsector_hourly_demand[DemandType.HEAT]))]
-            res_dict[DemandType.HYDROGEN] = \
-                [res_value + new_value for (res_value, new_value)
-                 in list(zip(res_dict[DemandType.HYDROGEN], subsector_hourly_demand[DemandType.HYDROGEN]))]
-        return res_dict
         """
-        mfh_share = 1 - self.hh_if.get_single_household_share()
-        hourly_profile: dict[DemandType, [float]] = self.hh_if.get_load_profile_mfh()
+        Calculate the hourly demand for the multiple person households in this sector.
+
+        :return: The hourly demand in a list in order by demand type.
+        """
+        mfh_share = 1 - self._hh_if.get_single_household_share()
+        hourly_profile: dict[DemandType, [float]] = self._hh_if.get_load_profile_mfh()
         demand_mfh = self.calculate_demand().copy_scale(mfh_share)
 
         res_dict = dict[DemandType, [float]]()
