@@ -1,9 +1,12 @@
 from enum import Enum
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
-from endemo2.data_structures.containers import Interval, HisProg
+from endemo2.data_structures.containers import Interval, HisProg, Heat
+from endemo2.data_structures.enumerations import DemandType
+from endemo2.data_structures.prediction_models import Timeseries
 from endemo2.input_and_settings.control_parameters import ControlParameters
 
 from endemo2 import utility as uty
@@ -15,6 +18,7 @@ class HouseholdsSubsectorId(Enum):
     WATER_HEATING = 2,
     COOKING = 3,
     LIGHTING_AND_APPLIANCES = 4
+    OTHER = 5
 
 
 class HouseholdsInput:
@@ -31,7 +35,8 @@ class HouseholdsInput:
         HouseholdsSubsectorId.SPACE_COOLING: "1b_SpaceCooling",
         HouseholdsSubsectorId.WATER_HEATING: "1c_WaterHeating",
         HouseholdsSubsectorId.COOKING: "1d_Cooking",
-        HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES: "1e_LightingAndAppliances"
+        HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES: "1e_LightingAndAppliances",
+        HouseholdsSubsectorId.OTHER: "1f_OtherEndUses"
     }
 
     hh_energy_carrier_unit_conversion = {
@@ -65,9 +70,32 @@ class HouseholdsInput:
         self.sh_persons_per_household = None   # {country_name -> [start(year, value), end(year, value)]}
         self.sh_read_space_heating_input(ctrl, hh_path)
 
+        # read load profile
         if ctrl.general_settings.toggle_hourly_forecast:
-            # todo: read load profile stuff
-            pass
+            df_load_profile = pd.read_excel(hh_path / "hh_timeseries.xlsx", sheet_name="timeseries")
+
+            electricity = list(df_load_profile["Elec"])[1:]
+            efh_heat_q1 = list(df_load_profile["EFH_Heat_Q1"])[1:]
+            efh_heat_q2 = list(df_load_profile["EFH_Heat_Q2"])[1:]
+            efh_h2 = list(df_load_profile["EFH_H2"])[1:]
+            mfh_heat_q1 = list(df_load_profile["MFH_Heat_Q1"])[1:]
+            mfh_heat_q2 = list(df_load_profile["MFH_Heat_Q2"])[1:]
+            mfh_h2 = list(df_load_profile["MFH_H2"])[1:]
+
+            self.load_profile_single_households = dict[DemandType, [Any]]()
+            self.load_profile_single_households[DemandType.ELECTRICITY] = electricity
+            self.load_profile_single_households[DemandType.HEAT] = \
+                [Heat(q1, q2) for q1, q2 in zip(efh_heat_q1, efh_heat_q2)]
+            self.load_profile_single_households[DemandType.HYDROGEN] = efh_h2
+
+            self.load_profile_multiple_households = dict[DemandType, [Any]]()
+            self.load_profile_multiple_households[DemandType.ELECTRICITY] = electricity
+            self.load_profile_multiple_households[DemandType.HEAT] = \
+                [Heat(q1, q2) for q1, q2 in zip(mfh_heat_q1, mfh_heat_q2)]
+            self.load_profile_multiple_households[DemandType.HYDROGEN] = mfh_h2
+        else:
+            self.load_profile_single_households = None
+            self.load_profile_multiple_households = None
 
     def read_historical_consumption(self, ctrl, hh_path):
         self.historical_consumption = dict[str, dict[HouseholdsSubsectorId, dict[str, [(float, float)]]]]()
@@ -102,6 +130,33 @@ class HouseholdsInput:
                         his_data = [(2018, 0.0)]    # assume 0.0 if no data is present in file
 
                     self.historical_consumption[country_name][subsector][energy_carrier] = his_data
+
+            # merge lighting and appliances with other subsector
+            lighting_id = HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES
+            other_id = HouseholdsSubsectorId.OTHER
+            dict_lighting_subsector = \
+                self.historical_consumption[country_name][lighting_id]
+            dict_other_subsector = self.historical_consumption[country_name][other_id]
+
+            for energy_carrier in HouseholdsInput.hh_energy_carrier_unit_conversion.keys():
+                if energy_carrier in dict_lighting_subsector.keys() and energy_carrier in dict_other_subsector.keys():
+                    # both present -> add them together
+                    ts_lighting = Timeseries(self.historical_consumption[country_name][lighting_id][energy_carrier])
+                    ts_other = Timeseries(self.historical_consumption[country_name][other_id][energy_carrier])
+                    # add data
+                    ts_merged = ts_lighting.add(ts_other)
+                    # save
+                    self.historical_consumption[country_name][lighting_id][energy_carrier] = ts_merged.get_data()
+                elif energy_carrier in dict_other_subsector.keys():
+                    # just take others values if none are present for lighting
+                    self.historical_consumption[country_name][lighting_id][energy_carrier] = \
+                        self.historical_consumption[country_name][other_id][energy_carrier]
+                elif energy_carrier in dict_lighting_subsector.keys():
+                    # other wouldn't add anything -> continue
+                    continue
+
+            # delete other subsector from dictionary
+            del self.historical_consumption[country_name][other_id]
 
     def hw_read_hot_water_input(self, ctrl: ControlParameters, hh_path: Path):
         ex_hot_water = pd.ExcelFile(hh_path / "Warm_Water.xlsx")

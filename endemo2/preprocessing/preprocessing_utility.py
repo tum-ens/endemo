@@ -14,13 +14,8 @@ def energy_carrier_to_energy_consumption(efficiency: dict[str, EH],
     :return: sum of energy consumption and sum of heat consumption.
         Of form (energy_consumption_sum, heat_consumption_sum)
     """
-    # get range
-    first_year_for_data = int(list(dict_ec_his.values())[0][0][0])  # read year range from first entry
-    last_year_for_data = int(list(dict_ec_his.values())[0][-1][0])
-
-    year_zero_list = list(zip(range(first_year_for_data, last_year_for_data + 1), itertools.repeat(0)))
-    electricity_demand_sum = Timeseries(year_zero_list)
-    heat_demand_sum = Timeseries(year_zero_list)
+    electricity_demand_sum = Timeseries([])
+    heat_demand_sum = Timeseries([])
 
     for energy_carrier_name, ec_his_am in dict_ec_his.items():
         ts_historical_energy_carrier_amount = Timeseries(ec_his_am)

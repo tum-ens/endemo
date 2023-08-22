@@ -9,6 +9,8 @@ from typing import Any, Union
 
 import statistics as st
 
+import numpy as np
+
 from endemo2.data_structures.containers import Interval
 from endemo2.data_structures.enumerations import ForecastMethod
 from endemo2 import utility as uty
@@ -437,14 +439,25 @@ class Timeseries(TwoDseries, RigidTimeseries):
     def add(self, other_ts: Timeseries) -> Timeseries:
         """
         Add the data of the other_ts to self. Also return a reference to self.
+        When a datapoint is only present in one of the timeseries it is added!
 
         :param other_ts: The timeseries, whose data should be added to self.
         :return: A reference to self.
         """
-        other_ts_with_zeroes = \
-            Timeseries.fill_empty_years_with_value(other_ts, Interval(self._data[0][0], self._data[-1][0]), 0.0)
-        self._data = uty.zip_data_on_x_and_map(self._data, other_ts_with_zeroes._data,
-                                               lambda x, y1, y2: (x, y1 + y2))
+        (start, end) = uty.get_series_range([self, other_ts])
+        other_ts = Timeseries.fill_empty_years_with_value(other_ts, Interval(start, end), np.NaN)
+        self.fill_own_empty_years_with_value(Interval(start, end), np.NaN)
+
+        zipped = list(zip(other_ts._data, self._data))
+        added_data = []
+        for (x, y1), (_, y2) in zipped:
+            if y1 is np.NaN and y2 is np.NaN:
+                continue
+            y1_nan_to_zero = 0.0 if y1 is np.NaN else y1
+            y2_nan_to_zero = 0.0 if y2 is np.NaN else y2
+            added_data.append((x, y1_nan_to_zero + y2_nan_to_zero))
+
+        self._data = added_data
         return self
 
     def divide_by(self, other_ts: Timeseries) -> Timeseries:
@@ -510,6 +523,29 @@ class Timeseries(TwoDseries, RigidTimeseries):
         else:
             return res[0]
 
+    def fill_own_empty_years_with_value(self, interval: Interval, fill_value: float):
+        """
+        Fill own data in interval with fill value
+
+        :param interval: The interval that should be filled.
+        :param fill_value: The value that should be used to fill gaps
+        """
+        result = []
+        current_year = interval.start
+        for year, value in self._data:
+            # add zeros before the next year that is in timeseries to fill gaps
+            while current_year < year:
+                result.append((current_year, fill_value))
+                current_year += 1
+            result.append((year, value))
+            current_year += 1
+
+        while current_year <= interval.end:
+            result.append((current_year, fill_value))
+            current_year += 1
+
+        self._data = result
+
     @classmethod
     def fill_empty_years_with_value(cls, ts: Timeseries, interval: Interval, fill_value: float) -> Timeseries:
         """
@@ -521,21 +557,10 @@ class Timeseries(TwoDseries, RigidTimeseries):
         :param fill_value: Value with which gaps in the data should be filled.
         :return: The created timeseries with values from ts and filled gaps with given value.
         """
+        result = Timeseries(ts._data.copy())
+        result.fill_own_empty_years_with_value(interval, fill_value)
 
-        result = []
-        current_year = interval.start
-        for year, value in ts._data:
-            # add zeros before the next year that is in timeseries to fill gaps
-            while current_year < year:
-                result.append((current_year, fill_value))
-                current_year += 1
-            result.append((year, value))
-
-        while current_year <= interval.end:
-            result.append((current_year, fill_value))
-            current_year += 1
-
-        return Timeseries(result)
+        return result
 
 
 class IntervalForecast:

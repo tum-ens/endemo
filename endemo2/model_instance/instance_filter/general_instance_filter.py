@@ -111,12 +111,25 @@ class CountryInstanceFilter:
             return dict()
 
         nuts2_population_in_target_year = self.get_population_nuts2_in_target_year(country_name)
-        country_population_in_target_year = \
-            math.fsum([nuts2_pop for nuts2_pop in nuts2_population_in_target_year.values()])
-
+        country_population_in_target_year = self.get_population_nuts2_sum(country_name)
         # fill result structure by dividing nuts2 region population though total population
         result_nuts2_population_percentage = dict[str, float]()
         for region_name, region_pop in nuts2_population_in_target_year.items():
             result_nuts2_population_percentage[region_name] = region_pop / country_population_in_target_year
 
         return result_nuts2_population_percentage
+
+    def get_population_nuts2_sum(self, country_name) -> float:
+        """ Getter for the sum of the nuts2 population for a country. """
+        country_pp = self.preprocessor.countries_pp[country_name]
+        nuts2_pp: NUTS2Preprocessed = country_pp.nuts2_pp
+        if nuts2_pp is None:
+            # country doesn't have any nuts2 data
+            return 0.0
+
+        nuts2_population_in_target_year = self.get_population_nuts2_in_target_year(country_name)
+        nuts2_population_sum_in_target_year = \
+            math.fsum([nuts2_pop for nuts2_pop in nuts2_population_in_target_year.values()])
+
+        return nuts2_population_sum_in_target_year
+

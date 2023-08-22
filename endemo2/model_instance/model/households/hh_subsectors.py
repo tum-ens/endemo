@@ -1,7 +1,9 @@
 
 from endemo2.data_structures.containers import Demand, Heat
+from endemo2.data_structures.enumerations import DemandType
 from endemo2.input_and_settings.input_households import HouseholdsSubsectorId
 from endemo2.model_instance.instance_filter.households_instance_filter import HouseholdsInstanceFilter
+from endemo2 import utility as uty
 
 
 class HouseholdsSubsector:
@@ -23,6 +25,39 @@ class HouseholdsSubsector:
         heat_in_levels = heat_levels.copy_multiply_scalar(heat)
 
         return Demand(electricity, heat_in_levels, hydrogen)
+
+    def calculate_demand_distributed_by_nuts2(self) -> dict[str, Demand]:
+        demand = self.calculate_demand()
+        nuts2_distribution = self.hh_if.get_nuts2_distribution(self.country_name)
+        return uty.multiply_dictionary_with_demand(nuts2_distribution, demand)
+
+    def calculate_hourly_demand_efh(self) -> dict[DemandType, [float]]:
+        efh_share = self.hh_if.get_single_household_share()
+        hourly_profile: dict[DemandType, [float]] = self.hh_if.get_load_profile_efh()
+        subsector_demand = self.calculate_demand().copy_scale(efh_share)
+
+        res_dict = dict[DemandType, [float]]()
+        res_dict[DemandType.ELECTRICITY] = [subsector_demand.electricity * hour_perc
+                                            for hour_perc in hourly_profile[DemandType.ELECTRICITY]]
+        res_dict[DemandType.HEAT] = [subsector_demand.heat.copy_multiply(hour_perc)
+                                     for hour_perc in hourly_profile[DemandType.HEAT]]
+        res_dict[DemandType.HYDROGEN] = [subsector_demand.hydrogen * hour_perc
+                                         for hour_perc in hourly_profile[DemandType.HYDROGEN]]
+        return res_dict
+
+    def calculate_hourly_demand_mfh(self) -> dict[DemandType, [float]]:
+        mfh_share = 1 - self.hh_if.get_single_household_share()
+        hourly_profile: dict[DemandType, [float]] = self.hh_if.get_load_profile_mfh()
+        subsector_demand = self.calculate_demand().copy_scale(mfh_share)
+
+        res_dict = dict[DemandType, [float]]()
+        res_dict[DemandType.ELECTRICITY] = [subsector_demand.electricity * hour_perc
+                                            for hour_perc in hourly_profile[DemandType.ELECTRICITY]]
+        res_dict[DemandType.HEAT] = [subsector_demand.heat.copy_multiply(hour_perc)
+                                     for hour_perc in hourly_profile[DemandType.HEAT]]
+        res_dict[DemandType.HYDROGEN] = [subsector_demand.hydrogen * hour_perc
+                                         for hour_perc in hourly_profile[DemandType.HYDROGEN]]
+        return res_dict
 
 
 class HotWater(HouseholdsSubsector):

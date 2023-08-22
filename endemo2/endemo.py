@@ -8,8 +8,8 @@ from endemo2.model_instance.instance_filter.industry_instance_filter \
     import IndustryInstanceFilter, ProductInstanceFilter
 from endemo2.input_and_settings import input_general
 from endemo2.model_instance.model import country
-from endemo2.output.instance_output import generate_instance_output
-from endemo2.output.preprocessing_output import generate_preprocessing_output
+from endemo2.output.output_instance import generate_instance_output
+from endemo2.output.output_preprocessing import generate_preprocessing_output
 from endemo2.preprocessing.preprocessor import Preprocessor
 
 

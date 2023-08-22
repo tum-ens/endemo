@@ -8,7 +8,61 @@ import math
 import pandas as pd
 
 from endemo2.data_structures import prediction_models as pm
+from endemo2.data_structures.containers import Demand
 from endemo2.data_structures.prediction_models import TwoDseries, Timeseries
+
+
+def multiply_dictionary_with_scalar(dictionary: dict[str, float], scalar: float) -> dict[str, float]:
+    """
+    Multiplies every dictionary entry with value and returns the result
+
+    :param dictionary: The dictionary that should be used.
+    :param scalar: The value the dictionary entries should be multiplied with.
+    :return: The resulting dictionary.
+    """
+
+    res_dict = dict[str, float]()
+
+    for key, value in dictionary.items():
+        res_dict[key] = value * scalar
+
+    return res_dict
+
+
+def multiply_demand_dictionary_with_scalar(dictionary: dict[str, Demand], scalar: float) -> dict[str, Demand]:
+    """
+    Multiplies every dictionary demand entry with value and returns the result
+
+    :param dictionary: The dictionary that should be used.
+    :param scalar: The value the dictionary entries should be multiplied with.
+    :return: The resulting dictionary.
+    """
+
+    res_dict = dict[str, Demand]()
+
+    for key, value in dictionary.items():
+        res_dict[key] = value.copy_scale(scalar)
+
+    return res_dict
+
+
+def multiply_dictionary_with_demand(dictionary: dict[str, float], demand: Demand) -> dict[str, Demand]:
+    """
+    Multiplies every dictionary entry with demand and returns the result
+
+    :param dictionary: The dictionary that should be used.
+    :param demand: The demand the dictionary entries should be multiplied with.
+    :return: The resulting dictionary.
+    """
+
+    res_dict = dict[str, Demand]()
+
+    for key, value in dictionary.items():
+        if key not in res_dict.keys():
+            res_dict[key] = Demand()
+        res_dict[key] = demand.copy_scale(value)
+
+    return res_dict
 
 
 def str_dict(dictionary: dict):

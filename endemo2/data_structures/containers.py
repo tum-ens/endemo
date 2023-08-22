@@ -83,10 +83,10 @@ class Heat:
     :ivar float q4: Amount for heat level Q4
     """
     def __init__(self, q1: float = 0, q2: float = 0, q3: float = 0, q4: float = 0):
-        self.q1 = float(q1)
-        self.q2 = float(q2)
-        self.q3 = float(q3)
-        self.q4 = float(q4)
+        self.q1 = max(0.0, float(q1))
+        self.q2 = max(0.0, float(q2))
+        self.q3 = max(0.0, float(q3))
+        self.q4 = max(0.0, float(q4))
 
     def __str__(self):
         return "Heat:[" + str(self.q1) + ", " + str(self.q2) + ", " + str(self.q3) + ", " + str(self.q4) + ")"
@@ -172,12 +172,12 @@ class Demand:
     :ivar float hydrogen: Amount of hydrogen demand.
     """
     def __init__(self, electricity: float = 0, heat: Heat = None, hydrogen: float = 0):
-        self.electricity = electricity
+        self.electricity = max(0.0, electricity)
         if heat is None:
             self.heat = Heat()
         else:
             self.heat = heat
-        self.hydrogen = hydrogen
+        self.hydrogen = max(0.0, hydrogen)
 
     def __str__(self):
         return "<Demand: " + "electricity: " + str(self.electricity) + ", heat: " + str(self.heat) + ", hydrogen: " + \

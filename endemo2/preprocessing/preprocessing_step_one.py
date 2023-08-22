@@ -25,6 +25,7 @@ class HouseholdsPreprocessed:
         # enum_subsector -> str_energy_carrier -> [(float, float)]
         self.sectors_pp = dict[HouseholdsSubsectorId, dict[DemandType, Timeseries]]()
         for subsector, dict_energy_carrier_his in dict_subsector_energy_carrier_his.items():
+
             ts_electricity, ts_heat = energy_carrier_to_energy_consumption(efficiency_hh, dict_energy_carrier_his)
 
             self.sectors_pp[subsector] = dict[DemandType, Timeseries]()

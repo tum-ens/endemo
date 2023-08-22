@@ -57,7 +57,8 @@ class HouseholdsInstanceFilter:
         return self.hh_input.hw_dict_hot_water_calibration[country_name]
 
     def get_population_in_target_year(self, country_name) -> float:
-        return self.country_if.get_population_country_in_target_year(country_name)
+        return self.country_if.get_population_country_in_target_year(country_name) #todo: change after testing
+        #return self.country_if.get_population_nuts2_sum(country_name)
 
     def get_heat_levels(self) -> Heat:
         return self.ctrl.hh_settings.heat_levels
@@ -137,3 +138,15 @@ class HouseholdsInstanceFilter:
 
     def get_space_heating_calibration_factor(self, country_name) -> float:
         return self.hh_input.hw_dict_hot_water_calibration[country_name]  # TODO: is this correct?
+
+    def get_nuts2_distribution(self, country_name) -> dict[str, float]:
+        return self.country_if.get_population_nuts2_percentages_in_target_year(country_name)
+
+    def get_single_household_share(self) -> float:
+        return self.ctrl.hh_settings.single_households_share
+
+    def get_load_profile_efh(self) -> dict[DemandType, [float]]:
+        return self.hh_input.load_profile_single_households
+
+    def get_load_profile_mfh(self) -> dict[DemandType, [float]]:
+        return self.hh_input.load_profile_multiple_households
