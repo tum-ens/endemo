@@ -7,7 +7,7 @@ from endemo2.data_structures.containers import SpecConsum, Heat, EH
 from endemo2.data_structures.enumerations import DemandType, ForecastMethod, SubsectorGroup
 from endemo2.data_structures.conversions_unit import Unit, get_conversion_scalar
 from endemo2.input_and_settings.control_parameters import ControlParameters
-from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
+from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter, InstanceFilter
 from endemo2.preprocessing.preprocessing_step_one import ProductPreprocessed, CountryPreprocessed
 from endemo2.preprocessing.preprocessor import Preprocessor
 from endemo2.data_structures.prediction_models import TwoDseries, Coef
@@ -15,7 +15,7 @@ from endemo2.input_and_settings.input_general import GeneralInput
 from endemo2.input_and_settings.input_industry import IndustryInput
 
 
-class IndustryInstanceFilter:
+class IndustryInstanceFilter(InstanceFilter):
     """
     This instance filter serves as a filter between the instance settings and the actual calculation of the demand
         of the industry sectors.
@@ -23,11 +23,12 @@ class IndustryInstanceFilter:
 
     def __init__(self, ctrl: ControlParameters, industry_input: IndustryInput, preprocessor: Preprocessor,
                  country_instance_filter: CountryInstanceFilter):
+        super().__init__(ctrl, preprocessor.countries_pp)
+
+        self.industry_input = industry_input
         self.rest_sector_input = industry_input.rest_sector_input
-        self.ctrl = ctrl
         self.preprocessor = preprocessor
         self.country_instance_filter = country_instance_filter
-        self.industry_input = industry_input
 
     def get_active_products_for_this_country(self, country_name) -> list[str]:
         """ Getter for the active (or produced) products of a country. """
@@ -95,17 +96,18 @@ class IndustryInstanceFilter:
         return self.get_nuts2_rest_sector_distribution(country_name).keys()
 
 
-class ProductInstanceFilter:
+class ProductInstanceFilter(InstanceFilter):
     """
     This instance filter serves as a filter between the instance settings and the actual calculation of the demand
         of the different products.
     """
     def __init__(self, ctrl: ControlParameters, preprocessor: Preprocessor, industry_input: IndustryInput,
                  general_input: GeneralInput, country_instance_filter: CountryInstanceFilter):
-        self.ctrl = ctrl
-        self.preprocessor = preprocessor
+        super().__init__(ctrl, preprocessor.countries_pp)
+
         self.industry_input = industry_input
         self.general_input = general_input
+        self.preprocessor = preprocessor
         self.country_instance_filter = country_instance_filter
 
         # modify preprocessed product coefficients to include the product settings

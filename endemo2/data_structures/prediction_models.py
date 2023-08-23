@@ -268,10 +268,10 @@ class RigidTimeseries:
     def __str__(self):
         return str(self._data)
 
-    def get_last_available_data_entry_or_zero(self) -> float:
+    def get_last_available_data_entry_or_zero(self) -> Datapoint:
         """ Returns the last data entry in the timeseries data if present, else 0.0. """
         if len(self._data) == 0:
-            return 0.0
+            return Datapoint(0.0)
         else:
             return self._data[-1]
 

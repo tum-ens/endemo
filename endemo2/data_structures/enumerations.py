@@ -93,3 +93,12 @@ class HouseholdsSubsectorId(Enum):
     COOKING = 3,
     LIGHTING_AND_APPLIANCES = 4
     OTHER = 5
+
+
+class TransportModalSplitMethod(Enum):
+    """
+    The enum indicating how the modal split for the transport sector should be obtained.
+    """
+    HISTORICAL_TIME_TREND = 0
+    HISTORICAL_CONSTANT = 1
+    USER_DEFINED = 2

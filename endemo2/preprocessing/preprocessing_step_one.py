@@ -16,7 +16,14 @@ from endemo2.preprocessing.preprocessing_utility import energy_carrier_to_energy
 
 
 class HouseholdsPreprocessed:
-    def __init__(self, country_name: str, general_input: GeneralInput, households_input: HouseholdsInput):
+    """
+    Preprocesses everything of the households sector.
+
+    :ivar dict[HouseholdsSubsectorId, dict[DemandType, Timeseries]] sectors_pp: The timeseries for the energy
+        consumption of each subsector and demand type.
+    """
+    def __init__(self, country_name: str, general_input: GeneralInput, households_input: HouseholdsInput,
+                 population_historical: Timeseries):
 
         # create timeseries out of historical energy carrier data
         dict_subsector_energy_carrier_his = households_input.historical_consumption[country_name]
@@ -28,9 +35,10 @@ class HouseholdsPreprocessed:
 
             ts_electricity, ts_heat = energy_carrier_to_energy_consumption(efficiency_hh, dict_energy_carrier_his)
 
+            # divide by historical population to make the time trend per capita
             self.sectors_pp[subsector] = dict[DemandType, Timeseries]()
-            self.sectors_pp[subsector][DemandType.ELECTRICITY] = ts_electricity
-            self.sectors_pp[subsector][DemandType.HEAT] = ts_heat
+            self.sectors_pp[subsector][DemandType.ELECTRICITY] = ts_electricity.divide_by(population_historical)
+            self.sectors_pp[subsector][DemandType.HEAT] = ts_heat.divide_by(population_historical)
             self.sectors_pp[subsector][DemandType.HYDROGEN] = Timeseries([(2018, 0.0)])
 
             # generate coefficients
@@ -349,4 +357,6 @@ class CountryPreprocessed:
                                           self.population_pp.population_historical_whole_country,
                                           self.nuts2_pp.population_historical_tree_root)
         if SectorIdentifier.HOUSEHOLDS in active_sectors:
-            self.households_pp = HouseholdsPreprocessed(country_name, input_manager.general_input, input_manager.hh_input)
+            self.households_pp = HouseholdsPreprocessed(country_name, input_manager.general_input,
+                                                        input_manager.hh_input,
+                                                        self.population_pp.population_historical_whole_country)

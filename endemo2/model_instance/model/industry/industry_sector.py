@@ -18,10 +18,7 @@ class Industry(Sector):
 
     def __init__(self, country_name, industry_instance_filter: IndustryInstanceFilter,
                  product_instance_filter: ProductInstanceFilter):
-        super().__init__()
-
-        self._industry_instance_filter = industry_instance_filter
-        self._country_name = country_name
+        super().__init__(country_name, industry_instance_filter)
 
         active_products = industry_instance_filter.get_active_product_names()
         active_products_country = industry_instance_filter.get_active_products_for_this_country(country_name)
@@ -54,12 +51,12 @@ class Industry(Sector):
         :return: The demand of the rest sector in given year rest(y).
         """
 
-        rest_calc_data = self._industry_instance_filter.get_rest_sector_proportion_in_basis_year(self._country_name)
-        rest_growth_rate = self._industry_instance_filter.get_rest_sector_growth_rate()
-        rest_heat_levels = self._industry_instance_filter.get_rest_sector_heat_levels()
+        rest_calc_data = self._instance_filter.get_rest_sector_proportion_in_basis_year(self._country_name)
+        rest_growth_rate = self._instance_filter.get_rest_sector_growth_rate()
+        rest_heat_levels = self._instance_filter.get_rest_sector_heat_levels()
 
-        start_year = self._industry_instance_filter.get_rest_sector_basis_year()
-        target_year = self._industry_instance_filter.get_target_year()
+        start_year = self._instance_filter.get_rest_sector_basis_year()
+        target_year = self._instance_filter.get_target_year()
 
         result = Demand()
 
@@ -81,7 +78,7 @@ class Industry(Sector):
         :return: The dictionary of {nuts2_region -> demand}.
         """
         rest_demand = self.calculate_rest_sector_demand()
-        nuts2_capacities = self._industry_instance_filter.get_nuts2_rest_sector_distribution(self._country_name)
+        nuts2_capacities = self._instance_filter.get_nuts2_rest_sector_distribution(self._country_name)
 
         resulting_distributed_demand = dict[str, Demand]()
         for region_name, capacity in nuts2_capacities.items():
@@ -184,7 +181,7 @@ class Industry(Sector):
 
         res_dict = dict[str, dict[DemandType, [float]]]()
 
-        for region_name in self._industry_instance_filter.get_nuts2_regions(self._country_name):
+        for region_name in self._instance_filter.get_nuts2_regions(self._country_name):
             res_dict[region_name] = dict[DemandType, [float]]()
             res_dict[region_name][DemandType.ELECTRICITY] = list(repeat(0.0, 8760))
             res_dict[region_name][DemandType.HEAT] = list(repeat(Heat(), 8760))
@@ -215,7 +212,7 @@ class Industry(Sector):
         """
 
         rest_demand = self.calculate_rest_sector_demand()
-        hourly_profile = self._industry_instance_filter.get_rest_sector_hourly_profile(self._country_name)
+        hourly_profile = self._instance_filter.get_rest_sector_hourly_profile(self._country_name)
 
         res_dict = dict[DemandType, [float]]()
         res_dict[DemandType.ELECTRICITY] = [rest_demand.electricity * hour_perc
@@ -234,7 +231,7 @@ class Industry(Sector):
         """
 
         rest_demands = self.calculate_rest_demand_distributed_by_nuts2()
-        hourly_profile = self._industry_instance_filter.get_rest_sector_hourly_profile(self._country_name)
+        hourly_profile = self._instance_filter.get_rest_sector_hourly_profile(self._country_name)
 
         res_dict = dict[str, dict[DemandType, [float]]]()
 

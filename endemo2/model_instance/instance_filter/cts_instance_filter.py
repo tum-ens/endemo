@@ -5,20 +5,21 @@ from endemo2.data_structures.conversions_unit import Unit, convert, get_conversi
 from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.input_and_settings.input_cts import CtsInput
 from endemo2.input_and_settings.input_general import GeneralInput
-from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
+from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter, InstanceFilter
 from endemo2.preprocessing.preprocessing_step_one import CountryPreprocessed, CtsPreprocessed
+from endemo2.preprocessing.preprocessor import Preprocessor
 
 
-class CtsInstanceFilter:
+class CtsInstanceFilter(InstanceFilter):
     """ The instance filter for the CTS sector. """
 
     def __init__(self, ctrl: ControlParameters, general_input: GeneralInput, cts_input: CtsInput,
-                 countries_pp: [CountryPreprocessed], country_if: CountryInstanceFilter):
-        self.ctrl = ctrl
+                 preprocessor: Preprocessor, country_if: CountryInstanceFilter):
+        super().__init__(ctrl, preprocessor)
+
+        self.general_input = general_input
         self.cts_input = cts_input
         self.country_if = country_if
-        self.countries_pp = countries_pp
-        self.general_input = general_input
 
     def get_cts_subsector_names(self) -> [str]:
         """ Get the names of all _subsectors of the cts sector. """
@@ -26,7 +27,7 @@ class CtsInstanceFilter:
 
     def get_specific_consumption(self, country_name) -> SpecConsum:
         """ Get the specific consumption for a country in TWh/thousand employees. """
-        cts_pp: CtsPreprocessed = self.countries_pp[country_name].cts_pp
+        cts_pp: CtsPreprocessed = self.preprocessor.countries_pp[country_name].cts_pp
         ts_specific_consumption = cts_pp.specific_consumption
 
         # get predictions
@@ -74,7 +75,7 @@ class CtsInstanceFilter:
 
     def get_employee_share_of_population_country(self, country_name, subsector_name) -> float:
         """ Get the share of population that is employed in a certain subsector. """
-        cts_pp: CtsPreprocessed = self.countries_pp[country_name].cts_pp
+        cts_pp: CtsPreprocessed = self.preprocessor.countries_pp[country_name].cts_pp
 
         # get target_year form settings
         target_year = self.ctrl.general_settings.target_year
@@ -93,7 +94,7 @@ class CtsInstanceFilter:
 
     def get_employee_share_of_population_nuts2(self, country_name, subsector_name) -> dict[str, float]:
         """ Get the share of population in a nuts2 region that is employed in a certain subsector. """
-        cts_pp: CtsPreprocessed = self.countries_pp[country_name].cts_pp
+        cts_pp: CtsPreprocessed = self.preprocessor.countries_pp[country_name].cts_pp
 
         # get target_year form settings
         target_year = self.ctrl.general_settings.target_year

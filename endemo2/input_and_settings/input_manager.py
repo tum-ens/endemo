@@ -10,6 +10,7 @@ from endemo2.input_and_settings.input_cts import CtsInput
 from endemo2.input_and_settings.input_households import HouseholdsInput
 from endemo2.input_and_settings.input_industry import IndustryInput
 from endemo2.input_and_settings.input_general import GeneralInput
+from endemo2.input_and_settings.input_transport import TransportInput
 
 
 class InputManager:
@@ -37,6 +38,7 @@ class InputManager:
     industry_path = input_path / 'industry'
     cts_path = input_path / 'commercial_trade_and_services'
     hh_path = input_path / 'households'
+    transport_path = input_path / 'transport'
 
     ctrl_path = input_path / 'Set_and_Control_Parameters.xlsx'
 
@@ -64,6 +66,10 @@ class InputManager:
             # read households
             self.hh_input = HouseholdsInput(self.ctrl, InputManager.hh_path)
 
+        if SectorIdentifier.TRANSPORT in active_sectors:
+            # read transport
+            self.transport_input = TransportInput(self.ctrl, InputManager.transport_path)
+
     def update_set_and_control_parameters(self):
         """ Updates Set_and_Control_Parameters.xlsx """
         self.ctrl = InputManager.read_set_and_control_parameters()
@@ -85,4 +91,6 @@ class InputManager:
 
         hh_settings = cp.HouseholdSettings(pd.read_excel(ctrl_ex, sheet_name="HH"))
 
-        return cp.ControlParameters(general_settings, industry_settings, cts_settings, hh_settings)
+        transport_settings = cp.TransportSettings(pd.read_excel(ctrl_ex, sheet_name="TRA"))
+
+        return cp.ControlParameters(general_settings, industry_settings, cts_settings, hh_settings, transport_settings)

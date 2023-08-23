@@ -4,26 +4,40 @@ This module contains all instance filters that relate to the general part of the
 
 import math
 
-from endemo2.data_structures.containers import CA
+from endemo2.data_structures.containers import CA, Datapoint
 from endemo2.data_structures.nuts_tree import NutsRegionLeaf
 from endemo2.data_structures.prediction_models import RigidTimeseries, IntervalForecast, Timeseries
 from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.data_structures.enumerations import SectorIdentifier
+from endemo2.input_and_settings.input_manager import InputManager
 from endemo2.preprocessing.preprocessing_step_one import NUTS2Preprocessed, GDPPreprocessed
 from endemo2.preprocessing.preprocessor import Preprocessor
 from endemo2.input_and_settings.input_general import GeneralInput
 
 
-class CountryInstanceFilter:
+class InstanceFilter:
+    """ 
+    The parent class of all instance filters. 
+    
+    :ivar ControlParameters ctrl: The control parameters object.
+    :ivar Preprocessor preprocessor: The preprocessor object.
+    """
+
+    def __init__(self, ctrl: ControlParameters, preprocessor: Preprocessor):
+        self.ctrl = ctrl
+        self.preprocessor = preprocessor
+        
+
+class CountryInstanceFilter(InstanceFilter):
     """
     This instance filter serves as a filter between the instance settings and the actual calculation of a
     country's demand.
     """
 
     def __init__(self, ctrl: ControlParameters, general_input: GeneralInput, preprocessor: Preprocessor):
-        self.ctrl = ctrl
+        super().__init__(ctrl, preprocessor)
+
         self.general_input = general_input
-        self.preprocessor = preprocessor
 
     def get_country_abbreviations(self, country_name) -> CA:
         """ Getter for the countries abbreviations. """
@@ -95,7 +109,8 @@ class CountryInstanceFilter:
                 # get start point for prediction data -> take last available historical data
                 his_start_year_ts: RigidTimeseries = \
                     historical_nuts2_population_data.get_specific_node(region_name).get()
-                nuts2_last_available_population_data_point: float = his_start_year_ts.get_last_available_data_entry_or_zero()
+                nuts2_last_available_population_data_point: Datapoint = \
+                    his_start_year_ts.get_last_available_data_entry_or_zero()
 
                 # do forecast for nuts2 region
                 nuts2_pop_forecast: IntervalForecast = nuts2_leaf.get()

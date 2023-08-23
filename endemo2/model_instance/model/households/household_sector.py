@@ -19,10 +19,7 @@ class Households(Sector):
     """
 
     def __init__(self, country_name: str, households_instance_filter: HouseholdsInstanceFilter):
-        super().__init__()
-
-        self._hh_if = households_instance_filter
-        self._country_name = country_name
+        super().__init__(country_name, households_instance_filter)
 
         # create subsectors
         subsector_ids = households_instance_filter.get_subsectors()
@@ -60,7 +57,7 @@ class Households(Sector):
         :return: The demand summed over all subsector in this households sector, split by nuts2 regions.
         """
         demand = self.calculate_demand()
-        nuts2_distribution = self._hh_if.get_nuts2_distribution(self._country_name)
+        nuts2_distribution = self._instance_filter.get_nuts2_distribution(self._country_name)
         return uty.multiply_dictionary_with_demand(nuts2_distribution, demand)
 
     def calculate_hourly_demand_efh(self) -> dict[DemandType, [float]]:
@@ -69,8 +66,8 @@ class Households(Sector):
 
         :return: The hourly demand in a list in order by demand type.
         """
-        efh_share = self._hh_if.get_single_household_share()
-        hourly_profile: dict[DemandType, [float]] = self._hh_if.get_load_profile_efh()
+        efh_share = self._instance_filter.get_single_household_share()
+        hourly_profile: dict[DemandType, [float]] = self._instance_filter.get_load_profile_efh()
         demand_efh = self.calculate_demand().copy_scale(efh_share)
 
         res_dict = dict[DemandType, [float]]()
@@ -88,8 +85,8 @@ class Households(Sector):
 
         :return: The hourly demand in a list in order by demand type.
         """
-        mfh_share = 1 - self._hh_if.get_single_household_share()
-        hourly_profile: dict[DemandType, [float]] = self._hh_if.get_load_profile_mfh()
+        mfh_share = 1 - self._instance_filter.get_single_household_share()
+        hourly_profile: dict[DemandType, [float]] = self._instance_filter.get_load_profile_mfh()
         demand_mfh = self.calculate_demand().copy_scale(mfh_share)
 
         res_dict = dict[DemandType, [float]]()

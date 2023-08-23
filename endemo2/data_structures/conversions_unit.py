@@ -13,6 +13,8 @@ class Unit(Enum):
     kWh = 3
     TJ = 4
     GJ = 5
+    liter = 6
+    m3 = 7
 
 
 # holds all scalars that are used for unit conversion
@@ -21,7 +23,8 @@ unit_conversion_scalar_table = {
     (Unit.TJ, Unit.TWh): 1 / 3600,
     (Unit.kWh, Unit.TWh): 1 / 10**9,
     (Unit.TWh, Unit.kWh): 10**9,
-    (Unit.GJ, Unit.TWh): 1 / (3600 * 1000)
+    (Unit.GJ, Unit.TWh): 1 / (3600 * 1000),
+    (Unit.liter, Unit.m3): 1 / 1000
 }
 
 

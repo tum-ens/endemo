@@ -10,7 +10,8 @@ import numpy as np
 import pandas as pd
 
 from endemo2.data_structures.containers import Heat
-from endemo2.data_structures.enumerations import ForecastMethod, SectorIdentifier, DemandType, ScForecastMethod
+from endemo2.data_structures.enumerations import ForecastMethod, SectorIdentifier, DemandType, ScForecastMethod, \
+    TransportModalSplitMethod
 
 ProductSettings = \
     namedtuple("ProductSettings", ("active", "manual_exp_change_rate", "perc_used", "efficiency_improvement"))
@@ -26,11 +27,12 @@ class ControlParameters:
     """
 
     def __init__(self, general_settings: GeneralSettings, industry_settings: IndustrySettings,
-                 cts_settings: CtsSettings, hh_settings: HouseholdSettings):
+                 cts_settings: CtsSettings, hh_settings: HouseholdSettings, transport_settings: TransportSettings):
         self.general_settings = general_settings
         self.industry_settings = industry_settings
         self.cts_settings = cts_settings
         self.hh_settings = hh_settings
+        self.transport_settings = transport_settings
 
 
 class GeneralSettings:
@@ -285,6 +287,17 @@ class HouseholdSettings:
             df_hh[df_hh["Parameter"] == "Predefined ratio of single households"].get("Value").iloc[0]
 
 
+class TransportSettings:
+
+    map_model_split_method_string_to_enum = {
+        ("Historical", "Trend"): TransportModalSplitMethod.HISTORICAL_TIME_TREND,
+        ("Historical", "Constant"): TransportModalSplitMethod.HISTORICAL_CONSTANT,
+        ("User-defined", "Trend"): TransportModalSplitMethod.USER_DEFINED,
+        ("User-defined", "Constant"): TransportModalSplitMethod.USER_DEFINED
+    }
+
+    def __init__(self, df_transport: pd.DataFrame):
+        pass
 
 
 

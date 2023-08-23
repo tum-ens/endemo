@@ -1,12 +1,13 @@
-import endemo2.input_and_settings.input_manager
 from endemo2.data_structures.enumerations import SectorIdentifier
 from endemo2.input_and_settings.control_parameters import ControlParameters
+from endemo2.input_and_settings.input_manager import InputManager
 from endemo2.model_instance.instance_filter.cts_instance_filter import CtsInstanceFilter
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
 from endemo2.model_instance.instance_filter.households_instance_filter import HouseholdsInstanceFilter
 from endemo2.model_instance.instance_filter.industry_instance_filter \
     import IndustryInstanceFilter, ProductInstanceFilter
 from endemo2.input_and_settings import input_general
+from endemo2.model_instance.instance_filter.transport_instance_filter import TransportInstanceFilter
 from endemo2.model_instance.model import country
 from endemo2.output.output_instance import generate_instance_output
 from endemo2.output.output_preprocessing import generate_preprocessing_output
@@ -32,6 +33,7 @@ class Endemo:
         self.product_instance_filter = None
         self.cts_instance_filter = None
         self.hh_instance_filter = None
+        self.transport_instance_filter = None
 
     def execute_with_preprocessing(self):
         """
@@ -39,7 +41,7 @@ class Endemo:
         """
         # read input_and_settings
         print("Reading Input ...")
-        self.input_manager = endemo2.input_and_settings.input_manager.InputManager()
+        self.input_manager = InputManager()
         print("Input was successfully read.")
 
         # do preprocessing
@@ -92,13 +94,19 @@ class Endemo:
 
         if SectorIdentifier.COMMERCIAL_TRADE_SERVICES in active_subsectors:
             cts_input = self.input_manager.cts_input
-            self.cts_instance_filter = CtsInstanceFilter(ctrl, general_input, cts_input, prepro.countries_pp,
+            self.cts_instance_filter = CtsInstanceFilter(ctrl, general_input, cts_input, prepro,
                                                          self.country_instance_filter)
 
         if SectorIdentifier.HOUSEHOLDS in active_subsectors:
             hh_input = self.input_manager.hh_input
-            self.hh_instance_filter = HouseholdsInstanceFilter(ctrl, general_input, hh_input, prepro.countries_pp,
+            self.hh_instance_filter = HouseholdsInstanceFilter(ctrl, general_input, hh_input, prepro,
                                                                self.country_instance_filter)
+
+        if SectorIdentifier.TRANSPORT in active_subsectors:
+            transport_input = self.input_manager.transport_input
+            self.transport_instance_filter = TransportInstanceFilter(ctrl, transport_input, prepro,
+                                                                     self.country_instance_filter,
+                                                                     self.industry_instance_filter)
 
         print("Instance filters were successfully created.")
 

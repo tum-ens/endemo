@@ -18,8 +18,11 @@ hh_subsectors = [
         HouseholdsSubsectorId.SPACE_COOLING,
         HouseholdsSubsectorId.WATER_HEATING,
         HouseholdsSubsectorId.COOKING,
-        HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES
+        HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES,
+        HouseholdsSubsectorId.OTHER
 ]
+
+hh_visible_subsectors = hh_subsectors[:-1]
 
 
 class HouseholdsInput:
@@ -33,7 +36,7 @@ class HouseholdsInput:
     :ivar dict[str, float] hw_dict_hot_water_per_person_per_day: The amount of hot water per person per day in liter
         for each country. Is of form {country_name -> liters}.
     :ivar dict[str, float] hw_dict_hot_water_calibration: The hot water calibration value for each country.
-        Is of form {country_name -> calibration values}.
+        Is of form {country_name -> calibration value}.
     :ivar float hw_specific_capacity: The hot water specific capacity.
     :ivar float hw_outlet_temperature: The hot water outlet temperature.
     :ivar dict[str, float] hw_inlet_temperature: The hot water inlet temperature for each country.
@@ -46,6 +49,8 @@ class HouseholdsInput:
     :ivar HisProg(dict[str, [Datapoint]](), dict[str, [Interval[Datapoint, Datapoint]]]())
         sh_persons_per_household: The datapoints for the persons per household in every year to interpolate between.
         Is of form {country_name -> [start(year, value), end(year, value)]}
+    :ivar dict[str, float] hw_dict_space_heating_calibration: The space heating calibration value for each country.
+        Is of form {country_name -> calibration value}.
     """
 
     hh_input_sheet_names = {
@@ -76,16 +81,17 @@ class HouseholdsInput:
 
         # read input for hot water (hw)
         self.hw_dict_hot_water_per_person_per_day = None   # dict{country_name -> liters}
-        self.hw_dict_hot_water_calibration = None          # dict{country_name -> calibration values}
+        self.hw_dict_hot_water_calibration = None          # dict{country_name -> calibration value}
         self.hw_specific_capacity = None                   # float
         self.hw_outlet_temperature = None                  # float
         self.hw_inlet_temperature = None                   # dict{country_name -> float}
         self.hw_read_hot_water_input(ctrl, hh_path)
 
         # read input for space heating (sh)
-        self.sh_specific_heat = None           # {country_name -> (start_point, change_rate)}
-        self.sh_area_per_household = None      # {country_name -> (start_point, change_rate)}
-        self.sh_persons_per_household = None   # {country_name -> [start(year, value), end(year, value)]}
+        self.sh_specific_heat = None                    # {country_name -> (start_point, change_rate)}
+        self.sh_area_per_household = None               # {country_name -> (start_point, change_rate)}
+        self.sh_persons_per_household = None            # {country_name -> [start(year, value), end(year, value)]}
+        self.sh_dict_space_heating_calibration = None   # {country_name -> calibration value
         self.sh_read_space_heating_input(ctrl, hh_path)
 
         # read load profile
@@ -151,6 +157,7 @@ class HouseholdsInput:
                     self.historical_consumption[country_name][subsector][energy_carrier] = his_data
 
             # merge lighting and appliances with other subsector
+            """
             lighting_id = HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES
             other_id = HouseholdsSubsectorId.OTHER
             dict_lighting_subsector = \
@@ -176,10 +183,11 @@ class HouseholdsInput:
 
             # delete other subsector from dictionary
             del self.historical_consumption[country_name][other_id]
+            """
 
     def hw_read_hot_water_input(self, ctrl: ControlParameters, hh_path: Path):
         """ Reads the input file for hot water in the households sector. """
-        ex_hot_water = pd.ExcelFile(hh_path / "Warm_Water.xlsx")
+        ex_hot_water = pd.ExcelFile(hh_path / "Hot_Water.xlsx")
 
         # read liter per person per day
         df_hot_water = pd.read_excel(ex_hot_water, "WaterPerPers")
@@ -190,7 +198,7 @@ class HouseholdsInput:
             if country_name not in ctrl.general_settings.active_countries:
                 # skip inactive countries or rows without data
                 continue
-            self.hw_dict_hot_water_per_person_per_day[country_name] = float(row["Warm water [liter/d/per]"])
+            self.hw_dict_hot_water_per_person_per_day[country_name] = float(row["Hot water [liter/d/per]"])
 
         # read calibration value
         df_calibration_values = pd.read_excel(ex_hot_water, "Calibration")
@@ -280,5 +288,13 @@ class HouseholdsInput:
                 y2 = float(row[x2])
                 self.sh_persons_per_household.prognosis[country_name].append(
                     Interval(Datapoint(x1, y1), Datapoint(x2, y2)))
+
+        # read calibration value
+        df_calibration_values = pd.read_excel(ex_space_heating, "Calibration")
+
+        self.sh_dict_space_heating_calibration = dict[str, float]()  # country_name -> calibration values
+        for _, row in df_calibration_values.iterrows():
+            country_name = row["Country"]
+            self.sh_dict_space_heating_calibration[country_name] = float(row["Calibration parameter [-]"])
 
 

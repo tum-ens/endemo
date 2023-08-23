@@ -7,32 +7,36 @@ from endemo2.data_structures.prediction_models import Timeseries, Coef
 from endemo2.data_structures.conversions_unit import convert, Unit
 from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.input_and_settings.input_general import GeneralInput
-from endemo2.input_and_settings.input_households import HouseholdsInput, HouseholdsSubsectorId, hh_subsectors
-from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
-from endemo2.preprocessing.preprocessing_step_one import CountryPreprocessed
+from endemo2.input_and_settings.input_households import HouseholdsInput, HouseholdsSubsectorId, hh_subsectors, \
+    hh_visible_subsectors
+from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter, InstanceFilter
+from endemo2.preprocessing.preprocessor import Preprocessor
 
 
-class HouseholdsInstanceFilter:
+class HouseholdsInstanceFilter(InstanceFilter):
     """ The instance filter for the Households sector. """
 
     def __init__(self, ctrl: ControlParameters, general_input: GeneralInput, hh_input: HouseholdsInput,
-                 countries_pp: [CountryPreprocessed], country_if: CountryInstanceFilter):
-        self.ctrl = ctrl
+                 preprocessor: Preprocessor, country_if: CountryInstanceFilter):
+        super().__init__(ctrl, preprocessor)
         self.general_input = general_input
         self.hh_input = hh_input
-        self.countries_pp = countries_pp
         self.country_if = country_if
 
     def get_subsectors(self) -> [HouseholdsSubsectorId]:
         """ Get a list of the Households sector's subsectors. """
-        return hh_subsectors
+        return hh_visible_subsectors
 
     def get_energy_consumption_in_target_year(self, country_name, subsector_id: HouseholdsSubsectorId) \
             -> (float, float, float):
         """ Get the linear time trend forecast for a subsector in a country. """
-        subsector_pp: dict[DemandType, Timeseries] = \
-            self.countries_pp[country_name].households_pp.sectors_pp[subsector_id]
+        if subsector_id is HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES:
+            return self.get_energy_consumption_lighting_and_appliances_in_target_year(country_name)
 
+        subsector_pp: dict[DemandType, Timeseries] = \
+            self.preprocessor.countries_pp[country_name].households_pp.sectors_pp[subsector_id]
+
+        # do forecast
         target_year = self.ctrl.general_settings.target_year
 
         dict_demand = dict[DemandType, float]()
@@ -41,13 +45,51 @@ class HouseholdsInstanceFilter:
             coef.set_method(ForecastMethod.LINEAR)
             dict_demand[demand_type] = coef.get_function_y(target_year)
 
+        # multiply with population; that way the value is not per capita anymore
+        population_in_target_year = self.get_population_in_target_year(country_name)
+
+        for demand_type in [DemandType.ELECTRICITY, DemandType.HEAT, DemandType.HYDROGEN]:
+            dict_demand[demand_type] *= population_in_target_year
+
+        return dict_demand[DemandType.ELECTRICITY], dict_demand[DemandType.HEAT], dict_demand[DemandType.HYDROGEN]
+
+    def get_energy_consumption_lighting_and_appliances_in_target_year(self, country_name) -> (float, float, float):
+        """ Get the linear time trend forecast for the lighting and appliances subsector. This is special. """
+        country_pp = self.preprocessor.countries_pp[country_name]
+        lighting_subsector_pp: dict[DemandType, Timeseries] = \
+            country_pp.households_pp.sectors_pp[HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES]
+        other_subsector_pp: dict[DemandType, Timeseries] = \
+            country_pp.households_pp.sectors_pp[HouseholdsSubsectorId.OTHER]
+
+        # do forecast
+        target_year = self.ctrl.general_settings.target_year
+
+        dict_demand = dict[DemandType, float]()
+        for demand_type, ts_lighting in lighting_subsector_pp.items():
+            ts_other = other_subsector_pp[demand_type]
+
+            coef_other = ts_other.get_coef()
+            coef_lighting = ts_lighting.get_coef()
+
+            coef_other.set_method(ForecastMethod.LINEAR)
+            coef_lighting.set_method(ForecastMethod.LINEAR)
+
+            dict_demand[demand_type] = \
+                coef_lighting.get_function_y(target_year) + coef_other.get_function_y(target_year)
+
+        # multiply with population; that way the value is not per capita anymore
+        population_in_target_year = self.get_population_in_target_year(country_name)
+
+        for demand_type in [DemandType.ELECTRICITY, DemandType.HEAT, DemandType.HYDROGEN]:
+            dict_demand[demand_type] *= population_in_target_year
+
         return dict_demand[DemandType.ELECTRICITY], dict_demand[DemandType.HEAT], dict_demand[DemandType.HYDROGEN]
 
     def get_hot_water_liter_per_capita(self, country_name) -> float:
         """ Get the amount of hot water per person in a year in m^3. """
         hot_water_per_person = self.hh_input.hw_dict_hot_water_per_person_per_day[country_name]
         hot_water_per_person *= 365     # per year
-        hot_water_per_person /= 1000    # liter -> m^3
+        hot_water_per_person = convert(Unit.liter, Unit.m3, hot_water_per_person)    # liter -> m^3
         return hot_water_per_person
 
     def get_hot_water_specific_capacity(self) -> float:
@@ -151,8 +193,8 @@ class HouseholdsInstanceFilter:
         return forecasted_specific_demand
 
     def get_space_heating_calibration_factor(self, country_name) -> float:
-        """ ??? todo"""
-        return self.hh_input.hw_dict_hot_water_calibration[country_name]  # TODO: is this correct?
+        """ Get the calibration factor for space heating. """
+        return self.hh_input.sh_dict_space_heating_calibration[country_name]
 
     def get_nuts2_distribution(self, country_name) -> dict[str, float]:
         """ Get the distribution percentages/100 for the nuts2 regions. """

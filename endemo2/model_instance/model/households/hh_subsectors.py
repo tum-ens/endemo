@@ -127,12 +127,12 @@ class SpaceHeating(HouseholdsSubsector):
         population_in_target_year = self._hh_if.get_population_in_target_year(self._country_name)
         avg_persons_per_household = self._hh_if.get_avg_persons_per_household_in_target_year(self._country_name)
         specific_heat_in_target_year = self._hh_if.get_space_heating_specific_heat_in_target_year(self._country_name)
-        # calibration_factor = self.hh_if.get_space_heating_calibration_factor(self.country_name) todo remove?
+        calibration_factor = self._hh_if.get_space_heating_calibration_factor(self._country_name)
         heat_levels: Heat = self._hh_if.get_heat_levels()
 
         # calculate heat demand
         num_households = population_in_target_year/avg_persons_per_household
-        heat = floor_space_in_target_year * num_households * specific_heat_in_target_year # * calibration_factor
+        heat = floor_space_in_target_year * num_households * specific_heat_in_target_year * calibration_factor
 
         # split in levels
         heat_in_levels = heat_levels.copy_multiply_scalar(heat)

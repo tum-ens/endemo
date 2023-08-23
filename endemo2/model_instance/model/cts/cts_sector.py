@@ -16,10 +16,7 @@ class CommercialTradeServices(Sector):
     """
 
     def __init__(self, country_name: str, cts_instance_filter: CtsInstanceFilter):
-        super().__init__()
-
-        self._country_name = country_name
-        self._cts_if = cts_instance_filter
+        super().__init__(country_name, cts_instance_filter)
 
         # create _subsectors
         subsectors = cts_instance_filter.get_cts_subsector_names()
@@ -95,7 +92,7 @@ class CommercialTradeServices(Sector):
 
         res_dict = dict[str, dict[DemandType, [float]]]()
 
-        for region_name in self._cts_if.get_nuts2_regions(self._country_name):
+        for region_name in self._instance_filter.get_nuts2_regions(self._country_name):
             res_dict[region_name] = dict[DemandType, [float]]()
             res_dict[region_name][DemandType.ELECTRICITY] = list(repeat(0.0, 8760))
             res_dict[region_name][DemandType.HEAT] = list(repeat(Heat(), 8760))
