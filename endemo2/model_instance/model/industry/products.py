@@ -3,6 +3,9 @@ from endemo2.data_structures.enumerations import DemandType
 
 
 class Product:
+    """
+    The class that represents a industry subsector in the model.
+    """
 
     def __init__(self, country_name, product_name, product_instance_filter, is_empty=False):
         self._product_instance_filter = product_instance_filter

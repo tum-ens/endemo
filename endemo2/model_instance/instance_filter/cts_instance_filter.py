@@ -1,6 +1,7 @@
 from endemo2.data_structures.containers import SpecConsum, Heat, Demand
 from endemo2.data_structures.enumerations import DemandType, ScForecastMethod, ForecastMethod
 from endemo2.data_structures.prediction_models import Coef, Timeseries
+from endemo2.data_structures.conversions_unit import Unit, convert, get_conversion_scalar
 from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.input_and_settings.input_cts import CtsInput
 from endemo2.input_and_settings.input_general import GeneralInput
@@ -56,10 +57,10 @@ class CtsInstanceFilter:
 
         specific_consumption = SpecConsum(sc[DemandType.ELECTRICITY], sc[DemandType.HEAT], sc[DemandType.HYDROGEN])
 
-        # efficiency scale fuel todo: should this be done later? reference says no
+        # efficiency scale heat as fuel todo: should this be done later? reference says no
 
-        # convert from GWh/thousand employee to TWh/thousand employee, TODO: make more pretty
-        specific_consumption.scale(1 / 1000)
+        # convert from GWh/thousand employee to TWh/thousand employee
+        specific_consumption.scale(get_conversion_scalar(Unit.GWh, Unit.TWh))
 
         return specific_consumption
 

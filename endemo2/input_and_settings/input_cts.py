@@ -4,7 +4,7 @@ from typing import Any
 import pandas as pd
 
 from endemo2 import utility as uty
-from endemo2.data_structures.containers import Heat
+from endemo2.data_structures.containers import Heat, Datapoint
 from endemo2.data_structures.enumerations import DemandType
 from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.input_and_settings.input_general import Abbreviations
@@ -18,15 +18,15 @@ class CtsInput:
     :param ControlParameters ctrl: The control parameters object.
     :param Path cts_path: The path to the input files for the CTS sector.
 
-    :ivar dict[str, dict[str, [(float, float)] dict_employee_number_country: Contains the number ob employees per
-        subsector for every country. Is of form {country_name -> {subsector -> [(float, float)]}}
-    :ivar dict[str, dict[str, dict[str, [(float, float)]] dict_employee_number_nuts2: Contains the number ob employees
+    :ivar dict[str, dict[str, [Datapoint] dict_employee_number_country: Contains the number ob employees per
+        subsector for every country. Is of form {country_name -> {subsector -> [Datapoint]}}
+    :ivar dict[str, dict[str, dict[str, [Datapoint]] dict_employee_number_nuts2: Contains the number ob employees
         per subsector for every NUTS2 region. Is of form
-        {country_name -> {nuts2_region -> {subsector -> [(float, float)]}}}
-    :ivar dict[str, [(float, float)]] dict_employee_number_country_cts: Contains the number of employees in the whole
+        {country_name -> {nuts2_region -> {subsector -> [Datapoint]}}}
+    :ivar dict[str, [Datapoint]] dict_employee_number_country_cts: Contains the number of employees in the whole
         cts sector.
-    :ivar dict[str, [(float, float)]] energy_carrier_consumption: The historical quantity of energy carrier in
-        subsector. Of form: {country_name -> {energy_carrier -> [(float, float)]}}
+    :ivar dict[str, [Datapoint]] energy_carrier_consumption: The historical quantity of energy carrier in
+        subsector. Of form: {country_name -> {energy_carrier -> [Datapoint]}}
     :ivar dict[DemandType, Any] load_profile: The load profile for the cts sector.
     """
 
@@ -52,7 +52,7 @@ class CtsInput:
         dict_employee_number_nuts2_unstructured = \
             self.read_employee_per_subsector(ctrl, cts_path / "Employee_Nuts2.xlsx", "Employee_per_sector")
         self.dict_employee_number_nuts2 = \
-            dict[str, dict[str, dict[str]]]()  # country_name -> nuts2_region -> subsector -> [(float, float)]
+            dict[str, dict[str, dict[str]]]()  # country_name -> nuts2_region -> subsector -> [Datapoint]
         for region_name, dict_subsec_data in dict_employee_number_nuts2_unstructured.items():
             if region_name[:2] not in Abbreviations.dict_alpha2_en_map.keys():
                 # skip inactive countries
@@ -88,9 +88,9 @@ class CtsInput:
 
     @classmethod
     def read_number_employees_cts(cls, ctrl: ControlParameters, path_to_file: Path, sheet_name: str) \
-            -> dict[str, [(float, float)]]:
+            -> dict[str, [Datapoint]]:
         """
-        Reads employees per subsector from the eurostats input sheets.
+        Reads employees per subsector from the euro-stats input sheets.
 
         :param ctrl: The control Parameters
         :param path_to_file: Path of the file that should be read.
@@ -103,7 +103,7 @@ class CtsInput:
         # skip years
         skip_years_in_df(df_employee_num, ctrl.cts_settings.skip_years)
 
-        dict_employee_number = dict[str, dict[str]]()  # country_name -> subsector -> [(float, float)]
+        dict_employee_number = dict[str, dict[str]]()  # country_name -> subsector -> [Datapoint]
         years = df_employee_num.columns[2:]
         for _, row in df_employee_num.iterrows():
             # only take the GUD lines and skip everything else
@@ -117,7 +117,7 @@ class CtsInput:
 
             # get values over time
             data = row[2:]
-            zipped = list(zip(years, data))
+            zipped = uty.float_lists_to_datapoint_list(years, data)
             his_data = uty.filter_out_nan_and_inf(zipped)
             his_data = uty.cut_after_x(his_data, ctrl.cts_settings.last_available_year - 1)
 
@@ -143,7 +143,7 @@ class CtsInput:
         # skip years
         skip_years_in_df(df_employee_num_per_subsector, ctrl.cts_settings.skip_years)
 
-        dict_employee_number = dict[str, dict[str]]()  # country_name -> subsector -> [(float, float)]
+        dict_employee_number = dict[str, dict[str]]()  # country_name -> subsector -> [Datapoint]
         years = df_employee_num_per_subsector.columns[4:]
         for _, row in df_employee_num_per_subsector.iterrows():
             region_column = "Land" if "Land" in df_employee_num_per_subsector.columns else "NUTS2"
@@ -152,7 +152,7 @@ class CtsInput:
 
             # get values over time
             data = row[4:]
-            zipped = list(zip(years, data))
+            zipped = uty.float_lists_to_datapoint_list(years, data)
             his_data = uty.filter_out_nan_and_inf(zipped)
             his_data = uty.map_data_y(his_data, lambda x: x * 1000)
             his_data = uty.cut_after_x(his_data, ctrl.cts_settings.last_available_year - 1)

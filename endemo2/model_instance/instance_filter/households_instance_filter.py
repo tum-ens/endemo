@@ -1,11 +1,13 @@
+import unittest.util
 import warnings
 
 from endemo2.data_structures.containers import Demand, Heat, Interval
 from endemo2.data_structures.enumerations import DemandType, ForecastMethod
 from endemo2.data_structures.prediction_models import Timeseries, Coef
+from endemo2.data_structures.conversions_unit import convert, Unit
 from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.input_and_settings.input_general import GeneralInput
-from endemo2.input_and_settings.input_households import HouseholdsInput, HouseholdsSubsectorId
+from endemo2.input_and_settings.input_households import HouseholdsInput, HouseholdsSubsectorId, hh_subsectors
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
 from endemo2.preprocessing.preprocessing_step_one import CountryPreprocessed
 
@@ -23,7 +25,7 @@ class HouseholdsInstanceFilter:
 
     def get_subsectors(self) -> [HouseholdsSubsectorId]:
         """ Get a list of the Households sector's subsectors. """
-        return self.hh_input.hh_subsectors
+        return hh_subsectors
 
     def get_energy_consumption_in_target_year(self, country_name, subsector_id: HouseholdsSubsectorId) \
             -> (float, float, float):
@@ -143,8 +145,8 @@ class HouseholdsInstanceFilter:
         # do forecast
         forecasted_specific_demand = forecast_coef.get_function_y(target_year)
 
-        # convert unit kWh -> TWh; todo: more pretty conversion
-        forecasted_specific_demand /= 10 ** 9
+        # convert unit kWh -> TWh
+        forecasted_specific_demand = convert(Unit.kWh, Unit.TWh, forecasted_specific_demand)
 
         return forecasted_specific_demand
 

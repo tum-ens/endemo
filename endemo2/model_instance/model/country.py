@@ -15,7 +15,7 @@ from endemo2.data_structures.enumerations import SectorIdentifier
 
 class Country:
     """
-    The Country connects all sectors_to_do and data from a single country. It is a completely self-contained unit.
+    The Country connects all transport and data from a single country. It is a completely self-contained unit.
 
     :param str country_name: Name of the country.
     :param CountryInstanceFilter country_instance_filter: The instance filter for the country.
@@ -35,7 +35,7 @@ class Country:
         self._country_name = country_name
         self._sectors = dict[SectorIdentifier, Sector]()
 
-        # fill sectors_to_do
+        # fill transport
         active_sectors = country_instance_filter.get_active_sectors()
         if SectorIdentifier.INDUSTRY in active_sectors:
             self._sectors[SectorIdentifier.INDUSTRY] = Industry(country_name, ind_if, prod_if)
@@ -48,17 +48,17 @@ class Country:
 
     def calculate_total_demand(self) -> Demand:
         """
-        Sum the demand over all sectors_to_do of the country.
+        Sum the demand over all transport of the country.
 
-        :return: The demand for a country summed over all sectors_to_do.
+        :return: The demand for a country summed over all transport.
         """
-        # TODO: implement when more sectors_to_do are available. Use the sector parent class to call the same functions
+        # TODO: implement when more sectors available. Use the sector parent class to call the same functions
         #  in a loop.
         pass
 
     def get_sector(self, sector_id: SectorIdentifier) -> Sector:
         """
-        Getter for the sectors_to_do of a country. Accessed by the sectors_to_do' identifier.
+        Getter for the transport of a country. Accessed by the transport' identifier.
 
         :param sector_id: Identifies Sector by enum value from SectorIdentifier.
         :return: The countries_in_group sector corresponding to the sector id.

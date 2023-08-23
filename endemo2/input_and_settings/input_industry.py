@@ -6,7 +6,7 @@ import pandas as pd
 
 from endemo2 import utility as uty
 from endemo2.data_structures import containers as dc
-from endemo2.data_structures.containers import Heat
+from endemo2.data_structures.containers import Heat, Datapoint
 from endemo2.data_structures.enumerations import GroupType, DemandType, SubsectorGroup
 from endemo2.input_and_settings import control_parameters as cp
 from endemo2.input_and_settings.control_parameters import IndustrySettings
@@ -34,11 +34,11 @@ class ProductInput:
     :ivar str front_label: The name of the product.
     :ivar dict[str, containers.SpecConsum] specific_consumption_default: Default specific consumption value for this
         product.
-    :ivar dict[str, (float, float)] specific_consumption_historical: Historical specific consumption data
+    :ivar dict[str, Datapoint] specific_consumption_historical: Historical specific consumption data
         for this product. Accessible per country.
     :ivar dict[str, containers.EH] bat: The best-available-technology consumption for this product.
         Accessible per country.
-    :ivar dict[str, (float, float)] production: The historical amount data for this product. Accessible per country.
+    :ivar dict[str, Datapoint] production: The historical amount data for this product. Accessible per country.
     :ivar Heat heat_levels: How heat demand should be distributed across heat levels for this product.
     :ivar float manual_exp_change_rate: If product amount projection will be calculated exponentially,
         this will be the change rate.
@@ -107,13 +107,13 @@ class ProductInput:
         return dict_prod_sc_country
 
     def read_energy_carrier_consumption_historical(self, industry_path: Path) \
-            -> dict[str, [(float, float)]]:
+            -> dict[str, [Datapoint]]:
         """
         Reads the historical consumption data for this subsector split by energy carriers.
 
         :param industry_path: The path to the industry input folder.
         :return: If present, the historical quantity of energy carrier in subsector.
-            Of form: {country_name -> {energy_carrier -> [(float, float)]}}
+            Of form: {country_name -> {energy_carrier -> [Datapoint]}}
         """
 
         if self.product_name not in IndustryInput.sc_historical_data_file_names.keys():
@@ -123,7 +123,7 @@ class ProductInput:
         return read_energy_carrier_consumption_historical(industry_path, sc_his_file_name)
 
     def read_production_data(self, industry_path: Path, industry_settings: IndustrySettings) \
-            -> dict[str, [(float, float)]]:
+            -> dict[str, [Datapoint]]:
         """
         Reads historical production quantities for this subsector.
 
@@ -136,7 +136,7 @@ class ProductInput:
         retrieve_prod.skip_years(industry_settings.skip_years)
         df_product_his = retrieve_prod.get()
 
-        dict_prod_his = dict[str, [(float, float)]]()
+        dict_prod_his = dict[str, [Datapoint]]()
 
         production_it = pd.DataFrame(df_product_his).itertuples()
         for row in production_it:
@@ -148,7 +148,7 @@ class ProductInput:
                 # country did not product this product at all => skip product for this country
                 # print("skipped " + front_label + " for country " + row.Country)
                 continue
-            zipped = list(zip(years, data))
+            zipped = uty.float_lists_to_datapoint_list(years, data)
             his_data = uty.filter_out_nan_and_inf(zipped)
             his_data = uty.cut_after_x(his_data, industry_settings.last_available_year - 1)
             his_data = uty.map_data_y(his_data, lambda x: x * 1000)  # convert kt to t
@@ -261,12 +261,12 @@ class ProductInput:
 
 class RestSectorInput:
     """
-    A container for the preprocessing data regarding the rest sectors_to_do.
+    A container for the preprocessing data regarding the rest transport.
 
     :param Path industry_path: The path to the industry input folder.
     :param dict[str, dc.Heat] dict_heat_levels: The heat levels.
 
-    :ivar dict[str, dict[DemandType, (float, float)]] rest_demand_proportion_basis_year: Used for the calculation of the rest sector.
+    :ivar dict[str, dict[DemandType, Datapoint]] rest_demand_proportion_basis_year: Used for the calculation of the rest sector.
         It has the following structure: {back_label -> {demand_type -> (rest_sector_percent, demand_2018)}}
     :ivar int rest_calc_basis_year: Year used as a starting point for calculating the rest sector demand.
     :ivar (float, float, float, float) rest_sector_heat_levels: The heat levels used to separate the heat demand in the

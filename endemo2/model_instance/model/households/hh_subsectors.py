@@ -1,6 +1,7 @@
 
 from endemo2.data_structures.containers import Demand, Heat
 from endemo2.data_structures.enumerations import DemandType
+from endemo2.data_structures.conversions_unit import Unit, convert
 from endemo2.input_and_settings.input_households import HouseholdsSubsectorId
 from endemo2.model_instance.instance_filter.households_instance_filter import HouseholdsInstanceFilter
 from endemo2 import utility as uty
@@ -97,7 +98,7 @@ class HotWater(HouseholdsSubsector):
 
         # calculate heat demand
         liter_in_target_year = population_target_year * liter_per_capita
-        delta_temperature = (outlet_temperature - inlet_temperature) / 10**9    # kWh -> TWh todo: prettier
+        delta_temperature = convert(Unit.kWh, Unit.TWh, (outlet_temperature - inlet_temperature))   # kWh -> TWh
         heat = liter_in_target_year * specific_capacity * delta_temperature * calibration_factor
 
         # split in levels
@@ -126,7 +127,7 @@ class SpaceHeating(HouseholdsSubsector):
         population_in_target_year = self._hh_if.get_population_in_target_year(self._country_name)
         avg_persons_per_household = self._hh_if.get_avg_persons_per_household_in_target_year(self._country_name)
         specific_heat_in_target_year = self._hh_if.get_space_heating_specific_heat_in_target_year(self._country_name)
-        # calibration_factor = self.hh_if.get_space_heating_calibration_factor(self.country_name) todo remove
+        # calibration_factor = self.hh_if.get_space_heating_calibration_factor(self.country_name) todo remove?
         heat_levels: Heat = self._hh_if.get_heat_levels()
 
         # calculate heat demand

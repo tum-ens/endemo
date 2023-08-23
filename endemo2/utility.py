@@ -8,8 +8,19 @@ import math
 import pandas as pd
 
 from endemo2.data_structures import prediction_models as pm
-from endemo2.data_structures.containers import Demand
+from endemo2.data_structures.containers import Demand, Datapoint
 from endemo2.data_structures.prediction_models import TwoDseries, Timeseries
+
+
+def float_lists_to_datapoint_list(list1: [float], list2: [float]) -> [Datapoint]:
+    """
+    Converts two lists to a list of data points.
+
+    :param list1: List that will represent the x-axis.
+    :param list2: List that will represent the y-axis.
+    :return: The list of data points gained from zipping the given lists.
+    """
+    return [Datapoint(x, y) for (x, y) in zip(list1, list2)]
 
 
 def multiply_dictionary_with_scalar(dictionary: dict[str, float], scalar: float) -> dict[str, float]:
@@ -103,7 +114,7 @@ def is_zero(xs: [float]) -> bool:
     return True
 
 
-def is_tuple_list_zero(xys: [(float, float)]) -> bool:
+def is_tuple_list_zero(xys: [Datapoint]) -> bool:
     """
     A wrapper for the is_zero function that applies it on a list of tuples, where only the second entries in a tuple
     are checked for being zero.
@@ -154,7 +165,7 @@ def plot_timeseries_regression(dr: pm.TwoDseries, title: str = "", x_label: str 
     plt.show()
 
 
-def apply_all_regressions(data: list[(float, float)]) -> pm.Coef:
+def apply_all_regressions(data: list[Datapoint]) -> pm.Coef:
     """
     Applies all available regression algorithms to given data and returns coefficient object.
 
@@ -180,7 +191,7 @@ def apply_all_regressions(data: list[(float, float)]) -> pm.Coef:
     return result
 
 
-def logarithmic_regression(data: list[(float, float)]) -> (float, float):
+def logarithmic_regression(data: list[Datapoint]) -> (float, float):
     """
     Apply logarithmic regression on data and return the coefficients.
 
@@ -197,7 +208,7 @@ def logarithmic_regression(data: list[(float, float)]) -> (float, float):
     return k0, k1
 
 
-def linear_regression(data: list[(float, float)], visualize: bool = False) -> (float, float):
+def linear_regression(data: list[Datapoint], visualize: bool = False) -> (float, float):
     """
     Apply linear regression on data and return the coefficients.
 
@@ -224,7 +235,7 @@ def linear_regression(data: list[(float, float)], visualize: bool = False) -> (f
     return k0, k1
 
 
-def quadratic_regression(data: list[(float, float)], visualize: bool = False) -> (float, float, float):
+def quadratic_regression(data: list[Datapoint], visualize: bool = False) -> (float, float, float):
     """
     Apply quadratic regression on data and return the coefficients.
 
@@ -254,8 +265,12 @@ def quadratic_regression(data: list[(float, float)], visualize: bool = False) ->
 def quadratic_regression_delta(dict_series: dict[str, pm.TwoDseries]) \
         -> ((float, float, float), dict[str, float]):
     """
-    :param dict data: The data on which linear regression is applied. It should be structured like {tag -> data list}
-    :return: The calculated coefficients (k0, k1, k2) and the offset for each tag {tag -> offset}
+    Applies delta quadratic regression on multiple TwoDseries in a dictionary.
+
+    :param dict_series: The TwoDseries on which the delta quadratic regression should be applied on.
+        It should be structured like {tag -> data list}.
+    :return: The calculated coefficients (k0, k1, k2) and the offset for each tag {tag -> offset}.
+        Is of form {group_coefficients, {tag -> offset}}
     """
     
     N = len(dict_series)
@@ -341,7 +356,7 @@ def quadratic_regression_delta(dict_series: dict[str, pm.TwoDseries]) \
     return (coef[0], coef[1], coef[2]), dict_result_offsets
 
 
-def exp_change(start_point: (float, float), change_rate: float, target_x: float) -> float:
+def exp_change(start_point: Datapoint, change_rate: float, target_x: float) -> float:
     """
     Calculates the result of exponential growth on a start point.
 
@@ -420,7 +435,7 @@ def is_permissible_float(x: str) -> bool:
         return False
 
 
-def filter_out_nan_and_inf(data: [(float, float)]) -> [(float, float)]:
+def filter_out_nan_and_inf(data: [Datapoint]) -> [Datapoint]:
     """
     Filters out all entries in the list of tuples, where one of the values is either Inf or NaN.
 
@@ -428,12 +443,12 @@ def filter_out_nan_and_inf(data: [(float, float)]) -> [(float, float)]:
     :return: The filtered list of tuples
     """
     filter_lambda = \
-        lambda xys: [(float(x), float(y)) for (x, y) in xys if is_permissible_float(x) and is_permissible_float(y)]
+        lambda xys: [Datapoint(float(x), float(y)) for (x, y) in xys if is_permissible_float(x) and is_permissible_float(y)]
     return filter_lambda(data)
 
 
 # zip 2 lists, where they have the same x value. Works only on ascending x values!!
-def _zip_on_x_generator(a: [(float, float)], b: [(float, float)]) -> ((float, float), (float, float)):
+def _zip_on_x_generator(a: [Datapoint], b: [Datapoint]) -> (Datapoint, Datapoint):
     """
     A helper function for combine_data_on_x. This is a generator, that returns one value after another.
     Can be cast to list to apply on whole preprocessing at once and create a list as output of form [(a, b), (a, d)]
@@ -446,20 +461,20 @@ def _zip_on_x_generator(a: [(float, float)], b: [(float, float)]) -> ((float, fl
     while True:
         if i >= len(a) or j >= len(b):
             break
-        elif float(a[i][0]) < float(b[j][0]):
+        elif float(a[i].x) < float(b[j].x):
             i += 1
             continue
-        elif float(a[i][0]) == float(b[j][0]):
-            yield a[i], b[j]
+        elif float(a[i].x) == float(b[j].x):
+            yield Datapoint(a[i], b[j])
             i += 1
             continue
-        elif float(a[i][0]) > float(b[j][0]):
+        elif float(a[i].x) > float(b[j].x):
             j += 1
             continue
 
 
-def zip_data_on_x(xys1: [(float, float)], xys2: [(float, float)], ascending_x=True) \
-        -> [(float, float)]:
+def zip_data_on_x(xys1: [Datapoint], xys2: [Datapoint], ascending_x=True) \
+        -> [Datapoint]:
     """
     Zip the two lists of tuples on the condition that the first tuple entry matches.
 
@@ -474,23 +489,23 @@ def zip_data_on_x(xys1: [(float, float)], xys2: [(float, float)], ascending_x=Tr
     if ascending_x:
         # runtime in O(n)
         zipped = list(_zip_on_x_generator(xys1, xys2))
-        res = list(map(lambda arg: (arg[0][1], arg[1][1]), zipped))
+        res = list(map(lambda arg: Datapoint(arg[0].y, arg[1].y), zipped))
     else:
         # runtime in O(n^2)
         for i in range(0, len(xys1)):
             for j in range(0, len(xys2)):
-                if xys1[i][0] == xys2[j][0]:
-                    res.append((xys1[i][1], xys2[j][1]))
+                if xys1[i].x == xys2[j].x:
+                    res.append(Datapoint(xys1[i].y, xys2[j].y))
     return res
 
 
-def zip_data_on_x_and_map(xys1: [(float, float)], xys2: [(float, float)], function) -> Any:
+def zip_data_on_x_and_map(xys1: [Datapoint], xys2: [Datapoint], function) -> Any:
     """
     Combines two data lists and applies the given function to them.
     x-axis has to be ascending.
 
-    :param [(float, float)] xys1: Data list one.
-    :param [(float, float)] xys2: Data list two.
+    :param [Datapoint] xys1: Data list one.
+    :param [Datapoint] xys2: Data list two.
     :param function: The function that is applied. Should be of form lambda x y1 y2 -> ...
     :return: The result of the applied function.
     """
@@ -498,7 +513,7 @@ def zip_data_on_x_and_map(xys1: [(float, float)], xys2: [(float, float)], functi
     return [function(x1, y1, y2) for ((x1, y1), (x2, y2)) in zipped]
 
 
-def map_data_y(xys: [(float, float)], function) -> [(float, float)]:
+def map_data_y(xys: [Datapoint], function) -> [Datapoint]:
     """
     Applies the given function component-wise on the y-axis of the given data.
 
@@ -506,10 +521,10 @@ def map_data_y(xys: [(float, float)], function) -> [(float, float)]:
     :param function: Function to apply to y-axis. Should be of form lambda x -> ...
     :return: The mapped data.
     """
-    return [(x, function(y)) for (x, y) in xys]
+    return [Datapoint(x, function(y)) for (x, y) in xys]
 
 
-def cut_after_x(data: [(float, float)], last_x: float) -> [(float, float)]:
+def cut_after_x(data: [Datapoint], last_x: float) -> [Datapoint]:
     """
     Cuts the tail of a list, according to first entry of tuple being larger than last_x.
 
@@ -528,19 +543,19 @@ def cut_after_x(data: [(float, float)], last_x: float) -> [(float, float)]:
     return []
 
 
-def convert_table_to_filtered_data_series_per_country(df: pd.DataFrame) -> dict:
+def convert_table_to_filtered_data_series_per_country(df: pd.DataFrame) -> dict[str, [Datapoint]]:
     """
     Create a dictionary from a table.
     A key is the first value in row. The corresponding value is a list [column_name, column_value] for the whole row.
 
     :param df: The dataframe to process
-    :return: The row-oriented dictionary { first_row_entry -> [column_name, column_value]}
+    :return: The row-oriented dictionary { first_row_entry -> [(column_name, column_value)]}
     """
     dict_out = dict()
     it = pd.DataFrame(df).itertuples()
     for row in it:
         country_name = row[1]
-        zipped = list(zip(list(df)[1:], row[2:]))
+        zipped = float_lists_to_datapoint_list(list(df)[1:], row[2:])
         his_data = filter_out_nan_and_inf(zipped)
         dict_out[country_name] = his_data
     return dict_out
@@ -558,8 +573,8 @@ def get_series_range(tss: [TwoDseries]) -> (int, int):
 
     for ts in tss:
         if len(ts.get_data()) > 0:
-            first_year = ts.get_data()[0][0]
-            last_year = ts.get_data()[-1][0]
+            first_year = ts.get_data()[0].x
+            last_year = ts.get_data()[-1].x
             if min_year is None and max_year is None:
                 min_year = first_year
                 max_year = last_year

@@ -20,6 +20,14 @@ endemo2.model\_instance.instance\_filter.general\_instance\_filter module
    :undoc-members:
    :show-inheritance:
 
+endemo2.model\_instance.instance\_filter.households\_instance\_filter module
+----------------------------------------------------------------------------
+
+.. automodule:: endemo2.model_instance.instance_filter.households_instance_filter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 endemo2.model\_instance.instance\_filter.industry\_instance\_filter module
 --------------------------------------------------------------------------
 

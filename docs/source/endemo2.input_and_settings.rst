@@ -28,6 +28,14 @@ endemo2.input\_and\_settings.input\_general module
    :undoc-members:
    :show-inheritance:
 
+endemo2.input\_and\_settings.input\_households module
+-----------------------------------------------------
+
+.. automodule:: endemo2.input_and_settings.input_households
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 endemo2.input\_and\_settings.input\_industry module
 ---------------------------------------------------
 

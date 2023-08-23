@@ -1,11 +1,11 @@
 import itertools
 
-from endemo2.data_structures.containers import Interval, EH
+from endemo2.data_structures.containers import Interval, EH, Datapoint
 from endemo2.data_structures.prediction_models import Timeseries
 
 
 def energy_carrier_to_energy_consumption(efficiency: dict[str, EH],
-                                         dict_ec_his: dict[str, [(float, float)]]) -> (Timeseries, Timeseries):
+                                         dict_ec_his: dict[str, [Datapoint]]) -> (Timeseries, Timeseries):
     """
     Convert the energy carriers to electricity and heat with efficiency and sum them up.
 

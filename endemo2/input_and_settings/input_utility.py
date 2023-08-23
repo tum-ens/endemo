@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from endemo2.data_structures.containers import Datapoint
 from endemo2.input_and_settings.input_general import Abbreviations, GeneralInput
 from endemo2 import utility as uty
 
@@ -14,7 +15,7 @@ def skip_years_in_df(df: pd.DataFrame, skip_years: [int]):
 
 
 def read_energy_carrier_consumption_historical(path: Path, filename: str) \
-        -> dict[str, [(float, float)]]:
+        -> dict[str, [Datapoint]]:
     """
     Reads the historical consumption data split by energy carriers from a nrg_bal file.
 
@@ -22,10 +23,10 @@ def read_energy_carrier_consumption_historical(path: Path, filename: str) \
     :param filename: The filename of the file to read.
 
     :return: If present, the historical quantity of energy carrier in subsector.
-        Of form: {country_name -> {energy_carrier -> [(float, float)]}}
+        Of form: {country_name -> {energy_carrier -> [Datapoint]}}
     """
 
-    dict_sc_his = dict[str, dict[str, [(float, float)]]]()
+    dict_sc_his = dict[str, dict[str, [Datapoint]]]()
 
     ex_sc_his = pd.ExcelFile(path / filename)
 
@@ -44,7 +45,7 @@ def read_energy_carrier_consumption_historical(path: Path, filename: str) \
 
             if not uty.is_zero(data):
                 # data exists -> fill into dictionary
-                zipped = list(zip(years, data))
+                zipped = uty.float_lists_to_datapoint_list(years, data)
                 his_data = uty.filter_out_nan_and_inf(zipped)
                 if country_name_en not in dict_sc_his.keys():
                     dict_sc_his[country_name_en] = dict()

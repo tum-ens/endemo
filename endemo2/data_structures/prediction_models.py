@@ -11,7 +11,7 @@ import statistics as st
 
 import numpy as np
 
-from endemo2.data_structures.containers import Interval
+from endemo2.data_structures.containers import Interval, Datapoint
 from endemo2.data_structures.enumerations import ForecastMethod
 from endemo2 import utility as uty
 from endemo2.data_structures import containers as ctn
@@ -21,7 +21,7 @@ class Coef:
     """
     The container for the coefficients of different forecast methods.
 
-    :ivar ((x0, y0), r) _exp:
+    :ivar (Datapoint, r) _exp:
         (x0, y0) is the start point for the exponential calculation and r is the growth rate.
         Used for calculation y(x) = y0 * (1+r)^(x - x0)
     :ivar (k0, k1) _lin: Used for the calculation f(x) = k0 + k1 * x
@@ -32,13 +32,17 @@ class Coef:
         object. Example: Is used when setting the exponential forecast method for timeseries with only one data point.
     """
     def __init__(self):
-        self._exp: ((float, float), float) = None
+        self._exp: (Datapoint, float) = None
         self._log: (float, float) = None
         self._lin: (float, float) = None
         self._quadr: (float, float, float) = None
         self._offset: Union[float, None] = None
         self._method: Union[ForecastMethod, None] = None
         self._fixed_forecast_method: bool = False
+
+    def get_method(self) -> ForecastMethod:
+        """ Getter for the forecast method attribute. """
+        return self._method
 
     def set_method(self, method: ForecastMethod, fixate=False):
         """
@@ -52,7 +56,7 @@ class Coef:
         if fixate:
             self._fixed_forecast_method = fixate
 
-    def set_exp_start_point(self, start_point: (float, float)):
+    def set_exp_start_point(self, start_point: Datapoint):
         """
         Setter for the exponential start point.
 
@@ -76,7 +80,7 @@ class Coef:
         if self._exp is None:
             self._exp = (None, exp_growth_rate)
 
-    def set_exp(self, start_point: (float, float), exp_growth_rate: float):
+    def set_exp(self, start_point: Datapoint, exp_growth_rate: float):
         """
         Setter for the exponential coefficients.
 
@@ -129,7 +133,7 @@ class Coef:
         :return: The according y-axis value if exponential start point and growth rate is set, otherwise None.
         """
         if self._exp is not None and self._exp[0] is not None:
-            return uty.exp_change((self._exp[0][0], self._exp[0][1]), self._exp[1], target_x)
+            return uty.exp_change(self._exp[0], self._exp[1], target_x)
         else:
             return None
 
@@ -228,7 +232,7 @@ class Coef:
         """
         return self._quadr
 
-    def get_exp(self) -> ((float, float), float):
+    def get_exp(self) -> (Datapoint, float):
         """
         Getter for the exponential coefficient.
 
@@ -253,18 +257,18 @@ class RigidTimeseries:
     :param data: The timeseries data, where the x-axis is Time and the y-axis is some value over time.
         Can contain NaN and Inf values.
 
-    :ivar [(float, float)] _data: The timeseries data, where the x-axis is Time and the y-axis is some value over time.
+    :ivar [Datapoint] _data: The timeseries data, where the x-axis is Time and the y-axis is some value over time.
         Filtered to not contain any NaN or Inf values.
     """
 
-    def __init__(self, data: [(float, float)]):
+    def __init__(self, data: [Datapoint]):
         # clean data before saving; also copies the input_and_settings data
         self._data = uty.filter_out_nan_and_inf(data)
 
     def __str__(self):
         return str(self._data)
 
-    def get_last_available_year(self) -> float:
+    def get_last_available_data_entry_or_zero(self) -> float:
         """ Returns the last data entry in the timeseries data if present, else 0.0. """
         if len(self._data) == 0:
             return 0.0
@@ -291,14 +295,14 @@ class TwoDseries:
     """
     A class representing a data series [(x, y)]. Both axis can be any type of data.
 
-    :param [(float, float)] data: The TwoDseries data, where the x-axis and the y-axis can be any floating point values.
+    :param [Datapoint] data: The TwoDseries data, where the x-axis and the y-axis can be any floating point values.
         Can contain NaN and Inf values.
 
-    :ivar [(float, float)] _data: Where the x-axis is first in tuple and the y-axis is second.
+    :ivar [Datapoint] _data: Where the x-axis is first in tuple and the y-axis is second.
     :ivar Coef coefficients: The coefficients for this data series.
     """
 
-    def __init__(self, data: [(float, float)]):
+    def __init__(self, data: [Datapoint]):
         # clean data before saving; also copies the input_and_settings data
         self._data = uty.filter_out_nan_and_inf(data)
         self.coefficients = None
@@ -347,7 +351,7 @@ class TwoDseries:
         """
         return uty.is_tuple_list_zero(self._data)
 
-    def get_data(self) -> [(float, float)]:
+    def get_data(self) -> [Datapoint]:
         """ Getter for the data attribute. """
         return self._data
 
@@ -376,13 +380,13 @@ class Timeseries(TwoDseries, RigidTimeseries):
     A class strictly representing a value over time. This usage is a class invariant and the class should not be used
     in any other way.
 
-    :param [(float, float)] data: The timeseries data, where the x-axis is Time and the y-axis is some value over time.
+    :param [Datapoint] data: The timeseries data, where the x-axis is Time and the y-axis is some value over time.
         Can contain NaN and Inf values.
 
-    :ivar [(float, float)] _data: Where the x-axis is Time and the y-axis is some value over time.
+    :ivar [Datapoint] _data: Where the x-axis is Time and the y-axis is some value over time.
     """
 
-    def __init__(self, data: [(float, float)]):
+    def __init__(self, data: [Datapoint]):
         super().__init__(data)
 
     @classmethod
@@ -433,7 +437,7 @@ class Timeseries(TwoDseries, RigidTimeseries):
         :return: self
         """
         super().append_others_data(other_ts)
-        self._data.sort(key=lambda data_point: data_point[0])
+        self._data.sort(key=lambda data_point: data_point.x)
         return self
 
     def add(self, other_ts: Timeseries) -> Timeseries:
@@ -455,7 +459,7 @@ class Timeseries(TwoDseries, RigidTimeseries):
                 continue
             y1_nan_to_zero = 0.0 if y1 is np.NaN else y1
             y2_nan_to_zero = 0.0 if y2 is np.NaN else y2
-            added_data.append((x, y1_nan_to_zero + y2_nan_to_zero))
+            added_data.append(Datapoint(x, y1_nan_to_zero + y2_nan_to_zero))
 
         self._data = added_data
         return self
@@ -467,9 +471,9 @@ class Timeseries(TwoDseries, RigidTimeseries):
         :param other_ts: The timeseries, whose data should be divided by.
         :return: A reference to self.
         """
-        others_data_without_zeros = [(x, y) for (x, y) in other_ts._data if y != 0]
+        others_data_without_zeros = [Datapoint(x, y) for (x, y) in other_ts._data if y != 0]
         self._data = uty.zip_data_on_x_and_map(self._data, others_data_without_zeros,
-                                               lambda x, y1, y2: (x, y1 / y2))
+                                               lambda x, y1, y2: Datapoint(x, y1 / y2))
         return self
 
     def scale(self, scalar: float) -> Timeseries:
@@ -479,10 +483,10 @@ class Timeseries(TwoDseries, RigidTimeseries):
         :param scalar: The scalar that should be scaled by.
         :return: A reference to self.
         """
-        self._data = [(x, y * scalar) for (x, y) in self._data]
+        self._data = [Datapoint(x, y * scalar) for (x, y) in self._data]
         return self
 
-    def get_last_data_entry(self) -> (float, float):
+    def get_last_data_entry(self) -> Datapoint:
         """
         Getter for the last available entry in data.
 
@@ -535,13 +539,13 @@ class Timeseries(TwoDseries, RigidTimeseries):
         for year, value in self._data:
             # add zeros before the next year that is in timeseries to fill gaps
             while current_year < year:
-                result.append((current_year, fill_value))
+                result.append(Datapoint(current_year, fill_value))
                 current_year += 1
-            result.append((year, value))
+            result.append(Datapoint(year, value))
             current_year += 1
 
         while current_year <= interval.end:
-            result.append((current_year, fill_value))
+            result.append(Datapoint(current_year, fill_value))
             current_year += 1
 
         self._data = result
@@ -578,7 +582,7 @@ class IntervalForecast:
         # map percentage to its hundredth
         self._interval_changeRate = [(prog[0], prog[1] / 100) for prog in progression_data]
 
-    def get_forecast(self, target_x: float, start_point: (float, float)) -> float:
+    def get_forecast(self, target_x: float, start_point: Datapoint) -> float:
         """
         Get the prognosis of the y-axis value for a target x-axis value from the manual exponential
         interval-growth-rate forecast.
@@ -591,9 +595,9 @@ class IntervalForecast:
         :param target_x: The target x-axis value.
         :return: The predicted y value at x-axis value x.
         """
-        result = start_point[1]
+        result = start_point.y
         for interval_change in self._interval_changeRate:
-            start = max(start_point[0], interval_change[0].start)  # cut off protruding years at start
+            start = max(start_point.x, interval_change[0].start)  # cut off protruding years at start
             end = min(target_x, interval_change[0].end)  # cut off protruding years at end
             exp = max(0, end - start)  # clamp to 0, to ignore certain intervals
             result *= (1 + interval_change[1]) ** exp

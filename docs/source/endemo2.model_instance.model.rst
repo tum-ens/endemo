@@ -8,8 +8,9 @@ Subpackages
    :maxdepth: 4
 
    endemo2.model_instance.model.cts
+   endemo2.model_instance.model.households
    endemo2.model_instance.model.industry
-   endemo2.model_instance.model.sectors_to_do
+   endemo2.model_instance.model.transport
 
 Submodules
 ----------

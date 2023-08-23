@@ -12,6 +12,22 @@ endemo2.data\_structures.containers module
    :undoc-members:
    :show-inheritance:
 
+endemo2.data\_structures.conversions\_string module
+---------------------------------------------------
+
+.. automodule:: endemo2.data_structures.conversions_string
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+endemo2.data\_structures.conversions\_unit module
+-------------------------------------------------
+
+.. automodule:: endemo2.data_structures.conversions_unit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 endemo2.data\_structures.enumerations module
 --------------------------------------------
 

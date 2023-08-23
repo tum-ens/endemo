@@ -4,10 +4,18 @@ endemo2.output package
 Submodules
 ----------
 
-endemo2.output.instance\_output module
+endemo2.output.output\_instance module
 --------------------------------------
 
-.. automodule:: endemo2.output.instance_output
+.. automodule:: endemo2.output.output_instance
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+endemo2.output.output\_preprocessing module
+-------------------------------------------
+
+.. automodule:: endemo2.output.output_preprocessing
    :members:
    :undoc-members:
    :show-inheritance:
@@ -20,18 +28,10 @@ endemo2.output.output\_utility module
    :undoc-members:
    :show-inheritance:
 
-endemo2.output.plot\_utility module
------------------------------------
+endemo2.output.output\_utility\_visual module
+---------------------------------------------
 
-.. automodule:: endemo2.output.plot_utility
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-endemo2.output.preprocessing\_output module
--------------------------------------------
-
-.. automodule:: endemo2.output.preprocessing_output
+.. automodule:: endemo2.output.output_utility_visual
    :members:
    :undoc-members:
    :show-inheritance:

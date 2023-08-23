@@ -5,6 +5,7 @@ import warnings
 
 from endemo2.data_structures.containers import SpecConsum, Heat, EH
 from endemo2.data_structures.enumerations import DemandType, ForecastMethod, SubsectorGroup
+from endemo2.data_structures.conversions_unit import Unit, get_conversion_scalar
 from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
 from endemo2.preprocessing.preprocessing_step_one import ProductPreprocessed, CountryPreprocessed
@@ -176,7 +177,7 @@ class ProductInstanceFilter:
         # specific consumption cannot get better than the best available technology
         specific_consumption.cap_at_bat(self.get_bat(country_name, product_name))
 
-        specific_consumption.scale(1 / 3600000)  # convert from GJ/t to TWh/t, TODO: make more pretty
+        specific_consumption.scale(get_conversion_scalar(Unit.GJ, Unit.TWh))  # convert from GJ/t to TWh/t
         return specific_consumption
 
     def get_bat(self, country_name, product_name) -> EH:
@@ -263,7 +264,7 @@ class ProductInstanceFilter:
     def get_hourly_profile(self, country_name: str, product_name: str) -> dict[DemandType, [float]]:
         """ Getter for the hourly profile of each demand type for a country and a subsector. """
 
-        # certain countries should be substituted for other countries. This is ugly. Please find another solution.
+        # certain countries should be substituted for other countries. This is ugly. Please find another solution. todo
         map_to_different_country = {
             "Switzerland": "Austria",
             "Iceland": "Austria",

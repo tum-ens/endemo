@@ -75,9 +75,21 @@ class StartPoint(Enum):
 
 class SectorIdentifier(Enum):
     """
-    The enum class to quickly discern sectors_to_do.
+    The enum class to quickly discern sectors.
     """
     INDUSTRY = 0
     HOUSEHOLDS = 1
     TRANSPORT = 2
     COMMERCIAL_TRADE_SERVICES = 3
+
+
+class HouseholdsSubsectorId(Enum):
+    """
+    The enum class to quickly recognise the different household sectors.
+    """
+    SPACE_HEATING = 0,
+    SPACE_COOLING = 1,
+    WATER_HEATING = 2,
+    COOKING = 3,
+    LIGHTING_AND_APPLIANCES = 4
+    OTHER = 5

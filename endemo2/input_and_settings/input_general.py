@@ -9,6 +9,7 @@ import pandas as pd
 
 from endemo2 import utility as uty
 from endemo2.data_structures import containers as dc
+from endemo2.data_structures.containers import Datapoint
 from endemo2.input_and_settings import control_parameters as cp
 from endemo2.input_and_settings.control_parameters import ControlParameters
 
@@ -37,7 +38,7 @@ class PopulationInput:
         The sheet containing the prognosis intervals and growth rate for nuts2 regions.
 
     :ivar dict[str, HisProg] country_population: Data for the population of whole countries_in_group.
-        It is of the form historical:{country_name -> [(float, float)]}, prognosis:{country_name -> [(float, float)]}
+        It is of the form historical:{country_name -> [Datapoint]}, prognosis:{country_name -> [Datapoint]}
     :ivar dict[str, [(str, [float, float])]] nuts2_population: Data for the population of NUTS2 regions.
         It is of the form {country_name -> (code -> (historical: [(float,float)], prognosis: [interval, growth rate]))}
     """
@@ -56,7 +57,7 @@ class PopulationInput:
 
         # preprocess nuts2 population historical data
         df_nuts2_pop_his = df_nuts2_pop_his.drop('GEO/TIME', axis=1)
-        dict_nuts2_pop_his = dict[str, dict[str, [(float, float)]]]()
+        dict_nuts2_pop_his = dict[str, dict[str, [Datapoint]]]()
         it = df_nuts2_pop_his.itertuples()
         for row in it:
             region_name = str(row[1]).strip()  # read region code from rows
@@ -67,7 +68,7 @@ class PopulationInput:
             if region_name[-1] == "X":
                 # its a non-region
                 continue
-            zipped = list(zip(list(df_nuts2_pop_his)[1:], row[2:]))
+            zipped = uty.float_lists_to_datapoint_list(list(df_nuts2_pop_his)[1:], row[2:])
             his_data = uty.filter_out_nan_and_inf(zipped)
             abbrev = region_name[:2]
             if abbrev not in dict_nuts2_pop_his.keys():
@@ -117,7 +118,7 @@ class GeneralInput:
     :param Path path: The path to the preprocessing/general folder
 
     :ivar PopulationData population: All data from the population preprocessing.
-    :ivar dict[str, HisProg[[(float, float)], [Interval, float]]] gdp: The gdp for each country.
+    :ivar dict[str, HisProg[[Datapoint], [Interval, float]]] gdp: The gdp for each country.
     :ivar dict[str, ("electricity", "heat")] efficiency: The efficiency for each energy carrier.
     :ivar dict[str, ("electricity", "heat")] efficiency_hh: The efficiency for each energy carrier using the households
         names.
@@ -129,7 +130,7 @@ class GeneralInput:
 
     def __init__(self, ctrl: cp.ControlParameters, path: Path):
         self.abbreviations = dict[str, dc.CA]()
-        self.gdp = dict[str, dc.HisProg[[(float, float)], [dc.Interval, float]]]()
+        self.gdp = dict[str, dc.HisProg[[Datapoint], [dc.Interval, float]]]()
         self.efficiency = dict[str, dc.EH]()
         self.efficiency_hh = dict[str, dc.EH]()
 
@@ -169,7 +170,7 @@ class GeneralInput:
             # read gdp historical
             years = df_gdp_his.columns[3:]
             gdp_data = df_gdp_his[df_gdp_his["Country Code"] == alpha3].iloc[0][3:]
-            zipped = list(zip(years, gdp_data))
+            zipped = uty.float_lists_to_datapoint_list(years, gdp_data)
             gdp_his = uty.filter_out_nan_and_inf(zipped)
 
             # read gdp prognosis

@@ -17,7 +17,7 @@ CA = coll.namedtuple("CA", ["alpha2", "alpha3", "german_name"])     # abbreviati
 HisProg = coll.namedtuple("HisProg", ["historical", "prognosis"])   # container for historical and prognosis data
 Interval = coll.namedtuple("Interval", ["start", "end"])            # representation of an interval
 
-Datapoint = coll.namedtuple("Datapoint", ["x", "y"])    # todo: put everywhere
+Datapoint = coll.namedtuple("Datapoint", ["x", "y"])
 
 
 class SpecConsum:

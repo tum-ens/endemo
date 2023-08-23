@@ -1,11 +1,10 @@
+"""
+This module contains everything one needs to represent NUTS regions as a tree structure.
+The leafs are NUTS2 regions, the root is the 2-letter country code and the in-between-nodes are for navigation.
+"""
 from __future__ import annotations
 
 from typing import Any, Union
-
-"""
-This module contains everything one needs to represent NUTS regions as a tree structure. 
-The leafs are NUTS2 regions, the root is the 2-letter country code and the in-between-nodes are for navigation.
-"""
 
 
 class NutsRegion:

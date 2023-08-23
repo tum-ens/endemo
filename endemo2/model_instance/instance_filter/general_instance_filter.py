@@ -92,9 +92,10 @@ class CountryInstanceFilter:
             for nuts2_leaf in nuts2_leafs:
                 region_name = nuts2_leaf.region_name
 
-                # get start point for prediction data -> take last available historical data; todo: is this correct?
-                his_start_year_ts: RigidTimeseries = historical_nuts2_population_data.get_specific_node(region_name).get()
-                nuts2_last_available_population_data_point: float = his_start_year_ts.get_last_available_year()
+                # get start point for prediction data -> take last available historical data
+                his_start_year_ts: RigidTimeseries = \
+                    historical_nuts2_population_data.get_specific_node(region_name).get()
+                nuts2_last_available_population_data_point: float = his_start_year_ts.get_last_available_data_entry_or_zero()
 
                 # do forecast for nuts2 region
                 nuts2_pop_forecast: IntervalForecast = nuts2_leaf.get()

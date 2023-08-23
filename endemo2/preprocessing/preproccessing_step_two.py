@@ -141,13 +141,13 @@ class GroupManager:
     The group manager is responsible for pre-processing the coefficients for all country groups and providing the
     results. These can be obtained via calling the provided methods.
 
-    :ivar dict[str, set[str]] separate_countries_group: The countries calculated seperately for each product.
+    :ivar dict[str, set[str]] separate_countries_group: The countries calculated separately for each product.
         Is of the form {front_label -> [separate countries]}.
     :ivar dict[str, [CountryGroupJoined]] joined_groups: The dictionary containing all joined groups for a product.
         Is of form {front_label -> [grp1, grp2, ...]}
     :ivar dict[str, [CountryGroupJoinedDiversified]] joined_groups: The dictionary containing all joined_diversified
         groups for a product. Is of form {front_label -> [grp1, grp2, ...]}
-    :ivar dict[str, dict[str, (GroupType, int)]] country_to_group_map: A dictionary that for each products maps a
+    :ivar dict[str, dict[str, (GroupType, int)]] country_to_group_map: A dictionary that for each product maps a
         country name to its group_id and group_type. Is of form {front_label -> back_label -> (group_type, group_id)}
     """
 

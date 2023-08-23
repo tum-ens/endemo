@@ -89,7 +89,7 @@ class GeneralSettings:
 
     def get_active_sectors(self) -> [SectorIdentifier]:
         """
-        :return: The list of sectors_to_do activated for calculation.
+        :return: The list of transport activated for calculation.
         """
         return [sector for (sector, isActive) in self._sectors_active_values.items() if isActive]
 
