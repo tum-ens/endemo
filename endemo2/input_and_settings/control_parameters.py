@@ -275,6 +275,15 @@ class CtsSettings:
 
 
 class HouseholdSettings:
+    """
+    The HouseholdSettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
+    HH sheet.
+
+    :param DataFrame df_hh: The HH sheet of Set_and_Control_Parameters.xlsx
+
+    :ivar Heat heat_levels: How heat should be distributed among different heat levels.
+    :ivar float single_households_share: The percentage/100 of single households.
+    """
     def __init__(self, df_hh: pd.DataFrame):
 
         # read heat levels
@@ -288,6 +297,20 @@ class HouseholdSettings:
 
 
 class TransportSettings:
+    """
+    The TransportSettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
+    TRA sheet.
+
+    :param DataFrame df_transport: The TRA sheet of Set_and_Control_Parameters.xlsx
+
+    :ivar TransportModalSplitMethod split_method: How the demand should be split among modals.
+    :ivar str scenario_selection_final_energy_demand: Scenario selection for final energy demand calculation -
+        electricity and hydrogen vehicles shares based on reference case or user inputs
+    :ivar bool toggle_calculate_rest_subsector: Scenario selection for final energy demand calculation - electricity
+        and hydrogen vehicles shares
+    :ivar int ind_production_reference_year: Freight transport is dependent on industrial production. Reference
+        historical year selection.
+    """
 
     map_model_split_method_string_to_enum = {
         ("Historical", "Trend"): TransportModalSplitMethod.HISTORICAL_TIME_TREND,
@@ -297,11 +320,24 @@ class TransportSettings:
     }
 
     def __init__(self, df_transport: pd.DataFrame):
-        pass
 
+        # read modal split method
+        scenario_selection_modal_split = \
+            df_transport[df_transport["Parameter"] == "Scenario selection for modal split"].get("Value").iloc[0]
+        method_for_modal_split = \
+            df_transport[df_transport["Parameter"] == "Method for modal split"].get("Value").iloc[0]
 
+        self.split_method = TransportSettings.map_model_split_method_string_to_enum[(scenario_selection_modal_split,
+                                                                                    method_for_modal_split)]
 
+        self.scenario_selection_final_energy_demand = \
+            df_transport[df_transport["Parameter"] == "Scenario selection for final energy demand"].get("Value").iloc[0]
 
+        self.toggle_calculate_rest_subsector = \
+            df_transport[df_transport["Parameter"] == "Calculation for rest subsector"].get("Value").iloc[0]
+
+        self.ind_production_reference_year = \
+            df_transport[df_transport["Parameter"] == "Reference year for industrial production"].get("Value").iloc[0]
 
 
 

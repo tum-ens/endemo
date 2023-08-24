@@ -102,3 +102,18 @@ class TransportModalSplitMethod(Enum):
     HISTORICAL_TIME_TREND = 0
     HISTORICAL_CONSTANT = 1
     USER_DEFINED = 2
+
+
+class TransportModal(Enum):
+    """
+    The enum to differentiate different modes of transport or combinations of them.
+    """
+    road = 0
+    car = 1
+    bus = 2
+    rail = 3
+    road_rail = 4
+    ship = 5
+    flight = 6
+    road_rail_ship = 7
+

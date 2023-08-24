@@ -38,7 +38,7 @@ class InputManager:
     industry_path = input_path / 'industry'
     cts_path = input_path / 'commercial_trade_and_services'
     hh_path = input_path / 'households'
-    transport_path = input_path / 'transport'
+    transport_path = input_path / 'traffic'
 
     ctrl_path = input_path / 'Set_and_Control_Parameters.xlsx'
 
