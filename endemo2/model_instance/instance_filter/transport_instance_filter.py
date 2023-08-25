@@ -43,9 +43,13 @@ class TransportInstanceFilter(InstanceFilter):
             modal_shared_historical_value_total.y \
             / self.get_historical_population_in_certain_year(country_name, year_of_historical_value)
 
-        population_in_target_year = self.get_population_in_target_year(country_name)
+        target_year_amount = 0
+        if traffic_type == TrafficType.PERSON:
+            target_year_amount = self.get_population_in_target_year(country_name)
+        elif traffic_type == TrafficType.FREIGHT:
+            target_year_amount = self.transport_input.ind_amount_target_year[country_name]
 
-        return modal_shared_historical_specific * population_in_target_year * modal_share
+        return modal_shared_historical_specific * target_year_amount * modal_share
 
     def get_modal_share_in_target_year(self, country_name, traffic_type: TrafficType, modal_id: TransportModal) \
             -> float:
