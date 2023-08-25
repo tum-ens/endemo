@@ -44,8 +44,8 @@ class ProductInput:
         this will be the change rate.
     :ivar float perc_used: A scalar for the amount of a product.
         This is used to model modern technologies replacing old ones.
-    :ivar dict[str, dict[str, float]]: Installed capacity in %/100 for each NUTS2 Region.
-        Structure {back_label -> {nuts2_region_name -> capacity_value}}
+    :ivar dict[str, dict[str, float]] nuts2_installed_capacity: Installed capacity in %/100 for each NUTS2 Region.
+        Structure {country_name -> {nuts2_region_name -> capacity_value}}
     :ivar dict[str, [[str]]] country_groups: Input from country group file,
         structured as {group_type -> list_of_groups}.
     """
@@ -264,7 +264,7 @@ class RestSectorInput:
     A container for the preprocessing data regarding the rest transport.
 
     :param Path industry_path: The path to the industry input folder.
-    :param dict[str, dc.Heat] dict_heat_levels: The heat levels.
+    :param dict[str, Heat] dict_heat_levels: The heat levels.
 
     :ivar dict[str, dict[DemandType, Datapoint]] rest_demand_proportion_basis_year: Used for the calculation of the rest sector.
         It has the following structure: {back_label -> {demand_type -> (rest_sector_percent, demand_2018)}}
@@ -273,7 +273,7 @@ class RestSectorInput:
         rest sector into the different heat levels.
     """
 
-    def __init__(self, industry_path: Path, dict_heat_levels: dict[str, dc.Heat]):
+    def __init__(self, industry_path: Path, dict_heat_levels: dict[str, Heat]):
         df_rest_calc = pd.read_excel(industry_path / "Ind_energy_demand_2018_Trend_Restcalcul.xlsx")
         self.rest_calc_basis_year = 2018  # change here, if another year should be used for rest sector (also path)
         self.rest_sector_heat_levels = dict_heat_levels["rest"]

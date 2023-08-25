@@ -51,20 +51,23 @@ class FileGenerator(object):
     #        fg.add_entry("Sources", "[1] ...")
     #        ...
 
-    def __init__(self, input_manager, directory, filename):
+    def __init__(self, input_manager, directory, filename, output_path=None):
+
+        if output_path is None:
+            output_path = input_manager.output_path
 
         # generate directory based on date
         day_directory_name = FileGenerator.get_day_directory()
 
         # create directory when not present
         if directory == "":
-            if not os.path.exists(input_manager.output_path):
-                os.makedirs(input_manager.output_path)
-            self.out_file_path = input_manager.output_path / day_directory_name / filename
+            if not os.path.exists(output_path):
+                os.makedirs(output_path)
+            self.out_file_path = output_path / day_directory_name / filename
         else:
-            if not os.path.exists(input_manager.output_path / day_directory_name / directory):
-                os.makedirs(input_manager.output_path / day_directory_name / directory)
-            self.out_file_path = input_manager.output_path / day_directory_name / directory / filename
+            if not os.path.exists(output_path / day_directory_name / directory):
+                os.makedirs(output_path / day_directory_name / directory)
+            self.out_file_path = output_path / day_directory_name / directory / filename
 
         self.input_manager = input_manager
         self.excel_writer = pd.ExcelWriter(self.out_file_path)

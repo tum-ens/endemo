@@ -8,8 +8,9 @@ import math
 import pandas as pd
 
 from endemo2.data_structures import prediction_models as pm
-from endemo2.data_structures.containers import Demand, Datapoint
-from endemo2.data_structures.prediction_models import TwoDseries, Timeseries
+from endemo2.data_structures.containers import Demand, Datapoint, Interval
+from endemo2.data_structures.enumerations import ForecastMethod
+from endemo2.data_structures.prediction_models import TwoDseries, Timeseries, Coef
 
 
 def float_lists_to_datapoint_list(list1: [float], list2: [float]) -> [Datapoint]:
@@ -23,7 +24,7 @@ def float_lists_to_datapoint_list(list1: [float], list2: [float]) -> [Datapoint]
     return [Datapoint(x, y) for (x, y) in zip(list1, list2)]
 
 
-def multiply_dictionary_with_scalar(dictionary: dict[str, float], scalar: float) -> dict[str, float]:
+def multiply_dictionary_with_scalar(dictionary: dict[Any, float], scalar: float) -> dict[Any, float]:
     """
     Multiplies every dictionary entry with value and returns the result
 
@@ -32,7 +33,7 @@ def multiply_dictionary_with_scalar(dictionary: dict[str, float], scalar: float)
     :return: The resulting dictionary.
     """
 
-    res_dict = dict[str, float]()
+    res_dict = dict[Any, float]()
 
     for key, value in dictionary.items():
         res_dict[key] = value * scalar
@@ -588,3 +589,59 @@ def get_series_range(tss: [TwoDseries]) -> (int, int):
     if max_year is None:
         max_year = 0
     return int(min_year), int(max_year)
+
+
+def exponential_interpolation(start: Datapoint, end: Datapoint, interpol_y) -> float:
+    """
+    Interpolate between the given datapoints and return the interpolated value at given y-axis point interpol_y.
+
+    :param start: The left data point.
+    :param end: The right data point.
+    :param interpol_y: The y value at which the interpolated x value should be obtained.
+    :return: The interpolated x value at y value interpol_y.
+    """
+    if start.x == end.x:
+        # interval starts and ends at same value -> interpolated value is start value
+        return start.y
+
+    # unpack supporting points
+    x1, y1 = start
+    x2, y2 = end
+
+    # calculate change_rate for exponential growth interpolation
+    change_rate = 1 - (y2 / max(0.01, y1)) ** (1 / (x2 - x1))
+
+    # forecast
+    forecast_coef = Coef()
+    forecast_coef.set_exp(start, change_rate)
+    forecast_coef.set_method(ForecastMethod.EXPONENTIAL)
+
+    return forecast_coef.get_function_y(interpol_y)
+
+
+def find_interval_between_datapoints(datapoints: [Datapoint], target_y: float) -> Interval[Datapoint, Datapoint]:
+    """
+    Finds the neighboring datapoints for a given target_y in a list of datapoints.
+
+    :param datapoints: The list of datapoints that should be searched for the right interval.
+    :param target_y: The y-axis value for which the enclosing interval should be found.
+    :return: The interval from the datapoint list that encloses the target_y value.
+    """
+    interval = None
+    for (x1, y1), (x2, y2) in zip(datapoints, datapoints[1:]):
+        if target_y < x1 or x2 < target_y:
+            # target year is outside current interval -> skip
+            continue
+        if x1 == target_y:
+            # smaller supporting point is at target year -> directly return
+            return Interval(Datapoint(x1, y1), Datapoint(x1, y1))
+        if x2 == target_y:
+            # larger supporting point is at target year -> directly return
+            return Interval(Datapoint(x2, y2), Datapoint(x2, y2))
+        if x1 < target_y < x2:
+            # found correct interval -> break loop
+            interval = Interval(Datapoint(x1, y1), Datapoint(x2, y2))
+            break
+
+    return interval
+

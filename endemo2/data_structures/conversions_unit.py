@@ -18,6 +18,7 @@ class Unit(Enum):
     Standard = 8
     Million = 9
     Billion = 10
+    kilo = 11
 
 
 # holds all scalars that are used for unit conversion
@@ -30,7 +31,8 @@ unit_conversion_scalar_table = {
     (Unit.liter, Unit.m3): 1 / 1000,
     (Unit.Billion, Unit.Million): 1000,
     (Unit.Standard, Unit.Million): 1/10**6,
-    (Unit.Million, Unit.Standard): 10**6
+    (Unit.Million, Unit.Standard): 10**6,
+    (Unit.kilo, Unit.Million): 1 / 1000
 }
 
 

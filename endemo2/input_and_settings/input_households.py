@@ -6,8 +6,7 @@ import pandas as pd
 
 from endemo2.data_structures.containers import Interval, HisProg, Heat, Datapoint
 from endemo2.data_structures.enumerations import DemandType, HouseholdsSubsectorId
-from endemo2.data_structures.prediction_models import Timeseries
-from endemo2.data_structures.conversions_unit import Unit, unit_conversion_scalar_table, get_conversion_scalar
+from endemo2.data_structures.conversions_unit import Unit, get_conversion_scalar
 from endemo2.input_and_settings.control_parameters import ControlParameters
 
 from endemo2 import utility as uty
@@ -20,6 +19,7 @@ hh_subsectors = [
         HouseholdsSubsectorId.COOKING,
         HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES,
         HouseholdsSubsectorId.OTHER
+
 ]
 
 hh_visible_subsectors = hh_subsectors[:-1]
@@ -46,9 +46,9 @@ class HouseholdsInput:
         for each country. Is of form {country_name -> (start_point, change_rate)}
     :ivar dict[str, (Datapoint, float)] sh_area_per_household: The area per household forecast start point and
         change rate for each country. Is of form {country_name -> (start_point, change_rate)}
-    :ivar HisProg(dict[str, [Datapoint]](), dict[str, [Interval[Datapoint, Datapoint]]]())
-        sh_persons_per_household: The datapoints for the persons per household in every year to interpolate between.
-        Is of form {country_name -> [start(year, value), end(year, value)]}
+    :ivar HisProg(dict[str, [Datapoint]](), dict[str, [Datapoint]]()) sh_persons_per_household:
+        The datapoints for the persons per household in every year to interpolate between.
+        Is of form {country_name -> [(year, value)]}.
     :ivar dict[str, float] hw_dict_space_heating_calibration: The space heating calibration value for each country.
         Is of form {country_name -> calibration value}.
     """
@@ -90,7 +90,7 @@ class HouseholdsInput:
         # read input for space heating (sh)
         self.sh_specific_heat = None                    # {country_name -> (start_point, change_rate)}
         self.sh_area_per_household = None               # {country_name -> (start_point, change_rate)}
-        self.sh_persons_per_household = None            # {country_name -> [start(year, value), end(year, value)]}
+        self.sh_persons_per_household = None            # {country_name -> [Datapoint]}
         self.sh_dict_space_heating_calibration = None   # {country_name -> calibration value
         self.sh_read_space_heating_input(ctrl, hh_path)
 
@@ -155,35 +155,6 @@ class HouseholdsInput:
                         his_data = [(2018, 0.0)]    # assume 0.0 if no data is present in file
 
                     self.historical_consumption[country_name][subsector][energy_carrier] = his_data
-
-            # merge lighting and appliances with other subsector
-            """
-            lighting_id = HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES
-            other_id = HouseholdsSubsectorId.OTHER
-            dict_lighting_subsector = \
-                self.historical_consumption[country_name][lighting_id]
-            dict_other_subsector = self.historical_consumption[country_name][other_id]
-
-            for energy_carrier in HouseholdsInput.hh_energy_carrier_unit_conversion.keys():
-                if energy_carrier in dict_lighting_subsector.keys() and energy_carrier in dict_other_subsector.keys():
-                    # both present -> add them together
-                    ts_lighting = Timeseries(self.historical_consumption[country_name][lighting_id][energy_carrier])
-                    ts_other = Timeseries(self.historical_consumption[country_name][other_id][energy_carrier])
-                    # add data
-                    ts_merged = ts_lighting.add(ts_other)
-                    # save
-                    self.historical_consumption[country_name][lighting_id][energy_carrier] = ts_merged.get_data()
-                elif energy_carrier in dict_other_subsector.keys():
-                    # just take others values if none are present for lighting
-                    self.historical_consumption[country_name][lighting_id][energy_carrier] = \
-                        self.historical_consumption[country_name][other_id][energy_carrier]
-                elif energy_carrier in dict_lighting_subsector.keys():
-                    # other wouldn't add anything -> continue
-                    continue
-
-            # delete other subsector from dictionary
-            del self.historical_consumption[country_name][other_id]
-            """
 
     def hw_read_hot_water_input(self, ctrl: ControlParameters, hh_path: Path):
         """ Reads the input file for hot water in the households sector. """
@@ -261,7 +232,7 @@ class HouseholdsInput:
         df_persons_per_household = pd.read_excel(ex_space_heating, "PersPerHousehold")
 
         self.sh_persons_per_household = HisProg(dict[str, [Datapoint]](),  # historical
-                                                dict[str, [Interval[Datapoint, Datapoint]]]())    # prognosis
+                                                dict[str, [Datapoint]]())    # prognosis
         for _, row in df_persons_per_household.iterrows():
             country_name = row["Country"]
             if country_name not in ctrl.general_settings.active_countries:
@@ -281,13 +252,10 @@ class HouseholdsInput:
             step_size = 10
 
             self.sh_persons_per_household.prognosis[country_name] = []
-            for year in range(first_year_to_read, last_year_to_read, step_size):
-                x1 = year
-                y1 = float(row[x1])
-                x2 = year + step_size
-                y2 = float(row[x2])
-                self.sh_persons_per_household.prognosis[country_name].append(
-                    Interval(Datapoint(x1, y1), Datapoint(x2, y2)))
+            for year in range(first_year_to_read, last_year_to_read + 1, step_size):
+                x = year
+                y = float(row[x])
+                self.sh_persons_per_household.prognosis[country_name].append(Datapoint(x, y))
 
         # read calibration value
         df_calibration_values = pd.read_excel(ex_space_heating, "Calibration")

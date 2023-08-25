@@ -103,6 +103,10 @@ class TransportModalSplitMethod(Enum):
     HISTORICAL_CONSTANT = 1
     USER_DEFINED = 2
 
+class TrafficType(Enum):
+    """ The type of traffic. """
+    PERSON = 0
+    FREIGHT = 1
 
 class TransportModal(Enum):
     """

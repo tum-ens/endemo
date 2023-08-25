@@ -11,6 +11,8 @@ from endemo2.input_and_settings.input_households import HouseholdsInput, Househo
     hh_visible_subsectors
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter, InstanceFilter
 from endemo2.preprocessing.preprocessor import Preprocessor
+from endemo2 import utility as uty
+
 
 
 class HouseholdsInstanceFilter(InstanceFilter):
@@ -143,37 +145,12 @@ class HouseholdsInstanceFilter(InstanceFilter):
         person_per_household_intervals = person_per_household.prognosis[country_name]
 
         # find correct interval
-        interval = None
-        for (x1, y1), (x2, y2) in person_per_household_intervals:
-            if target_year < x1 or x2 < target_year:
-                # target year is outside current interval -> skip
-                continue
-            if x1 == target_year:
-                # smaller supporting point is at target year -> directly return
-                return y1
-            if x2 == target_year:
-                # larger supporting point is at target year -> directly return
-                return y2
-            if x1 < target_year < x2:
-                # found correct interval -> break loop
-                interval = Interval((x1, y1), (x2, y2))
+        interval = uty.find_interval_between_datapoints(person_per_household_intervals, target_year)
 
         if interval is None:
             warnings.warn("Target year not within bounds of the average person per household input.")
 
-        # unpack supporting points
-        x1, y1 = interval.start
-        x2, y2 = interval.end
-
-        # calculate change_rate for exponential growth interpolation
-        change_rate = 1 - (y2 / max(0.01, y1)) ** (1 / (x2 - x1))
-
-        # forecast
-        forecast_coef = Coef()
-        forecast_coef.set_exp(interval.start, change_rate)
-        forecast_coef.set_method(ForecastMethod.EXPONENTIAL)
-
-        return forecast_coef.get_function_y(target_year)
+        return uty.exponential_interpolation(interval.start, interval.end, target_year)
 
     def get_space_heating_specific_heat_in_target_year(self, country_name) -> float:
         """ Get the amount of specific heat for space heating in a given country in TWh. """

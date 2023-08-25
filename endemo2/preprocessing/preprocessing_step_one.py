@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from endemo2.data_structures.nuts_tree import NutsRegionNode, NutsRegionLeaf
 from endemo2.data_structures.containers import EH, HisProg
-from endemo2.data_structures.enumerations import DemandType, SectorIdentifier, TransportModal
+from endemo2.data_structures.enumerations import DemandType, SectorIdentifier, TransportModal, TrafficType
 from endemo2.data_structures.prediction_models import Timeseries, RigidTimeseries, IntervalForecast
 from endemo2.input_and_settings.input_general import GeneralInput, Abbreviations
 from endemo2.input_and_settings.input_households import HouseholdsInput, HouseholdsSubsectorId
@@ -15,35 +15,25 @@ from endemo2.input_and_settings.input_industry import ProductInput
 from endemo2.input_and_settings.input_transport import TransportInput
 from endemo2.preprocessing.preprocessing_utility import energy_carrier_to_energy_consumption
 
-
 class TransportPreprocessed:
     """
     Preprocesses everything of the transport sector.
 
-    :ivar dict[TransportModal, Timeseries] person_modal_split_timeseries: The preprocessed percentages of modal splits
-        for person traffic.
-    :ivar dict[TransportModal, Timeseries] freight_modal_split_timeseries: The preprocessed percentages of modal splits
-        for freight traffic.
+    :ivar dict[TrafficType, dict[TransportModal, Timeseries]] modal_split_timeseries: The preprocessed
+        percentages of modal splits for each traffic type.
     """
     def __init__(self, country_name: str, general_input: GeneralInput, transport_input: TransportInput):
 
-        # preprocess modal split timeseries for people traffic
-        self.person_modal_split_timeseries = dict[TransportModal, Timeseries]()  # {modal_id -> ts}
-        for modal_id, data in transport_input.person_modal_split[country_name].items():
-            ts = Timeseries(data)
-            # preprocess coefficients
-            ts.generate_coef()
-            # save
-            self.person_modal_split_timeseries[modal_id] = ts
-
-        # preprocess modal split timeseries for freight traffic
-        self.freight_modal_split_timeseries = dict[TransportModal, Timeseries]()  # {modal_id -> ts}
-        for modal_id, data in transport_input.freight_modal_split[country_name].items():
-            ts = Timeseries(data)
-            # preprocess coefficients
-            ts.generate_coef()
-            # save
-            self.freight_modal_split_timeseries[modal_id] = ts
+        self.modal_split_timeseries = dict[TrafficType, dict[TransportModal, Timeseries]]()
+        for traffic_type in TransportInput.tra_modal_lists.keys():
+            # preprocess modal split timeseries for given traffic type
+            self.modal_split_timeseries[traffic_type] = dict[TransportModal, Timeseries]()  # {modal_id -> ts}
+            for modal_id, data in transport_input.modal_split_his[traffic_type][country_name].items():
+                ts = Timeseries(data)
+                # preprocess coefficients
+                ts.generate_coef()
+                # save
+                self.modal_split_timeseries[traffic_type][modal_id] = ts
 
 
 class HouseholdsPreprocessed:
