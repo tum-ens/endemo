@@ -39,15 +39,20 @@ class TransportInstanceFilter(InstanceFilter):
 
         year_of_historical_value = modal_shared_historical_value_total.x
 
-        modal_shared_historical_specific = \
-            modal_shared_historical_value_total.y \
-            / self.get_historical_population_in_certain_year(country_name, year_of_historical_value)
-
+        modal_shared_historical_specific = 0
         target_year_amount = 0
         if traffic_type == TrafficType.PERSON:
+            modal_shared_historical_specific = \
+                modal_shared_historical_value_total.y \
+                / self.get_historical_population_in_certain_year(country_name, year_of_historical_value)
             target_year_amount = self.get_population_in_target_year(country_name)
         elif traffic_type == TrafficType.FREIGHT:
-            target_year_amount = self.transport_input.ind_amount_target_year[country_name]
+            reference_year = self.ctrl.transport_settings.ind_production_reference_year
+            reference_amount = self.industry_if.get_product_amount_historical_in_year(country_name, reference_year)
+            target_year = self.ctrl.general_settings.target_year
+            # todo: take forecast instead of historical value here
+            target_year_amount = self.industry_if.get_product_amount_historical_in_year(country_name, target_year)
+            modal_shared_historical_specific = modal_shared_historical_value_total.y / reference_amount
 
         return modal_shared_historical_specific * target_year_amount * modal_share
 
@@ -110,7 +115,7 @@ class TransportInstanceFilter(InstanceFilter):
             coef_modal_share = his_modal_share.get_coef()
             coef_modal_share.set_method(ForecastMethod.LINEAR)
 
-            forecasted_share = coef_modal_share.get_function_y(target_year)
+            forecasted_share = max(0.0, coef_modal_share.get_function_y(target_year))
 
             percentage_sum += forecasted_share
             forecast_dict[modal_id] = forecasted_share

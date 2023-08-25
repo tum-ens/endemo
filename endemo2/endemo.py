@@ -136,5 +136,6 @@ class Endemo:
         print("Writing scenario output...")
         generate_instance_output(self.input_manager, self.countries,
                                  self.country_instance_filter, self.product_instance_filter,
-                                 self.cts_instance_filter, self.hh_instance_filter)
+                                 self.industry_instance_filter,
+                                 self.cts_instance_filter, self.hh_instance_filter, self.transport_instance_filter)
         print("Model output was successfully written.")

@@ -1,6 +1,7 @@
 """
 This module contains all instance filters that relate to the industry sector of the model.
 """
+from __future__ import annotations
 import warnings
 
 from endemo2.data_structures.containers import SpecConsum, Heat, EH
@@ -10,10 +11,9 @@ from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter, InstanceFilter
 from endemo2.preprocessing.preprocessing_step_one import ProductPreprocessed, CountryPreprocessed
 from endemo2.preprocessing.preprocessor import Preprocessor
-from endemo2.data_structures.prediction_models import TwoDseries, Coef
+from endemo2.data_structures.prediction_models import TwoDseries
 from endemo2.input_and_settings.input_general import GeneralInput
 from endemo2.input_and_settings.input_industry import IndustryInput
-
 
 class IndustryInstanceFilter(InstanceFilter):
     """
@@ -29,6 +29,16 @@ class IndustryInstanceFilter(InstanceFilter):
         self.rest_sector_input = industry_input.rest_sector_input
         self.preprocessor = preprocessor
         self.country_instance_filter = country_instance_filter
+
+    def get_product_amount_historical_in_year(self, country_name, year) -> float:
+        """ Get the historical total amount of product quantity in a countries industry in a certain year."""
+        products_pp: dict[str, ProductPreprocessed] = \
+            self.preprocessor.countries_pp[country_name].industry_pp.products_pp
+
+        sum_in_year = 0.0
+        for product_name, product_pp in products_pp.items():
+            sum_in_year += product_pp.amount_vs_year.get_value_at_year_else_zero(year)  # todo: is it zero too often?
+        return sum_in_year
 
     def get_active_products_for_this_country(self, country_name) -> list[str]:
         """ Getter for the active (or produced) products of a country. """

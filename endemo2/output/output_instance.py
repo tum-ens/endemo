@@ -10,10 +10,13 @@ from pathlib import Path
 from endemo2.data_structures.conversions_unit import convert, Unit
 from endemo2.input_and_settings.input_households import HouseholdsSubsectorId
 from endemo2.input_and_settings.input_manager import InputManager
+from endemo2.input_and_settings.input_transport import TransportInput
 from endemo2.model_instance.instance_filter.cts_instance_filter import CtsInstanceFilter
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter
 from endemo2.model_instance.instance_filter.households_instance_filter import HouseholdsInstanceFilter
-from endemo2.model_instance.instance_filter.industry_instance_filter import ProductInstanceFilter
+from endemo2.model_instance.instance_filter.industry_instance_filter import ProductInstanceFilter, \
+    IndustryInstanceFilter
+from endemo2.model_instance.instance_filter.transport_instance_filter import TransportInstanceFilter
 from endemo2.model_instance.model.country import Country
 from endemo2.data_structures.containers import Demand, SpecConsum
 from endemo2.model_instance.model.cts.cts_sector import CommercialTradeServices
@@ -22,8 +25,8 @@ from endemo2.model_instance.model.industry.products import Product
 from endemo2.output.output_utility import FileGenerator, shortcut_demand_table, get_day_folder_path, \
     ensure_directory_exists
 from endemo2.model_instance.model.industry.industry_sector import Industry
-from endemo2.data_structures.enumerations import SectorIdentifier, ForecastMethod, DemandType
-from endemo2.data_structures.conversions_string import map_hh_subsector_to_string
+from endemo2.data_structures.enumerations import SectorIdentifier, ForecastMethod, DemandType, TrafficType
+from endemo2.data_structures.conversions_string import map_hh_subsector_to_string, map_tra_modal_to_string
 
 # toggles to further control which output is written, maybe adapt them into settings later
 IND_HOURLY_DEMAND_DISABLE = False
@@ -37,8 +40,10 @@ TOGGLE_DETAILED_OUTPUT = True
 def generate_instance_output(input_manager: InputManager, countries: dict[str, Country],
                              country_instance_filter: CountryInstanceFilter,
                              product_instance_filter: ProductInstanceFilter,
+                             industry_instance_filter: IndustryInstanceFilter,
                              cts_instance_filter: CtsInstanceFilter,
-                             hh_instance_filter: HouseholdsInstanceFilter):
+                             hh_instance_filter: HouseholdsInstanceFilter,
+                             tra_instance_filter: TransportInstanceFilter):
     """
     Calls all generate_x_output functions of this module that should be used to generate output.
     """
@@ -74,7 +79,6 @@ def generate_instance_output(input_manager: InputManager, countries: dict[str, C
     scenario_folder = ensure_directory_exists(day_folder / scenario_output_folder_name)
     if TOGGLE_DETAILED_OUTPUT:
         details_folder = ensure_directory_exists(scenario_folder / "details")
-    input_output_folder = input_manager.input_output_path
 
     # copy Set_and_Control_Parameters that lead to this instance output to output folder
     shutil.copy(InputManager.ctrl_path, scenario_folder / "Set_and_Control_Parameters.xlsx")
@@ -91,8 +95,6 @@ def generate_instance_output(input_manager: InputManager, countries: dict[str, C
         if TOGGLE_DETAILED_OUTPUT:
             output_gen_population_forecast_details(details_folder, input_manager, countries, country_instance_filter)
     if SectorIdentifier.INDUSTRY in active_sectors:
-        output_ind_product_amount(input_output_folder, input_manager, countries, product_instance_filter)
-
         if not toggle_nuts2:
             output_ind_demand_country(scenario_folder, input_manager, countries)
         if toggle_nuts2:
@@ -102,6 +104,7 @@ def generate_instance_output(input_manager: InputManager, countries: dict[str, C
         if toggle_hourly and toggle_nuts2 and not IND_HOURLY_DEMAND_DISABLE:
             output_ind_demand_hourly_nuts2(scenario_folder, input_manager, countries)
         if TOGGLE_DETAILED_OUTPUT:
+            output_ind_product_amount(details_folder, input_manager, countries, product_instance_filter)
             output_ind_specific_consumption(details_folder, input_manager, countries, product_instance_filter)
     if SectorIdentifier.COMMERCIAL_TRADE_SERVICES in active_sectors:
         if not toggle_nuts2:
@@ -127,6 +130,11 @@ def generate_instance_output(input_manager: InputManager, countries: dict[str, C
         if TOGGLE_DETAILED_OUTPUT:
             output_hh_characteristics(details_folder, input_manager, countries, hh_instance_filter)
             output_hh_subsectors_demand(details_folder, input_manager, countries, hh_instance_filter)
+    if SectorIdentifier.TRANSPORT in active_sectors:
+        if TOGGLE_DETAILED_OUTPUT:
+            output_tra_modal_split(details_folder, input_manager, tra_instance_filter)
+            output_tra_historical_production_volume(details_folder, input_manager, industry_instance_filter,
+                                                    product_instance_filter)
 
 
 def output_gen_gdp(folder: Path, input_manager: InputManager, countries,
@@ -673,3 +681,54 @@ def output_hh_demand_hourly_nuts2(folder: Path, input_manager: InputManager, cou
                 fg.add_complete_column(region_name + ".MFH_Q1", [h.q1 for h in hourly_demand_mfh[DemandType.HEAT]])
                 fg.add_complete_column(region_name + ".MFH_Q2", [h.q2 for h in hourly_demand_mfh[DemandType.HEAT]])
                 fg.add_complete_column(region_name + ".MFH_H2", hourly_demand_mfh[DemandType.HYDROGEN])
+
+
+def output_tra_modal_split(folder: Path, input_manager: InputManager, traffic_if: TransportInstanceFilter):
+    """ The modal split output for the transport sector. """
+
+    filename = "tra_modal_split_" + str(input_manager.ctrl.general_settings.target_year) + ".xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        fg.start_sheet("Pt Modal Split")
+        for country_name in input_manager.ctrl.general_settings.active_countries:
+            fg.add_entry("Country", country_name)
+            for modal_group_id in TransportInput.tra_modal_split_groups[TrafficType.PERSON]:
+                for modal_id in TransportInput.tra_modal_split_groups[TrafficType.PERSON][modal_group_id]:
+                    share = traffic_if.get_modal_share_in_target_year(country_name, TrafficType.PERSON, modal_id)
+                    modal_string = map_tra_modal_to_string[modal_id]
+                    fg.add_entry("pt " + modal_string + " [%]", share * 100)
+
+        fg.start_sheet("Ft Modal Split")
+        for country_name in input_manager.ctrl.general_settings.active_countries:
+            fg.add_entry("Country", country_name)
+            for modal_group_id in TransportInput.tra_modal_split_groups[TrafficType.FREIGHT]:
+                for modal_id in TransportInput.tra_modal_split_groups[TrafficType.FREIGHT][modal_group_id]:
+                    share = traffic_if.get_modal_share_in_target_year(country_name, TrafficType.FREIGHT, modal_id)
+                    modal_string = map_tra_modal_to_string[modal_id]
+                    fg.add_entry("ft " + modal_string + " [%]", share * 100)
+
+def output_tra_historical_production_volume(folder: Path, input_manager: InputManager,
+                                            industry_if: IndustryInstanceFilter, product_if: ProductInstanceFilter):
+    """ Outputs the historical quantities of the industry sector that are used for transport sector calculations. """
+
+    target_year = input_manager.ctrl.general_settings.target_year
+    reference_year = input_manager.ctrl.transport_settings.ind_production_reference_year
+
+    filename = "tra_production_volume.xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        fg.start_sheet("total " + str(target_year))     # todo: take forecast instead of historical value here
+        for country_name in input_manager.ctrl.general_settings.active_countries:
+            fg.add_entry("Country", country_name)
+            amount = industry_if.get_product_amount_historical_in_year(country_name, target_year)
+            fg.add_entry("Amount [kt]", amount / 1000)
+
+        fg.start_sheet("total " + str(reference_year))
+        for country_name in input_manager.ctrl.general_settings.active_countries:
+            fg.add_entry("Country", country_name)
+            amount = industry_if.get_product_amount_historical_in_year(country_name, reference_year)
+            fg.add_entry("Amount [kt]", amount / 1000)
+
+        # todo: single products quantity output
+
+

@@ -51,25 +51,10 @@ class TransportInput:
         }
     }
 
-    def __init__(self, ctrl: ControlParameters, traffic_path: Path, input_generated_path: Path):
+    def __init__(self, ctrl: ControlParameters, traffic_path: Path):
 
         ex_person_traffic = pd.ExcelFile(traffic_path / "Persontraffic.xlsx")
         ex_freight_traffic = pd.ExcelFile(traffic_path / "Freighttraffic.xlsx")
-
-        # read freight rail_road_ship tons from model-generated input
-        ref_year = ctrl.transport_settings.ind_production_reference_year
-        ex_ind_product_amount_ref_year = \
-            pd.ExcelFile(input_generated_path / ("ind_product_amount_forecast_" + str(ref_year) + ".xlsx"))
-
-        # read output of product amount in industry sector
-        ref_year = ctrl.general_settings.target_year
-        df_ind_product_amount_target_year = \
-            pd.read_excel(input_generated_path / ("ind_product_amount_forecast_" + str(ref_year) + ".xlsx"), "IND")
-        self.ind_amount_target_year = dict[str, float]()
-        for _, row in df_ind_product_amount_target_year.iterrows():
-            country_name = row["Country"]
-            amount = row["Amount[kt]"]
-            self.ind_amount_target_year[country_name] = convert(Unit.kilo, Unit.Million, amount)
 
         self.kilometres = dict[TrafficType, dict[str, dict[TransportModal, Datapoint]]]()
         self.modal_split_his = dict()
@@ -110,8 +95,6 @@ class TransportInput:
             pd.read_excel(ex_freight_traffic, sheet_name="Tonnekm_road_rail_ship")
         dict_df_freight_km[TransportModal.flight] = Unit.Standard, "tonne_km", \
             pd.read_excel(ex_freight_traffic, sheet_name="Tonnekm_flight")
-        dict_df_freight_km[TransportModal.road_rail_ship] = Unit.kilo, "Amount [kt]", \
-            pd.read_excel(ex_ind_product_amount_ref_year, sheet_name="IND")
         self.kilometres[TrafficType.FREIGHT] = \
             self.read_specific_km(ctrl, dict_df_freight_km, desired_unit=Unit.Million, reference_year=2018)
 

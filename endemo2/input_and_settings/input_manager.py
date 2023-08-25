@@ -33,7 +33,6 @@ class InputManager:
 
     super_path = Path(os.path.abspath(''))
     input_path = super_path / 'input'
-    input_output_path = super_path / 'input_generated'
     output_path = super_path / 'output'
     general_path = input_path / 'general'
     industry_path = input_path / 'industry'
@@ -70,7 +69,7 @@ class InputManager:
         if SectorIdentifier.TRANSPORT in active_sectors:
             # read transport
             self.transport_input = \
-                TransportInput(self.ctrl, InputManager.transport_path, InputManager.input_output_path)
+                TransportInput(self.ctrl, InputManager.transport_path)
 
     def update_set_and_control_parameters(self):
         """ Updates Set_and_Control_Parameters.xlsx """
