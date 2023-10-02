@@ -166,22 +166,25 @@ class Demand:
     :param float electricity: Amount of electricity demand.
     :param Heat heat: Amount of heat demand.
     :param float hydrogen: Amount of hydrogen demand.
+    :param float fuel: Amount of fuel demand (only transport sector).
 
     :ivar float electricity: Amount of electricity demand.
     :ivar Heat heat: Amount of heat demand.
     :ivar float hydrogen: Amount of hydrogen demand.
+    :ivar float fuel: Amount of fuel demand.
     """
-    def __init__(self, electricity: float = 0, heat: Heat = None, hydrogen: float = 0):
+    def __init__(self, electricity: float = 0, heat: Heat = None, hydrogen: float = 0, fuel: float = 0):
         self.electricity = max(0.0, electricity)
         if heat is None:
             self.heat = Heat()
         else:
             self.heat = heat
         self.hydrogen = max(0.0, hydrogen)
+        self.fuel = max(0.0, fuel)
 
     def __str__(self):
         return "<Demand: " + "electricity: " + str(self.electricity) + ", heat: " + str(self.heat) + ", hydrogen: " + \
-            str(self.hydrogen) + ">"
+            str(self.hydrogen) + ", fuel: " + str(self.fuel) + ">"
 
     def set(self, dt: DemandType, value: Any) -> None:
         """
@@ -200,6 +203,9 @@ class Demand:
             case DemandType.HYDROGEN:
                 assert (isinstance(value, float) or isinstance(value, int))
                 self.hydrogen = value
+            case DemandType.FUEL:
+                assert (isinstance(value, float) or isinstance(value, int))
+                self.fuel = value
 
     def get(self, dt: DemandType) -> Any:
         """
@@ -214,23 +220,28 @@ class Demand:
                 return self.heat
             case DemandType.HYDROGEN:
                 return self.hydrogen
+            case DemandType.FUEL:
+                return self.fuel
 
     def add(self, other: Demand) -> None:
         """ Add the values of "other" demand component-wise to own member variables. """
         self.electricity += other.electricity
         self.heat.mutable_add(other.heat)
         self.hydrogen += other.hydrogen
+        self.fuel += other.fuel
 
     def scale(self, scalar: float) -> None:
         """ Scale member variables component-wise with scalar. """
         self.electricity *= scalar
         self.hydrogen *= scalar
         self.heat.mutable_multiply_scalar(scalar)
+        self.fuel *= scalar
 
     def copy_scale(self, scalar: float) -> Demand:
         """ Create a new Demand object, that is the scaled version of self. """
-        return Demand(self.electricity * scalar, self.heat.copy_multiply_scalar(scalar), self.hydrogen * scalar)
+        return Demand(self.electricity * scalar, self.heat.copy_multiply_scalar(scalar),
+                      self.hydrogen * scalar, self.fuel * scalar)
 
     def get_sum(self) -> float:
         """ Returns energy demand sum. """
-        return self.electricity + self.heat.get_sum() + self.hydrogen
+        return self.electricity + self.heat.get_sum() + self.hydrogen + self.fuel

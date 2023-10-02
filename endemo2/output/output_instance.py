@@ -133,8 +133,8 @@ def generate_instance_output(input_manager: InputManager, countries: dict[str, C
     if SectorIdentifier.TRANSPORT in active_sectors:
         if TOGGLE_DETAILED_OUTPUT:
             output_tra_modal_split(details_folder, input_manager, tra_instance_filter)
-            output_tra_historical_production_volume(details_folder, input_manager, industry_instance_filter,
-                                                    product_instance_filter)
+            output_tra_production_volume(details_folder, input_manager, industry_instance_filter,
+                                         product_instance_filter)
 
 
 def output_gen_gdp(folder: Path, input_manager: InputManager, countries,
@@ -707,8 +707,9 @@ def output_tra_modal_split(folder: Path, input_manager: InputManager, traffic_if
                     modal_string = map_tra_modal_to_string[modal_id]
                     fg.add_entry("ft " + modal_string + " [%]", share * 100)
 
-def output_tra_historical_production_volume(folder: Path, input_manager: InputManager,
-                                            industry_if: IndustryInstanceFilter, product_if: ProductInstanceFilter):
+
+def output_tra_production_volume(folder: Path, input_manager: InputManager,
+                                 industry_if: IndustryInstanceFilter, product_if: ProductInstanceFilter):
     """ Outputs the historical quantities of the industry sector that are used for transport sector calculations. """
 
     target_year = input_manager.ctrl.general_settings.target_year
@@ -717,18 +718,27 @@ def output_tra_historical_production_volume(folder: Path, input_manager: InputMa
     filename = "tra_production_volume.xlsx"
     fg = FileGenerator(input_manager, folder, filename)
     with fg:
-        fg.start_sheet("total " + str(target_year))     # todo: take forecast instead of historical value here
+        fg.start_sheet("total " + str(target_year))
         for country_name in input_manager.ctrl.general_settings.active_countries:
             fg.add_entry("Country", country_name)
-            amount = industry_if.get_product_amount_historical_in_year(country_name, target_year)
-            fg.add_entry("Amount [kt]", amount / 1000)
+            amount = product_if.get_product_amount_sum_in_target_year(country_name)
+            fg.add_entry("Amount [t]", amount)
 
         fg.start_sheet("total " + str(reference_year))
         for country_name in input_manager.ctrl.general_settings.active_countries:
             fg.add_entry("Country", country_name)
             amount = industry_if.get_product_amount_historical_in_year(country_name, reference_year)
-            fg.add_entry("Amount [kt]", amount / 1000)
+            fg.add_entry("Amount [t]", amount)
 
-        # todo: single products quantity output
+        fg.start_sheet("single " + str(reference_year))
+        for country_name in input_manager.ctrl.general_settings.active_countries:
+            fg.add_entry("Country", country_name)
+            for subsector_name in input_manager.ctrl.industry_settings.active_product_names:
+                perc_used = product_if.get_perc_used(subsector_name)
+                amount = product_if.get_historical_amount(country_name, subsector_name, reference_year) * perc_used
+                fg.add_entry(subsector_name + " [t]", amount)
 
 
+def output_traffic_kilometers():
+    """ Outputs the forecast kilometers for each traffic type. """
+    

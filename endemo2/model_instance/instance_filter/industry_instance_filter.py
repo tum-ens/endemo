@@ -11,7 +11,7 @@ from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2.model_instance.instance_filter.general_instance_filter import CountryInstanceFilter, InstanceFilter
 from endemo2.preprocessing.preprocessing_step_one import ProductPreprocessed, CountryPreprocessed
 from endemo2.preprocessing.preprocessor import Preprocessor
-from endemo2.data_structures.prediction_models import TwoDseries
+from endemo2.data_structures.prediction_models import TwoDseries, Coef
 from endemo2.input_and_settings.input_general import GeneralInput
 from endemo2.input_and_settings.input_industry import IndustryInput
 
@@ -213,6 +213,13 @@ class ProductInstanceFilter(InstanceFilter):
         heat_levels = ind_input.dict_product_input[product_name].heat_levels
         return heat_levels
 
+    def get_historical_amount(self, country_name, product_name, year) -> float:
+        """ Get the historical amount of industry subsector production in tons. """
+        country_pp = self.preprocessor.countries_pp[country_name]
+        product_pp = country_pp.industry_pp.products_pp[product_name]
+
+        return product_pp.amount_vs_year.get_value_at_year_else_zero(year)
+
     def get_amount(self, country_name, product_name) -> float:
         """ Get amount of a subsector in a country's industry in t. """
         country_pp = self.preprocessor.countries_pp[country_name]
@@ -303,6 +310,17 @@ class ProductInstanceFilter(InstanceFilter):
     def get_heat_substitution(self) -> dict[DemandType, Heat]:
         """ Getter for the substitution of heat with electricity and hydrogen. """
         return self.ctrl.industry_settings.heat_substitution
+
+    def get_product_amount_sum_in_target_year(self, country_name) -> float:
+        """ Get forecasted product amount in target year. If historically present, use historical. """
+        products_pp: dict[str, ProductPreprocessed] = \
+            self.preprocessor.countries_pp[country_name].industry_pp.products_pp
+
+        sum_in_year = 0.0
+        for product_name, product_pp in products_pp.items():
+            perc_used = self.get_perc_used(product_name)
+            sum_in_year += self.get_amount(country_name, product_name) * perc_used
+        return sum_in_year
 
 
 

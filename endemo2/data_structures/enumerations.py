@@ -64,6 +64,7 @@ class DemandType(Enum):
     ELECTRICITY = 0
     HEAT = 1
     HYDROGEN = 2
+    FUEL = 3
 
 
 class StartPoint(Enum):
@@ -103,10 +104,21 @@ class TransportModalSplitMethod(Enum):
     HISTORICAL_CONSTANT = 1
     USER_DEFINED = 2
 
+
+class TransportFinalEnergyDemandScenario(Enum):
+    """
+    The enum indicating how the final energy demand should be split.
+    Either by the given reference or user defined values.
+    """
+    REFERENCE = 0
+    USER_DEFINED = 1
+
+
 class TrafficType(Enum):
     """ The type of traffic. """
     PERSON = 0
     FREIGHT = 1
+
 
 class TransportModal(Enum):
     """
@@ -120,4 +132,3 @@ class TransportModal(Enum):
     ship = 5
     flight = 6
     road_rail_ship = 7
-

@@ -2,9 +2,10 @@ from pathlib import Path
 
 import pandas as pd
 
-from endemo2.data_structures.containers import Datapoint
+from endemo2.data_structures.containers import Datapoint, Demand
+from endemo2.data_structures.conversions_string import map_tra_modal_to_string
 from endemo2.data_structures.conversions_unit import Unit, convert
-from endemo2.data_structures.enumerations import TransportModal, TrafficType
+from endemo2.data_structures.enumerations import TransportModal, TrafficType, DemandType
 from endemo2.input_and_settings.control_parameters import ControlParameters
 from endemo2 import utility as uty
 
@@ -55,6 +56,8 @@ class TransportInput:
 
         ex_person_traffic = pd.ExcelFile(traffic_path / "Persontraffic.xlsx")
         ex_freight_traffic = pd.ExcelFile(traffic_path / "Freighttraffic.xlsx")
+        ex_person_energy_sources = pd.ExcelFile(traffic_path / "Pt_FinalEnergySources.xlsx")
+        ex_freight_energy_sources = pd.ExcelFile(traffic_path / "Ft_FinalEnergySources.xlsx")
 
         self.kilometres = dict[TrafficType, dict[str, dict[TransportModal, Datapoint]]]()
         self.modal_split_his = dict()
@@ -120,6 +123,87 @@ class TransportInput:
         self.modal_split_user_def[TrafficType.FREIGHT] = \
             self.read_modal_split_sheets(ctrl, dict_df_person_modal_split_user)
 
+        # read transport demand conversion input+
+        self.modal_ukm_energy_consumption = dict[TrafficType, dict[TransportModal, Demand]]()
+        self.demand_split_reference = dict[TrafficType, dict[TransportModal, dict[DemandType, [Datapoint]]]]()
+        self.demand_split_user = dict[TrafficType, dict[TransportModal, dict[DemandType, [Datapoint]]]]()
+
+        # read final energy sources
+        # todo: document from here on out
+        df_energy_per_source_person = pd.read_excel(ex_person_energy_sources, sheet_name="EnergyperSource")
+        df_energy_per_source_freight = pd.read_excel(ex_freight_energy_sources, sheet_name="EnergyperSource")
+
+        self.modal_ukm_energy_consumption[TrafficType.PERSON] = \
+            TransportInput.read_energy_per_source(TrafficType.PERSON, df_energy_per_source_person)
+        self.modal_ukm_energy_consumption[TrafficType.FREIGHT] = \
+            TransportInput.read_energy_per_source(TrafficType.FREIGHT, df_energy_per_source_freight)
+
+        # read percentages
+        self.modal_energy_split_ref = \
+            dict[TrafficType, dict[TransportModal, dict[DemandType, dict[str, [Datapoint]]]]]()
+        self.modal_energy_split_user = \
+            dict[TrafficType, dict[TransportModal, dict[DemandType, dict[str, [Datapoint]]]]]()
+
+        for traffic_type, modals in TransportInput.tra_modal_lists.keys():
+            for modal_id in modals:
+                str_modal = map_tra_modal_to_string[modal_id]
+
+                sheet_name_elec_ref = "elec_" + str_modal + "_ref"
+                sheet_name_elec_user = "elec_" + str_modal + "_user"
+
+                sheet_name_h2_ref = "h2_" + str_modal + "_ref"
+                sheet_name_h2_user = "h2_" + str_modal + "_user"
+
+                ex_energy_sources = None
+                if traffic_type == TrafficType.PERSON:
+                    ex_energy_sources = ex_person_energy_sources
+                elif traffic_type == TrafficType.FREIGHT:
+                    ex_energy_sources = ex_freight_traffic
+
+                df_elec_ref = pd.read_excel(ex_energy_sources, sheet_name=sheet_name_elec_ref)
+                df_elec_user = pd.read_excel(ex_energy_sources, sheet_name=sheet_name_elec_user)
+
+                df_h2_ref = pd.read_excel(ex_energy_sources, sheet_name=sheet_name_h2_ref)
+                df_h2_user = pd.read_excel(ex_energy_sources, sheet_name=sheet_name_h2_user)
+
+                if traffic_type not in self.modal_energy_split_ref.keys():
+                    self.modal_energy_split_ref[traffic_type] = \
+                        dict[TransportModal, dict[DemandType, dict[str, [Datapoint]]]]()
+                if traffic_type not in self.modal_energy_split_user.keys():
+                    self.modal_energy_split_user[traffic_type] = \
+                        dict[TransportModal, dict[DemandType, dict[str, [Datapoint]]]]()
+                if modal_id not in self.modal_energy_split_ref[traffic_type].keys():
+                    self.modal_energy_split_ref[traffic_type][modal_id] = dict[DemandType, dict[str, [Datapoint]]]()
+                if modal_id not in self.modal_energy_split_user[traffic_type].keys():
+                    self.modal_energy_split_user[traffic_type][modal_id] = dict[DemandType, dict[str, [Datapoint]]]()
+
+                self.modal_energy_split_ref[traffic_type][modal_id][DemandType.ELECTRICITY] = \
+                    uty.map_data_y(TransportInput.read_timeline(ctrl, df_elec_ref), lambda x: x/100)
+                self.modal_energy_split_ref[traffic_type][modal_id][DemandType.HYDROGEN] = \
+                    uty.map_data_y(TransportInput.read_timeline(ctrl, df_h2_ref), lambda x: x/100)
+                self.modal_energy_split_user[traffic_type][modal_id][DemandType.ELECTRICITY] = \
+                    uty.map_data_y(TransportInput.read_timeline(ctrl, df_elec_user), lambda x: x/100)
+                self.modal_energy_split_user[traffic_type][modal_id][DemandType.HYDROGEN] = \
+                    uty.map_data_y(TransportInput.read_timeline(ctrl, df_h2_user), lambda x: x/100)
+
+
+    @classmethod
+    def read_timeline(cls, ctrl, df) -> dict[str, [Datapoint]]:
+        dict_res = dict[str, [Datapoint]]()
+
+        for modal_id, df_sheet in df.items():
+            years = df_sheet.columns[1:]
+            for _, row in df_sheet.iterrows():
+                country_name = row["Country"]
+                if country_name not in ctrl.general_settings.active_countries:
+                    # skip inactive countries and invalid entries
+                    continue
+
+                data = row[1:]
+                his_data = uty.float_lists_to_datapoint_list(years, data)
+                dict_res[country_name] = his_data
+
+        return dict_res
 
     @classmethod
     def read_specific_km(cls, ctrl, dict_specific_km: dict[TransportModal, (Unit, pd.DataFrame)], desired_unit: Unit,
@@ -168,5 +252,33 @@ class TransportInput:
                 dict_res[country_name][modal_id] = his_data
 
         return dict_res
+
+    @classmethod
+    def read_energy_per_source(cls, traffic_type, df_energy_per_source) -> dict[TransportModal, Demand]:
+        result = dict[TransportModal, Demand]()
+
+        for modal_id in TransportInput.tra_modal_lists[traffic_type]:
+            str_modal = map_tra_modal_to_string[modal_id]
+            electricity = \
+                df_energy_per_source[
+                    df_energy_per_source[
+                        "Energy consumption kWh/pkm (flight: PJ/pkm)"] == "Electricity"].get(str_modal).iloc[0]
+            hydrogen = \
+                df_energy_per_source[
+                    df_energy_per_source[
+                        "Energy consumption kWh/pkm (flight: PJ/pkm)"] == "Hydrogen"].get(str_modal).iloc[0]
+
+            fuel = df_energy_per_source[
+                df_energy_per_source[
+                    "Energy consumption kWh/pkm (flight: PJ/pkm)"] == "Diesel"].get(str_modal).iloc[0]
+            if modal_id == TransportModal.flight:
+                fuel = df_energy_per_source[
+                    df_energy_per_source[
+                        "Energy consumption kWh/pkm (flight: PJ/pkm)"] == "Kerosine"].get(str_modal).iloc[0]
+                fuel = convert(Unit.PJ, Unit.kWh, fuel)
+
+            result[modal_id] = Demand(electricity=electricity, hydrogen=hydrogen, fuel=fuel)
+
+        return result
 
 

@@ -11,7 +11,7 @@ import pandas as pd
 
 from endemo2.data_structures.containers import Heat
 from endemo2.data_structures.enumerations import ForecastMethod, SectorIdentifier, DemandType, ScForecastMethod, \
-    TransportModalSplitMethod
+    TransportModalSplitMethod, TransportFinalEnergyDemandScenario
 
 ProductSettings = \
     namedtuple("ProductSettings", ("active", "manual_exp_change_rate", "perc_used", "efficiency_improvement"))
@@ -319,6 +319,11 @@ class TransportSettings:
         ("User-defined", "Constant"): TransportModalSplitMethod.USER_DEFINED
     }
 
+    map_final_energy_demand_scenario_to_enum = {
+        "Reference": TransportFinalEnergyDemandScenario.REFERENCE,
+        "User-defined": TransportFinalEnergyDemandScenario.USER_DEFINED
+    }
+
     def __init__(self, df_transport: pd.DataFrame):
 
         # read modal split method
@@ -331,7 +336,9 @@ class TransportSettings:
                                                                                     method_for_modal_split)]
 
         self.scenario_selection_final_energy_demand = \
-            df_transport[df_transport["Parameter"] == "Scenario selection for final energy demand"].get("Value").iloc[0]
+            TransportSettings.map_final_energy_demand_scenario_to_enum[
+                df_transport[
+                    df_transport["Parameter"] == "Scenario selection for final energy demand"].get("Value").iloc[0]]
 
         self.toggle_calculate_rest_subsector = \
             df_transport[df_transport["Parameter"] == "Calculation for rest subsector"].get("Value").iloc[0]

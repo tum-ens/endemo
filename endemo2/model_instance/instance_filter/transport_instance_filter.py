@@ -1,21 +1,45 @@
 from typing import Union
 
-from endemo2.data_structures.enumerations import TransportModal, TransportModalSplitMethod, ForecastMethod, TrafficType
+from endemo2.data_structures.enumerations import TransportModal, TransportModalSplitMethod, ForecastMethod, TrafficType, \
+    TransportFinalEnergyDemandScenario
 from endemo2.input_and_settings.input_transport import TransportInput
 from endemo2.model_instance.instance_filter.general_instance_filter import InstanceFilter, CountryInstanceFilter
-from endemo2.model_instance.instance_filter.industry_instance_filter import IndustryInstanceFilter
+from endemo2.model_instance.instance_filter.industry_instance_filter import IndustryInstanceFilter, \
+    ProductInstanceFilter
 from endemo2.preprocessing.preprocessor import Preprocessor
 from endemo2 import utility as uty
 
 
 class TransportInstanceFilter(InstanceFilter):
     def __init__(self, ctrl, transport_input: TransportInput, preprocessor: Preprocessor,
-                 country_instance_filter: CountryInstanceFilter, industry_instance_filter: IndustryInstanceFilter):
+                 country_instance_filter: CountryInstanceFilter, industry_instance_filter: IndustryInstanceFilter,
+                 product_instance_filter: ProductInstanceFilter):
         super().__init__(ctrl, preprocessor)
 
         self.transport_input = transport_input
         self.country_if = country_instance_filter
         self.industry_if = industry_instance_filter
+        self.product_if = product_instance_filter
+
+    def get_perc_modal_to_demand_type_in_target_year(self, country_name, traffic_type, modal_id, demand_type) -> float:
+        """ Get the percentage of ukm that contribute to a demand type. """
+
+        final_energy_scenario = self.ctrl.transport_settings.scenario_selection_final_energy_demand
+        datapoints = []
+
+        if final_energy_scenario == TransportFinalEnergyDemandScenario.REFERENCE:
+            datapoints = self.transport_input.modal_energy_split_ref[traffic_type, modal_id][demand_type][country_name]
+        elif final_energy_scenario == TransportFinalEnergyDemandScenario.USER_DEFINED:
+            datapoints = self.transport_input.modal_energy_split_user[traffic_type, modal_id][demand_type][country_name]
+
+        target_year = self.ctrl.general_settings.target_year
+
+        (d1, d2) = uty.find_interval_between_datapoints(datapoints, target_year)
+        return uty.exponential_interpolation(d1, d2, target_year)
+
+    def get_modals_for_traffic_type(self, traffic_type) -> [TransportModal]:
+        """ Returns a list of all modals for the given traffic type. """
+        return TransportInput.tra_modal_lists[traffic_type]
 
     def get_population_in_target_year(self, country_name) -> float:
         """ Get the population in target year. """
@@ -49,9 +73,9 @@ class TransportInstanceFilter(InstanceFilter):
         elif traffic_type == TrafficType.FREIGHT:
             reference_year = self.ctrl.transport_settings.ind_production_reference_year
             reference_amount = self.industry_if.get_product_amount_historical_in_year(country_name, reference_year)
-            target_year = self.ctrl.general_settings.target_year
-            # todo: take forecast instead of historical value here
-            target_year_amount = self.industry_if.get_product_amount_historical_in_year(country_name, target_year)
+
+            # take product amount forecast from industry
+            target_year_amount = self.product_if.get_product_amount_sum_in_target_year(country_name)
             modal_shared_historical_specific = modal_shared_historical_value_total.y / reference_amount
 
         return modal_shared_historical_specific * target_year_amount * modal_share
@@ -69,7 +93,7 @@ class TransportInstanceFilter(InstanceFilter):
                     return 1.0
                 modal_share = \
                     self.get_modal_group_percentages_in_target_year(country_name, traffic_type,
-                                                                           modal_group_parent)[modal_id]
+                                                                    modal_group_parent)[modal_id]
                 return modal_share
             case TransportModalSplitMethod.HISTORICAL_CONSTANT:
                 modal_group_parent = self.get_modal_group_parent(traffic_type, modal_id)
@@ -124,4 +148,3 @@ class TransportInstanceFilter(InstanceFilter):
         res_dict = uty.multiply_dictionary_with_scalar(forecast_dict, 1 / percentage_sum)
 
         return res_dict
-

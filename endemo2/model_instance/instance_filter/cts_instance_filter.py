@@ -88,7 +88,8 @@ class CtsInstanceFilter(InstanceFilter):
         # predict
         value_in_2018 = ts_employee_share.get_value_at_year(2018)
         prediction = max(0.0, coef.get_function_y(target_year))  # cannot be smaller than 0
-        prediction = min(prediction, value_in_2018 * 1.15)  # cap it. todo: maybe this can be done better?
+        # prediction = min(prediction, value_in_2018 * 1.15)  # cap it.
+        prediction = min(prediction, 1.0)
 
         return prediction
 
