@@ -144,7 +144,7 @@ class TransportInput:
         self.modal_energy_split_user = \
             dict[TrafficType, dict[TransportModal, dict[DemandType, dict[str, [Datapoint]]]]]()
 
-        for traffic_type, modals in TransportInput.tra_modal_lists.keys():
+        for traffic_type, modals in TransportInput.tra_modal_lists.items():
             for modal_id in modals:
                 str_modal = map_tra_modal_to_string[modal_id]
 
@@ -158,7 +158,7 @@ class TransportInput:
                 if traffic_type == TrafficType.PERSON:
                     ex_energy_sources = ex_person_energy_sources
                 elif traffic_type == TrafficType.FREIGHT:
-                    ex_energy_sources = ex_freight_traffic
+                    ex_energy_sources = ex_freight_energy_sources
 
                 df_elec_ref = pd.read_excel(ex_energy_sources, sheet_name=sheet_name_elec_ref)
                 df_elec_user = pd.read_excel(ex_energy_sources, sheet_name=sheet_name_elec_user)
@@ -178,30 +178,30 @@ class TransportInput:
                     self.modal_energy_split_user[traffic_type][modal_id] = dict[DemandType, dict[str, [Datapoint]]]()
 
                 self.modal_energy_split_ref[traffic_type][modal_id][DemandType.ELECTRICITY] = \
-                    uty.map_data_y(TransportInput.read_timeline(ctrl, df_elec_ref), lambda x: x/100)
+                    TransportInput.read_timeline_perc(ctrl, df_elec_ref)
                 self.modal_energy_split_ref[traffic_type][modal_id][DemandType.HYDROGEN] = \
-                    uty.map_data_y(TransportInput.read_timeline(ctrl, df_h2_ref), lambda x: x/100)
+                    TransportInput.read_timeline_perc(ctrl, df_h2_ref)
                 self.modal_energy_split_user[traffic_type][modal_id][DemandType.ELECTRICITY] = \
-                    uty.map_data_y(TransportInput.read_timeline(ctrl, df_elec_user), lambda x: x/100)
+                    TransportInput.read_timeline_perc(ctrl, df_elec_user)
                 self.modal_energy_split_user[traffic_type][modal_id][DemandType.HYDROGEN] = \
-                    uty.map_data_y(TransportInput.read_timeline(ctrl, df_h2_user), lambda x: x/100)
-
+                    TransportInput.read_timeline_perc(ctrl, df_h2_user)
 
     @classmethod
-    def read_timeline(cls, ctrl, df) -> dict[str, [Datapoint]]:
+    def read_timeline_perc(cls, ctrl, df) -> dict[str, [Datapoint]]:
         dict_res = dict[str, [Datapoint]]()
 
-        for modal_id, df_sheet in df.items():
-            years = df_sheet.columns[1:]
-            for _, row in df_sheet.iterrows():
-                country_name = row["Country"]
-                if country_name not in ctrl.general_settings.active_countries:
-                    # skip inactive countries and invalid entries
-                    continue
+        years = df.columns[1:]
+        for _, row in df.iterrows():
+            country_name = row["Country"]
+            if country_name not in ctrl.general_settings.active_countries:
+                # skip inactive countries and invalid entries
+                continue
 
-                data = row[1:]
-                his_data = uty.float_lists_to_datapoint_list(years, data)
-                dict_res[country_name] = his_data
+            data = row[1:]
+            his_data = uty.float_lists_to_datapoint_list(years, data)
+            his_data = uty.filter_out_nan_and_inf(his_data)
+            his_data = uty.map_data_y(his_data, lambda x: x/100)
+            dict_res[country_name] = his_data
 
         return dict_res
 
@@ -220,13 +220,13 @@ class TransportInput:
                 if reference_year is not None:
                     year = reference_year
                 else:
-                    year = row["year"]
+                    year = int(row["year"])
 
                 pkm = convert(curr_unit, desired_unit, row[value_column])
 
                 if country_name not in dict_res.keys():
                     dict_res[country_name] = dict[TransportModal]()
-                dict_res[country_name][TransportModal.road_rail] = Datapoint(year, pkm)
+                dict_res[country_name][modal_id] = Datapoint(year, pkm)
 
         return dict_res
 
@@ -257,24 +257,30 @@ class TransportInput:
     def read_energy_per_source(cls, traffic_type, df_energy_per_source) -> dict[TransportModal, Demand]:
         result = dict[TransportModal, Demand]()
 
+        str_energy_consumption_column_name = ""
+        if traffic_type == TrafficType.PERSON:
+            str_energy_consumption_column_name = "Energy consumption kWh/pkm (flight: PJ/pkm)"
+        elif traffic_type == TrafficType.FREIGHT:
+            str_energy_consumption_column_name = "Energy consumption MJ/tkm"
+
         for modal_id in TransportInput.tra_modal_lists[traffic_type]:
             str_modal = map_tra_modal_to_string[modal_id]
             electricity = \
                 df_energy_per_source[
                     df_energy_per_source[
-                        "Energy consumption kWh/pkm (flight: PJ/pkm)"] == "Electricity"].get(str_modal).iloc[0]
+                        str_energy_consumption_column_name] == "Electricity"].get(str_modal).iloc[0]
             hydrogen = \
                 df_energy_per_source[
                     df_energy_per_source[
-                        "Energy consumption kWh/pkm (flight: PJ/pkm)"] == "Hydrogen"].get(str_modal).iloc[0]
+                        str_energy_consumption_column_name] == "Hydrogen"].get(str_modal).iloc[0]
 
             fuel = df_energy_per_source[
                 df_energy_per_source[
-                    "Energy consumption kWh/pkm (flight: PJ/pkm)"] == "Diesel"].get(str_modal).iloc[0]
+                    str_energy_consumption_column_name] == "Diesel"].get(str_modal).iloc[0]
             if modal_id == TransportModal.flight:
                 fuel = df_energy_per_source[
                     df_energy_per_source[
-                        "Energy consumption kWh/pkm (flight: PJ/pkm)"] == "Kerosine"].get(str_modal).iloc[0]
+                        str_energy_consumption_column_name] == "Kerosine"].get(str_modal).iloc[0]
                 fuel = convert(Unit.PJ, Unit.kWh, fuel)
 
             result[modal_id] = Demand(electricity=electricity, hydrogen=hydrogen, fuel=fuel)

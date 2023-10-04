@@ -1,5 +1,5 @@
 from endemo2.data_structures.containers import Demand
-from endemo2.data_structures.enumerations import TrafficType, TransportModal
+from endemo2.data_structures.enumerations import TrafficType, TransportModal, DemandType
 from endemo2.model_instance.instance_filter.transport_instance_filter import TransportInstanceFilter
 from endemo2.model_instance.model.sector import Sector
 
@@ -31,9 +31,21 @@ class Transport(Sector):
         # iterate through all modals
         for modal_id in self._transport_if.get_modals_for_traffic_type(traffic_type):
             ukm_modal = self._transport_if.get_unit_km_in_target_year(self._country_name, traffic_type, modal_id)
-            # todo: calculate demand from ukm per modal in traffic type
-            demand: Demand = None
-            result[modal_id] = demand
+
+            elec_perc = \
+                self._transport_if.get_perc_modal_to_demand_type_in_target_year(self._country_name, traffic_type,
+                                                                                modal_id, DemandType.ELECTRICITY)
+            hydrogen_perc = \
+                self._transport_if.get_perc_modal_to_demand_type_in_target_year(self._country_name, traffic_type,
+                                                                                modal_id, DemandType.HYDROGEN)
+            fuel_perc = 1.0 - elec_perc - hydrogen_perc
+
+            demand_type_perc = Demand(electricity=elec_perc, hydrogen=hydrogen_perc, fuel=fuel_perc)
+            ukm_per_demand_type = demand_type_perc.copy_scale(ukm_modal)
+
+            energy_consumption: Demand = self._transport_if.get_energy_consumption_of_modal(traffic_type, modal_id)
+
+            result[modal_id] = ukm_per_demand_type.copy_multiply(energy_consumption)
 
         return result
 

@@ -30,16 +30,6 @@ class IndustryInstanceFilter(InstanceFilter):
         self.preprocessor = preprocessor
         self.country_instance_filter = country_instance_filter
 
-    def get_product_amount_historical_in_year(self, country_name, year) -> float:
-        """ Get the historical total amount of product quantity in a countries industry in a certain year."""
-        products_pp: dict[str, ProductPreprocessed] = \
-            self.preprocessor.countries_pp[country_name].industry_pp.products_pp
-
-        sum_in_year = 0.0
-        for product_name, product_pp in products_pp.items():
-            sum_in_year += product_pp.amount_vs_year.get_value_at_year_else_zero(year)  # todo: is it zero too often?
-        return sum_in_year
-
     def get_active_products_for_this_country(self, country_name) -> list[str]:
         """ Getter for the active (or produced) products of a country. """
         dict_product_input = self.industry_input.dict_product_input
@@ -234,10 +224,9 @@ class ProductInstanceFilter(InstanceFilter):
         use_gdp = ind_s.use_gdp_as_x
 
         # if country in group -> use group coefficients
-        if not group_manager.is_in_separate_group(country_name, product_name):
+        if not group_manager.is_in_separate_group(country_name, product_name) \
+                and ind_s.forecast_method is ForecastMethod.QUADRATIC:
             coef_obj = group_manager.get_coef_for_country_and_product(country_name, product_name)
-            if ind_s.forecast_method is not ForecastMethod.QUADRATIC:
-                warnings.warn("what happens in this case?")
         else:
             # country not in group -> calculate separately
             active_TwoDSeries: TwoDseries
@@ -322,5 +311,16 @@ class ProductInstanceFilter(InstanceFilter):
             sum_in_year += self.get_amount(country_name, product_name) * perc_used
         return sum_in_year
 
+    def get_product_amount_historical_in_year(self, country_name, year) -> float:
+        """ Get the historical total amount of product quantity in a countries industry in a certain year."""
+        products_pp: dict[str, ProductPreprocessed] = \
+            self.preprocessor.countries_pp[country_name].industry_pp.products_pp
+
+        sum_in_year = 0.0
+        for product_name, product_pp in products_pp.items():
+            perc_used = self.get_perc_used(product_name)
+            amount_in_year = product_pp.amount_vs_year.get_value_at_year_else_zero(year)
+            sum_in_year += amount_in_year * perc_used
+        return sum_in_year
 
 

@@ -21,17 +21,17 @@ production_per_land_his_steel = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nach
 
 production_per_land_his_amm = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic', "ProduktionsmengeGüterverkehr.xlsx",'Ammonium')
 
-# production_per_land_his_alu = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo2\preprocessing\traffic', 'ProduktionsmengeGüterverkehr_2050.xlsx','Aluminium')
+# production_per_land_his_alu = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic', 'ProduktionsmengeGüterverkehr_2050.xlsx','Aluminium')
 
-# production_per_land_his_cem = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo2\preprocessing\traffic', "ProduktionsmengeGüterverkehr_2050.xlsx",'Cement')
+# production_per_land_his_cem = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic', "ProduktionsmengeGüterverkehr_2050.xlsx",'Cement')
 
-# production_per_land_his_glas = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo2\preprocessing\traffic', "ProduktionsmengeGüterverkehr_2050.xlsx",'Glas')
+# production_per_land_his_glas = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic', "ProduktionsmengeGüterverkehr_2050.xlsx",'Glas')
 
-# production_per_land_his_pa = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo2\preprocessing\traffic', "ProduktionsmengeGüterverkehr_2050.xlsx",'Paper')
+# production_per_land_his_pa = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic', "ProduktionsmengeGüterverkehr_2050.xlsx",'Paper')
 
-# production_per_land_his_steel = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo2\preprocessing\traffic', "ProduktionsmengeGüterverkehr_2050.xlsx",'Steel')
+# production_per_land_his_steel = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic', "ProduktionsmengeGüterverkehr_2050.xlsx",'Steel')
 
-# production_per_land_his_amm = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo2\preprocessing\traffic', "ProduktionsmengeGüterverkehr_2050.xlsx",'Ammonium')
+# production_per_land_his_amm = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic', "ProduktionsmengeGüterverkehr_2050.xlsx",'Ammonium')
 
 Countries = load_excel_sheet(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic', "ProduktionsmengeGüterverkehr.xlsx",'Country')
 
@@ -94,7 +94,7 @@ for country in range(0, len(Countries)):
     add.append([Countries['Country_engl'][country], alu, cem, glas, pa, steel, amm])
 
 production = pd.DataFrame(add)
-#production.to_excel(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo2\preprocessing\traffic\Productionvolume_historical.xlsx', index=False)
+#production.to_excel(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic\Productionvolume_historical.xlsx', index=False)
 production.to_excel(r'N:\Projekte\IPP\08 Daten\Nachfrage\Nachfragemodell\endemo\input\traffic\Productionvolume_single_2018.xlsx', index=False)
 
 print('finished.')

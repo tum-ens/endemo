@@ -144,12 +144,12 @@ class ProductInput:
                 continue
             years = df_product_his.columns[1:]
             data = df_product_his[df_product_his["Country"] == row.Country].iloc[0][1:]
-            if uty.is_zero(data):
+            zipped = uty.float_lists_to_datapoint_list(years, data)
+            his_data = uty.filter_out_nan_and_inf(zipped)
+            if uty.is_tuple_list_zero(his_data):
                 # country did not product this product at all => skip product for this country
                 # print("skipped " + front_label + " for country " + row.Country)
                 continue
-            zipped = uty.float_lists_to_datapoint_list(years, data)
-            his_data = uty.filter_out_nan_and_inf(zipped)
             his_data = uty.cut_after_x(his_data, industry_settings.last_available_year - 1)
             his_data = uty.map_data_y(his_data, lambda x: x * 1000)  # convert kt to t
             dict_prod_his[row.Country] = his_data

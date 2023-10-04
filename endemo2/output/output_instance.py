@@ -22,11 +22,13 @@ from endemo2.data_structures.containers import Demand, SpecConsum
 from endemo2.model_instance.model.cts.cts_sector import CommercialTradeServices
 from endemo2.model_instance.model.households.household_sector import Households
 from endemo2.model_instance.model.industry.products import Product
+from endemo2.model_instance.model.transport.transport_sector import Transport
 from endemo2.output.output_utility import FileGenerator, shortcut_demand_table, get_day_folder_path, \
     ensure_directory_exists
 from endemo2.model_instance.model.industry.industry_sector import Industry
 from endemo2.data_structures.enumerations import SectorIdentifier, ForecastMethod, DemandType, TrafficType
-from endemo2.data_structures.conversions_string import map_hh_subsector_to_string, map_tra_modal_to_string
+from endemo2.data_structures.conversions_string import map_hh_subsector_to_string, map_tra_modal_to_string, \
+    map_tra_traffic_type_to_string, map_demand_to_string
 
 # toggles to further control which output is written, maybe adapt them into settings later
 IND_HOURLY_DEMAND_DISABLE = False
@@ -135,6 +137,8 @@ def generate_instance_output(input_manager: InputManager, countries: dict[str, C
             output_tra_modal_split(details_folder, input_manager, tra_instance_filter)
             output_tra_production_volume(details_folder, input_manager, industry_instance_filter,
                                          product_instance_filter)
+            output_tra_kilometers(details_folder, input_manager, tra_instance_filter)
+            output_tra_energy_demand_detail(details_folder, input_manager, countries)
 
 
 def output_gen_gdp(folder: Path, input_manager: InputManager, countries,
@@ -230,7 +234,8 @@ def output_ind_product_amount(folder: Path, input_manager: InputManager, countri
                     dict_sum[country_name] = 0.0
                 fg.add_entry("Country", country_name)
                 try:
-                    product_amount = product_instance_filter.get_amount(country_name, product_name) / 1000
+                    perc_used = product_instance_filter.get_perc_used(product_name)
+                    product_amount = product_instance_filter.get_amount(country_name, product_name) * perc_used / 1000
                     dict_sum[country_name] += product_amount
                     fg.add_entry("Amount [kt]", product_amount)
                 except KeyError:
@@ -727,7 +732,7 @@ def output_tra_production_volume(folder: Path, input_manager: InputManager,
         fg.start_sheet("total " + str(reference_year))
         for country_name in input_manager.ctrl.general_settings.active_countries:
             fg.add_entry("Country", country_name)
-            amount = industry_if.get_product_amount_historical_in_year(country_name, reference_year)
+            amount = product_if.get_product_amount_historical_in_year(country_name, reference_year)
             fg.add_entry("Amount [t]", amount)
 
         fg.start_sheet("single " + str(reference_year))
@@ -739,6 +744,71 @@ def output_tra_production_volume(folder: Path, input_manager: InputManager,
                 fg.add_entry(subsector_name + " [t]", amount)
 
 
-def output_traffic_kilometers():
+def output_tra_kilometers(folder: Path, input_manager: InputManager, traffic_if: TransportInstanceFilter):
     """ Outputs the forecast kilometers for each traffic type. """
-    
+
+    filename = "tra_traffic_kilometers_" + str(input_manager.ctrl.general_settings.target_year) + ".xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        fg.start_sheet("Person kilometers")
+        for country_name in input_manager.ctrl.general_settings.active_countries:
+            fg.add_entry("Country", country_name)
+            sum = 0.0
+            for modal_id in TransportInput.tra_modal_lists[TrafficType.PERSON]:
+                ukm = traffic_if.get_unit_km_in_target_year(country_name, TrafficType.PERSON, modal_id) / 1000
+                modal_string = map_tra_modal_to_string[modal_id]
+                sum += ukm
+                fg.add_entry("pt " + modal_string + " [Mrd. pkm]", ukm)
+            fg.add_entry("pt total [Mrd. pkm]", sum)
+
+        fg.start_sheet("Tonne kilometers")
+        for country_name in input_manager.ctrl.general_settings.active_countries:
+            fg.add_entry("Country", country_name)
+            sum = 0.0
+            for modal_id in TransportInput.tra_modal_lists[TrafficType.FREIGHT]:
+                ukm = traffic_if.get_unit_km_in_target_year(country_name, TrafficType.FREIGHT, modal_id)
+                modal_string = map_tra_modal_to_string[modal_id]
+                sum += ukm
+                fg.add_entry("ft " + modal_string + " [Mil. tkm]", ukm)
+            fg.add_entry("ft total [Mil. tkm]", sum)
+
+
+def output_tra_energy_demand_detail(folder: Path, input_manager: InputManager, countries):
+    """ Output the forecasted energy demand split by modals. """
+
+    for traffic_type in [TrafficType.PERSON, TrafficType.FREIGHT]:
+        filename = "tra_energy_demand_" + map_tra_traffic_type_to_string[traffic_type] + "_" \
+                   + str(input_manager.ctrl.general_settings.target_year) + ".xlsx"
+
+        dict_total_energy_carrier = dict[str, dict[DemandType, float]]()
+
+        fg = FileGenerator(input_manager, folder, filename)
+        with fg:
+            for demand_type in [DemandType.ELECTRICITY, DemandType.HYDROGEN, DemandType.FUEL]:
+                fg.start_sheet(map_demand_to_string[demand_type] + " per country")
+                for country_name, country_obj in countries.items():
+                    fg.add_entry("Country", country_name)
+
+                    if country_name not in dict_total_energy_carrier.keys():
+                        dict_total_energy_carrier[country_name] = dict[DemandType]()
+
+                    for modal_id in TransportInput.tra_modal_lists[traffic_type]:
+                        modal_string = map_tra_modal_to_string[modal_id]
+                        transport_sector: Transport = country_obj.get_sector(SectorIdentifier.TRANSPORT)
+                        demand: Demand = transport_sector.calculate_subsector_demand(traffic_type)[modal_id]
+                        consumption = demand.get(demand_type) / 1000
+
+                        fg.add_entry(modal_string + " [TWh]", consumption)
+
+                        if demand_type not in dict_total_energy_carrier[country_name]:
+                            dict_total_energy_carrier[country_name][demand_type] = 0.0
+                        dict_total_energy_carrier[country_name][demand_type] += consumption
+
+                    fg.add_entry("total [TWh]", dict_total_energy_carrier[country_name][demand_type])
+
+            fg.start_sheet("total per country")
+            for country_name, country_obj in countries.items():
+                fg.add_entry("Country", country_name)
+                for demand_type in [DemandType.ELECTRICITY, DemandType.HYDROGEN, DemandType.FUEL]:
+                    fg.add_entry("total " + map_demand_to_string[demand_type] + " [TWh]",
+                                 dict_total_energy_carrier[country_name][demand_type])

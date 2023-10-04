@@ -230,6 +230,11 @@ class Demand:
         self.hydrogen += other.hydrogen
         self.fuel += other.fuel
 
+    def copy_multiply(self, other: Demand) -> Demand:
+        """ Multiplies the values of "other" demand component-wise to own member variables. """
+        return Demand(self.electricity * other.electricity, self.heat.copy_multiply(other.heat),
+                      self.hydrogen * other.hydrogen, self.fuel * other.fuel)
+
     def scale(self, scalar: float) -> None:
         """ Scale member variables component-wise with scalar. """
         self.electricity *= scalar

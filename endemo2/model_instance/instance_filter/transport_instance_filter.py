@@ -1,5 +1,6 @@
 from typing import Union
 
+from endemo2.data_structures.containers import Demand
 from endemo2.data_structures.enumerations import TransportModal, TransportModalSplitMethod, ForecastMethod, TrafficType, \
     TransportFinalEnergyDemandScenario
 from endemo2.input_and_settings.input_transport import TransportInput
@@ -21,6 +22,10 @@ class TransportInstanceFilter(InstanceFilter):
         self.industry_if = industry_instance_filter
         self.product_if = product_instance_filter
 
+    def get_energy_consumption_of_modal(self, traffic_type, modal_id) -> Demand:
+        """ Get the energy consumption per ukm for a modal. """
+        return self.transport_input.modal_ukm_energy_consumption[traffic_type][modal_id]
+
     def get_perc_modal_to_demand_type_in_target_year(self, country_name, traffic_type, modal_id, demand_type) -> float:
         """ Get the percentage of ukm that contribute to a demand type. """
 
@@ -28,9 +33,9 @@ class TransportInstanceFilter(InstanceFilter):
         datapoints = []
 
         if final_energy_scenario == TransportFinalEnergyDemandScenario.REFERENCE:
-            datapoints = self.transport_input.modal_energy_split_ref[traffic_type, modal_id][demand_type][country_name]
+            datapoints = self.transport_input.modal_energy_split_ref[traffic_type][modal_id][demand_type][country_name]
         elif final_energy_scenario == TransportFinalEnergyDemandScenario.USER_DEFINED:
-            datapoints = self.transport_input.modal_energy_split_user[traffic_type, modal_id][demand_type][country_name]
+            datapoints = self.transport_input.modal_energy_split_user[traffic_type][modal_id][demand_type][country_name]
 
         target_year = self.ctrl.general_settings.target_year
 
@@ -72,7 +77,7 @@ class TransportInstanceFilter(InstanceFilter):
             target_year_amount = self.get_population_in_target_year(country_name)
         elif traffic_type == TrafficType.FREIGHT:
             reference_year = self.ctrl.transport_settings.ind_production_reference_year
-            reference_amount = self.industry_if.get_product_amount_historical_in_year(country_name, reference_year)
+            reference_amount = self.product_if.get_product_amount_historical_in_year(country_name, reference_year)
 
             # take product amount forecast from industry
             target_year_amount = self.product_if.get_product_amount_sum_in_target_year(country_name)

@@ -106,7 +106,8 @@ class Endemo:
             transport_input = self.input_manager.transport_input
             self.transport_instance_filter = TransportInstanceFilter(ctrl, transport_input, prepro,
                                                                      self.country_instance_filter,
-                                                                     self.industry_instance_filter)
+                                                                     self.industry_instance_filter,
+                                                                     self.product_instance_filter)
 
         print("Instance filters were successfully created.")
 
@@ -116,7 +117,8 @@ class Endemo:
         for country_name in self.input_manager.ctrl.general_settings.active_countries:
             self.countries[country_name] = country.Country(country_name, self.country_instance_filter,
                                                            self.industry_instance_filter, self.product_instance_filter,
-                                                           self.cts_instance_filter, self.hh_instance_filter)
+                                                           self.cts_instance_filter, self.hh_instance_filter,
+                                                           self.transport_instance_filter)
 
         print("Model scenario was successfully initiated.")
 

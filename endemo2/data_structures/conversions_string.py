@@ -4,7 +4,8 @@ from endemo2.data_structures.enumerations import DemandType, HouseholdsSubsector
 
 map_demand_to_string = {DemandType.ELECTRICITY: "electricity",
                         DemandType.HEAT: "heat",
-                        DemandType.HYDROGEN: "hydrogen"}
+                        DemandType.HYDROGEN: "hydrogen",
+                        DemandType.FUEL: "fuel"}
 
 map_hh_subsector_to_string = {
     HouseholdsSubsectorId.SPACE_HEATING: "space_heating",
@@ -27,6 +28,7 @@ map_tra_modal_to_string = {
     TransportModal.rail: "rail",
     TransportModal.bus: "bus",
     TransportModal.car: "car",
-    TransportModal.ship: "ship"
+    TransportModal.ship: "ship",
+    TransportModal.flight: "flight"
 
 }

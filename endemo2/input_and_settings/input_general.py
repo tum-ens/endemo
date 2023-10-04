@@ -137,9 +137,9 @@ class GeneralInput:
         df_abbr = pd.read_excel(path / "Abbreviations.xlsx")
         df_world_pop_his = pd.read_excel(path / "Population_historical_world.xls")
         df_world_pop_prog = pd.read_excel(path / "Population_projection_world.xlsx")
-        df_nuts2_pop_his = pd.read_csv(path / "Population_historical_NUTS2.csv")
+        df_nuts2_pop_his = pd.read_csv(path / "Population_historical_NUTS2.csv", encoding="ISO-8859-1")
         df_nuts2_pop_prog = \
-            pd.read_excel(path / "Population_projection_NUTS2.xlsx",
+            pd.read_excel(path / "Population_changeprojection_NUTS2.xlsx",
                           sheet_name="Populationprojection_NUTS2_" + str(ctrl.general_settings.nuts2_version))
         df_gdp_his = pd.read_excel(path / "GDP_per_capita_historical.xlsx", sheet_name="constant 2015 USD")
         df_gdp_prog_europa = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data")
