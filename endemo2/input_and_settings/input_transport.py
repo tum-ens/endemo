@@ -1,5 +1,7 @@
 from pathlib import Path
+from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from endemo2.data_structures.containers import Datapoint, Demand
@@ -69,7 +71,7 @@ class TransportInput:
             pd.read_excel(ex_person_traffic, sheet_name="Personkm_road_rail")
         dict_df_person_km[TransportModal.flight] = Unit.Million, "Mil. pkm", \
             pd.read_excel(ex_person_traffic, sheet_name="Passengerkm_flight")
-        self.kilometres[TrafficType.PERSON] = self.read_specific_km(ctrl, dict_df_person_km, desired_unit=Unit.Million)
+        self.kilometres[TrafficType.PERSON] = self.read_specific_km(ctrl, dict_df_person_km, desired_unit=Unit.Standard)
 
         # read person modal splits
         dict_df_person_modal_split_his = dict[TransportModal, pd.DataFrame]()
@@ -99,7 +101,7 @@ class TransportInput:
         dict_df_freight_km[TransportModal.flight] = Unit.Standard, "tonne_km", \
             pd.read_excel(ex_freight_traffic, sheet_name="Tonnekm_flight")
         self.kilometres[TrafficType.FREIGHT] = \
-            self.read_specific_km(ctrl, dict_df_freight_km, desired_unit=Unit.Million, reference_year=2018)
+            self.read_specific_km(ctrl, dict_df_freight_km, desired_unit=Unit.Standard, reference_year=2018)
 
         # read freight modal splits
         dict_df_freight_modal_split_his = dict[TransportModal, pd.DataFrame]()
@@ -186,6 +188,41 @@ class TransportInput:
                 self.modal_energy_split_user[traffic_type][modal_id][DemandType.HYDROGEN] = \
                     TransportInput.read_timeline_perc(ctrl, df_h2_user)
 
+        # read load profile
+        if ctrl.general_settings.toggle_hourly_forecast:
+            df_load_profile = \
+                pd.read_excel(traffic_path / "tra_timeseries.xlsx", sheet_name="timeseries_LoadingProfile")
+
+            self.load_profile = dict[(TrafficType, TransportModal, DemandType), Any]()
+            self.load_profile[(TrafficType.FREIGHT, TransportModal.road, DemandType.ELECTRICITY)] \
+                = np.array(df_load_profile["ft.road.elec"])
+            self.load_profile[(TrafficType.FREIGHT, TransportModal.road, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["ft.road.hydrogen"])
+            self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["pt.road.elec"])
+            self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["pt.road.hydrogen"])
+            self.load_profile[(TrafficType.FREIGHT, TransportModal.road, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["ft.rail.elec"])
+            self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["pt.rail.elec"])
+            self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["pt.rail.hydrogen"])
+            self.load_profile[(TrafficType.FREIGHT, TransportModal.road, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["ship.elec"])
+            self.load_profile[(TrafficType.FREIGHT, TransportModal.road, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["ship.hydrogen"])
+            self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["flight.elec"])
+            self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["flight.hydrogen"])
+            self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["other"])
+            self.load_profile[(TrafficType.FREIGHT, TransportModal.road, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["other"])
+        else:
+            self.load_profile = None
+
     @classmethod
     def read_timeline_perc(cls, ctrl, df) -> dict[str, [Datapoint]]:
         dict_res = dict[str, [Datapoint]]()
@@ -200,7 +237,7 @@ class TransportInput:
             data = row[1:]
             his_data = uty.float_lists_to_datapoint_list(years, data)
             his_data = uty.filter_out_nan_and_inf(his_data)
-            his_data = uty.map_data_y(his_data, lambda x: x/100)
+            his_data = uty.map_data_y(his_data, lambda x: x / 100)
             dict_res[country_name] = his_data
 
         return dict_res
@@ -259,7 +296,7 @@ class TransportInput:
 
         str_energy_consumption_column_name = ""
         if traffic_type == TrafficType.PERSON:
-            str_energy_consumption_column_name = "Energy consumption kWh/pkm (flight: PJ/pkm)"
+            str_energy_consumption_column_name = "Energy consumption MJ/pkm"
         elif traffic_type == TrafficType.FREIGHT:
             str_energy_consumption_column_name = "Energy consumption MJ/tkm"
 
@@ -281,10 +318,11 @@ class TransportInput:
                 fuel = df_energy_per_source[
                     df_energy_per_source[
                         str_energy_consumption_column_name] == "Kerosine"].get(str_modal).iloc[0]
-                fuel = convert(Unit.PJ, Unit.kWh, fuel)
+
+            electricity = convert(Unit.MJ, Unit.kWh, electricity)
+            hydrogen = convert(Unit.MJ, Unit.kWh, hydrogen)
+            fuel = convert(Unit.MJ, Unit.kWh, fuel)
 
             result[modal_id] = Demand(electricity=electricity, hydrogen=hydrogen, fuel=fuel)
 
         return result
-
-

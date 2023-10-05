@@ -20,6 +20,7 @@ class Unit(Enum):
     Billion = 10
     kilo = 11
     PJ = 12
+    MJ = 13
 
 
 # holds all scalars that are used for unit conversion
@@ -30,11 +31,15 @@ unit_conversion_scalar_table = {
     (Unit.TWh, Unit.kWh): 10**9,
     (Unit.GJ, Unit.TWh): 1 / (3600 * 1000),
     (Unit.liter, Unit.m3): 1 / 1000,
+    (Unit.Million, Unit.Billion): 1/1000,
     (Unit.Billion, Unit.Million): 1000,
     (Unit.Standard, Unit.Million): 1/10**6,
+    (Unit.Standard, Unit.Billion): 1/10**9,
     (Unit.Million, Unit.Standard): 10**6,
+    (Unit.Billion, Unit.Standard): 10**9,
     (Unit.kilo, Unit.Million): 1 / 1000,
-    (Unit.PJ, Unit.kWh): 10**12 / 3600
+    (Unit.PJ, Unit.kWh): 10**12 / 3600,
+    (Unit.MJ, Unit.kWh): 10**3 / 3600
 }
 
 

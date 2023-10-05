@@ -15,9 +15,28 @@ class Transport(Sector):
         """
         Calculate demand of the transport sector.
 
-        :return: The demand summed over all _subsectors in this transport sector.
+        :return: The demand summed over all subsectors demand in this transport sector.
         """
-        pass
+        demand = Demand()
+
+        demand.add(self.calculate_demand_for_traffic_type(TrafficType.PERSON))
+        demand.add(self.calculate_demand_for_traffic_type(TrafficType.FREIGHT))
+
+        return demand
+
+    def calculate_demand_for_traffic_type(self, traffic_type: TrafficType) -> Demand:
+        """
+        Calculate demand of a traffic type in the transport sector.
+
+        :return: The demand summed over all subsectors for a traffic type in this transport sector.
+        """
+        demand = Demand()
+
+        dict_subsector_demand = self.calculate_subsector_demand(traffic_type)
+        for _, subsector_demand in dict_subsector_demand.items():
+            demand.add(subsector_demand)
+
+        return demand
 
     def calculate_subsector_demand(self, traffic_type: TrafficType) -> dict[TransportModal, Demand]:
         """
@@ -30,7 +49,8 @@ class Transport(Sector):
 
         # iterate through all modals
         for modal_id in self._transport_if.get_modals_for_traffic_type(traffic_type):
-            ukm_modal = self._transport_if.get_unit_km_in_target_year(self._country_name, traffic_type, modal_id)
+            ukm_modal = \
+                self._transport_if.get_unit_km_country_in_target_year(self._country_name, traffic_type, modal_id)
 
             elec_perc = \
                 self._transport_if.get_perc_modal_to_demand_type_in_target_year(self._country_name, traffic_type,
@@ -49,10 +69,42 @@ class Transport(Sector):
 
         return result
 
+    def calculate_demand_for_traffic_type_distributed_by_nuts2(self, traffic_type) -> dict[str, Demand]:
+        """
+        Calculate demand of transport sector distributed by nuts2 regions for a traffic type.
+
+        :return: The demand of a traffic type summed over all subsector in this transport sector,
+            split by nuts2 regions.
+        """
+        demand = self.calculate_demand_for_traffic_type(traffic_type)
+
+        nuts2_distribution_scalars = \
+            self._transport_if.get_nuts2_distribution_scalars(self._country_name, traffic_type)
+
+        distributed_demand = dict[str, Demand]()
+
+        for (nuts2_region_name, distribution_scalar) in nuts2_distribution_scalars.items():
+            region_demand = demand.copy_scale(distribution_scalar)
+            distributed_demand[nuts2_region_name] = region_demand
+
+        return distributed_demand
+
     def calculate_demand_distributed_by_nuts2(self) -> dict[str, Demand]:
         """
-        Calculate demand distributed by nuts2 regions.
+        Calculate demand of transport sector distributed by nuts2 regions.
 
-        :return: The demand summed over all subsector in this households sector, split by nuts2 regions.
+        :return: The demand summed over all subsector in this transport sector, split by nuts2 regions.
         """
-        pass
+
+        person_demand_split_by_nuts2 = self.calculate_demand_for_traffic_type_distributed_by_nuts2(TrafficType.PERSON)
+        freight_demand_split_by_nuts2 = self.calculate_demand_for_traffic_type_distributed_by_nuts2(TrafficType.FREIGHT)
+
+        demand = dict[str, Demand]()
+
+        for nuts2_region, person_demand in person_demand_split_by_nuts2.items():
+            freight_demand = freight_demand_split_by_nuts2[nuts2_region]
+            demand[nuts2_region] = Demand()
+            demand[nuts2_region].add(person_demand)
+            demand[nuts2_region].add(freight_demand)
+
+        return demand

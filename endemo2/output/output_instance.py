@@ -7,7 +7,9 @@ import math
 import shutil
 from pathlib import Path
 
-from endemo2.data_structures.conversions_unit import convert, Unit
+import numpy as np
+
+from endemo2.data_structures.conversions_unit import convert, Unit, get_conversion_scalar
 from endemo2.input_and_settings.input_households import HouseholdsSubsectorId
 from endemo2.input_and_settings.input_manager import InputManager
 from endemo2.input_and_settings.input_transport import TransportInput
@@ -26,7 +28,8 @@ from endemo2.model_instance.model.transport.transport_sector import Transport
 from endemo2.output.output_utility import FileGenerator, shortcut_demand_table, get_day_folder_path, \
     ensure_directory_exists
 from endemo2.model_instance.model.industry.industry_sector import Industry
-from endemo2.data_structures.enumerations import SectorIdentifier, ForecastMethod, DemandType, TrafficType
+from endemo2.data_structures.enumerations import SectorIdentifier, ForecastMethod, DemandType, TrafficType, \
+    TransportModal
 from endemo2.data_structures.conversions_string import map_hh_subsector_to_string, map_tra_modal_to_string, \
     map_tra_traffic_type_to_string, map_demand_to_string
 
@@ -133,11 +136,15 @@ def generate_instance_output(input_manager: InputManager, countries: dict[str, C
             output_hh_characteristics(details_folder, input_manager, countries, hh_instance_filter)
             output_hh_subsectors_demand(details_folder, input_manager, countries, hh_instance_filter)
     if SectorIdentifier.TRANSPORT in active_sectors:
+        output_tra_energy_demand_country(scenario_folder, input_manager, countries)
+        output_tra_kilometers(scenario_folder, input_manager, tra_instance_filter)
+        if toggle_nuts2:
+            output_tra_energy_demand_nuts2(scenario_folder, input_manager, countries)
+            output_tra_kilometers_nuts2(scenario_folder, input_manager, tra_instance_filter)
         if TOGGLE_DETAILED_OUTPUT:
             output_tra_modal_split(details_folder, input_manager, tra_instance_filter)
             output_tra_production_volume(details_folder, input_manager, industry_instance_filter,
                                          product_instance_filter)
-            output_tra_kilometers(details_folder, input_manager, tra_instance_filter)
             output_tra_energy_demand_detail(details_folder, input_manager, countries)
 
 
@@ -726,7 +733,7 @@ def output_tra_production_volume(folder: Path, input_manager: InputManager,
         fg.start_sheet("total " + str(target_year))
         for country_name in input_manager.ctrl.general_settings.active_countries:
             fg.add_entry("Country", country_name)
-            amount = product_if.get_product_amount_sum_in_target_year(country_name)
+            amount = product_if.get_product_amount_sum_country_in_target_year(country_name)
             fg.add_entry("Amount [t]", amount)
 
         fg.start_sheet("total " + str(reference_year))
@@ -755,7 +762,8 @@ def output_tra_kilometers(folder: Path, input_manager: InputManager, traffic_if:
             fg.add_entry("Country", country_name)
             sum = 0.0
             for modal_id in TransportInput.tra_modal_lists[TrafficType.PERSON]:
-                ukm = traffic_if.get_unit_km_in_target_year(country_name, TrafficType.PERSON, modal_id) / 1000
+                ukm = traffic_if.get_unit_km_country_in_target_year(country_name, TrafficType.PERSON, modal_id)
+                ukm = convert(Unit.Standard, Unit.Billion, ukm)
                 modal_string = map_tra_modal_to_string[modal_id]
                 sum += ukm
                 fg.add_entry("pt " + modal_string + " [Mrd. pkm]", ukm)
@@ -766,11 +774,51 @@ def output_tra_kilometers(folder: Path, input_manager: InputManager, traffic_if:
             fg.add_entry("Country", country_name)
             sum = 0.0
             for modal_id in TransportInput.tra_modal_lists[TrafficType.FREIGHT]:
-                ukm = traffic_if.get_unit_km_in_target_year(country_name, TrafficType.FREIGHT, modal_id)
+                ukm = traffic_if.get_unit_km_country_in_target_year(country_name, TrafficType.FREIGHT, modal_id)
+                ukm = convert(Unit.Standard, Unit.Million, ukm)
                 modal_string = map_tra_modal_to_string[modal_id]
                 sum += ukm
                 fg.add_entry("ft " + modal_string + " [Mil. tkm]", ukm)
             fg.add_entry("ft total [Mil. tkm]", sum)
+
+
+def output_tra_kilometers_nuts2(folder: Path, input_manager: InputManager, traffic_if: TransportInstanceFilter):
+    """ Outputs the forecast kilometers for each traffic type. """
+
+    filename = "tra_traffic_kilometers_nuts2_" + str(input_manager.ctrl.general_settings.target_year) + ".xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        fg.start_sheet("Person kilometers")
+        for country_name in input_manager.ctrl.general_settings.active_countries:
+            for region_name in traffic_if.get_nuts2_region_names(country_name):
+                fg.add_entry("NUTS2 Region", region_name)
+                sum = 0.0
+                for modal_id in TransportInput.tra_modal_lists[TrafficType.PERSON]:
+                    ukm = traffic_if.get_unit_km_nuts2_in_target_year(country_name, region_name, TrafficType.PERSON,
+                                                                      modal_id)
+                    ukm = convert(Unit.Standard, Unit.Billion, ukm)
+
+                    modal_string = map_tra_modal_to_string[modal_id]
+                    sum += ukm
+                    fg.add_entry("pt " + modal_string + " [Mrd. pkm]", ukm)
+                fg.add_entry("pt total [Mrd. pkm]", sum)
+
+        fg.start_sheet("Tonne kilometers")
+        for country_name in input_manager.ctrl.general_settings.active_countries:
+            for region_name in traffic_if.get_nuts2_region_names(country_name):
+                fg.add_entry("NUTS2 Region", region_name)
+                sum = 0.0
+                for modal_id in TransportInput.tra_modal_lists[TrafficType.FREIGHT]:
+                    ukm = \
+                        traffic_if.get_unit_km_nuts2_in_target_year(country_name, region_name, TrafficType.FREIGHT,
+                                                                    modal_id)
+
+                    ukm = convert(Unit.Standard, Unit.Million, ukm)
+
+                    modal_string = map_tra_modal_to_string[modal_id]
+                    sum += ukm
+                    fg.add_entry("ft " + modal_string + " [Mil. tkm]", ukm)
+                fg.add_entry("ft total [Mil. tkm]", sum)
 
 
 def output_tra_energy_demand_detail(folder: Path, input_manager: InputManager, countries):
@@ -796,7 +844,8 @@ def output_tra_energy_demand_detail(folder: Path, input_manager: InputManager, c
                         modal_string = map_tra_modal_to_string[modal_id]
                         transport_sector: Transport = country_obj.get_sector(SectorIdentifier.TRANSPORT)
                         demand: Demand = transport_sector.calculate_subsector_demand(traffic_type)[modal_id]
-                        consumption = demand.get(demand_type) / 1000
+                        consumption = demand.get(demand_type)
+                        consumption = convert(Unit.kWh, Unit.TWh, consumption)
 
                         fg.add_entry(modal_string + " [TWh]", consumption)
 
@@ -812,3 +861,69 @@ def output_tra_energy_demand_detail(folder: Path, input_manager: InputManager, c
                 for demand_type in [DemandType.ELECTRICITY, DemandType.HYDROGEN, DemandType.FUEL]:
                     fg.add_entry("total " + map_demand_to_string[demand_type] + " [TWh]",
                                  dict_total_energy_carrier[country_name][demand_type])
+
+
+def output_tra_energy_demand_country(folder: Path, input_manager: InputManager, countries):
+    """ Output the forecasted energy demand. """
+
+    filename = "tra_demand_forecast_per_country.xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        fg.start_sheet("TRA")
+        for country_name, country_obj in countries.items():
+            fg.add_entry("Country", country_name)
+
+            transport_sector: Transport = country_obj.get_sector(SectorIdentifier.TRANSPORT)
+            tra_demand = transport_sector.calculate_demand()
+            tra_demand.scale(get_conversion_scalar(Unit.kWh, Unit.TWh))
+            fg.add_entry("Electricity [TWh]", tra_demand.electricity)
+            fg.add_entry("Heat [TWh]", tra_demand.heat.get_sum())
+            fg.add_entry("Hydrogen [TWh]", tra_demand.hydrogen)
+            fg.add_entry("Fuel [TWh]", tra_demand.fuel)
+
+
+def output_tra_energy_demand_nuts2(folder: Path, input_manager: InputManager, countries):
+    """ Generates the demand output of the transport sector distributed by nuts2 regions. """
+
+    filename = "tra_demand_forecast_per_nuts2.xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        fg.start_sheet("TRA")
+        for country_name, country_obj in countries.items():
+            transport_sector: Transport = country_obj.get_sector(SectorIdentifier.TRANSPORT)
+            tra_demand_nuts2 = transport_sector.calculate_demand_distributed_by_nuts2()
+            for region_name, demand in tra_demand_nuts2.items():
+                fg.add_entry("NUTS2 Region", region_name)
+                demand.scale(get_conversion_scalar(Unit.kWh, Unit.TWh))
+                shortcut_demand_table(fg, demand)
+
+
+def output_tra_demand_hourly(folder: Path, input_manager: InputManager, countries):
+    """ Generates the hourly demand output for the transport sector. """
+
+    filename = "tra_demand_forecast_hourly.xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        fg.start_sheet("TRA")
+
+        fg.add_complete_column("t", np.arange(1, 8760 + 1))
+
+        load_profile: dict = input_manager.transport_input.load_profile
+
+        for country_name, country_obj in countries.items():
+            transport_sector: Transport = country_obj.get_sector(SectorIdentifier.TRANSPORT)
+            person_demand = transport_sector.calculate_demand_for_traffic_type(TrafficType.PERSON)
+            freight_demand = transport_sector.calculate_demand_for_traffic_type(TrafficType.FREIGHT)
+
+            fg.add_complete_column(
+                country_name + ".Elec" + "road",    #todo: better
+                person_demand.electricity
+                * load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)])
+            fg.add_complete_column(
+                country_name + ".Elec",
+                person_demand.electricity
+                * load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)])
+
+
+
+

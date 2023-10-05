@@ -312,7 +312,7 @@ class IndustryInput:
         "steel": FileReadingHelper("Steel_Production.xlsx", "Data_total", [], lambda x: x),
         "steel_prim": FileReadingHelper("Steel_Production.xlsx", "Steel_prim", [], lambda x: x),
         "steel_sec": FileReadingHelper("Steel_Production.xlsx", "Steel_sec", [], lambda x: x),
-        "steel_direct": FileReadingHelper("Steel_Production.xlsx", "Data_total", [], lambda x: x),
+        "steel_direct": FileReadingHelper("Steel_Production.xlsx", "Steel_sec", [], lambda x: x),
         "alu_prim": FileReadingHelper("Aluminium_Production.xlsx", "Prim_Data", [], lambda x: x),
         "alu_sec": FileReadingHelper("Aluminium_Production.xlsx", "Sec_Data", [], lambda x: x),
         "copper_prim": FileReadingHelper("Copper_Production.xlsx", "Copper_WSP", [0, 1],

@@ -15,6 +15,7 @@ from endemo2.data_structures.prediction_models import TwoDseries, Coef
 from endemo2.input_and_settings.input_general import GeneralInput
 from endemo2.input_and_settings.input_industry import IndustryInput
 
+
 class IndustryInstanceFilter(InstanceFilter):
     """
     This instance filter serves as a filter between the instance settings and the actual calculation of the demand
@@ -101,6 +102,7 @@ class ProductInstanceFilter(InstanceFilter):
     This instance filter serves as a filter between the instance settings and the actual calculation of the demand
         of the different products.
     """
+
     def __init__(self, ctrl: ControlParameters, preprocessor: Preprocessor, industry_input: IndustryInput,
                  general_input: GeneralInput, country_instance_filter: CountryInstanceFilter):
         super().__init__(ctrl, preprocessor.countries_pp)
@@ -130,7 +132,8 @@ class ProductInstanceFilter(InstanceFilter):
                 return self.country_instance_filter.get_population_nuts2_percentages_in_target_year(country_name)
         else:
             # country doesn't have product -> zero capacities
-            nuts2_regions_of_country = self.general_input.population.nuts2_population[country_name].prognosis.keys()  # TODO: make more pretty, maybe a function to get nuts2 regions for a country
+            nuts2_regions_of_country = self.general_input.population.nuts2_population[
+                country_name].prognosis.keys()  # TODO: make more pretty, maybe a function to get nuts2 regions for a country
             res_dict_nuts2_capacities = dict[str, float]()
             for nuts2_region_name in nuts2_regions_of_country:
                 res_dict_nuts2_capacities[nuts2_region_name] = 0
@@ -170,8 +173,8 @@ class ProductInstanceFilter(InstanceFilter):
             # do easy manual forecast
             basis_year = self.ctrl.industry_settings.last_available_year + 1
             change_rate = self.ctrl.industry_settings.product_settings[product_name].efficiency_improvement
-            forecast_scalar = (1 - change_rate)**(target_year - basis_year)
-            specific_consumption.scale(forecast_scalar)   # forecast
+            forecast_scalar = (1 - change_rate) ** (target_year - basis_year)
+            specific_consumption.scale(forecast_scalar)  # forecast
 
         # efficiency scale fuel
         specific_consumption.heat = specific_consumption.heat * fuel_efficiency
@@ -238,7 +241,7 @@ class ProductInstanceFilter(InstanceFilter):
                 active_TwoDSeries = product_pp.amount_per_capita_vs_year
             elif not use_per_capita and use_gdp:
                 active_TwoDSeries = product_pp.amount_vs_gdp
-            else:   # use_per_capita and use_gdp:
+            else:  # use_per_capita and use_gdp:
                 active_TwoDSeries = product_pp.amount_per_capita_vs_gdp
 
             # get coefficients from preprocessed data
@@ -300,8 +303,8 @@ class ProductInstanceFilter(InstanceFilter):
         """ Getter for the substitution of heat with electricity and hydrogen. """
         return self.ctrl.industry_settings.heat_substitution
 
-    def get_product_amount_sum_in_target_year(self, country_name) -> float:
-        """ Get forecasted product amount in target year. If historically present, use historical. """
+    def get_product_amount_sum_country_in_target_year(self, country_name) -> float:
+        """ Get forecasted product amount for a country in target year."""
         products_pp: dict[str, ProductPreprocessed] = \
             self.preprocessor.countries_pp[country_name].industry_pp.products_pp
 
@@ -310,6 +313,23 @@ class ProductInstanceFilter(InstanceFilter):
             perc_used = self.get_perc_used(product_name)
             sum_in_year += self.get_amount(country_name, product_name) * perc_used
         return sum_in_year
+
+    def get_product_amount_sum_nuts2_in_target_year(self, country_name) -> dict[str, float]:
+        """ Get forecasted product amount for all nuts2 regions of a country in target year. """
+        products_pp: dict[str, ProductPreprocessed] = \
+            self.preprocessor.countries_pp[country_name].industry_pp.products_pp
+
+        dict_sum_in_year = dict[str, float]()
+        for product_name, product_pp in products_pp.items():
+            perc_used = self.get_perc_used(product_name)
+            amount_in_year = self.get_amount(country_name, product_name) * perc_used
+            installed_capacities = self.get_nuts2_capacities(country_name, product_name)
+            for nuts2_region_name, capacity in installed_capacities.items():
+                if nuts2_region_name not in dict_sum_in_year:
+                    dict_sum_in_year[nuts2_region_name] = 0.0
+                dict_sum_in_year[nuts2_region_name] += amount_in_year * installed_capacities[nuts2_region_name]
+
+        return dict_sum_in_year
 
     def get_product_amount_historical_in_year(self, country_name, year) -> float:
         """ Get the historical total amount of product quantity in a countries industry in a certain year."""
@@ -322,5 +342,3 @@ class ProductInstanceFilter(InstanceFilter):
             amount_in_year = product_pp.amount_vs_year.get_value_at_year_else_zero(year)
             sum_in_year += amount_in_year * perc_used
         return sum_in_year
-
-

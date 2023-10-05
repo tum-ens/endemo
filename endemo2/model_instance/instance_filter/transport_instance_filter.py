@@ -22,6 +22,10 @@ class TransportInstanceFilter(InstanceFilter):
         self.industry_if = industry_instance_filter
         self.product_if = product_instance_filter
 
+    def get_nuts2_region_names(self, country_name) -> [str]:
+        """ Get the nuts2 region names of a country. """
+        return self.industry_if.get_nuts2_regions(country_name)
+
     def get_energy_consumption_of_modal(self, traffic_type, modal_id) -> Demand:
         """ Get the energy consumption per ukm for a modal. """
         return self.transport_input.modal_ukm_energy_consumption[traffic_type][modal_id]
@@ -46,44 +50,67 @@ class TransportInstanceFilter(InstanceFilter):
         """ Returns a list of all modals for the given traffic type. """
         return TransportInput.tra_modal_lists[traffic_type]
 
-    def get_population_in_target_year(self, country_name) -> float:
-        """ Get the population in target year. """
+    def get_population_country_in_target_year(self, country_name) -> float:
+        """ Get the country population in target year. """
         return self.country_if.get_population_country_in_target_year(country_name)
+
+    def get_population_nuts2_in_target_year(self, country_name) -> dict[str, float]:
+        """ Get the nuts2 population in target year. """
+        return self.country_if.get_population_nuts2_in_target_year(country_name)
 
     def get_historical_population_in_certain_year(self, country_name, year) -> float:
         """ Get the population of a country in a given year. """
         ts_pop_his = self.preprocessor.countries_pp[country_name].population_pp.population_historical_whole_country
         return ts_pop_his.get_value_at_year(year)
 
-    def get_unit_km_in_target_year(self, country_name, traffic_type: TrafficType, modal_id: TransportModal) -> float:
-        """ Get the total amount of kilometres of a traffic type and modal in the target year. """
+    def get_specific_unit_km_in_reference_year(self, country_name, traffic_type, modal_id) -> float:
+        """ Get the kilometers per person or per ton in reference year. """
         modal_group_parent = self.get_modal_group_parent(traffic_type, modal_id)
         if modal_group_parent is None:
             modal_group_parent = modal_id
-
-        modal_share = self.get_modal_share_in_target_year(country_name, traffic_type, modal_id)
 
         modal_shared_historical_value_total = \
             self.transport_input.kilometres[traffic_type][country_name][modal_group_parent]
 
         year_of_historical_value = modal_shared_historical_value_total.x
 
-        modal_shared_historical_specific = 0
-        target_year_amount = 0
+        specific_ukm = 0
         if traffic_type == TrafficType.PERSON:
-            modal_shared_historical_specific = \
+            specific_ukm = \
                 modal_shared_historical_value_total.y \
                 / self.get_historical_population_in_certain_year(country_name, year_of_historical_value)
-            target_year_amount = self.get_population_in_target_year(country_name)
         elif traffic_type == TrafficType.FREIGHT:
             reference_year = self.ctrl.transport_settings.ind_production_reference_year
             reference_amount = self.product_if.get_product_amount_historical_in_year(country_name, reference_year)
 
-            # take product amount forecast from industry
-            target_year_amount = self.product_if.get_product_amount_sum_in_target_year(country_name)
-            modal_shared_historical_specific = modal_shared_historical_value_total.y / reference_amount
+            specific_ukm = modal_shared_historical_value_total.y / reference_amount
 
-        return modal_shared_historical_specific * target_year_amount * modal_share
+        return specific_ukm
+
+    def get_unit_km_country_in_target_year(self, country_name, traffic_type: TrafficType, modal_id: TransportModal) \
+            -> float:
+        """ Get the total amount of kilometres of a traffic type and modal for a country in the target year. """
+
+        modal_share_target_year = self.get_modal_share_in_target_year(country_name, traffic_type, modal_id)
+
+        specific_ukm = self.get_specific_unit_km_in_reference_year(country_name, traffic_type, modal_id)
+        target_year_amount = 0
+        if traffic_type == TrafficType.PERSON:
+            target_year_amount = self.get_population_country_in_target_year(country_name)
+        elif traffic_type == TrafficType.FREIGHT:
+            # take product amount forecast from industry
+            target_year_amount = self.product_if.get_product_amount_sum_country_in_target_year(country_name)
+
+        return specific_ukm * target_year_amount * modal_share_target_year
+
+    def get_unit_km_nuts2_in_target_year(self, country_name, region_name: str, traffic_type: TrafficType,
+                                         modal_id: TransportModal) -> float:
+        """ Get the total amount of kilometres of a traffic type and modal for a country in the target year. """
+
+        ukm_country = self.get_unit_km_country_in_target_year(country_name, traffic_type, modal_id)
+        distribution_scalars = self.get_nuts2_distribution_scalars(country_name, traffic_type)
+
+        return ukm_country * distribution_scalars[region_name]
 
     def get_modal_share_in_target_year(self, country_name, traffic_type: TrafficType, modal_id: TransportModal) \
             -> float:
@@ -153,3 +180,11 @@ class TransportInstanceFilter(InstanceFilter):
         res_dict = uty.multiply_dictionary_with_scalar(forecast_dict, 1 / percentage_sum)
 
         return res_dict
+
+    def get_nuts2_distribution_scalars(self, country_name, traffic_type) -> dict[str, float]:
+        """ Get the scalars for distributing results across nuts2 regions. """
+
+        if traffic_type == TrafficType.PERSON:
+            return self.country_if.get_population_nuts2_percentages_in_target_year(country_name)
+        if traffic_type == TrafficType.FREIGHT:
+            return self.country_if.get_population_nuts2_percentages_in_target_year(country_name)

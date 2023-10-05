@@ -85,7 +85,7 @@ class FileGenerator(object):
     def get_day_directory(cls):
         return "results_" + datetime.today().strftime('%Y-%m-%d')
 
-    def add_complete_column(self, column_name: str, column_content: list):
+    def add_complete_column(self, column_name: str, column_content: []):
         """
         Add a complete column to sheet.
         But pay attention! In the end of the sheet, all columns have to have the same length.
@@ -165,7 +165,7 @@ def shortcut_sc_output(fg, sc):
 def shortcut_demand_table(fg: FileGenerator, demand: Demand):
     """ A shortcut to output the contents of a Demand object. """
     fg.add_entry("Electricity [TWh]", demand.electricity)
-    fg.add_entry("Heat [TWh]", demand.heat.q1 + demand.heat.q2 + demand.heat.q3 + demand.heat.q4)
+    fg.add_entry("Heat [TWh]", demand.heat.get_sum())
     fg.add_entry("Hydrogen [TWh]", demand.hydrogen)
     fg.add_entry("Heat Q1 [TWh]", demand.heat.q1)
     fg.add_entry("Heat Q2 [TWh]", demand.heat.q2)
