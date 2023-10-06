@@ -98,5 +98,52 @@ class Households(Sector):
                                          for hour_perc in hourly_profile[DemandType.HYDROGEN]]
         return res_dict
 
+    def calculate_hourly_demand_efh_distributed_by_nuts2(self) -> dict[str, dict[DemandType, [float]]]:
+        """
+        Calculate the hourly demand for the single person households in this sector.
+
+        :return: The hourly demand in a list in order by demand type.
+        """
+        demand_efh = self.calculate_hourly_demand_efh()
+
+        nuts2_distribution_scalars = self._instance_filter.get_nuts2_distribution(self._country_name)
+
+        res_dict = dict[str, dict[DemandType, [float]]]()
+
+        for region_name, distribution_scalar in nuts2_distribution_scalars.items():
+            res_dict[region_name] = dict[DemandType, [float]]()
+
+            res_dict[region_name][DemandType.ELECTRICITY] = [hourly_demand * distribution_scalar
+                                                             for hourly_demand in demand_efh[DemandType.ELECTRICITY]]
+            res_dict[region_name][DemandType.HEAT] = [hourly_demand.copy_multiply_scalar(distribution_scalar)
+                                                      for hourly_demand in demand_efh[DemandType.HEAT]]
+            res_dict[region_name][DemandType.HYDROGEN] = [hourly_demand * distribution_scalar
+                                                          for hourly_demand in demand_efh[DemandType.HYDROGEN]]
+
+        return res_dict
+
+    def calculate_hourly_demand_mfh_distributed_by_nuts2(self) -> dict[str, dict[DemandType, [float]]]:
+        """
+        Calculate the hourly demand for the single person households in this sector.
+
+        :return: The hourly demand in a list in order by demand type.
+        """
+        demand_mfh = self.calculate_hourly_demand_mfh()
+
+        nuts2_distribution_scalars = self._instance_filter.get_nuts2_distribution(self._country_name)
+
+        res_dict = dict[str, dict[DemandType, [float]]]()
+
+        for region_name, distribution_scalar in nuts2_distribution_scalars.items():
+            res_dict[region_name] = dict[DemandType, [float]]()
+
+            res_dict[region_name][DemandType.ELECTRICITY] = [hourly_demand * distribution_scalar
+                                                             for hourly_demand in demand_mfh[DemandType.ELECTRICITY]]
+            res_dict[region_name][DemandType.HEAT] = [hourly_demand.copy_multiply_scalar(distribution_scalar)
+                                                      for hourly_demand in demand_mfh[DemandType.HEAT]]
+            res_dict[region_name][DemandType.HYDROGEN] = [hourly_demand * distribution_scalar
+                                                          for hourly_demand in demand_mfh[DemandType.HYDROGEN]]
+
+        return res_dict
 
 

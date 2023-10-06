@@ -87,7 +87,7 @@ class TransportInstanceFilter(InstanceFilter):
 
         return specific_ukm
 
-    def get_unit_km_country_in_target_year(self, country_name, traffic_type: TrafficType, modal_id: TransportModal) \
+    def get_unit_km_in_target_year_country(self, country_name, traffic_type: TrafficType, modal_id: TransportModal) \
             -> float:
         """ Get the total amount of kilometres of a traffic type and modal for a country in the target year. """
 
@@ -103,11 +103,11 @@ class TransportInstanceFilter(InstanceFilter):
 
         return specific_ukm * target_year_amount * modal_share_target_year
 
-    def get_unit_km_nuts2_in_target_year(self, country_name, region_name: str, traffic_type: TrafficType,
+    def get_unit_km_in_target_year_nuts2(self, country_name, region_name: str, traffic_type: TrafficType,
                                          modal_id: TransportModal) -> float:
         """ Get the total amount of kilometres of a traffic type and modal for a country in the target year. """
 
-        ukm_country = self.get_unit_km_country_in_target_year(country_name, traffic_type, modal_id)
+        ukm_country = self.get_unit_km_in_target_year_country(country_name, traffic_type, modal_id)
         distribution_scalars = self.get_nuts2_distribution_scalars(country_name, traffic_type)
 
         return ukm_country * distribution_scalars[region_name]

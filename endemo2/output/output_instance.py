@@ -3,14 +3,12 @@ This module contains all functions that generate output files from a model insta
 """
 from __future__ import annotations
 
-import math
 import shutil
 from pathlib import Path
 
 import numpy as np
 
 from endemo2.data_structures.conversions_unit import convert, Unit, get_conversion_scalar
-from endemo2.input_and_settings.input_households import HouseholdsSubsectorId
 from endemo2.input_and_settings.input_manager import InputManager
 from endemo2.input_and_settings.input_transport import TransportInput
 from endemo2.model_instance.instance_filter.cts_instance_filter import CtsInstanceFilter
@@ -37,6 +35,7 @@ from endemo2.data_structures.conversions_string import map_hh_subsector_to_strin
 IND_HOURLY_DEMAND_DISABLE = False
 CTS_HOURLY_DEMAND_DISABLE = False
 HH_HOURLY_DEMAND_DISABLE = False
+TRA_HOURLY_DEMAND_DISABLE = False
 
 TOGGLE_GEN_OUTPUT = True
 TOGGLE_DETAILED_OUTPUT = True
@@ -100,8 +99,7 @@ def generate_instance_output(input_manager: InputManager, countries: dict[str, C
         if TOGGLE_DETAILED_OUTPUT:
             output_gen_population_forecast_details(details_folder, input_manager, countries, country_instance_filter)
     if SectorIdentifier.INDUSTRY in active_sectors:
-        if not toggle_nuts2:
-            output_ind_demand_country(scenario_folder, input_manager, countries)
+        output_ind_demand_country(scenario_folder, input_manager, countries)
         if toggle_nuts2:
             output_ind_demand_nuts2(scenario_folder, input_manager, countries)
         if toggle_hourly and not toggle_nuts2 and not IND_HOURLY_DEMAND_DISABLE:
@@ -112,8 +110,7 @@ def generate_instance_output(input_manager: InputManager, countries: dict[str, C
             output_ind_product_amount(details_folder, input_manager, countries, product_instance_filter)
             output_ind_specific_consumption(details_folder, input_manager, countries, product_instance_filter)
     if SectorIdentifier.COMMERCIAL_TRADE_SERVICES in active_sectors:
-        if not toggle_nuts2:
-            output_cts_demand_country(scenario_folder, input_manager, countries)
+        output_cts_demand_country(scenario_folder, input_manager, countries)
         if toggle_nuts2:
             output_cts_demand_nuts2(scenario_folder, input_manager, countries)
         if toggle_hourly and not toggle_nuts2 and not CTS_HOURLY_DEMAND_DISABLE:
@@ -124,20 +121,25 @@ def generate_instance_output(input_manager: InputManager, countries: dict[str, C
             output_cts_employee_number(details_folder, input_manager, countries, cts_instance_filter)
             output_cts_specific_consumption(details_folder, input_manager, countries, cts_instance_filter)
     if SectorIdentifier.HOUSEHOLDS in active_sectors:
-        if not toggle_nuts2:
-            output_hh_demand_country(scenario_folder, input_manager, countries)
+        output_hh_demand_country(scenario_folder, input_manager, countries)
         if toggle_nuts2:
             output_hh_demand_nuts2(scenario_folder, input_manager, countries)
         if toggle_hourly and not toggle_nuts2 and not HH_HOURLY_DEMAND_DISABLE:
             output_hh_demand_hourly_country(scenario_folder, input_manager, countries)
         if toggle_hourly and toggle_nuts2 and not HH_HOURLY_DEMAND_DISABLE:
-            pass
+            output_hh_demand_hourly_nuts2(scenario_folder, input_manager, countries)
         if TOGGLE_DETAILED_OUTPUT:
             output_hh_characteristics(details_folder, input_manager, countries, hh_instance_filter)
             output_hh_subsectors_demand(details_folder, input_manager, countries, hh_instance_filter)
     if SectorIdentifier.TRANSPORT in active_sectors:
         output_tra_energy_demand_country(scenario_folder, input_manager, countries)
         output_tra_kilometers(scenario_folder, input_manager, tra_instance_filter)
+        if toggle_hourly and not toggle_nuts2 and not TRA_HOURLY_DEMAND_DISABLE:
+            output_tra_demand_hourly_country(scenario_folder, input_manager, countries)
+            output_tra_pkm_tkm_hourly_country(scenario_folder, input_manager, tra_instance_filter)
+        if toggle_hourly and toggle_nuts2 and not HH_HOURLY_DEMAND_DISABLE:
+            output_tra_demand_hourly_nuts2(scenario_folder, input_manager, countries)
+            output_tra_pkm_tkm_hourly_nuts2(scenario_folder, input_manager, tra_instance_filter)
         if toggle_nuts2:
             output_tra_energy_demand_nuts2(scenario_folder, input_manager, countries)
             output_tra_kilometers_nuts2(scenario_folder, input_manager, tra_instance_filter)
@@ -644,7 +646,7 @@ def output_hh_demand_hourly_country(folder: Path, input_manager: InputManager, c
     filename = "hh_demand_forecast_hourly_per_country.xlsx"
     fg = FileGenerator(input_manager, folder, filename)
     with fg:
-        fg.start_sheet("CTS")
+        fg.start_sheet("HH")
         fg.add_complete_column("t", list(range(1, 8760 + 1)))
         for country_name, country in countries.items():
             hourly_demand_efh = country.get_sector(
@@ -667,10 +669,10 @@ def output_hh_demand_hourly_country(folder: Path, input_manager: InputManager, c
 def output_hh_demand_hourly_nuts2(folder: Path, input_manager: InputManager, countries):
     """ Generates the demand output of the households sector distributed by nuts2 regions. """
 
-    filename = "hh_demand_forecast_hourly_per_country.xlsx"
+    filename = "hh_demand_forecast_hourly_per_nuts2.xlsx"
     fg = FileGenerator(input_manager, folder, filename)
     with fg:
-        fg.start_sheet("CTS")
+        fg.start_sheet("HH")
         fg.add_complete_column("t", list(range(1, 8760 + 1)))
         for country_name, country in countries.items():
             hourly_demand_efh_nuts2 = country.get_sector(
@@ -762,7 +764,7 @@ def output_tra_kilometers(folder: Path, input_manager: InputManager, traffic_if:
             fg.add_entry("Country", country_name)
             sum = 0.0
             for modal_id in TransportInput.tra_modal_lists[TrafficType.PERSON]:
-                ukm = traffic_if.get_unit_km_country_in_target_year(country_name, TrafficType.PERSON, modal_id)
+                ukm = traffic_if.get_unit_km_in_target_year_country(country_name, TrafficType.PERSON, modal_id)
                 ukm = convert(Unit.Standard, Unit.Billion, ukm)
                 modal_string = map_tra_modal_to_string[modal_id]
                 sum += ukm
@@ -774,7 +776,7 @@ def output_tra_kilometers(folder: Path, input_manager: InputManager, traffic_if:
             fg.add_entry("Country", country_name)
             sum = 0.0
             for modal_id in TransportInput.tra_modal_lists[TrafficType.FREIGHT]:
-                ukm = traffic_if.get_unit_km_country_in_target_year(country_name, TrafficType.FREIGHT, modal_id)
+                ukm = traffic_if.get_unit_km_in_target_year_country(country_name, TrafficType.FREIGHT, modal_id)
                 ukm = convert(Unit.Standard, Unit.Million, ukm)
                 modal_string = map_tra_modal_to_string[modal_id]
                 sum += ukm
@@ -794,7 +796,7 @@ def output_tra_kilometers_nuts2(folder: Path, input_manager: InputManager, traff
                 fg.add_entry("NUTS2 Region", region_name)
                 sum = 0.0
                 for modal_id in TransportInput.tra_modal_lists[TrafficType.PERSON]:
-                    ukm = traffic_if.get_unit_km_nuts2_in_target_year(country_name, region_name, TrafficType.PERSON,
+                    ukm = traffic_if.get_unit_km_in_target_year_nuts2(country_name, region_name, TrafficType.PERSON,
                                                                       modal_id)
                     ukm = convert(Unit.Standard, Unit.Billion, ukm)
 
@@ -810,7 +812,7 @@ def output_tra_kilometers_nuts2(folder: Path, input_manager: InputManager, traff
                 sum = 0.0
                 for modal_id in TransportInput.tra_modal_lists[TrafficType.FREIGHT]:
                     ukm = \
-                        traffic_if.get_unit_km_nuts2_in_target_year(country_name, region_name, TrafficType.FREIGHT,
+                        traffic_if.get_unit_km_in_target_year_nuts2(country_name, region_name, TrafficType.FREIGHT,
                                                                     modal_id)
 
                     ukm = convert(Unit.Standard, Unit.Million, ukm)
@@ -898,10 +900,10 @@ def output_tra_energy_demand_nuts2(folder: Path, input_manager: InputManager, co
                 shortcut_demand_table(fg, demand)
 
 
-def output_tra_demand_hourly(folder: Path, input_manager: InputManager, countries):
+def output_tra_demand_hourly_country(folder: Path, input_manager: InputManager, countries):
     """ Generates the hourly demand output for the transport sector. """
 
-    filename = "tra_demand_forecast_hourly.xlsx"
+    filename = "tra_demand_forecast_hourly_country.xlsx"
     fg = FileGenerator(input_manager, folder, filename)
     with fg:
         fg.start_sheet("TRA")
@@ -912,18 +914,172 @@ def output_tra_demand_hourly(folder: Path, input_manager: InputManager, countrie
 
         for country_name, country_obj in countries.items():
             transport_sector: Transport = country_obj.get_sector(SectorIdentifier.TRANSPORT)
-            person_demand = transport_sector.calculate_demand_for_traffic_type(TrafficType.PERSON)
-            freight_demand = transport_sector.calculate_demand_for_traffic_type(TrafficType.FREIGHT)
+            person_demand = transport_sector.calculate_subsector_demand(TrafficType.PERSON)
+            freight_demand = transport_sector.calculate_subsector_demand(TrafficType.FREIGHT)
 
-            fg.add_complete_column(
-                country_name + ".Elec" + "road",    #todo: better
-                person_demand.electricity
-                * load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)])
-            fg.add_complete_column(
-                country_name + ".Elec",
-                person_demand.electricity
-                * load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)])
+            sum_electricity = np.zeros(8760)
+            sum_hydrogen = np.zeros(8760)
+
+            for modal_id in TransportInput.tra_modal_lists[TrafficType.PERSON]:
+                traffic_type = TrafficType.PERSON
+                person_modal_demand: Demand = person_demand[modal_id]
+                person_modal_demand.scale(get_conversion_scalar(Unit.kWh, Unit.TWh))
+
+                if modal_id == TransportModal.bus or modal_id == TransportModal.car:
+                    modal_id = TransportModal.road
+                if modal_id == TransportModal.flight:
+                    traffic_type = TrafficType.BOTH
+
+                sum_electricity += person_modal_demand.electricity \
+                                   * load_profile[(traffic_type, modal_id, DemandType.ELECTRICITY)]
+                sum_hydrogen += person_modal_demand.hydrogen \
+                                   * load_profile[(traffic_type, modal_id, DemandType.HYDROGEN)]
+
+            for modal_id in TransportInput.tra_modal_lists[TrafficType.FREIGHT]:
+                traffic_type = TrafficType.FREIGHT
+
+                if modal_id == TransportModal.flight:
+                    traffic_type = TrafficType.BOTH
+
+                freight_modal_demand: Demand = freight_demand[modal_id]
+                freight_modal_demand.scale(get_conversion_scalar(Unit.kWh, Unit.TWh))
+
+                sum_electricity += freight_modal_demand.electricity \
+                                   * load_profile[(traffic_type, modal_id, DemandType.ELECTRICITY)]
+                sum_hydrogen += freight_modal_demand.hydrogen \
+                                * load_profile[(traffic_type, modal_id, DemandType.HYDROGEN)]
+
+            fg.add_complete_column(country_name + ".Elec", sum_electricity)
+            fg.add_complete_column(country_name + ".H2", sum_hydrogen)
 
 
+def output_tra_demand_hourly_nuts2(folder: Path, input_manager: InputManager, countries):
+    """ Generates the hourly demand output for the transport sector. """
 
+    filename = "tra_demand_forecast_hourly_nuts2.xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        fg.start_sheet("TRA")
+
+        fg.add_complete_column("t", np.arange(1, 8760 + 1))
+
+        load_profile: dict = input_manager.transport_input.load_profile
+
+        for country_name, country_obj in countries.items():
+            transport_sector: Transport = country_obj.get_sector(SectorIdentifier.TRANSPORT)
+            person_demand_nuts2 = transport_sector.calculate_subsector_demand_distributed_by_nuts2(TrafficType.PERSON)
+            freight_demand_nuts2 = transport_sector.calculate_subsector_demand_distributed_by_nuts2(TrafficType.FREIGHT)
+
+            for region_name, person_demand in person_demand_nuts2.items():
+                freight_demand = freight_demand_nuts2[region_name]
+
+                sum_electricity = np.zeros(8760)
+                sum_hydrogen = np.zeros(8760)
+
+                for modal_id in TransportInput.tra_modal_lists[TrafficType.PERSON]:
+                    traffic_type = TrafficType.PERSON
+                    person_modal_demand: Demand = person_demand[modal_id]
+                    person_modal_demand.scale(get_conversion_scalar(Unit.kWh, Unit.TWh))
+
+                    if modal_id == TransportModal.bus or modal_id == TransportModal.car:
+                        modal_id = TransportModal.road
+                    if modal_id == TransportModal.flight:
+                        traffic_type = TrafficType.BOTH
+
+                    sum_electricity += person_modal_demand.electricity \
+                                       * load_profile[(traffic_type, modal_id, DemandType.ELECTRICITY)]
+                    sum_hydrogen += person_modal_demand.hydrogen \
+                                       * load_profile[(traffic_type, modal_id, DemandType.HYDROGEN)]
+
+                for modal_id in TransportInput.tra_modal_lists[TrafficType.FREIGHT]:
+                    traffic_type = TrafficType.FREIGHT
+
+                    if modal_id == TransportModal.flight:
+                        traffic_type = TrafficType.BOTH
+
+                    freight_modal_demand: Demand = freight_demand[modal_id]
+                    freight_modal_demand.scale(get_conversion_scalar(Unit.kWh, Unit.TWh))
+
+                    sum_electricity += freight_modal_demand.electricity \
+                                       * load_profile[(traffic_type, modal_id, DemandType.ELECTRICITY)]
+                    sum_hydrogen += freight_modal_demand.hydrogen \
+                                    * load_profile[(traffic_type, modal_id, DemandType.HYDROGEN)]
+
+                fg.add_complete_column(region_name + ".Elec", sum_electricity)
+                fg.add_complete_column(region_name + ".H2", sum_hydrogen)
+
+def output_tra_pkm_tkm_hourly_country(folder: Path, input_manager: InputManager, traffic_if: TransportInstanceFilter):
+    """ Generates the hourly demand output for the transport sector. """
+
+    filename = "tra_pkm_tkm_forecast_hourly_country.xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        fg.start_sheet("TRA")
+
+        fg.add_complete_column("t", np.arange(1, 8760 + 1))
+
+        load_profile_ukm: dict = input_manager.transport_input.load_profile_ukm
+
+        for country_name in input_manager.ctrl.general_settings.active_countries:
+
+            traffic_type = TrafficType.PERSON
+            for modal_id in TransportInput.tra_modal_lists[traffic_type]:
+                pkm = traffic_if.get_unit_km_in_target_year_country(country_name, traffic_type, modal_id)
+                pkm = convert(Unit.Standard, Unit.Billion, pkm)
+
+                str_tra = map_tra_traffic_type_to_string[traffic_type]
+                str_modal = map_tra_modal_to_string[modal_id]
+
+                fg.add_complete_column(country_name + "." + str_tra + "." + str_modal + " [Mil. pkm]",
+                                       pkm * load_profile_ukm[(traffic_type, modal_id)])
+
+            traffic_type = TrafficType.FREIGHT
+            for modal_id in TransportInput.tra_modal_lists[traffic_type]:
+                tkm = traffic_if.get_unit_km_in_target_year_country(country_name, traffic_type, modal_id)
+                tkm = convert(Unit.Standard, Unit.Million, tkm)
+
+                str_tra = map_tra_traffic_type_to_string[traffic_type]
+                str_modal = map_tra_modal_to_string[modal_id]
+
+                fg.add_complete_column(country_name + "." + str_tra + "." + str_modal + " [Mrd. tkm]",
+                                       tkm * load_profile_ukm[(traffic_type, modal_id)])
+
+
+def output_tra_pkm_tkm_hourly_nuts2(folder: Path, input_manager: InputManager, traffic_if: TransportInstanceFilter):
+    """ Generates the hourly demand output for the transport sector. """
+
+    filename = "tra_pkm_tkm_forecast_hourly_nuts2.xlsx"
+    fg = FileGenerator(input_manager, folder, filename)
+    with fg:
+        fg.start_sheet("TRA")
+
+        fg.add_complete_column("t", np.arange(1, 8760 + 1))
+
+        load_profile_ukm: dict = input_manager.transport_input.load_profile_ukm
+
+        for country_name in input_manager.ctrl.general_settings.active_countries:
+
+            for region_name in traffic_if.get_nuts2_region_names(country_name):
+
+                traffic_type = TrafficType.PERSON
+                for modal_id in TransportInput.tra_modal_lists[traffic_type]:
+                    pkm = traffic_if.get_unit_km_in_target_year_nuts2(country_name, region_name, traffic_type, modal_id)
+                    pkm = convert(Unit.Standard, Unit.Billion, pkm)
+
+                    str_tra = map_tra_traffic_type_to_string[traffic_type]
+                    str_modal = map_tra_modal_to_string[modal_id]
+
+                    fg.add_complete_column(region_name + "." + str_tra + "." + str_modal + " [Mil. pkm]",
+                                           pkm * load_profile_ukm[(traffic_type, modal_id)])
+
+                traffic_type = TrafficType.FREIGHT
+                for modal_id in TransportInput.tra_modal_lists[traffic_type]:
+                    tkm = traffic_if.get_unit_km_in_target_year_nuts2(country_name, region_name, traffic_type, modal_id)
+                    tkm = convert(Unit.Standard, Unit.Million, tkm)
+
+                    str_tra = map_tra_traffic_type_to_string[traffic_type]
+                    str_modal = map_tra_modal_to_string[modal_id]
+
+                    fg.add_complete_column(region_name + "." + str_tra + "." + str_modal + " [Mrd. tkm]",
+                                           tkm * load_profile_ukm[(traffic_type, modal_id)])
 

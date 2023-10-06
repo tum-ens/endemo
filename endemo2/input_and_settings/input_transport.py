@@ -190,38 +190,59 @@ class TransportInput:
 
         # read load profile
         if ctrl.general_settings.toggle_hourly_forecast:
-            df_load_profile = \
-                pd.read_excel(traffic_path / "tra_timeseries.xlsx", sheet_name="timeseries_LoadingProfile")
+            ex_load_profile = pd.ExcelFile(traffic_path / "tra_timeseries.xlsx")
+            df_load_profile = pd.read_excel(ex_load_profile, sheet_name="timeseries_LoadingProfile")
+            df_load_profile_ukm = pd.read_excel(ex_load_profile, sheet_name="timeseries_MobilityProfile")
 
             self.load_profile = dict[(TrafficType, TransportModal, DemandType), Any]()
             self.load_profile[(TrafficType.FREIGHT, TransportModal.road, DemandType.ELECTRICITY)] \
-                = np.array(df_load_profile["ft.road.elec"])
+                = np.array(df_load_profile["ft.road.elec"][1:])
             self.load_profile[(TrafficType.FREIGHT, TransportModal.road, DemandType.HYDROGEN)] \
-                = np.array(df_load_profile["ft.road.hydrogen"])
+                = np.array(df_load_profile["ft.road.hydrogen"][1:])
+            self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.ELECTRICITY)] \
+                = np.array(df_load_profile["pt.road.elec"][1:])
             self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)] \
-                = np.array(df_load_profile["pt.road.elec"])
-            self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)] \
-                = np.array(df_load_profile["pt.road.hydrogen"])
-            self.load_profile[(TrafficType.FREIGHT, TransportModal.road, DemandType.HYDROGEN)] \
-                = np.array(df_load_profile["ft.rail.elec"])
-            self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)] \
-                = np.array(df_load_profile["pt.rail.elec"])
-            self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)] \
-                = np.array(df_load_profile["pt.rail.hydrogen"])
-            self.load_profile[(TrafficType.FREIGHT, TransportModal.road, DemandType.HYDROGEN)] \
-                = np.array(df_load_profile["ship.elec"])
-            self.load_profile[(TrafficType.FREIGHT, TransportModal.road, DemandType.HYDROGEN)] \
-                = np.array(df_load_profile["ship.hydrogen"])
-            self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)] \
-                = np.array(df_load_profile["flight.elec"])
-            self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)] \
-                = np.array(df_load_profile["flight.hydrogen"])
-            self.load_profile[(TrafficType.PERSON, TransportModal.road, DemandType.HYDROGEN)] \
-                = np.array(df_load_profile["other"])
-            self.load_profile[(TrafficType.FREIGHT, TransportModal.road, DemandType.HYDROGEN)] \
-                = np.array(df_load_profile["other"])
+                = np.array(df_load_profile["pt.road.hydrogen"][1:])
+            self.load_profile[(TrafficType.FREIGHT, TransportModal.rail, DemandType.ELECTRICITY)] \
+                = np.array(df_load_profile["ft.rail.elec"][1:])
+            self.load_profile[(TrafficType.FREIGHT, TransportModal.rail, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["ft.rail.hydrogen"][1:])
+            self.load_profile[(TrafficType.PERSON, TransportModal.rail, DemandType.ELECTRICITY)] \
+                = np.array(df_load_profile["pt.rail.elec"][1:])
+            self.load_profile[(TrafficType.PERSON, TransportModal.rail, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["pt.rail.hydrogen"][1:])
+            self.load_profile[(TrafficType.FREIGHT, TransportModal.ship, DemandType.ELECTRICITY)] \
+                = np.array(df_load_profile["ship.elec"][1:])
+            self.load_profile[(TrafficType.FREIGHT, TransportModal.ship, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["ship.hydrogen"][1:])
+            self.load_profile[(TrafficType.BOTH, TransportModal.flight, DemandType.ELECTRICITY)] \
+                = np.array(df_load_profile["flight.elec"][1:])
+            self.load_profile[(TrafficType.BOTH, TransportModal.flight, DemandType.HYDROGEN)] \
+                = np.array(df_load_profile["flight.hydrogen"][1:])
+
+            self.load_profile_ukm = dict[(TrafficType, TransportModal, DemandType), Any]()
+            self.load_profile_ukm[(TrafficType.PERSON, TransportModal.rail)] \
+                = np.array(df_load_profile_ukm["pt.rail"][1:])
+            self.load_profile_ukm[(TrafficType.PERSON, TransportModal.car)] \
+                = np.array(df_load_profile_ukm["pt.car"][1:])
+            self.load_profile_ukm[(TrafficType.PERSON, TransportModal.bus)] \
+                = np.array(df_load_profile_ukm["pt.bus"][1:])
+            self.load_profile_ukm[(TrafficType.PERSON, TransportModal.flight)] \
+                = np.array(df_load_profile_ukm["pt.flight"][1:])
+            self.load_profile_ukm[(TrafficType.PERSON, TransportModal.ship)] \
+                = np.array(df_load_profile_ukm["pt.ship"][1:])
+            self.load_profile_ukm[(TrafficType.FREIGHT, TransportModal.rail)] \
+                = np.array(df_load_profile_ukm["ft.rail"][1:])
+            self.load_profile_ukm[(TrafficType.FREIGHT, TransportModal.road)] \
+                = np.array(df_load_profile_ukm["ft.road"][1:])
+            self.load_profile_ukm[(TrafficType.FREIGHT, TransportModal.flight)] \
+                = np.array(df_load_profile_ukm["ft.flight"][1:])
+            self.load_profile_ukm[(TrafficType.FREIGHT, TransportModal.ship)] \
+                = np.array(df_load_profile_ukm["ft.ship"][1:])
         else:
             self.load_profile = None
+            self.load_profile_ukm = None
+
 
     @classmethod
     def read_timeline_perc(cls, ctrl, df) -> dict[str, [Datapoint]]:

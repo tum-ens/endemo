@@ -2,6 +2,7 @@ from endemo2.data_structures.containers import Demand
 from endemo2.data_structures.enumerations import TrafficType, TransportModal, DemandType
 from endemo2.model_instance.instance_filter.transport_instance_filter import TransportInstanceFilter
 from endemo2.model_instance.model.sector import Sector
+import endemo2.utility as uty
 
 
 class Transport(Sector):
@@ -50,7 +51,7 @@ class Transport(Sector):
         # iterate through all modals
         for modal_id in self._transport_if.get_modals_for_traffic_type(traffic_type):
             ukm_modal = \
-                self._transport_if.get_unit_km_country_in_target_year(self._country_name, traffic_type, modal_id)
+                self._transport_if.get_unit_km_in_target_year_country(self._country_name, traffic_type, modal_id)
 
             elec_perc = \
                 self._transport_if.get_perc_modal_to_demand_type_in_target_year(self._country_name, traffic_type,
@@ -69,6 +70,28 @@ class Transport(Sector):
 
         return result
 
+    def calculate_subsector_demand_distributed_by_nuts2(self, traffic_type: TrafficType) \
+            -> dict[str, dict[TransportModal, Demand]]:
+        """
+        Calculate demand for a traffic type in the transport sector distributed by nuts2 regions
+
+        :param traffic_type: The traffic type whose demand should be calculated.
+        :return: The demand of the traffic type split in modals distributed by nuts2 regions.
+        """
+        dict_demand = self.calculate_subsector_demand(traffic_type)
+
+        nuts2_distribution_scalars = \
+            self._transport_if.get_nuts2_distribution_scalars(self._country_name, traffic_type)
+
+        distributed_demand = dict[str, dict[TransportModal, Demand]]()
+
+        for (nuts2_region_name, distribution_scalar) in nuts2_distribution_scalars.items():
+            scaled_demand = uty.multiply_demand_dictionary_with_scalar(dict_demand, distribution_scalar)
+            distributed_demand[nuts2_region_name] = scaled_demand
+
+        return distributed_demand
+
+
     def calculate_demand_for_traffic_type_distributed_by_nuts2(self, traffic_type) -> dict[str, Demand]:
         """
         Calculate demand of transport sector distributed by nuts2 regions for a traffic type.
@@ -81,11 +104,7 @@ class Transport(Sector):
         nuts2_distribution_scalars = \
             self._transport_if.get_nuts2_distribution_scalars(self._country_name, traffic_type)
 
-        distributed_demand = dict[str, Demand]()
-
-        for (nuts2_region_name, distribution_scalar) in nuts2_distribution_scalars.items():
-            region_demand = demand.copy_scale(distribution_scalar)
-            distributed_demand[nuts2_region_name] = region_demand
+        distributed_demand = uty.multiply_dictionary_with_demand(nuts2_distribution_scalars, demand)
 
         return distributed_demand
 

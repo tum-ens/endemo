@@ -118,6 +118,7 @@ class TrafficType(Enum):
     """ The type of traffic. """
     PERSON = 0
     FREIGHT = 1
+    BOTH = 2
 
 
 class TransportModal(Enum):
