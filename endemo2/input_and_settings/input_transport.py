@@ -19,13 +19,20 @@ class TransportInput:
     :param ControlParameters ctrl: The control parameters object.
     :param Path traffic_path: The path to the input files for the CTS sector.
 
-    :ivar dict[TrafficType, dict[str, dict[TransportModal, Datapoint]]] specific_km: The number of (million) kilometres
+    :ivar dict[TrafficType, dict[str, dict[TransportModal, Datapoint]]] kilometres: The number of (million) kilometres
         travelled in one year by one unit of traffic type.
         Is of form {traffic_type -> country_name -> transport_modal -> datapoint}.
     :ivar dict[TrafficType, dict[str, dict[TransportModal, [Datapoint]]]] modal_split_his: The historical data on model
         splits for each traffic type.
     :ivar dict[TrafficType, dict[str, dict[TransportModal, [Datapoint]]]] modal_split_user_def: The user defined model
         split points for each traffic type.
+
+    :ivar dict[TrafficType, dict[TransportModal, Demand]] modal_ukm_energy_consumption: The energy consumption for each
+        pkm or tkm and each transport modal.
+    :ivar dict[TrafficType, dict[TransportModal, dict[DemandType, [Datapoint]]]] demand_split_reference:
+        How demand should be split over time. Reference from real data.
+    :ivar dict[TrafficType, dict[TransportModal, dict[DemandType, [Datapoint]]]] demand_split_user:
+    How demand should be split over time. Defined by user.
     """
 
     tra_traffic_types = [TrafficType.PERSON, TrafficType.FREIGHT]
@@ -125,13 +132,12 @@ class TransportInput:
         self.modal_split_user_def[TrafficType.FREIGHT] = \
             self.read_modal_split_sheets(ctrl, dict_df_person_modal_split_user)
 
-        # read transport demand conversion input+
+        # read transport demand conversion input
         self.modal_ukm_energy_consumption = dict[TrafficType, dict[TransportModal, Demand]]()
         self.demand_split_reference = dict[TrafficType, dict[TransportModal, dict[DemandType, [Datapoint]]]]()
         self.demand_split_user = dict[TrafficType, dict[TransportModal, dict[DemandType, [Datapoint]]]]()
 
         # read final energy sources
-        # todo: document from here on out
         df_energy_per_source_person = pd.read_excel(ex_person_energy_sources, sheet_name="EnergyperSource")
         df_energy_per_source_freight = pd.read_excel(ex_freight_energy_sources, sheet_name="EnergyperSource")
 
@@ -246,6 +252,7 @@ class TransportInput:
 
     @classmethod
     def read_timeline_perc(cls, ctrl, df) -> dict[str, [Datapoint]]:
+        """ Read a simple timeline of percentage values. Convert to %/100. """
         dict_res = dict[str, [Datapoint]]()
 
         years = df.columns[1:]
@@ -266,6 +273,7 @@ class TransportInput:
     @classmethod
     def read_specific_km(cls, ctrl, dict_specific_km: dict[TransportModal, (Unit, pd.DataFrame)], desired_unit: Unit,
                          reference_year: int = None) -> dict[str, dict[TransportModal, Datapoint]]:
+        """ Read the specific kilometers and convert unit to desired unit.  """
         dict_res = dict[str, dict[TransportModal, Datapoint]]()
 
         for modal_id, (curr_unit, value_column, df_specific_km) in dict_specific_km.items():
@@ -291,6 +299,7 @@ class TransportInput:
     @classmethod
     def read_modal_split_sheets(cls, ctrl, dict_df_modal_split: dict[TransportModal, pd.DataFrame]) \
             -> dict[str, dict[TransportModal, [Datapoint]]]:
+        """ Reads the modal split sheets. """
 
         dict_res = dict[str, dict[TransportModal, [Datapoint]]]()
 
@@ -313,6 +322,7 @@ class TransportInput:
 
     @classmethod
     def read_energy_per_source(cls, traffic_type, df_energy_per_source) -> dict[TransportModal, Demand]:
+        """ Reads the energy per source sheet. """
         result = dict[TransportModal, Demand]()
 
         str_energy_consumption_column_name = ""

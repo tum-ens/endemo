@@ -10,7 +10,7 @@ map_demand_to_string = {DemandType.ELECTRICITY: "electricity",
 map_hh_subsector_to_string = {
     HouseholdsSubsectorId.SPACE_HEATING: "space_heating",
     HouseholdsSubsectorId.SPACE_COOLING: "space_cooling",
-    HouseholdsSubsectorId.WATER_HEATING: "water_heating",
+    HouseholdsSubsectorId.WATER_HEATING: "hot_water",
     HouseholdsSubsectorId.COOKING: "cooking",
     HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES: "light_and_appliances",
     HouseholdsSubsectorId.OTHER: "other"

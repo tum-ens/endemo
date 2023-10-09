@@ -27,36 +27,20 @@ class Unit(Enum):
 unit_conversion_scalar_table = {
     (Unit.GWh, Unit.TWh): 1 / 1000,
     (Unit.TJ, Unit.TWh): 1 / 3600,
-    (Unit.kWh, Unit.TWh): 1 / 10**9,
-    (Unit.TWh, Unit.kWh): 10**9,
+    (Unit.kWh, Unit.TWh): 1 / 10 ** 9,
+    (Unit.TWh, Unit.kWh): 10 ** 9,
     (Unit.GJ, Unit.TWh): 1 / (3600 * 1000),
     (Unit.liter, Unit.m3): 1 / 1000,
-    (Unit.Million, Unit.Billion): 1/1000,
+    (Unit.Million, Unit.Billion): 1 / 1000,
     (Unit.Billion, Unit.Million): 1000,
-    (Unit.Standard, Unit.Million): 1/10**6,
-    (Unit.Standard, Unit.Billion): 1/10**9,
-    (Unit.Million, Unit.Standard): 10**6,
-    (Unit.Billion, Unit.Standard): 10**9,
+    (Unit.Standard, Unit.Million): 1 / 10 ** 6,
+    (Unit.Standard, Unit.Billion): 1 / 10 ** 9,
+    (Unit.Million, Unit.Standard): 10 ** 6,
+    (Unit.Billion, Unit.Standard): 10 ** 9,
     (Unit.kilo, Unit.Million): 1 / 1000,
-    (Unit.PJ, Unit.kWh): 10**12 / 3600,
-    (Unit.MJ, Unit.kWh): 10**3 / 3600
+    (Unit.PJ, Unit.kWh): 10 ** 12 / 3600,
+    (Unit.MJ, Unit.kWh): 10 ** 3 / 3600
 }
-
-
-def get_conversion_scalar(from_unit: Unit, to_unit: Unit) -> float:
-    """
-    Get the scalar that converts one unit to another.
-
-    :param from_unit: The unit of the value that should be converted.
-    :param to_unit: The resulting unit.
-    :return: The scalar for unit conversion.
-    """
-    if (from_unit, to_unit) not in unit_conversion_scalar_table.keys():
-        warnings.warn("Please add the unit conversion scalar to the table for conversion: "
-                      + str(from_unit) + " to " + str(to_unit))
-    if from_unit == to_unit:
-        return 1.0
-    return unit_conversion_scalar_table[(from_unit, to_unit)]
 
 
 def convert(from_unit: Unit, to_unit: Unit, value: float) -> float:
@@ -75,3 +59,18 @@ def convert(from_unit: Unit, to_unit: Unit, value: float) -> float:
         return value
     return unit_conversion_scalar_table[(from_unit, to_unit)] * value
 
+
+def get_conversion_scalar(from_unit: Unit, to_unit: Unit) -> float:
+    """
+    Get the scalar that converts one unit to another.
+
+    :param from_unit: The unit of the value that should be converted.
+    :param to_unit: The resulting unit.
+    :return: The scalar for unit conversion.
+    """
+    if (from_unit, to_unit) not in unit_conversion_scalar_table.keys():
+        warnings.warn("Please add the unit conversion scalar to the table for conversion: "
+                      + str(from_unit) + " to " + str(to_unit))
+    if from_unit == to_unit:
+        return 1.0
+    return unit_conversion_scalar_table[(from_unit, to_unit)]

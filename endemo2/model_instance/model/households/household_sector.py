@@ -28,7 +28,8 @@ class Households(Sector):
         for subsector_id in subsector_ids:
             if subsector_id in [HouseholdsSubsectorId.SPACE_COOLING,
                                 HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES,
-                                HouseholdsSubsectorId.COOKING]:
+                                HouseholdsSubsectorId.COOKING,
+                                HouseholdsSubsectorId.OTHER]:
                 self._subsectors[subsector_id] = \
                     HouseholdsSubsector(country_name, subsector_id, households_instance_filter)
             if subsector_id == HouseholdsSubsectorId.WATER_HEATING:

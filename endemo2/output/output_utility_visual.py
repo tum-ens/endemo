@@ -67,9 +67,9 @@ def plot_coef_in_range(label: str, start_end: (int, int), coef: Coef, color_lin,
         else:
             coef_func = [coef.get_quadr_y(x) for x in x_axis]
             plt.plot(x_axis, coef_func, color=color_quadr, label=label + " quadr coef", linestyle="dashed")
-    if exp is not None:
-        (start_x, start_y) = exp[0]
-        x_exp = [start_x, start_x + 1, start_x + 2, start_x + 3, start_x + 4]
+    if exp is not None and exp[0] is not None:
+        start = exp[0]
+        x_exp = [start.x, start.x + 1, start.x + 2, start.x + 3, start.x + 4]
         coef_func = [coef.get_exp_y(x) for x in x_exp]
         plt.plot(x_exp, coef_func, color=color_exp, label=label + " exp coef", linestyle="dashed")
 

@@ -64,6 +64,7 @@ class HouseholdsPreprocessed:
 
             # generate coefficients
             for demand_type in [DemandType.ELECTRICITY, DemandType.HEAT, DemandType.HYDROGEN]:
+                # Difference to ENDEMO Ver. 1!!! LINEAR Regression instead of exponential
                 self.sectors_pp[subsector][demand_type].generate_coef()
 
 

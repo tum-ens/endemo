@@ -65,7 +65,7 @@ class Industry(Sector):
             rest_target_year = \
                 rest_start_year * (1 + rest_growth_rate) ** (target_year - start_year)
             if demand_type == DemandType.HEAT:
-                rest_target_year = rest_heat_levels.copy_multiply_scalar(rest_start_year)
+                rest_target_year = rest_heat_levels.copy_multiply_scalar(rest_target_year)
             result.set(demand_type, rest_target_year)
 
         return result

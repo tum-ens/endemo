@@ -55,7 +55,7 @@ class CountryInstanceFilter(InstanceFilter):
 
         target_year = self.ctrl.general_settings.target_year
 
-        gdp_start_point = gdp_historical_pp.get_last_data_entry()
+        gdp_start_point = Datapoint(2020, gdp_historical_pp.get_value_at_year(2020))  # todo: create entry in settings for this value
         if target_year <= gdp_start_point[0]:
             # use historical data
             return gdp_historical_pp.get_value_at_year(target_year)

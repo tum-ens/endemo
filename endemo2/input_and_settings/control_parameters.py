@@ -168,7 +168,7 @@ class IndustrySettings:
 
         self.rest_sector_growth_rate = \
             df_subsectors[df_subsectors["Subsectors"] == "unspecified industry"].get(
-                "Parameter: production quantity change in %/year").iloc[0]
+                "Parameter: production quantity change in %/year").iloc[0] / 100
 
         # read substitution of heat by electricity and hydrogen
         self.heat_substitution = dict[DemandType, Heat]()
@@ -197,7 +197,7 @@ class IndustrySettings:
                     "Active subsectors").iloc[0]
             prod_quant_change = \
                 df_subsectors[df_subsectors["Subsectors"] == product].get(
-                    "Parameter: production quantity change in %/year").iloc[0]
+                    "Parameter: production quantity change in %/year").iloc[0] / 100
             sub_perc_used_string = \
                 df_subsectors[df_subsectors["Subsectors"] == product].get(
                     "Parameter: technology substitution in %").iloc[0]

@@ -31,7 +31,7 @@ TOGGLE_CTS_EMPLOYEE_NUTS2_VISUAL_OUTPUT = False
 
 TOGGLE_HH_CONSUMPTION_VISUAL_OUTPUT = False
 
-TOGGLE_TRA_MODAL_SPLIT_VISUAL_OUTPUT = True
+TOGGLE_TRA_MODAL_SPLIT_VISUAL_OUTPUT = False
 
 
 def generate_preprocessing_output(input_manager: InputManager, preprocessor: Preprocessor):
@@ -563,7 +563,8 @@ def output_hh_demand_historical_2018(folder, input_manager: InputManager,
                 demand_sum = 0
                 for demand_type in [DemandType.ELECTRICITY, DemandType.HEAT, DemandType.HYDROGEN]:
                     demand_sum += subsector_pp[demand_type].get_value_at_year_else_zero(target_year)
-                fg.add_entry("Consumption 2018 [TWh]", demand_sum)
+                population = country_pp.population_pp.population_whole_country_prognosis.get_value_at_year(target_year)
+                fg.add_entry("Consumption 2018 [TWh]", demand_sum * population)
 
 
 def output_hh_consumption_visual_country(folder, input_manager: InputManager,

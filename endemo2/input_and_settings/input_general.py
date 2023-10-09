@@ -143,7 +143,6 @@ class GeneralInput:
                           sheet_name="Populationprojection_NUTS2_" + str(ctrl.general_settings.nuts2_version))
         df_gdp_his = pd.read_excel(path / "GDP_per_capita_historical.xlsx", sheet_name="constant 2015 USD")
         df_gdp_prog_europa = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data")
-        df_gdp_prog_world = pd.read_excel(path / "GDP_per_capita_change_rate_projection.xlsx", sheet_name="Data_world")
         df_efficiency = pd.read_excel(path / "Efficiency_Combustion.xlsx", sheet_name="Data")
         df_nuts2_labels = pd.read_excel(path / "NUTS2_from_Model.xlsx")
 
@@ -176,15 +175,11 @@ class GeneralInput:
             # read gdp prognosis
             interval_conv = lambda xs: [dc.Interval(int(x.split('-')[0]), int(x.split('-')[1])) for x in xs]
             intervals_europa = interval_conv(df_gdp_prog_europa.columns[1:-1])
-            intervals_world = interval_conv(df_gdp_prog_world.columns[1:-1])
 
             zipped_gdp_prog: list[dc.Interval, float]
             if country_name in list(df_gdp_prog_europa["Country"]):
                 gdp_prog = df_gdp_prog_europa[df_gdp_prog_europa["Country"] == country_name].iloc[0][1:-1]
                 zipped_gdp_prog = list(zip(intervals_europa, gdp_prog))
-            elif country_name in list(df_gdp_prog_world["Country"]):
-                gdp_prog = df_gdp_prog_world[df_gdp_prog_world["Country"] == country_name].iloc[0][1:-1]
-                zipped_gdp_prog = list(zip(intervals_world, gdp_prog))
             else:
                 warnings.warn("Attention! For country \"" + country_name
                               + "\" no gdp prognosis data was found. Data from \"all\" is used instead now.")

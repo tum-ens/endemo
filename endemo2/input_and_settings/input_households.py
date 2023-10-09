@@ -22,7 +22,7 @@ hh_subsectors = [
 
 ]
 
-hh_visible_subsectors = hh_subsectors[:-1]
+hh_visible_subsectors = hh_subsectors
 
 
 class HouseholdsInput:

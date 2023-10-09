@@ -41,7 +41,7 @@ def multiply_dictionary_with_scalar(dictionary: dict[Any, float], scalar: float)
     return res_dict
 
 
-def multiply_demand_dictionary_with_scalar(dictionary: dict[Any, Demand], scalar: float) -> dict[Any, Demand]:
+def multiply_demand_dictionary_with_scalar(dictionary: dict[str, Demand], scalar: float) -> dict[str, Demand]:
     """
     Multiplies every dictionary demand entry with value and returns the result
 
@@ -50,7 +50,7 @@ def multiply_demand_dictionary_with_scalar(dictionary: dict[Any, Demand], scalar
     :return: The resulting dictionary.
     """
 
-    res_dict = dict[Any, Demand]()
+    res_dict = dict[str, Demand]()
 
     for key, value in dictionary.items():
         res_dict[key] = value.copy_scale(scalar)
