@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.preprocessing.preproccessing_step_two &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.preprocessing.preproccessing_step_two</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.preprocessing.preproccessing_step_two</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains all classed used for the first stage of preprocessing.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">utility</span> <span class="k">as</span> <span class="n">uty</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.enumerations</span> <span class="kn">import</span> <span class="n">GroupType</span><span class="p">,</span> <span class="n">ForecastMethod</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.prediction_models</span> <span class="kn">import</span> <span class="n">Coef</span><span class="p">,</span> <span class="n">TwoDseries</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.control_parameters</span> <span class="kn">import</span> <span class="n">ControlParameters</span>
+<span class="kn">from</span> <span class="nn">endemo2.preprocessing.preprocessing_step_one</span> <span class="kn">import</span> <span class="n">CountryPreprocessed</span><span class="p">,</span> <span class="n">ProductPreprocessed</span>
+
+
+<div class="viewcode-block" id="CountryGroup"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroup">[docs]</a><span class="k">class</span> <span class="nc">CountryGroup</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A group of countries.</span>
+
+<span class="sd">    :ivar [str] _countries_in_group: List of countries that belong to this group.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">countries_in_group</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_countries_in_group</span> <span class="o">=</span> <span class="n">countries_in_group</span>
+
+<div class="viewcode-block" id="CountryGroup.get_countries_in_group"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroup.get_countries_in_group">[docs]</a>    <span class="k">def</span> <span class="nf">get_countries_in_group</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the countries in group. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_countries_in_group</span></div></div>
+
+
+<div class="viewcode-block" id="CountryGroupJoined"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined">[docs]</a><span class="k">class</span> <span class="nc">CountryGroupJoined</span><span class="p">(</span><span class="n">CountryGroup</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents one country group of type &quot;joined&quot;.</span>
+
+<span class="sd">    :ivar Coef _group_coef: The coefficients calculated for the whole group.</span>
+<span class="sd">    :ivar TwoDseries _joined_data: The TwoDseries combining the data from all countries in this group.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span><span class="p">,</span> <span class="n">product_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">countries_in_group</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                 <span class="n">countries_pp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">CountryPreprocessed</span><span class="p">]):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">countries_in_group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_group_coef</span> <span class="o">=</span> <span class="n">Coef</span><span class="p">()</span>
+
+        <span class="c1"># combine timeseries</span>
+        <span class="c1"># merge all data of countries_in_group within group</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_joined_data</span> <span class="o">=</span> <span class="n">TwoDseries</span><span class="p">([])</span>
+        <span class="k">for</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_countries_in_group</span><span class="p">:</span>
+            <span class="n">country_pp</span><span class="p">:</span> <span class="n">CountryPreprocessed</span> <span class="o">=</span> <span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+
+            <span class="c1"># if country doesn&#39;t have product, skip</span>
+            <span class="k">if</span> <span class="n">product_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">industry_pp</span><span class="o">.</span><span class="n">products_pp</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">continue</span>
+
+            <span class="n">product_pp</span><span class="p">:</span> <span class="n">ProductPreprocessed</span> <span class="o">=</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">industry_pp</span><span class="o">.</span><span class="n">products_pp</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span>
+
+            <span class="n">gdp_as_x</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">use_gdp_as_x</span>
+            <span class="n">y_per_capita</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">production_quantity_calc_per_capita</span>
+
+            <span class="n">active_timeseries</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="c1"># decide which data to use</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">gdp_as_x</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">y_per_capita</span><span class="p">:</span>
+                <span class="n">active_timeseries</span> <span class="o">=</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_vs_year</span>
+            <span class="k">elif</span> <span class="n">gdp_as_x</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">y_per_capita</span><span class="p">:</span>
+                <span class="n">active_timeseries</span> <span class="o">=</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_vs_gdp</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">gdp_as_x</span> <span class="ow">and</span> <span class="n">y_per_capita</span><span class="p">:</span>
+                <span class="n">active_timeseries</span> <span class="o">=</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_per_capita_vs_year</span>
+            <span class="k">elif</span> <span class="n">gdp_as_x</span> <span class="ow">and</span> <span class="n">y_per_capita</span><span class="p">:</span>
+                <span class="n">active_timeseries</span> <span class="o">=</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_per_capita_vs_gdp</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_all_data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">country_name</span><span class="p">,</span> <span class="n">active_timeseries</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_joined_data</span><span class="o">.</span><span class="n">append_others_data</span><span class="p">(</span><span class="n">active_timeseries</span><span class="p">)</span>
+
+        <span class="c1"># calculate group coefficients and save result</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_group_coef</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joined_data</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CountryGroupJoined.get_coef"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined.get_coef">[docs]</a>    <span class="k">def</span> <span class="nf">get_coef</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coef</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the group coefficient. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_group_coef</span></div>
+
+<div class="viewcode-block" id="CountryGroupJoined.get_all_historical_data"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined.get_all_historical_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_historical_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="nb">str</span><span class="p">,</span> <span class="n">TwoDseries</span><span class="p">)]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for all historical data contributing to this group. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_data</span></div></div>
+
+
+<div class="viewcode-block" id="CountryGroupJoinedDiversified"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified">[docs]</a><span class="k">class</span> <span class="nc">CountryGroupJoinedDiversified</span><span class="p">(</span><span class="n">CountryGroup</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents one country group of type &quot;joined diversified&quot;.</span>
+
+<span class="sd">    :ivar [TwoDseries] _joined_data: The TwoDseries combining the data from all countries in this group.</span>
+<span class="sd">    :ivar (float, float, float) _coef_tuple: The coefficients calculated for the whole group.</span>
+<span class="sd">    :ivar dict[str, float] _offset_dict: The offsets for each country in this group.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span><span class="p">,</span> <span class="n">product_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">countries_in_group</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                 <span class="n">countries_pp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">CountryPreprocessed</span><span class="p">]):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">countries_in_group</span><span class="p">)</span>
+
+        <span class="c1"># combine timeseries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_joined_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TwoDseries</span><span class="p">]()</span>
+        <span class="k">for</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_countries_in_group</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">country_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">countries_pp</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="c1"># country not active, skip</span>
+                <span class="k">continue</span>
+            <span class="n">country_pp</span><span class="p">:</span> <span class="n">CountryPreprocessed</span> <span class="o">=</span> <span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+
+            <span class="c1"># if country doesn&#39;t have product, skip</span>
+            <span class="k">if</span> <span class="n">product_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">industry_pp</span><span class="o">.</span><span class="n">products_pp</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">continue</span>
+
+            <span class="n">product_pp</span><span class="p">:</span> <span class="n">ProductPreprocessed</span> <span class="o">=</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">industry_pp</span><span class="o">.</span><span class="n">products_pp</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span>
+
+            <span class="n">gdp_as_x</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">use_gdp_as_x</span>
+            <span class="n">y_per_capita</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">production_quantity_calc_per_capita</span>
+
+            <span class="c1"># decide which data to use</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">gdp_as_x</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">y_per_capita</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_joined_data</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_vs_year</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">gdp_as_x</span> <span class="ow">and</span> <span class="n">y_per_capita</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_joined_data</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_per_capita_vs_year</span>
+            <span class="k">elif</span> <span class="n">gdp_as_x</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">y_per_capita</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_joined_data</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_vs_gdp</span>
+            <span class="k">elif</span> <span class="n">gdp_as_x</span> <span class="ow">and</span> <span class="n">y_per_capita</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_joined_data</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_per_capita_vs_gdp</span>
+
+        <span class="c1"># calculate group coefficients and save result</span>
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coef_tuple</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offset_dict</span><span class="p">)</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">quadratic_regression_delta</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_joined_data</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CountryGroupJoinedDiversified.get_coef_for_country"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified.get_coef_for_country">[docs]</a>    <span class="k">def</span> <span class="nf">get_coef_for_country</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coef</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the coefficient object for a country in this group. &quot;&quot;&quot;</span>
+        <span class="n">country_coef</span> <span class="o">=</span> <span class="n">Coef</span><span class="p">()</span>
+        <span class="n">country_coef</span><span class="o">.</span><span class="n">set_quadr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coef_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef_tuple</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">country_coef</span><span class="o">.</span><span class="n">set_offset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_offset_dict</span><span class="p">[</span><span class="n">country_name</span><span class="p">])</span>
+        <span class="n">country_coef</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">QUADRATIC_OFFSET</span><span class="p">,</span> <span class="n">fixate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">country_coef</span></div>
+
+<div class="viewcode-block" id="CountryGroupJoinedDiversified.get_all_historical_data"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified.get_all_historical_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_historical_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="nb">str</span><span class="p">,</span> <span class="n">TwoDseries</span><span class="p">)]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for all historical data contributing to this group. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joined_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="GroupManager"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.GroupManager">[docs]</a><span class="k">class</span> <span class="nc">GroupManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The group manager is responsible for pre-processing the coefficients for all country groups and providing the</span>
+<span class="sd">    results. These can be obtained via calling the provided methods.</span>
+
+<span class="sd">    :ivar dict[str, set[str]] separate_countries_group: The countries calculated separately for each product.</span>
+<span class="sd">        Is of the form {front_label -&gt; [separate countries]}.</span>
+<span class="sd">    :ivar dict[str, [CountryGroupJoined]] joined_groups: The dictionary containing all joined groups for a product.</span>
+<span class="sd">        Is of form {front_label -&gt; [grp1, grp2, ...]}</span>
+<span class="sd">    :ivar dict[str, [CountryGroupJoinedDiversified]] joined_groups: The dictionary containing all joined_diversified</span>
+<span class="sd">        groups for a product. Is of form {front_label -&gt; [grp1, grp2, ...]}</span>
+<span class="sd">    :ivar dict[str, dict[str, (GroupType, int)]] country_to_group_map: A dictionary that for each product maps a</span>
+<span class="sd">        country name to its group_id and group_type. Is of form {front_label -&gt; back_label -&gt; (group_type, group_id)}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_manager</span><span class="p">,</span> <span class="n">countries_pp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">CountryPreprocessed</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">separate_countries_group</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joined_groups</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">CountryGroupJoined</span><span class="p">]]()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joined_div_groups</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">CountryGroupJoinedDiversified</span><span class="p">]]()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">country_to_group_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">(</span><span class="n">GroupType</span><span class="p">,</span> <span class="nb">int</span><span class="p">)]]()</span>
+
+        <span class="n">group_input</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">GroupType</span><span class="p">,</span> <span class="p">[[</span><span class="nb">str</span><span class="p">]]]]()</span>     <span class="c1"># product -&gt; {grp_type -&gt; [g1[c1, c2,..], g2[c4,..]]}</span>
+        <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_input_obj</span> <span class="ow">in</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">dict_product_input</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">group_input</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">product_input_obj</span><span class="o">.</span><span class="n">country_groups</span>
+
+        <span class="c1"># create all groups</span>
+        <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">group_dict</span> <span class="ow">in</span> <span class="n">group_input</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">country_to_group_map</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">(</span><span class="n">GroupType</span><span class="p">,</span> <span class="nb">int</span><span class="p">)]()</span>
+
+            <span class="c1"># save separate countries_in_group for easy check</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">separate_countries_group</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="nb">set</span><span class="p">([</span><span class="n">country</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">group_dict</span><span class="p">[</span><span class="n">GroupType</span><span class="o">.</span><span class="n">SEPARATE</span><span class="p">]</span> <span class="k">for</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">])</span>  <span class="c1"># flatten</span>
+
+            <span class="c1"># process joined groups for this product</span>
+            <span class="n">in_joined_groups_country_names</span><span class="p">:</span> <span class="p">[[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">group_dict</span><span class="p">[</span><span class="n">GroupType</span><span class="o">.</span><span class="n">JOINED</span><span class="p">]</span>
+            <span class="n">res_joined_groups</span><span class="p">:</span> <span class="p">[</span><span class="n">CountryGroupJoined</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">joined_group</span> <span class="ow">in</span> <span class="n">in_joined_groups_country_names</span><span class="p">:</span>
+                <span class="n">group_id</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">res_joined_groups</span><span class="p">)</span>
+
+                <span class="n">res_joined_groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">CountryGroupJoined</span><span class="p">(</span><span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">joined_group</span><span class="p">,</span> <span class="n">countries_pp</span><span class="p">))</span>
+
+                <span class="k">for</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">joined_group</span><span class="p">:</span>
+                    <span class="c1"># fill map to more efficiently access group with back_label</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">country_to_group_map</span><span class="p">[</span><span class="n">product_name</span><span class="p">][</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">GroupType</span><span class="o">.</span><span class="n">JOINED</span><span class="p">,</span> <span class="n">group_id</span><span class="p">)</span>
+
+            <span class="c1"># save joined groups for this product</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">joined_groups</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">res_joined_groups</span>
+
+            <span class="c1"># process joined_diversified groups for this product</span>
+            <span class="n">in_joined_div_groups_country_names</span><span class="p">:</span> <span class="p">[[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">group_dict</span><span class="p">[</span><span class="n">GroupType</span><span class="o">.</span><span class="n">JOINED_DIVERSIFIED</span><span class="p">]</span>
+            <span class="n">res_joined_div_groups</span><span class="p">:</span> <span class="p">[</span><span class="n">CountryGroupJoinedDiversified</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">joined_div_group</span> <span class="ow">in</span> <span class="n">in_joined_div_groups_country_names</span><span class="p">:</span>
+                <span class="n">group_id</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">res_joined_div_groups</span><span class="p">)</span>
+
+                <span class="n">res_joined_div_groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">CountryGroupJoinedDiversified</span><span class="p">(</span><span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">joined_div_group</span><span class="p">,</span> <span class="n">countries_pp</span><span class="p">))</span>
+
+                <span class="k">for</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">joined_div_group</span><span class="p">:</span>
+                    <span class="c1"># fill map to more efficiently access group with back_label</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">country_to_group_map</span><span class="p">[</span><span class="n">product_name</span><span class="p">][</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">GroupType</span><span class="o">.</span><span class="n">JOINED_DIVERSIFIED</span><span class="p">,</span> <span class="n">group_id</span><span class="p">)</span>
+
+            <span class="c1"># save joined groups for this product</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">joined_div_groups</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">res_joined_div_groups</span>
+
+<div class="viewcode-block" id="GroupManager.is_in_separate_group"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.GroupManager.is_in_separate_group">[docs]</a>    <span class="k">def</span> <span class="nf">is_in_separate_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">product_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return whether country should be calculated separately or is member of a group and should therefore</span>
+<span class="sd">        use the group coefficients.</span>
+
+<span class="sd">        :param country_name: The name of the country.</span>
+<span class="sd">        :param product_name: The name of the product.</span>
+<span class="sd">        :return: The bool indicating whether the country is not in a country group for the given product.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">separate_countries_group</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="GroupManager.get_coef_for_country_and_product"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.GroupManager.get_coef_for_country_and_product">[docs]</a>    <span class="k">def</span> <span class="nf">get_coef_for_country_and_product</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">product_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coef</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the calculated group coefficient for a certain country and a certain product.</span>
+
+<span class="sd">        :param country_name: The name of the country.</span>
+<span class="sd">        :param product_name: The name of the product.</span>
+<span class="sd">        :return: The group-calculated coefficients.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_in_separate_group</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">product_name</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Attention! Check if country is separate before checking group coefficients.&quot;</span><span class="p">)</span>
+
+        <span class="p">(</span><span class="n">group_type</span><span class="p">,</span> <span class="n">group_id</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_to_group_map</span><span class="p">[</span><span class="n">product_name</span><span class="p">][</span><span class="n">country_name</span><span class="p">]</span>
+
+        <span class="k">match</span> <span class="n">group_type</span><span class="p">:</span>
+            <span class="k">case</span> <span class="n">GroupType</span><span class="o">.</span><span class="n">JOINED</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">joined_groups</span><span class="p">[</span><span class="n">product_name</span><span class="p">][</span><span class="n">group_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span>
+            <span class="k">case</span> <span class="n">GroupType</span><span class="o">.</span><span class="n">JOINED_DIVERSIFIED</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">joined_div_groups</span><span class="p">[</span><span class="n">product_name</span><span class="p">][</span><span class="n">group_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_coef_for_country</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

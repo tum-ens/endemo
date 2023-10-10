@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.model_instance.instance_filter.industry_instance_filter &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.model_instance.instance_filter.industry_instance_filter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.model_instance.instance_filter.industry_instance_filter</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains all instance filters that relate to the industry sector of the model.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.containers</span> <span class="kn">import</span> <span class="n">SpecConsum</span><span class="p">,</span> <span class="n">Heat</span><span class="p">,</span> <span class="n">EH</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.enumerations</span> <span class="kn">import</span> <span class="n">DemandType</span><span class="p">,</span> <span class="n">ForecastMethod</span><span class="p">,</span> <span class="n">SubsectorGroup</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.conversions_unit</span> <span class="kn">import</span> <span class="n">Unit</span><span class="p">,</span> <span class="n">get_conversion_scalar</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.control_parameters</span> <span class="kn">import</span> <span class="n">ControlParameters</span>
+<span class="kn">from</span> <span class="nn">endemo2.model_instance.instance_filter.general_instance_filter</span> <span class="kn">import</span> <span class="n">CountryInstanceFilter</span><span class="p">,</span> <span class="n">InstanceFilter</span>
+<span class="kn">from</span> <span class="nn">endemo2.preprocessing.preprocessing_step_one</span> <span class="kn">import</span> <span class="n">ProductPreprocessed</span><span class="p">,</span> <span class="n">CountryPreprocessed</span>
+<span class="kn">from</span> <span class="nn">endemo2.preprocessing.preprocessor</span> <span class="kn">import</span> <span class="n">Preprocessor</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.prediction_models</span> <span class="kn">import</span> <span class="n">TwoDseries</span><span class="p">,</span> <span class="n">Coef</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_general</span> <span class="kn">import</span> <span class="n">GeneralInput</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_industry</span> <span class="kn">import</span> <span class="n">IndustryInput</span>
+
+
+<div class="viewcode-block" id="IndustryInstanceFilter"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter">[docs]</a><span class="k">class</span> <span class="nc">IndustryInstanceFilter</span><span class="p">(</span><span class="n">InstanceFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This instance filter serves as a filter between the instance settings and the actual calculation of the demand</span>
+<span class="sd">        of the industry sectors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span><span class="p">,</span> <span class="n">industry_input</span><span class="p">:</span> <span class="n">IndustryInput</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">:</span> <span class="n">Preprocessor</span><span class="p">,</span>
+                 <span class="n">country_instance_filter</span><span class="p">:</span> <span class="n">CountryInstanceFilter</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">industry_input</span> <span class="o">=</span> <span class="n">industry_input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest_sector_input</span> <span class="o">=</span> <span class="n">industry_input</span><span class="o">.</span><span class="n">rest_sector_input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span> <span class="o">=</span> <span class="n">preprocessor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">country_instance_filter</span> <span class="o">=</span> <span class="n">country_instance_filter</span>
+
+<div class="viewcode-block" id="IndustryInstanceFilter.get_active_products_for_this_country"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_active_products_for_this_country">[docs]</a>    <span class="k">def</span> <span class="nf">get_active_products_for_this_country</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the active (or produced) products of a country. &quot;&quot;&quot;</span>
+        <span class="n">dict_product_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">dict_product_input</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">product_name</span> <span class="k">for</span> <span class="n">product_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">active_product_names</span>
+                <span class="k">if</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">dict_product_input</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span><span class="o">.</span><span class="n">production</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span></div>
+
+<div class="viewcode-block" id="IndustryInstanceFilter.get_nuts2_rest_sector_distribution"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_nuts2_rest_sector_distribution">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuts2_rest_sector_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the capacity/100 of the rest sector for each nuts2 region in given country. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_instance_filter</span><span class="o">.</span><span class="n">get_population_nuts2_percentages_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IndustryInstanceFilter.get_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the target year. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span></div>
+
+<div class="viewcode-block" id="IndustryInstanceFilter.get_active_product_names"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_active_product_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_active_product_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the names of the product that are active in calculations. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">active_product_names</span></div>
+
+<div class="viewcode-block" id="IndustryInstanceFilter.get_rest_sector_proportion_in_basis_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_rest_sector_proportion_in_basis_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_rest_sector_proportion_in_basis_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the input data to calculate the rest sector demand. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_sector_input</span><span class="o">.</span><span class="n">rest_demand_proportion_basis_year</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="IndustryInstanceFilter.get_rest_sector_growth_rate"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_rest_sector_growth_rate">[docs]</a>    <span class="k">def</span> <span class="nf">get_rest_sector_growth_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the growth rate of a sector specified in settings. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">rest_sector_growth_rate</span></div>
+
+<div class="viewcode-block" id="IndustryInstanceFilter.get_rest_sector_basis_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_rest_sector_basis_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_rest_sector_basis_year</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the year used as the start year for the exponential growth of the rest sector. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_sector_input</span><span class="o">.</span><span class="n">rest_calc_basis_year</span></div>
+
+<div class="viewcode-block" id="IndustryInstanceFilter.get_rest_sector_heat_levels"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_rest_sector_heat_levels">[docs]</a>    <span class="k">def</span> <span class="nf">get_rest_sector_heat_levels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Heat</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the heat levels of the rest sector. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rest_sector_input</span><span class="o">.</span><span class="n">rest_sector_heat_levels</span></div>
+
+<div class="viewcode-block" id="IndustryInstanceFilter.get_rest_sector_hourly_profile"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_rest_sector_hourly_profile">[docs]</a>    <span class="k">def</span> <span class="nf">get_rest_sector_hourly_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the hourly profile of each demand type for a country and a subsector. &quot;&quot;&quot;</span>
+
+        <span class="c1"># certain countries should be substituted for other countries. This is ugly. Please find another solution.</span>
+        <span class="n">map_to_different_country</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Switzerland&quot;</span><span class="p">:</span> <span class="s2">&quot;Austria&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Iceland&quot;</span><span class="p">:</span> <span class="s2">&quot;Austria&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Albania&quot;</span><span class="p">:</span> <span class="s2">&quot;North Macedonia&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Bosnia and Herzegovina&quot;</span><span class="p">:</span> <span class="s2">&quot;North Macedonia&quot;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">map_to_different_country</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">country_name</span> <span class="o">=</span> <span class="n">map_to_different_country</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="c1">###</span>
+
+        <span class="n">subsector_group</span> <span class="o">=</span> <span class="n">SubsectorGroup</span><span class="o">.</span><span class="n">IRON_AND_STEEL</span>
+
+        <span class="n">electricity_profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">dict_electricity_profiles</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">heat_profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">dict_heat_profiles</span><span class="p">[</span><span class="n">subsector_group</span><span class="p">][</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">hydrogen_profile</span> <span class="o">=</span> <span class="n">heat_profile</span>
+
+        <span class="n">res_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="p">[</span><span class="nb">float</span><span class="p">]]()</span>
+        <span class="n">res_dict</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span> <span class="o">=</span> <span class="n">electricity_profile</span>
+        <span class="n">res_dict</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">]</span> <span class="o">=</span> <span class="n">heat_profile</span>
+        <span class="n">res_dict</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span> <span class="o">=</span> <span class="n">hydrogen_profile</span>
+
+        <span class="k">return</span> <span class="n">res_dict</span></div>
+
+<div class="viewcode-block" id="IndustryInstanceFilter.get_nuts2_regions"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_nuts2_regions">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuts2_regions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for nuts2 regions. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nuts2_rest_sector_distribution</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="ProductInstanceFilter"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter">[docs]</a><span class="k">class</span> <span class="nc">ProductInstanceFilter</span><span class="p">(</span><span class="n">InstanceFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This instance filter serves as a filter between the instance settings and the actual calculation of the demand</span>
+<span class="sd">        of the different products.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">:</span> <span class="n">Preprocessor</span><span class="p">,</span> <span class="n">industry_input</span><span class="p">:</span> <span class="n">IndustryInput</span><span class="p">,</span>
+                 <span class="n">general_input</span><span class="p">:</span> <span class="n">GeneralInput</span><span class="p">,</span> <span class="n">country_instance_filter</span><span class="p">:</span> <span class="n">CountryInstanceFilter</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">industry_input</span> <span class="o">=</span> <span class="n">industry_input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">general_input</span> <span class="o">=</span> <span class="n">general_input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span> <span class="o">=</span> <span class="n">preprocessor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">country_instance_filter</span> <span class="o">=</span> <span class="n">country_instance_filter</span>
+
+        <span class="c1"># modify preprocessed product coefficients to include the product settings</span>
+        <span class="k">for</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">country_pp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_pp</span> <span class="ow">in</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">industry_pp</span><span class="o">.</span><span class="n">products_pp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">product_settings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">product_settings</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span>
+                <span class="n">exp_growth_rate_from_settings</span> <span class="o">=</span> <span class="n">product_settings</span><span class="o">.</span><span class="n">manual_exp_change_rate</span>
+                <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_vs_year</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span><span class="o">.</span><span class="n">set_exp_growth_rate</span><span class="p">(</span><span class="n">exp_growth_rate_from_settings</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ProductInstanceFilter.get_nuts2_capacities"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_nuts2_capacities">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuts2_capacities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">product_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the nuts2 capacities for a certain product in a certain country. &quot;&quot;&quot;</span>
+        <span class="n">country_pp</span><span class="p">:</span> <span class="n">CountryPreprocessed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">product_name</span> <span class="ow">in</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">industry_pp</span><span class="o">.</span><span class="n">products_pp</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">nuts2_distribution_based_on_installed_ind_capacity</span><span class="p">:</span>
+                <span class="c1"># installed capacities active</span>
+                <span class="n">product_pp</span><span class="p">:</span> <span class="n">ProductPreprocessed</span> <span class="o">=</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">industry_pp</span><span class="o">.</span><span class="n">products_pp</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">nuts2_installed_capacity</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># instead use population percentages</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_instance_filter</span><span class="o">.</span><span class="n">get_population_nuts2_percentages_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># country doesn&#39;t have product -&gt; zero capacities</span>
+            <span class="n">nuts2_regions_of_country</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">general_input</span><span class="o">.</span><span class="n">population</span><span class="o">.</span><span class="n">nuts2_population</span><span class="p">[</span>
+                <span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">prognosis</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>  <span class="c1"># TODO: make more pretty, maybe a function to get nuts2 regions for a country</span>
+            <span class="n">res_dict_nuts2_capacities</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>
+            <span class="k">for</span> <span class="n">nuts2_region_name</span> <span class="ow">in</span> <span class="n">nuts2_regions_of_country</span><span class="p">:</span>
+                <span class="n">res_dict_nuts2_capacities</span><span class="p">[</span><span class="n">nuts2_region_name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">return</span> <span class="n">res_dict_nuts2_capacities</span></div>
+
+<div class="viewcode-block" id="ProductInstanceFilter.get_specific_consumption"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_specific_consumption">[docs]</a>    <span class="k">def</span> <span class="nf">get_specific_consumption</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">product_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SpecConsum</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get specific consumption in TWh/t&quot;&quot;&quot;</span>
+        <span class="n">country_pp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">product_pp</span> <span class="o">=</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">industry_pp</span><span class="o">.</span><span class="n">products_pp</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span>
+
+        <span class="n">gen_s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span>
+
+        <span class="n">sc_pp</span> <span class="o">=</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">specific_consumption_pp</span>
+
+        <span class="n">target_year</span> <span class="o">=</span> <span class="n">gen_s</span><span class="o">.</span><span class="n">target_year</span>
+        <span class="n">fuel_efficiency</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">general_input</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="s2">&quot;Brennstoff allgemein&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">heat</span>
+
+        <span class="k">if</span> <span class="n">sc_pp</span><span class="o">.</span><span class="n">historical_sc_available</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">trend_calc_for_spec</span><span class="p">:</span>
+
+            <span class="n">sc_his</span> <span class="o">=</span> <span class="n">sc_pp</span><span class="o">.</span><span class="n">specific_consumption_historical</span>
+
+            <span class="c1"># set forecast method. For specific consumption it&#39;s linear for now.</span>
+            <span class="k">for</span> <span class="n">demand_type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]:</span>
+                <span class="n">sc_his</span><span class="p">[</span><span class="n">demand_type</span><span class="p">]</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">)</span>
+
+            <span class="c1"># forecast specific consumption</span>
+            <span class="n">electricity</span> <span class="o">=</span> <span class="n">sc_his</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span><span class="o">.</span><span class="n">get_function_y</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+            <span class="n">heat</span> <span class="o">=</span> <span class="n">sc_his</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">]</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span><span class="o">.</span><span class="n">get_function_y</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+            <span class="n">hydrogen</span> <span class="o">=</span> <span class="n">sc_his</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span><span class="o">.</span><span class="n">get_function_y</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+
+            <span class="n">specific_consumption</span> <span class="o">=</span> <span class="n">SpecConsum</span><span class="p">(</span><span class="n">electricity</span><span class="p">,</span> <span class="n">heat</span><span class="p">,</span> <span class="n">hydrogen</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">default_cs</span> <span class="o">=</span> <span class="n">sc_pp</span><span class="o">.</span><span class="n">default_specific_consumption</span>
+            <span class="n">specific_consumption</span> <span class="o">=</span> <span class="n">SpecConsum</span><span class="p">(</span><span class="n">default_cs</span><span class="o">.</span><span class="n">electricity</span><span class="p">,</span> <span class="n">default_cs</span><span class="o">.</span><span class="n">heat</span><span class="p">,</span> <span class="n">default_cs</span><span class="o">.</span><span class="n">hydrogen</span><span class="p">)</span>
+
+            <span class="c1"># do easy manual forecast</span>
+            <span class="n">basis_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">last_available_year</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">change_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">product_settings</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span><span class="o">.</span><span class="n">efficiency_improvement</span>
+            <span class="n">forecast_scalar</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">change_rate</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">target_year</span> <span class="o">-</span> <span class="n">basis_year</span><span class="p">)</span>
+            <span class="n">specific_consumption</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">forecast_scalar</span><span class="p">)</span>  <span class="c1"># forecast</span>
+
+        <span class="c1"># efficiency scale fuel</span>
+        <span class="n">specific_consumption</span><span class="o">.</span><span class="n">heat</span> <span class="o">=</span> <span class="n">specific_consumption</span><span class="o">.</span><span class="n">heat</span> <span class="o">*</span> <span class="n">fuel_efficiency</span>
+
+        <span class="c1"># specific consumption cannot get better than the best available technology</span>
+        <span class="n">specific_consumption</span><span class="o">.</span><span class="n">cap_at_bat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_bat</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">product_name</span><span class="p">))</span>
+
+        <span class="n">specific_consumption</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">get_conversion_scalar</span><span class="p">(</span><span class="n">Unit</span><span class="o">.</span><span class="n">GJ</span><span class="p">,</span> <span class="n">Unit</span><span class="o">.</span><span class="n">TWh</span><span class="p">))</span>  <span class="c1"># convert from GJ/t to TWh/t</span>
+        <span class="k">return</span> <span class="n">specific_consumption</span></div>
+
+<div class="viewcode-block" id="ProductInstanceFilter.get_bat"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_bat">[docs]</a>    <span class="k">def</span> <span class="nf">get_bat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">product_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EH</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for BAT consumption. &quot;&quot;&quot;</span>
+        <span class="n">product_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">dict_product_input</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">product_input</span><span class="o">.</span><span class="n">bat</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">product_input</span><span class="o">.</span><span class="n">bat</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">product_input</span><span class="o">.</span><span class="n">bat</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ProductInstanceFilter.get_perc_used"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_perc_used">[docs]</a>    <span class="k">def</span> <span class="nf">get_perc_used</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">product_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for percentage/100 used from the product amount prognosis.</span>
+<span class="sd">        Used for the substitution of new technologies</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">product_settings</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span><span class="o">.</span><span class="n">perc_used</span></div>
+
+<div class="viewcode-block" id="ProductInstanceFilter.get_heat_levels"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_heat_levels">[docs]</a>    <span class="k">def</span> <span class="nf">get_heat_levels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">product_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Heat</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get heat levels of a product in perc/100. &quot;&quot;&quot;</span>
+        <span class="n">ind_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">industry_input</span>
+        <span class="n">heat_levels</span> <span class="o">=</span> <span class="n">ind_input</span><span class="o">.</span><span class="n">dict_product_input</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span><span class="o">.</span><span class="n">heat_levels</span>
+        <span class="k">return</span> <span class="n">heat_levels</span></div>
+
+<div class="viewcode-block" id="ProductInstanceFilter.get_historical_amount"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_historical_amount">[docs]</a>    <span class="k">def</span> <span class="nf">get_historical_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the historical amount of industry subsector production in tons. &quot;&quot;&quot;</span>
+        <span class="n">country_pp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">product_pp</span> <span class="o">=</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">industry_pp</span><span class="o">.</span><span class="n">products_pp</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_vs_year</span><span class="o">.</span><span class="n">get_value_at_year_else_zero</span><span class="p">(</span><span class="n">year</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ProductInstanceFilter.get_amount"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_amount">[docs]</a>    <span class="k">def</span> <span class="nf">get_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">product_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get amount of a subsector in a country&#39;s industry in t. &quot;&quot;&quot;</span>
+        <span class="n">country_pp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">product_pp</span> <span class="o">=</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">industry_pp</span><span class="o">.</span><span class="n">products_pp</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span>
+
+        <span class="n">gen_s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span>
+        <span class="n">ind_s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span>
+
+        <span class="n">group_manager</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">group_manager</span>
+
+        <span class="n">use_per_capita</span> <span class="o">=</span> <span class="n">ind_s</span><span class="o">.</span><span class="n">production_quantity_calc_per_capita</span>
+        <span class="n">use_gdp</span> <span class="o">=</span> <span class="n">ind_s</span><span class="o">.</span><span class="n">use_gdp_as_x</span>
+
+        <span class="c1"># if country in group -&gt; use group coefficients</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">group_manager</span><span class="o">.</span><span class="n">is_in_separate_group</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">product_name</span><span class="p">)</span> \
+                <span class="ow">and</span> <span class="n">ind_s</span><span class="o">.</span><span class="n">forecast_method</span> <span class="ow">is</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">QUADRATIC</span><span class="p">:</span>
+            <span class="n">coef_obj</span> <span class="o">=</span> <span class="n">group_manager</span><span class="o">.</span><span class="n">get_coef_for_country_and_product</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">product_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># country not in group -&gt; calculate separately</span>
+            <span class="n">active_TwoDSeries</span><span class="p">:</span> <span class="n">TwoDseries</span>
+
+            <span class="c1"># decide which preprocessed data to use, depending on instance settings</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">use_per_capita</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">use_gdp</span><span class="p">:</span>
+                <span class="n">active_TwoDSeries</span> <span class="o">=</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_vs_year</span>
+            <span class="k">elif</span> <span class="n">use_per_capita</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">use_gdp</span><span class="p">:</span>
+                <span class="n">active_TwoDSeries</span> <span class="o">=</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_per_capita_vs_year</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">use_per_capita</span> <span class="ow">and</span> <span class="n">use_gdp</span><span class="p">:</span>
+                <span class="n">active_TwoDSeries</span> <span class="o">=</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_vs_gdp</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># use_per_capita and use_gdp:</span>
+                <span class="n">active_TwoDSeries</span> <span class="o">=</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_per_capita_vs_gdp</span>
+
+            <span class="c1"># get coefficients from preprocessed data</span>
+            <span class="n">coef_obj</span> <span class="o">=</span> <span class="n">active_TwoDSeries</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span>
+
+        <span class="n">coef_obj</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ind_s</span><span class="o">.</span><span class="n">forecast_method</span><span class="p">)</span>
+
+        <span class="c1"># get prognosis</span>
+        <span class="n">target_year</span> <span class="o">=</span> <span class="n">gen_s</span><span class="o">.</span><span class="n">target_year</span>
+
+        <span class="n">amount_result</span><span class="p">:</span> <span class="nb">float</span>
+
+        <span class="k">if</span> <span class="n">use_gdp</span><span class="p">:</span>
+            <span class="c1"># if TwoDseries is per gdp, use gdp prediction to access it</span>
+            <span class="n">gdp_prog</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_instance_filter</span><span class="o">.</span><span class="n">get_gdp_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span>
+            <span class="n">amount_result</span> <span class="o">=</span> <span class="n">coef_obj</span><span class="o">.</span><span class="n">get_function_y</span><span class="p">(</span><span class="n">gdp_prog</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># TwoDseries is per time, so just use prediction per time</span>
+            <span class="n">amount_result</span> <span class="o">=</span> <span class="n">coef_obj</span><span class="o">.</span><span class="n">get_function_y</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+
+        <span class="c1"># scale by population if prognosis was per capita</span>
+        <span class="k">if</span> <span class="n">use_per_capita</span><span class="p">:</span>
+            <span class="n">population_prog</span> <span class="o">=</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">population_pp</span><span class="o">.</span><span class="n">population_whole_country_prognosis</span><span class="o">.</span><span class="n">get_value_at_year</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+            <span class="n">amount_result</span> <span class="o">*=</span> <span class="n">population_prog</span>
+
+        <span class="c1"># clamp to 0</span>
+        <span class="n">amount_result</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">amount_result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">amount_result</span></div>
+
+<div class="viewcode-block" id="ProductInstanceFilter.get_hourly_profile"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_hourly_profile">[docs]</a>    <span class="k">def</span> <span class="nf">get_hourly_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">product_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the hourly profile of each demand type for a country and a subsector. &quot;&quot;&quot;</span>
+
+        <span class="c1"># certain countries should be substituted for other countries. This is ugly. Please find another solution. todo</span>
+        <span class="n">map_to_different_country</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Switzerland&quot;</span><span class="p">:</span> <span class="s2">&quot;Austria&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Iceland&quot;</span><span class="p">:</span> <span class="s2">&quot;Austria&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Albania&quot;</span><span class="p">:</span> <span class="s2">&quot;North Macedonia&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Bosnia and Herzegovina&quot;</span><span class="p">:</span> <span class="s2">&quot;North Macedonia&quot;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">map_to_different_country</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">country_name</span> <span class="o">=</span> <span class="n">map_to_different_country</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="c1">###</span>
+
+        <span class="n">subsector_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">subsector_to_group_map</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span>
+
+        <span class="n">electricity_profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">dict_electricity_profiles</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">heat_profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">dict_heat_profiles</span><span class="p">[</span><span class="n">subsector_group</span><span class="p">][</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">hydrogen_profile</span> <span class="o">=</span> <span class="n">heat_profile</span>
+
+        <span class="n">res_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="p">[</span><span class="nb">float</span><span class="p">]]()</span>
+        <span class="n">res_dict</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span> <span class="o">=</span> <span class="n">electricity_profile</span>
+        <span class="n">res_dict</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">]</span> <span class="o">=</span> <span class="n">heat_profile</span>
+        <span class="n">res_dict</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span> <span class="o">=</span> <span class="n">hydrogen_profile</span>
+
+        <span class="k">return</span> <span class="n">res_dict</span></div>
+
+<div class="viewcode-block" id="ProductInstanceFilter.get_heat_substitution"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_heat_substitution">[docs]</a>    <span class="k">def</span> <span class="nf">get_heat_substitution</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="n">Heat</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the substitution of heat with electricity and hydrogen. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">heat_substitution</span></div>
+
+<div class="viewcode-block" id="ProductInstanceFilter.get_product_amount_sum_country_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_product_amount_sum_country_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_product_amount_sum_country_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get forecasted product amount for a country in target year.&quot;&quot;&quot;</span>
+        <span class="n">products_pp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ProductPreprocessed</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">industry_pp</span><span class="o">.</span><span class="n">products_pp</span>
+
+        <span class="n">sum_in_year</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_pp</span> <span class="ow">in</span> <span class="n">products_pp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">perc_used</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_perc_used</span><span class="p">(</span><span class="n">product_name</span><span class="p">)</span>
+            <span class="n">sum_in_year</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_amount</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">product_name</span><span class="p">)</span> <span class="o">*</span> <span class="n">perc_used</span>
+        <span class="k">return</span> <span class="n">sum_in_year</span></div>
+
+<div class="viewcode-block" id="ProductInstanceFilter.get_product_amount_sum_nuts2_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_product_amount_sum_nuts2_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_product_amount_sum_nuts2_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get forecasted product amount for all nuts2 regions of a country in target year. &quot;&quot;&quot;</span>
+        <span class="n">products_pp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ProductPreprocessed</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">industry_pp</span><span class="o">.</span><span class="n">products_pp</span>
+
+        <span class="n">dict_sum_in_year</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>
+        <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_pp</span> <span class="ow">in</span> <span class="n">products_pp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">perc_used</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_perc_used</span><span class="p">(</span><span class="n">product_name</span><span class="p">)</span>
+            <span class="n">amount_in_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_amount</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">product_name</span><span class="p">)</span> <span class="o">*</span> <span class="n">perc_used</span>
+            <span class="n">installed_capacities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nuts2_capacities</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">product_name</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">nuts2_region_name</span><span class="p">,</span> <span class="n">capacity</span> <span class="ow">in</span> <span class="n">installed_capacities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">nuts2_region_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_sum_in_year</span><span class="p">:</span>
+                    <span class="n">dict_sum_in_year</span><span class="p">[</span><span class="n">nuts2_region_name</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">dict_sum_in_year</span><span class="p">[</span><span class="n">nuts2_region_name</span><span class="p">]</span> <span class="o">+=</span> <span class="n">amount_in_year</span> <span class="o">*</span> <span class="n">installed_capacities</span><span class="p">[</span><span class="n">nuts2_region_name</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">dict_sum_in_year</span></div>
+
+<div class="viewcode-block" id="ProductInstanceFilter.get_product_amount_historical_in_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_product_amount_historical_in_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_product_amount_historical_in_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the historical total amount of product quantity in a countries industry in a certain year.&quot;&quot;&quot;</span>
+        <span class="n">products_pp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ProductPreprocessed</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">industry_pp</span><span class="o">.</span><span class="n">products_pp</span>
+
+        <span class="n">sum_in_year</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_pp</span> <span class="ow">in</span> <span class="n">products_pp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">perc_used</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_perc_used</span><span class="p">(</span><span class="n">product_name</span><span class="p">)</span>
+            <span class="n">amount_in_year</span> <span class="o">=</span> <span class="n">product_pp</span><span class="o">.</span><span class="n">amount_vs_year</span><span class="o">.</span><span class="n">get_value_at_year_else_zero</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+            <span class="n">sum_in_year</span> <span class="o">+=</span> <span class="n">amount_in_year</span> <span class="o">*</span> <span class="n">perc_used</span>
+        <span class="k">return</span> <span class="n">sum_in_year</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

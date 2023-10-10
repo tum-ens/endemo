@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.input_and_settings.input_transport &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.input_and_settings.input_transport</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.input_and_settings.input_transport</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.containers</span> <span class="kn">import</span> <span class="n">Datapoint</span><span class="p">,</span> <span class="n">Demand</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.conversions_string</span> <span class="kn">import</span> <span class="n">map_tra_modal_to_string</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.conversions_unit</span> <span class="kn">import</span> <span class="n">Unit</span><span class="p">,</span> <span class="n">convert</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.enumerations</span> <span class="kn">import</span> <span class="n">TransportModal</span><span class="p">,</span> <span class="n">TrafficType</span><span class="p">,</span> <span class="n">DemandType</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.control_parameters</span> <span class="kn">import</span> <span class="n">ControlParameters</span>
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">utility</span> <span class="k">as</span> <span class="n">uty</span>
+
+
+<div class="viewcode-block" id="TransportInput"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput">[docs]</a><span class="k">class</span> <span class="nc">TransportInput</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CtsInput denoted input that is read from the &quot;input/industry&quot; folder.</span>
+
+<span class="sd">    :param ControlParameters ctrl: The control parameters object.</span>
+<span class="sd">    :param Path traffic_path: The path to the input files for the CTS sector.</span>
+
+<span class="sd">    :ivar dict[TrafficType, dict[str, dict[TransportModal, Datapoint]]] kilometres: The number of (million) kilometres</span>
+<span class="sd">        travelled in one year by one unit of traffic type.</span>
+<span class="sd">        Is of form {traffic_type -&gt; country_name -&gt; transport_modal -&gt; datapoint}.</span>
+<span class="sd">    :ivar dict[TrafficType, dict[str, dict[TransportModal, [Datapoint]]]] modal_split_his: The historical data on model</span>
+<span class="sd">        splits for each traffic type.</span>
+<span class="sd">    :ivar dict[TrafficType, dict[str, dict[TransportModal, [Datapoint]]]] modal_split_user_def: The user defined model</span>
+<span class="sd">        split points for each traffic type.</span>
+
+<span class="sd">    :ivar dict[TrafficType, dict[TransportModal, Demand]] modal_ukm_energy_consumption: The energy consumption for each</span>
+<span class="sd">        pkm or tkm and each transport modal.</span>
+<span class="sd">    :ivar dict[TrafficType, dict[TransportModal, dict[DemandType, [Datapoint]]]] demand_split_reference:</span>
+<span class="sd">        How demand should be split over time. Reference from real data.</span>
+<span class="sd">    :ivar dict[TrafficType, dict[TransportModal, dict[DemandType, [Datapoint]]]] demand_split_user:</span>
+<span class="sd">    How demand should be split over time. Defined by user.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tra_traffic_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">,</span> <span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">]</span>
+
+    <span class="n">tra_modal_lists</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">TransportModal</span><span class="o">.</span><span class="n">car</span><span class="p">,</span>
+            <span class="n">TransportModal</span><span class="o">.</span><span class="n">bus</span><span class="p">,</span>
+            <span class="n">TransportModal</span><span class="o">.</span><span class="n">rail</span><span class="p">,</span>
+            <span class="n">TransportModal</span><span class="o">.</span><span class="n">flight</span>
+        <span class="p">],</span>
+        <span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">TransportModal</span><span class="o">.</span><span class="n">road</span><span class="p">,</span>
+            <span class="n">TransportModal</span><span class="o">.</span><span class="n">rail</span><span class="p">,</span>
+            <span class="n">TransportModal</span><span class="o">.</span><span class="n">ship</span><span class="p">,</span>
+            <span class="n">TransportModal</span><span class="o">.</span><span class="n">flight</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+
+    <span class="n">tra_modal_split_groups</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">:</span> <span class="p">{</span>
+            <span class="n">TransportModal</span><span class="o">.</span><span class="n">road_rail</span><span class="p">:</span> <span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">car</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">bus</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">rail</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">:</span> <span class="p">{</span>
+            <span class="n">TransportModal</span><span class="o">.</span><span class="n">road_rail_ship</span><span class="p">:</span> <span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">road</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">rail</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">ship</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span><span class="p">,</span> <span class="n">traffic_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+
+        <span class="n">ex_person_traffic</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">traffic_path</span> <span class="o">/</span> <span class="s2">&quot;Persontraffic.xlsx&quot;</span><span class="p">)</span>
+        <span class="n">ex_freight_traffic</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">traffic_path</span> <span class="o">/</span> <span class="s2">&quot;Freighttraffic.xlsx&quot;</span><span class="p">)</span>
+        <span class="n">ex_person_energy_sources</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">traffic_path</span> <span class="o">/</span> <span class="s2">&quot;Pt_FinalEnergySources.xlsx&quot;</span><span class="p">)</span>
+        <span class="n">ex_freight_energy_sources</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">traffic_path</span> <span class="o">/</span> <span class="s2">&quot;Ft_FinalEnergySources.xlsx&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">kilometres</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TrafficType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="n">Datapoint</span><span class="p">]]]()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modal_split_his</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modal_split_user_def</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># read person kilometres</span>
+        <span class="n">dict_df_person_km</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="p">(</span><span class="n">Unit</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)]()</span>
+        <span class="n">dict_df_person_km</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">road_rail</span><span class="p">]</span> <span class="o">=</span> <span class="n">Unit</span><span class="o">.</span><span class="n">Billion</span><span class="p">,</span> <span class="s2">&quot;Mrd. pkm&quot;</span><span class="p">,</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_person_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;Personkm_road_rail&quot;</span><span class="p">)</span>
+        <span class="n">dict_df_person_km</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">flight</span><span class="p">]</span> <span class="o">=</span> <span class="n">Unit</span><span class="o">.</span><span class="n">Million</span><span class="p">,</span> <span class="s2">&quot;Mil. pkm&quot;</span><span class="p">,</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_person_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;Passengerkm_flight&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kilometres</span><span class="p">[</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_specific_km</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">dict_df_person_km</span><span class="p">,</span> <span class="n">desired_unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">Standard</span><span class="p">)</span>
+
+        <span class="c1"># read person modal splits</span>
+        <span class="n">dict_df_person_modal_split_his</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]()</span>
+        <span class="n">dict_df_person_modal_split_his</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">car</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_person_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;ModalSplit_car_his&quot;</span><span class="p">)</span>
+        <span class="n">dict_df_person_modal_split_his</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">rail</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_person_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;ModalSplit_rail_his&quot;</span><span class="p">)</span>
+        <span class="n">dict_df_person_modal_split_his</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">bus</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_person_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;ModalSplit_bus_his&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modal_split_his</span><span class="p">[</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_modal_split_sheets</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">dict_df_person_modal_split_his</span><span class="p">)</span>
+
+        <span class="c1"># read person user defined split</span>
+        <span class="n">dict_df_person_modal_split_user</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]()</span>
+        <span class="n">dict_df_person_modal_split_his</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">car</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_person_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;ModalSplit_car_user&quot;</span><span class="p">)</span>
+        <span class="n">dict_df_person_modal_split_his</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">rail</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_person_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;ModalSplit_rail_user&quot;</span><span class="p">)</span>
+        <span class="n">dict_df_person_modal_split_his</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">bus</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_person_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;ModalSplit_bus_user&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modal_split_user_def</span><span class="p">[</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_modal_split_sheets</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">dict_df_person_modal_split_user</span><span class="p">)</span>
+
+        <span class="c1"># read freight kilometres</span>
+        <span class="n">dict_df_freight_km</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="p">(</span><span class="n">Unit</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)]()</span>
+        <span class="n">dict_df_freight_km</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">road_rail_ship</span><span class="p">]</span> <span class="o">=</span> <span class="n">Unit</span><span class="o">.</span><span class="n">Million</span><span class="p">,</span> <span class="s2">&quot;Mil. tkm&quot;</span><span class="p">,</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_freight_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;Tonnekm_road_rail_ship&quot;</span><span class="p">)</span>
+        <span class="n">dict_df_freight_km</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">flight</span><span class="p">]</span> <span class="o">=</span> <span class="n">Unit</span><span class="o">.</span><span class="n">Standard</span><span class="p">,</span> <span class="s2">&quot;tonne_km&quot;</span><span class="p">,</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_freight_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;Tonnekm_flight&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kilometres</span><span class="p">[</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_specific_km</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">dict_df_freight_km</span><span class="p">,</span> <span class="n">desired_unit</span><span class="o">=</span><span class="n">Unit</span><span class="o">.</span><span class="n">Standard</span><span class="p">,</span> <span class="n">reference_year</span><span class="o">=</span><span class="mi">2018</span><span class="p">)</span>
+
+        <span class="c1"># read freight modal splits</span>
+        <span class="n">dict_df_freight_modal_split_his</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]()</span>
+        <span class="n">dict_df_freight_modal_split_his</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">road</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_freight_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;ModalSplit_road_his&quot;</span><span class="p">)</span>
+        <span class="n">dict_df_freight_modal_split_his</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">rail</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_freight_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;ModalSplit_rail_his&quot;</span><span class="p">)</span>
+        <span class="n">dict_df_freight_modal_split_his</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">ship</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_freight_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;ModalSplit_ship_his&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modal_split_his</span><span class="p">[</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_modal_split_sheets</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">dict_df_freight_modal_split_his</span><span class="p">)</span>
+
+        <span class="c1"># read freight user defined split</span>
+        <span class="n">dict_df_freight_modal_split_user</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]()</span>
+        <span class="n">dict_df_freight_modal_split_user</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">road</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_freight_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;ModalSplit_road_user&quot;</span><span class="p">)</span>
+        <span class="n">dict_df_freight_modal_split_user</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">rail</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_freight_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;ModalSplit_rail_user&quot;</span><span class="p">)</span>
+        <span class="n">dict_df_freight_modal_split_user</span><span class="p">[</span><span class="n">TransportModal</span><span class="o">.</span><span class="n">ship</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_freight_traffic</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;ModalSplit_ship_user&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modal_split_user_def</span><span class="p">[</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_modal_split_sheets</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">dict_df_person_modal_split_user</span><span class="p">)</span>
+
+        <span class="c1"># read transport demand conversion input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modal_ukm_energy_consumption</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TrafficType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="n">Demand</span><span class="p">]]()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">demand_split_reference</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TrafficType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]]]()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">demand_split_user</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TrafficType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]]]()</span>
+
+        <span class="c1"># read final energy sources</span>
+        <span class="n">df_energy_per_source_person</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_person_energy_sources</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;EnergyperSource&quot;</span><span class="p">)</span>
+        <span class="n">df_energy_per_source_freight</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_freight_energy_sources</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;EnergyperSource&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">modal_ukm_energy_consumption</span><span class="p">[</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">TransportInput</span><span class="o">.</span><span class="n">read_energy_per_source</span><span class="p">(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">,</span> <span class="n">df_energy_per_source_person</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modal_ukm_energy_consumption</span><span class="p">[</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">TransportInput</span><span class="o">.</span><span class="n">read_energy_per_source</span><span class="p">(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">,</span> <span class="n">df_energy_per_source_freight</span><span class="p">)</span>
+
+        <span class="c1"># read percentages</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modal_energy_split_ref</span> <span class="o">=</span> \
+            <span class="nb">dict</span><span class="p">[</span><span class="n">TrafficType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]]]]()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modal_energy_split_user</span> <span class="o">=</span> \
+            <span class="nb">dict</span><span class="p">[</span><span class="n">TrafficType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]]]]()</span>
+
+        <span class="k">for</span> <span class="n">traffic_type</span><span class="p">,</span> <span class="n">modals</span> <span class="ow">in</span> <span class="n">TransportInput</span><span class="o">.</span><span class="n">tra_modal_lists</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">modal_id</span> <span class="ow">in</span> <span class="n">modals</span><span class="p">:</span>
+                <span class="n">str_modal</span> <span class="o">=</span> <span class="n">map_tra_modal_to_string</span><span class="p">[</span><span class="n">modal_id</span><span class="p">]</span>
+
+                <span class="n">sheet_name_elec_ref</span> <span class="o">=</span> <span class="s2">&quot;elec_&quot;</span> <span class="o">+</span> <span class="n">str_modal</span> <span class="o">+</span> <span class="s2">&quot;_ref&quot;</span>
+                <span class="n">sheet_name_elec_user</span> <span class="o">=</span> <span class="s2">&quot;elec_&quot;</span> <span class="o">+</span> <span class="n">str_modal</span> <span class="o">+</span> <span class="s2">&quot;_user&quot;</span>
+
+                <span class="n">sheet_name_h2_ref</span> <span class="o">=</span> <span class="s2">&quot;h2_&quot;</span> <span class="o">+</span> <span class="n">str_modal</span> <span class="o">+</span> <span class="s2">&quot;_ref&quot;</span>
+                <span class="n">sheet_name_h2_user</span> <span class="o">=</span> <span class="s2">&quot;h2_&quot;</span> <span class="o">+</span> <span class="n">str_modal</span> <span class="o">+</span> <span class="s2">&quot;_user&quot;</span>
+
+                <span class="n">ex_energy_sources</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">traffic_type</span> <span class="o">==</span> <span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">:</span>
+                    <span class="n">ex_energy_sources</span> <span class="o">=</span> <span class="n">ex_person_energy_sources</span>
+                <span class="k">elif</span> <span class="n">traffic_type</span> <span class="o">==</span> <span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">:</span>
+                    <span class="n">ex_energy_sources</span> <span class="o">=</span> <span class="n">ex_freight_energy_sources</span>
+
+                <span class="n">df_elec_ref</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_energy_sources</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name_elec_ref</span><span class="p">)</span>
+                <span class="n">df_elec_user</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_energy_sources</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name_elec_user</span><span class="p">)</span>
+
+                <span class="n">df_h2_ref</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_energy_sources</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name_h2_ref</span><span class="p">)</span>
+                <span class="n">df_h2_user</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_energy_sources</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name_h2_user</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">traffic_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modal_energy_split_ref</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">modal_energy_split_ref</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">]</span> <span class="o">=</span> \
+                        <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]]]()</span>
+                <span class="k">if</span> <span class="n">traffic_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modal_energy_split_user</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">modal_energy_split_user</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">]</span> <span class="o">=</span> \
+                        <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]]]()</span>
+                <span class="k">if</span> <span class="n">modal_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modal_energy_split_ref</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">modal_energy_split_ref</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">modal_id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]]()</span>
+                <span class="k">if</span> <span class="n">modal_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modal_energy_split_user</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">modal_energy_split_user</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">modal_id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]]()</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">modal_energy_split_ref</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">modal_id</span><span class="p">][</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="n">TransportInput</span><span class="o">.</span><span class="n">read_timeline_perc</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">df_elec_ref</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">modal_energy_split_ref</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">modal_id</span><span class="p">][</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="n">TransportInput</span><span class="o">.</span><span class="n">read_timeline_perc</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">df_h2_ref</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">modal_energy_split_user</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">modal_id</span><span class="p">][</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="n">TransportInput</span><span class="o">.</span><span class="n">read_timeline_perc</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">df_elec_user</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">modal_energy_split_user</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">modal_id</span><span class="p">][</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="n">TransportInput</span><span class="o">.</span><span class="n">read_timeline_perc</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">df_h2_user</span><span class="p">)</span>
+
+        <span class="c1"># read load profile</span>
+        <span class="k">if</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">toggle_hourly_forecast</span><span class="p">:</span>
+            <span class="n">ex_load_profile</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">traffic_path</span> <span class="o">/</span> <span class="s2">&quot;tra_timeseries.xlsx&quot;</span><span class="p">)</span>
+            <span class="n">df_load_profile</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_load_profile</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;timeseries_LoadingProfile&quot;</span><span class="p">)</span>
+            <span class="n">df_load_profile_ukm</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_load_profile</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;timeseries_MobilityProfile&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[(</span><span class="n">TrafficType</span><span class="p">,</span> <span class="n">TransportModal</span><span class="p">,</span> <span class="n">DemandType</span><span class="p">),</span> <span class="n">Any</span><span class="p">]()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">road</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;ft.road.elec&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">road</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;ft.road.hydrogen&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">road</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;pt.road.elec&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">road</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;pt.road.hydrogen&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">rail</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;ft.rail.elec&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">rail</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;ft.rail.hydrogen&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">rail</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;pt.rail.elec&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">rail</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;pt.rail.hydrogen&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">ship</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;ship.elec&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">ship</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;ship.hydrogen&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">BOTH</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">flight</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;flight.elec&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">BOTH</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">flight</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;flight.hydrogen&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_ukm</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[(</span><span class="n">TrafficType</span><span class="p">,</span> <span class="n">TransportModal</span><span class="p">,</span> <span class="n">DemandType</span><span class="p">),</span> <span class="n">Any</span><span class="p">]()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_ukm</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">rail</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile_ukm</span><span class="p">[</span><span class="s2">&quot;pt.rail&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_ukm</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">car</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile_ukm</span><span class="p">[</span><span class="s2">&quot;pt.car&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_ukm</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">bus</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile_ukm</span><span class="p">[</span><span class="s2">&quot;pt.bus&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_ukm</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">flight</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile_ukm</span><span class="p">[</span><span class="s2">&quot;pt.flight&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_ukm</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">ship</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile_ukm</span><span class="p">[</span><span class="s2">&quot;pt.ship&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_ukm</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">rail</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile_ukm</span><span class="p">[</span><span class="s2">&quot;ft.rail&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_ukm</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">road</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile_ukm</span><span class="p">[</span><span class="s2">&quot;ft.road&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_ukm</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">flight</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile_ukm</span><span class="p">[</span><span class="s2">&quot;ft.flight&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_ukm</span><span class="p">[(</span><span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">,</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">ship</span><span class="p">)]</span> \
+                <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_load_profile_ukm</span><span class="p">[</span><span class="s2">&quot;ft.ship&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_ukm</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="TransportInput.read_timeline_perc"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.read_timeline_perc">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">read_timeline_perc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Read a simple timeline of percentage values. Convert to %/100. &quot;&quot;&quot;</span>
+        <span class="n">dict_res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]()</span>
+
+        <span class="n">years</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">country_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">country_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">active_countries</span><span class="p">:</span>
+                <span class="c1"># skip inactive countries and invalid entries</span>
+                <span class="k">continue</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">float_lists_to_datapoint_list</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">filter_out_nan_and_inf</span><span class="p">(</span><span class="n">his_data</span><span class="p">)</span>
+            <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">map_data_y</span><span class="p">(</span><span class="n">his_data</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+            <span class="n">dict_res</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">his_data</span>
+
+        <span class="k">return</span> <span class="n">dict_res</span></div>
+
+<div class="viewcode-block" id="TransportInput.read_specific_km"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.read_specific_km">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">read_specific_km</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">dict_specific_km</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="p">(</span><span class="n">Unit</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)],</span> <span class="n">desired_unit</span><span class="p">:</span> <span class="n">Unit</span><span class="p">,</span>
+                         <span class="n">reference_year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="n">Datapoint</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Read the specific kilometers and convert unit to desired unit.  &quot;&quot;&quot;</span>
+        <span class="n">dict_res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="n">Datapoint</span><span class="p">]]()</span>
+
+        <span class="k">for</span> <span class="n">modal_id</span><span class="p">,</span> <span class="p">(</span><span class="n">curr_unit</span><span class="p">,</span> <span class="n">value_column</span><span class="p">,</span> <span class="n">df_specific_km</span><span class="p">)</span> <span class="ow">in</span> <span class="n">dict_specific_km</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_specific_km</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">country_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">country_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">active_countries</span><span class="p">:</span>
+                    <span class="c1"># skip inactive countries and invalid entries</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">reference_year</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">year</span> <span class="o">=</span> <span class="n">reference_year</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">])</span>
+
+                <span class="n">pkm</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="n">curr_unit</span><span class="p">,</span> <span class="n">desired_unit</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="n">value_column</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="n">country_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_res</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">dict_res</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">]()</span>
+                <span class="n">dict_res</span><span class="p">[</span><span class="n">country_name</span><span class="p">][</span><span class="n">modal_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">Datapoint</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">pkm</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dict_res</span></div>
+
+<div class="viewcode-block" id="TransportInput.read_modal_split_sheets"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.read_modal_split_sheets">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">read_modal_split_sheets</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">dict_df_modal_split</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> \
+            <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Reads the modal split sheets. &quot;&quot;&quot;</span>
+
+        <span class="n">dict_res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]]()</span>
+
+        <span class="k">for</span> <span class="n">modal_id</span><span class="p">,</span> <span class="n">df_sheet</span> <span class="ow">in</span> <span class="n">dict_df_modal_split</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">years</span> <span class="o">=</span> <span class="n">df_sheet</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_sheet</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">country_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">country_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">active_countries</span><span class="p">:</span>
+                    <span class="c1"># skip inactive countries and invalid entries</span>
+                    <span class="k">continue</span>
+
+                <span class="n">data</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">float_lists_to_datapoint_list</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">country_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_res</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">dict_res</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">]()</span>
+                <span class="n">dict_res</span><span class="p">[</span><span class="n">country_name</span><span class="p">][</span><span class="n">modal_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">his_data</span>
+
+        <span class="k">return</span> <span class="n">dict_res</span></div>
+
+<div class="viewcode-block" id="TransportInput.read_energy_per_source"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.read_energy_per_source">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">read_energy_per_source</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">,</span> <span class="n">df_energy_per_source</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="n">Demand</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Reads the energy per source sheet. &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="n">Demand</span><span class="p">]()</span>
+
+        <span class="n">str_energy_consumption_column_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">traffic_type</span> <span class="o">==</span> <span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">:</span>
+            <span class="n">str_energy_consumption_column_name</span> <span class="o">=</span> <span class="s2">&quot;Energy consumption MJ/pkm&quot;</span>
+        <span class="k">elif</span> <span class="n">traffic_type</span> <span class="o">==</span> <span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">:</span>
+            <span class="n">str_energy_consumption_column_name</span> <span class="o">=</span> <span class="s2">&quot;Energy consumption MJ/tkm&quot;</span>
+
+        <span class="k">for</span> <span class="n">modal_id</span> <span class="ow">in</span> <span class="n">TransportInput</span><span class="o">.</span><span class="n">tra_modal_lists</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">]:</span>
+            <span class="n">str_modal</span> <span class="o">=</span> <span class="n">map_tra_modal_to_string</span><span class="p">[</span><span class="n">modal_id</span><span class="p">]</span>
+            <span class="n">electricity</span> <span class="o">=</span> \
+                <span class="n">df_energy_per_source</span><span class="p">[</span>
+                    <span class="n">df_energy_per_source</span><span class="p">[</span>
+                        <span class="n">str_energy_consumption_column_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Electricity&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">str_modal</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">hydrogen</span> <span class="o">=</span> \
+                <span class="n">df_energy_per_source</span><span class="p">[</span>
+                    <span class="n">df_energy_per_source</span><span class="p">[</span>
+                        <span class="n">str_energy_consumption_column_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Hydrogen&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">str_modal</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">fuel</span> <span class="o">=</span> <span class="n">df_energy_per_source</span><span class="p">[</span>
+                <span class="n">df_energy_per_source</span><span class="p">[</span>
+                    <span class="n">str_energy_consumption_column_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Diesel&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">str_modal</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">modal_id</span> <span class="o">==</span> <span class="n">TransportModal</span><span class="o">.</span><span class="n">flight</span><span class="p">:</span>
+                <span class="n">fuel</span> <span class="o">=</span> <span class="n">df_energy_per_source</span><span class="p">[</span>
+                    <span class="n">df_energy_per_source</span><span class="p">[</span>
+                        <span class="n">str_energy_consumption_column_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Kerosine&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">str_modal</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">electricity</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="n">Unit</span><span class="o">.</span><span class="n">MJ</span><span class="p">,</span> <span class="n">Unit</span><span class="o">.</span><span class="n">kWh</span><span class="p">,</span> <span class="n">electricity</span><span class="p">)</span>
+            <span class="n">hydrogen</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="n">Unit</span><span class="o">.</span><span class="n">MJ</span><span class="p">,</span> <span class="n">Unit</span><span class="o">.</span><span class="n">kWh</span><span class="p">,</span> <span class="n">hydrogen</span><span class="p">)</span>
+            <span class="n">fuel</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="n">Unit</span><span class="o">.</span><span class="n">MJ</span><span class="p">,</span> <span class="n">Unit</span><span class="o">.</span><span class="n">kWh</span><span class="p">,</span> <span class="n">fuel</span><span class="p">)</span>
+
+            <span class="n">result</span><span class="p">[</span><span class="n">modal_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">Demand</span><span class="p">(</span><span class="n">electricity</span><span class="o">=</span><span class="n">electricity</span><span class="p">,</span> <span class="n">hydrogen</span><span class="o">=</span><span class="n">hydrogen</span><span class="p">,</span> <span class="n">fuel</span><span class="o">=</span><span class="n">fuel</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

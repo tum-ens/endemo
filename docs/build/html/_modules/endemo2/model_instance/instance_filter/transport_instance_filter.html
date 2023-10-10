@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.model_instance.instance_filter.transport_instance_filter &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.model_instance.instance_filter.transport_instance_filter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.model_instance.instance_filter.transport_instance_filter</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.containers</span> <span class="kn">import</span> <span class="n">Demand</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.enumerations</span> <span class="kn">import</span> <span class="n">TransportModal</span><span class="p">,</span> <span class="n">TransportModalSplitMethod</span><span class="p">,</span> <span class="n">ForecastMethod</span><span class="p">,</span> <span class="n">TrafficType</span><span class="p">,</span> \
+    <span class="n">TransportFinalEnergyDemandScenario</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_transport</span> <span class="kn">import</span> <span class="n">TransportInput</span>
+<span class="kn">from</span> <span class="nn">endemo2.model_instance.instance_filter.general_instance_filter</span> <span class="kn">import</span> <span class="n">InstanceFilter</span><span class="p">,</span> <span class="n">CountryInstanceFilter</span>
+<span class="kn">from</span> <span class="nn">endemo2.model_instance.instance_filter.industry_instance_filter</span> <span class="kn">import</span> <span class="n">IndustryInstanceFilter</span><span class="p">,</span> \
+    <span class="n">ProductInstanceFilter</span>
+<span class="kn">from</span> <span class="nn">endemo2.preprocessing.preprocessor</span> <span class="kn">import</span> <span class="n">Preprocessor</span>
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">utility</span> <span class="k">as</span> <span class="n">uty</span>
+
+
+<div class="viewcode-block" id="TransportInstanceFilter"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter">[docs]</a><span class="k">class</span> <span class="nc">TransportInstanceFilter</span><span class="p">(</span><span class="n">InstanceFilter</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">transport_input</span><span class="p">:</span> <span class="n">TransportInput</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">:</span> <span class="n">Preprocessor</span><span class="p">,</span>
+                 <span class="n">country_instance_filter</span><span class="p">:</span> <span class="n">CountryInstanceFilter</span><span class="p">,</span> <span class="n">industry_instance_filter</span><span class="p">:</span> <span class="n">IndustryInstanceFilter</span><span class="p">,</span>
+                 <span class="n">product_instance_filter</span><span class="p">:</span> <span class="n">ProductInstanceFilter</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">transport_input</span> <span class="o">=</span> <span class="n">transport_input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">country_if</span> <span class="o">=</span> <span class="n">country_instance_filter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">industry_if</span> <span class="o">=</span> <span class="n">industry_instance_filter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">product_if</span> <span class="o">=</span> <span class="n">product_instance_filter</span>
+
+<div class="viewcode-block" id="TransportInstanceFilter.get_nuts2_region_names"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_nuts2_region_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuts2_region_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the nuts2 region names of a country. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">industry_if</span><span class="o">.</span><span class="n">get_nuts2_regions</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TransportInstanceFilter.get_energy_consumption_of_modal"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_energy_consumption_of_modal">[docs]</a>    <span class="k">def</span> <span class="nf">get_energy_consumption_of_modal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">,</span> <span class="n">modal_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Demand</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the energy consumption per ukm for a modal. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport_input</span><span class="o">.</span><span class="n">modal_ukm_energy_consumption</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">modal_id</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TransportInstanceFilter.get_perc_modal_to_demand_type_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_perc_modal_to_demand_type_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_perc_modal_to_demand_type_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">,</span> <span class="n">modal_id</span><span class="p">,</span> <span class="n">demand_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the percentage of ukm that contribute to a demand type. &quot;&quot;&quot;</span>
+
+        <span class="n">final_energy_scenario</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">transport_settings</span><span class="o">.</span><span class="n">scenario_selection_final_energy_demand</span>
+        <span class="n">datapoints</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">final_energy_scenario</span> <span class="o">==</span> <span class="n">TransportFinalEnergyDemandScenario</span><span class="o">.</span><span class="n">REFERENCE</span><span class="p">:</span>
+            <span class="n">datapoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport_input</span><span class="o">.</span><span class="n">modal_energy_split_ref</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">modal_id</span><span class="p">][</span><span class="n">demand_type</span><span class="p">][</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">final_energy_scenario</span> <span class="o">==</span> <span class="n">TransportFinalEnergyDemandScenario</span><span class="o">.</span><span class="n">USER_DEFINED</span><span class="p">:</span>
+            <span class="n">datapoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport_input</span><span class="o">.</span><span class="n">modal_energy_split_user</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">modal_id</span><span class="p">][</span><span class="n">demand_type</span><span class="p">][</span><span class="n">country_name</span><span class="p">]</span>
+
+        <span class="n">target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
+
+        <span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">)</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">find_interval_between_datapoints</span><span class="p">(</span><span class="n">datapoints</span><span class="p">,</span> <span class="n">target_year</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">uty</span><span class="o">.</span><span class="n">exponential_interpolation</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">target_year</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TransportInstanceFilter.get_modals_for_traffic_type"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_modals_for_traffic_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_modals_for_traffic_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">TransportModal</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns a list of all modals for the given traffic type. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TransportInput</span><span class="o">.</span><span class="n">tra_modal_lists</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TransportInstanceFilter.get_population_country_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_population_country_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_population_country_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the country population in target year. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_if</span><span class="o">.</span><span class="n">get_population_country_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TransportInstanceFilter.get_population_nuts2_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_population_nuts2_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_population_nuts2_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the nuts2 population in target year. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_if</span><span class="o">.</span><span class="n">get_population_nuts2_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TransportInstanceFilter.get_historical_population_in_certain_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_historical_population_in_certain_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_historical_population_in_certain_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the population of a country in a given year. &quot;&quot;&quot;</span>
+        <span class="n">ts_pop_his</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">population_pp</span><span class="o">.</span><span class="n">population_historical_whole_country</span>
+        <span class="k">return</span> <span class="n">ts_pop_his</span><span class="o">.</span><span class="n">get_value_at_year</span><span class="p">(</span><span class="n">year</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TransportInstanceFilter.get_specific_unit_km_in_reference_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_specific_unit_km_in_reference_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_specific_unit_km_in_reference_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">,</span> <span class="n">modal_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the kilometers per person or per ton in reference year. &quot;&quot;&quot;</span>
+        <span class="n">modal_group_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_modal_group_parent</span><span class="p">(</span><span class="n">traffic_type</span><span class="p">,</span> <span class="n">modal_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">modal_group_parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">modal_group_parent</span> <span class="o">=</span> <span class="n">modal_id</span>
+
+        <span class="n">modal_shared_historical_value_total</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">transport_input</span><span class="o">.</span><span class="n">kilometres</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">country_name</span><span class="p">][</span><span class="n">modal_group_parent</span><span class="p">]</span>
+
+        <span class="n">year_of_historical_value</span> <span class="o">=</span> <span class="n">modal_shared_historical_value_total</span><span class="o">.</span><span class="n">x</span>
+
+        <span class="n">specific_ukm</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">traffic_type</span> <span class="o">==</span> <span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">:</span>
+            <span class="n">specific_ukm</span> <span class="o">=</span> \
+                <span class="n">modal_shared_historical_value_total</span><span class="o">.</span><span class="n">y</span> \
+                <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_historical_population_in_certain_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">year_of_historical_value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">traffic_type</span> <span class="o">==</span> <span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">:</span>
+            <span class="n">reference_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">transport_settings</span><span class="o">.</span><span class="n">ind_production_reference_year</span>
+            <span class="n">reference_amount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_if</span><span class="o">.</span><span class="n">get_product_amount_historical_in_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">reference_year</span><span class="p">)</span>
+
+            <span class="n">specific_ukm</span> <span class="o">=</span> <span class="n">modal_shared_historical_value_total</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">reference_amount</span>
+
+        <span class="k">return</span> <span class="n">specific_ukm</span></div>
+
+<div class="viewcode-block" id="TransportInstanceFilter.get_unit_km_in_target_year_country"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_unit_km_in_target_year_country">[docs]</a>    <span class="k">def</span> <span class="nf">get_unit_km_in_target_year_country</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">:</span> <span class="n">TrafficType</span><span class="p">,</span> <span class="n">modal_id</span><span class="p">:</span> <span class="n">TransportModal</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the total amount of kilometres of a traffic type and modal for a country in the target year. &quot;&quot;&quot;</span>
+
+        <span class="n">modal_share_target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_modal_share_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">,</span> <span class="n">modal_id</span><span class="p">)</span>
+
+        <span class="n">specific_ukm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_specific_unit_km_in_reference_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">,</span> <span class="n">modal_id</span><span class="p">)</span>
+        <span class="n">target_year_amount</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">traffic_type</span> <span class="o">==</span> <span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">:</span>
+            <span class="n">target_year_amount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_population_country_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">traffic_type</span> <span class="o">==</span> <span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">:</span>
+            <span class="c1"># take product amount forecast from industry</span>
+            <span class="n">target_year_amount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_if</span><span class="o">.</span><span class="n">get_product_amount_sum_country_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">specific_ukm</span> <span class="o">*</span> <span class="n">target_year_amount</span> <span class="o">*</span> <span class="n">modal_share_target_year</span></div>
+
+<div class="viewcode-block" id="TransportInstanceFilter.get_unit_km_in_target_year_nuts2"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_unit_km_in_target_year_nuts2">[docs]</a>    <span class="k">def</span> <span class="nf">get_unit_km_in_target_year_nuts2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">:</span> <span class="n">TrafficType</span><span class="p">,</span>
+                                         <span class="n">modal_id</span><span class="p">:</span> <span class="n">TransportModal</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the total amount of kilometres of a traffic type and modal for a country in the target year. &quot;&quot;&quot;</span>
+
+        <span class="n">ukm_country</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_unit_km_in_target_year_country</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">,</span> <span class="n">modal_id</span><span class="p">)</span>
+        <span class="n">distribution_scalars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nuts2_distribution_scalars</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ukm_country</span> <span class="o">*</span> <span class="n">distribution_scalars</span><span class="p">[</span><span class="n">region_name</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TransportInstanceFilter.get_modal_share_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_modal_share_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_modal_share_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">:</span> <span class="n">TrafficType</span><span class="p">,</span> <span class="n">modal_id</span><span class="p">:</span> <span class="n">TransportModal</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the share of a modal of transport in their group. If the modal is not grouped, returns 1.0 (100%). &quot;&quot;&quot;</span>
+        <span class="n">transport_pp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">transport_pp</span>
+
+        <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">transport_settings</span><span class="o">.</span><span class="n">split_method</span><span class="p">:</span>
+            <span class="k">case</span> <span class="n">TransportModalSplitMethod</span><span class="o">.</span><span class="n">HISTORICAL_TIME_TREND</span><span class="p">:</span>
+                <span class="n">modal_group_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_modal_group_parent</span><span class="p">(</span><span class="n">traffic_type</span><span class="p">,</span> <span class="n">modal_id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">modal_group_parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># not in split group -&gt; return 100%</span>
+                    <span class="k">return</span> <span class="mf">1.0</span>
+                <span class="n">modal_share</span> <span class="o">=</span> \
+                    <span class="bp">self</span><span class="o">.</span><span class="n">get_modal_group_percentages_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">,</span>
+                                                                    <span class="n">modal_group_parent</span><span class="p">)[</span><span class="n">modal_id</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">modal_share</span>
+            <span class="k">case</span> <span class="n">TransportModalSplitMethod</span><span class="o">.</span><span class="n">HISTORICAL_CONSTANT</span><span class="p">:</span>
+                <span class="n">modal_group_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_modal_group_parent</span><span class="p">(</span><span class="n">traffic_type</span><span class="p">,</span> <span class="n">modal_id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">modal_group_parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># not in split group -&gt; take historical value directly</span>
+                    <span class="k">return</span> <span class="mf">1.0</span>
+                <span class="n">modal_share</span> <span class="o">=</span> <span class="n">transport_pp</span><span class="o">.</span><span class="n">modal_split_timeseries</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">modal_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_last_data_entry</span><span class="p">()</span><span class="o">.</span><span class="n">y</span>
+
+                <span class="k">return</span> <span class="n">modal_share</span>
+
+            <span class="k">case</span> <span class="n">TransportModalSplitMethod</span><span class="o">.</span><span class="n">USER_DEFINED</span><span class="p">:</span>
+                <span class="n">target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
+
+                <span class="c1"># find interval in supporting points and interpolate</span>
+                <span class="n">interval</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">find_interval_between_datapoints</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport_input</span><span class="o">.</span><span class="n">modal_split_user_def</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">],</span>
+                                                                <span class="n">target_year</span><span class="p">)</span>
+                <span class="n">interpolated_value</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">exponential_interpolation</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">interval</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">target_year</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">interpolated_value</span></div>
+
+<div class="viewcode-block" id="TransportInstanceFilter.get_modal_group_parent"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_modal_group_parent">[docs]</a>    <span class="k">def</span> <span class="nf">get_modal_group_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">:</span> <span class="n">TrafficType</span><span class="p">,</span> <span class="n">modal_id</span><span class="p">:</span> <span class="n">TransportModal</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the parent modal of the group the given modal_id belongs to. &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">modal_parent_id</span><span class="p">,</span> <span class="n">modal_list</span> <span class="ow">in</span> <span class="n">TransportInput</span><span class="o">.</span><span class="n">tra_modal_split_groups</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">modal_id</span> <span class="ow">in</span> <span class="n">modal_list</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">modal_parent_id</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="TransportInstanceFilter.get_modal_group_percentages_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_modal_group_percentages_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_modal_group_percentages_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">:</span> <span class="n">TrafficType</span><span class="p">,</span>
+                                                   <span class="n">modal_group_parent_id</span><span class="p">:</span> <span class="n">TransportModal</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the forecasted shares of each modal in the group of the given modal parent. &quot;&quot;&quot;</span>
+        <span class="n">transport_pp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">transport_pp</span>
+        <span class="n">target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
+
+        <span class="n">forecast_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>
+        <span class="n">percentage_sum</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># do forecast for each modal in group</span>
+        <span class="k">for</span> <span class="n">modal_id</span> <span class="ow">in</span> <span class="n">TransportInput</span><span class="o">.</span><span class="n">tra_modal_split_groups</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">modal_group_parent_id</span><span class="p">]:</span>
+            <span class="n">his_modal_share</span> <span class="o">=</span> <span class="n">transport_pp</span><span class="o">.</span><span class="n">modal_split_timeseries</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">modal_id</span><span class="p">]</span>
+
+            <span class="n">coef_modal_share</span> <span class="o">=</span> <span class="n">his_modal_share</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span>
+            <span class="n">coef_modal_share</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">)</span>
+
+            <span class="n">forecasted_share</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">coef_modal_share</span><span class="o">.</span><span class="n">get_function_y</span><span class="p">(</span><span class="n">target_year</span><span class="p">))</span>
+
+            <span class="n">percentage_sum</span> <span class="o">+=</span> <span class="n">forecasted_share</span>
+            <span class="n">forecast_dict</span><span class="p">[</span><span class="n">modal_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">forecasted_share</span>
+
+        <span class="c1"># make all entries sum up to 1</span>
+        <span class="n">res_dict</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">multiply_dictionary_with_scalar</span><span class="p">(</span><span class="n">forecast_dict</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">percentage_sum</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res_dict</span></div>
+
+<div class="viewcode-block" id="TransportInstanceFilter.get_nuts2_distribution_scalars"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_nuts2_distribution_scalars">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuts2_distribution_scalars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">traffic_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the scalars for distributing results across nuts2 regions. &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">traffic_type</span> <span class="o">==</span> <span class="n">TrafficType</span><span class="o">.</span><span class="n">PERSON</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_if</span><span class="o">.</span><span class="n">get_population_nuts2_percentages_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">traffic_type</span> <span class="o">==</span> <span class="n">TrafficType</span><span class="o">.</span><span class="n">FREIGHT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_if</span><span class="o">.</span><span class="n">get_population_nuts2_percentages_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

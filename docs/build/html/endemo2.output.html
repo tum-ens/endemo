@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.output package &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="endemo2.preprocessing package" href="endemo2.preprocessing.html" />
+    <link rel="prev" title="endemo2.model_instance.model.transport package" href="endemo2.model_instance.model.transport.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="endemo2.html">endemo2 package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="endemo2.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html">endemo2.data_structures package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html">endemo2.input_and_settings package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.model_instance.html">endemo2.model_instance package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">endemo2.output package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.output.output_instance">endemo2.output.output_instance module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.output.output_preprocessing">endemo2.output.output_preprocessing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.output.output_utility">endemo2.output.output_utility module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.output.output_utility_visual">endemo2.output.output_utility_visual module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.output">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html">endemo2.preprocessing package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.endemo">endemo2.endemo module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.utility">endemo2.utility module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="endemo2.html">endemo2 package</a></li>
+      <li class="breadcrumb-item active">endemo2.output package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/endemo2.output.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="endemo2-output-package">
+<h1>endemo2.output package<a class="headerlink" href="#endemo2-output-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-endemo2.output.output_instance">
+<span id="endemo2-output-output-instance-module"></span><h2>endemo2.output.output_instance module<a class="headerlink" href="#module-endemo2.output.output_instance" title="Permalink to this heading"></a></h2>
+<p>This module contains all functions that generate output files from a model instance.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.generate_instance_output">
+<span class="sig-name descname"><span class="pre">generate_instance_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_instance_filter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_instance_filter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">industry_instance_filter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cts_instance_filter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hh_instance_filter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tra_instance_filter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#generate_instance_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.generate_instance_output" title="Permalink to this definition"></a></dt>
+<dd><p>Calls all generate_x_output functions of this module that should be used to generate output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.model_instance.model.html#endemo2.model_instance.model.country.Country" title="endemo2.model_instance.model.country.Country"><em>endemo2.model_instance.model.country.Country</em></a><em>]</em>) – </p></li>
+<li><p><strong>country_instance_filter</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter" title="endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter"><em>CountryInstanceFilter</em></a>) – </p></li>
+<li><p><strong>product_instance_filter</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter" title="endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter"><em>ProductInstanceFilter</em></a>) – </p></li>
+<li><p><strong>industry_instance_filter</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter" title="endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter"><em>IndustryInstanceFilter</em></a>) – </p></li>
+<li><p><strong>cts_instance_filter</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter" title="endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter"><em>CtsInstanceFilter</em></a>) – </p></li>
+<li><p><strong>hh_instance_filter</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter" title="endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter"><em>HouseholdsInstanceFilter</em></a>) – </p></li>
+<li><p><strong>tra_instance_filter</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter" title="endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter"><em>TransportInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_cts_demand_country">
+<span class="sig-name descname"><span class="pre">output_cts_demand_country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_cts_demand_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_cts_demand_country" title="Permalink to this definition"></a></dt>
+<dd><p>Generates all demand output for the cts sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_cts_demand_hourly_country">
+<span class="sig-name descname"><span class="pre">output_cts_demand_hourly_country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_cts_demand_hourly_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_cts_demand_hourly_country" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the output that splits the demand into the hourly timeseries for each country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_cts_demand_hourly_nuts2">
+<span class="sig-name descname"><span class="pre">output_cts_demand_hourly_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_cts_demand_hourly_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_cts_demand_hourly_nuts2" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the output that splits the demand into the hourly timeseries for nuts2 regions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_cts_demand_nuts2">
+<span class="sig-name descname"><span class="pre">output_cts_demand_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_cts_demand_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_cts_demand_nuts2" title="Permalink to this definition"></a></dt>
+<dd><p>Generates all demand output for the cts sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_cts_employee_number">
+<span class="sig-name descname"><span class="pre">output_cts_employee_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cts_instance_filter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_cts_employee_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_cts_employee_number" title="Permalink to this definition"></a></dt>
+<dd><p>Generates output for the number of employees in the cts sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>cts_instance_filter</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter" title="endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter"><em>CtsInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_cts_specific_consumption">
+<span class="sig-name descname"><span class="pre">output_cts_specific_consumption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cts_if</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_cts_specific_consumption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_cts_specific_consumption" title="Permalink to this definition"></a></dt>
+<dd><p>Generates all output related to the specific consumption of employees.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>cts_if</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter" title="endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter"><em>CtsInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_gen_gdp">
+<span class="sig-name descname"><span class="pre">output_gen_gdp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_instance_filter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_gen_gdp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_gen_gdp" title="Permalink to this definition"></a></dt>
+<dd><p>Generates all output related to the gdp of a countries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>country_instance_filter</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter" title="endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter"><em>CountryInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_gen_population_forecast">
+<span class="sig-name descname"><span class="pre">output_gen_population_forecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_instance_filter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_gen_population_forecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_gen_population_forecast" title="Permalink to this definition"></a></dt>
+<dd><p>Generates all output related to the population of a countries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>country_instance_filter</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter" title="endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter"><em>CountryInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_gen_population_forecast_details">
+<span class="sig-name descname"><span class="pre">output_gen_population_forecast_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_instance_filter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_gen_population_forecast_details"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_gen_population_forecast_details" title="Permalink to this definition"></a></dt>
+<dd><p>Generates all output related to the population of a countries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>country_instance_filter</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter" title="endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter"><em>CountryInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_hh_characteristics">
+<span class="sig-name descname"><span class="pre">output_hh_characteristics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hh_if</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_hh_characteristics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_hh_characteristics" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the households characteristics output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>hh_if</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter" title="endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter"><em>HouseholdsInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_hh_demand_country">
+<span class="sig-name descname"><span class="pre">output_hh_demand_country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_hh_demand_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_hh_demand_country" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the demand output of the households sector distributed by country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_hh_demand_hourly_country">
+<span class="sig-name descname"><span class="pre">output_hh_demand_hourly_country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_hh_demand_hourly_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_hh_demand_hourly_country" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the demand output of the households sector distributed by country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_hh_demand_hourly_nuts2">
+<span class="sig-name descname"><span class="pre">output_hh_demand_hourly_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_hh_demand_hourly_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_hh_demand_hourly_nuts2" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the demand output of the households sector distributed by nuts2 regions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_hh_demand_nuts2">
+<span class="sig-name descname"><span class="pre">output_hh_demand_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_hh_demand_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_hh_demand_nuts2" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the demand output of the households sector distributed by nuts2 regions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_hh_subsectors_demand">
+<span class="sig-name descname"><span class="pre">output_hh_subsectors_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hh_if</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_hh_subsectors_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_hh_subsectors_demand" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the simplified demand output of the subsectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>hh_if</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter" title="endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter"><em>HouseholdsInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_ind_demand_country">
+<span class="sig-name descname"><span class="pre">output_ind_demand_country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_ind_demand_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_ind_demand_country" title="Permalink to this definition"></a></dt>
+<dd><p>Generates industry demand output of a countries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_ind_demand_hourly_country">
+<span class="sig-name descname"><span class="pre">output_ind_demand_hourly_country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_ind_demand_hourly_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_ind_demand_hourly_country" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the output that splits the demand into the hourly timeseries for each country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_ind_demand_hourly_nuts2">
+<span class="sig-name descname"><span class="pre">output_ind_demand_hourly_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_ind_demand_hourly_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_ind_demand_hourly_nuts2" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the output that splits the demand into the hourly timeseries for nuts2 regions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_ind_demand_nuts2">
+<span class="sig-name descname"><span class="pre">output_ind_demand_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_ind_demand_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_ind_demand_nuts2" title="Permalink to this definition"></a></dt>
+<dd><p>Generates industry demand output for nuts2 regions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_ind_product_amount">
+<span class="sig-name descname"><span class="pre">output_ind_product_amount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_instance_filter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_ind_product_amount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_ind_product_amount" title="Permalink to this definition"></a></dt>
+<dd><p>Generates all output related to amount of a subsector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>product_instance_filter</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter" title="endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter"><em>ProductInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_ind_specific_consumption">
+<span class="sig-name descname"><span class="pre">output_ind_specific_consumption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_if</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_ind_specific_consumption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_ind_specific_consumption" title="Permalink to this definition"></a></dt>
+<dd><p>Generates all output related to the specific consumption of products.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>product_if</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter" title="endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter"><em>ProductInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_tra_demand_hourly_country">
+<span class="sig-name descname"><span class="pre">output_tra_demand_hourly_country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_tra_demand_hourly_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_tra_demand_hourly_country" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the hourly demand output for the transport sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_tra_demand_hourly_nuts2">
+<span class="sig-name descname"><span class="pre">output_tra_demand_hourly_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_tra_demand_hourly_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_tra_demand_hourly_nuts2" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the hourly demand output for the transport sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_tra_energy_demand_country">
+<span class="sig-name descname"><span class="pre">output_tra_energy_demand_country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_tra_energy_demand_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_tra_energy_demand_country" title="Permalink to this definition"></a></dt>
+<dd><p>Output the forecasted energy demand.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_tra_energy_demand_detail">
+<span class="sig-name descname"><span class="pre">output_tra_energy_demand_detail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_tra_energy_demand_detail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_tra_energy_demand_detail" title="Permalink to this definition"></a></dt>
+<dd><p>Output the forecasted energy demand split by modals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_tra_energy_demand_nuts2">
+<span class="sig-name descname"><span class="pre">output_tra_energy_demand_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_tra_energy_demand_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_tra_energy_demand_nuts2" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the demand output of the transport sector distributed by nuts2 regions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_tra_kilometers">
+<span class="sig-name descname"><span class="pre">output_tra_kilometers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traffic_if</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_tra_kilometers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_tra_kilometers" title="Permalink to this definition"></a></dt>
+<dd><p>Outputs the forecast kilometers for each traffic type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>traffic_if</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter" title="endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter"><em>TransportInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_tra_kilometers_nuts2">
+<span class="sig-name descname"><span class="pre">output_tra_kilometers_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traffic_if</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_tra_kilometers_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_tra_kilometers_nuts2" title="Permalink to this definition"></a></dt>
+<dd><p>Outputs the forecast kilometers for each traffic type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>traffic_if</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter" title="endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter"><em>TransportInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_tra_modal_split">
+<span class="sig-name descname"><span class="pre">output_tra_modal_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traffic_if</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_tra_modal_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_tra_modal_split" title="Permalink to this definition"></a></dt>
+<dd><p>The modal split output for the transport sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>traffic_if</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter" title="endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter"><em>TransportInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_tra_pkm_tkm_hourly_country">
+<span class="sig-name descname"><span class="pre">output_tra_pkm_tkm_hourly_country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traffic_if</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_tra_pkm_tkm_hourly_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_tra_pkm_tkm_hourly_country" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the hourly demand output for the transport sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>traffic_if</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter" title="endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter"><em>TransportInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_tra_pkm_tkm_hourly_nuts2">
+<span class="sig-name descname"><span class="pre">output_tra_pkm_tkm_hourly_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traffic_if</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_tra_pkm_tkm_hourly_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_tra_pkm_tkm_hourly_nuts2" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the hourly demand output for the transport sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>traffic_if</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter" title="endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter"><em>TransportInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_instance.output_tra_production_volume">
+<span class="sig-name descname"><span class="pre">output_tra_production_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">industry_if</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_if</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_instance.html#output_tra_production_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_instance.output_tra_production_volume" title="Permalink to this definition"></a></dt>
+<dd><p>Outputs the historical quantities of the industry sector that are used for transport sector calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>industry_if</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter" title="endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter"><em>IndustryInstanceFilter</em></a>) – </p></li>
+<li><p><strong>product_if</strong> (<a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter" title="endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter"><em>ProductInstanceFilter</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-endemo2.output.output_preprocessing">
+<span id="endemo2-output-output-preprocessing-module"></span><h2>endemo2.output.output_preprocessing module<a class="headerlink" href="#module-endemo2.output.output_preprocessing" title="Permalink to this heading"></a></h2>
+<p>This module contains all functions that generate output files from the preprocessor.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.generate_preprocessing_output">
+<span class="sig-name descname"><span class="pre">generate_preprocessing_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocessor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#generate_preprocessing_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.generate_preprocessing_output" title="Permalink to this definition"></a></dt>
+<dd><p>Calls all generate_x_output functions of this module that should be used to generate output of the preprocessor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>preprocessor</strong> (<a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessor.Preprocessor" title="endemo2.preprocessing.preprocessor.Preprocessor"><em>Preprocessor</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_cts_coef_employee_number">
+<span class="sig-name descname"><span class="pre">output_cts_coef_employee_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_cts_coef_employee_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_cts_coef_employee_number" title="Permalink to this definition"></a></dt>
+<dd><p>Generates coefficient output for the number of employees in the cts sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_cts_employee_number_visual_country">
+<span class="sig-name descname"><span class="pre">output_cts_employee_number_visual_country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_cts_employee_number_visual_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_cts_employee_number_visual_country" title="Permalink to this definition"></a></dt>
+<dd><p>Generate visual output for the number of employees in the cts sector per country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_cts_employee_number_visual_nuts2">
+<span class="sig-name descname"><span class="pre">output_cts_employee_number_visual_nuts2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_cts_employee_number_visual_nuts2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_cts_employee_number_visual_nuts2" title="Permalink to this definition"></a></dt>
+<dd><p>Generate visual output for the number of employees in the cts sector per nuts2 region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_cts_specific_consumption">
+<span class="sig-name descname"><span class="pre">output_cts_specific_consumption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_cts_specific_consumption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_cts_specific_consumption" title="Permalink to this definition"></a></dt>
+<dd><p>Generate all output related to preprocessed specific consumption of the cts sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_cts_specific_consumption_visual">
+<span class="sig-name descname"><span class="pre">output_cts_specific_consumption_visual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_cts_specific_consumption_visual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_cts_specific_consumption_visual" title="Permalink to this definition"></a></dt>
+<dd><p>Generate visual output for specific consumption in the cts sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_hh_coef_historical_consumption">
+<span class="sig-name descname"><span class="pre">output_hh_coef_historical_consumption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_hh_coef_historical_consumption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_hh_coef_historical_consumption" title="Permalink to this definition"></a></dt>
+<dd><p>Generates coefficient output for the historical consumption of the households sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_hh_consumption_visual_country">
+<span class="sig-name descname"><span class="pre">output_hh_consumption_visual_country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_hh_consumption_visual_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_hh_consumption_visual_country" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the visual output for each country and subsectors energy consumption in the households sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_hh_demand_historical_2018">
+<span class="sig-name descname"><span class="pre">output_hh_demand_historical_2018</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_hh_demand_historical_2018"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_hh_demand_historical_2018" title="Permalink to this definition"></a></dt>
+<dd><p>Generates historical demand output for the households sector in 2018.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_ind_coef_product_amount">
+<span class="sig-name descname"><span class="pre">output_ind_coef_product_amount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_ind_coef_product_amount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_ind_coef_product_amount" title="Permalink to this definition"></a></dt>
+<dd><p>Generate the output for preprocessed coefficients related to amount of products.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_ind_country_group">
+<span class="sig-name descname"><span class="pre">output_ind_country_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_ind_country_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_ind_country_group" title="Permalink to this definition"></a></dt>
+<dd><p>Generate industry group coefficient output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>group_manager</strong> (<a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.GroupManager" title="endemo2.preprocessing.preproccessing_step_two.GroupManager"><em>GroupManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_ind_country_group_visual">
+<span class="sig-name descname"><span class="pre">output_ind_country_group_visual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_ind_country_group_visual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_ind_country_group_visual" title="Permalink to this definition"></a></dt>
+<dd><p>Creates the visual output of country groups in the industry sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>group_manager</strong> (<a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.GroupManager" title="endemo2.preprocessing.preproccessing_step_two.GroupManager"><em>GroupManager</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_ind_product_amount_visual">
+<span class="sig-name descname"><span class="pre">output_ind_product_amount_visual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_ind_product_amount_visual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_ind_product_amount_visual" title="Permalink to this definition"></a></dt>
+<dd><p>Generate visual output for product amount in the industry sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_ind_specific_consumption">
+<span class="sig-name descname"><span class="pre">output_ind_specific_consumption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_ind_specific_consumption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_ind_specific_consumption" title="Permalink to this definition"></a></dt>
+<dd><p>Generate all output related to preprocessed specific consumption of the industry sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_ind_specific_consumption_visual">
+<span class="sig-name descname"><span class="pre">output_ind_specific_consumption_visual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_ind_specific_consumption_visual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_ind_specific_consumption_visual" title="Permalink to this definition"></a></dt>
+<dd><p>Generate visual output for specific consumption in the industry sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_tra_coef_modal_split">
+<span class="sig-name descname"><span class="pre">output_tra_coef_modal_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_tra_coef_modal_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_tra_coef_modal_split" title="Permalink to this definition"></a></dt>
+<dd><p>Generates coefficient output for the historical modal split.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_preprocessing.output_tra_modal_split_visual">
+<span class="sig-name descname"><span class="pre">output_tra_modal_split_visual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_preprocessing.html#output_tra_modal_split_visual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_preprocessing.output_tra_modal_split_visual" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the visual output for each country and modal split in the transport sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-endemo2.output.output_utility">
+<span id="endemo2-output-output-utility-module"></span><h2>endemo2.output.output_utility module<a class="headerlink" href="#module-endemo2.output.output_utility" title="Permalink to this heading"></a></h2>
+<p>This module contains utility functions and classes to more easily generate output files.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.FileGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FileGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#FileGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.FileGenerator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A tool to more easily generate output files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<em>Input</em>) – A reference to the input_manager that holds all preprocessing.</p></li>
+<li><p><strong>excel_writer</strong> (<em>pd.ExcelWriter</em>) – The excel writer used for writing the file.</p></li>
+<li><p><strong>current_sheet_name</strong> (<em>str</em>) – Keeps track of the current sheet name that new entries (add_entry) will be written to.</p></li>
+<li><p><strong>current_out_dict</strong> (<em>dict</em>) – Keeps the entries that are added.
+When writing the file, these are converted to a table.</p></li>
+<li><p><strong>out_file_path</strong> (<em>str</em>) – The output file path. Mainly used as attribute for debugging.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.FileGenerator.add_complete_column">
+<span class="sig-name descname"><span class="pre">add_complete_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#FileGenerator.add_complete_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.FileGenerator.add_complete_column" title="Permalink to this definition"></a></dt>
+<dd><p>Add a complete column to sheet.
+But pay attention! In the end of the sheet, all columns have to have the same length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>column_content</strong> (<em>[</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.FileGenerator.add_entry">
+<span class="sig-name descname"><span class="pre">add_entry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#FileGenerator.add_entry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.FileGenerator.add_entry" title="Permalink to this definition"></a></dt>
+<dd><p>Add an entry to a column. But pay attention! In the end of the sheet, all columns have to have the same length.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.FileGenerator.end_sheet">
+<span class="sig-name descname"><span class="pre">end_sheet</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#FileGenerator.end_sheet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.FileGenerator.end_sheet" title="Permalink to this definition"></a></dt>
+<dd><p>Stop editing current sheet.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.FileGenerator.get_day_directory">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_day_directory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#FileGenerator.get_day_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.FileGenerator.get_day_directory" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.FileGenerator.print_all_entries">
+<span class="sig-name descname"><span class="pre">print_all_entries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#FileGenerator.print_all_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.FileGenerator.print_all_entries" title="Permalink to this definition"></a></dt>
+<dd><p>Used for debugging purposes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.FileGenerator.print_length_of_all_entries">
+<span class="sig-name descname"><span class="pre">print_length_of_all_entries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#FileGenerator.print_length_of_all_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.FileGenerator.print_length_of_all_entries" title="Permalink to this definition"></a></dt>
+<dd><p>Used for debugging purposes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.FileGenerator.save_file">
+<span class="sig-name descname"><span class="pre">save_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#FileGenerator.save_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.FileGenerator.save_file" title="Permalink to this definition"></a></dt>
+<dd><p>Save the dictionary that was filled by this object to a file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.FileGenerator.start_sheet">
+<span class="sig-name descname"><span class="pre">start_sheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#FileGenerator.start_sheet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.FileGenerator.start_sheet" title="Permalink to this definition"></a></dt>
+<dd><p>Start editing a new sheet with name “name”.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.ensure_directory_exists">
+<span class="sig-name descname"><span class="pre">ensure_directory_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#ensure_directory_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.ensure_directory_exists" title="Permalink to this definition"></a></dt>
+<dd><p>Utility function to wrap a path to a directory that creates the directory if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>path</strong> (<em>Path</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.generate_timeseries_output">
+<span class="sig-name descname"><span class="pre">generate_timeseries_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_range</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#generate_timeseries_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.generate_timeseries_output" title="Permalink to this definition"></a></dt>
+<dd><p>Generate output for a Timeseries object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fg</strong> (<a class="reference internal" href="#endemo2.output.output_utility.FileGenerator" title="endemo2.output.output_utility.FileGenerator"><em>FileGenerator</em></a>) – </p></li>
+<li><p><strong>ts</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.get_day_folder_path">
+<span class="sig-name descname"><span class="pre">get_day_folder_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#get_day_folder_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.get_day_folder_path" title="Permalink to this definition"></a></dt>
+<dd><p>Get the path to the day folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.shortcut_coef_output">
+<span class="sig-name descname"><span class="pre">shortcut_coef_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#shortcut_coef_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.shortcut_coef_output" title="Permalink to this definition"></a></dt>
+<dd><p>A shortcut to easily output the contents of a coefficient object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fg</strong> (<a class="reference internal" href="#endemo2.output.output_utility.FileGenerator" title="endemo2.output.output_utility.FileGenerator"><em>FileGenerator</em></a>) – </p></li>
+<li><p><strong>coef</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef" title="endemo2.data_structures.prediction_models.Coef"><em>Coef</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.shortcut_demand_table">
+<span class="sig-name descname"><span class="pre">shortcut_demand_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">demand</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#shortcut_demand_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.shortcut_demand_table" title="Permalink to this definition"></a></dt>
+<dd><p>A shortcut to output the contents of a Demand object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fg</strong> (<a class="reference internal" href="#endemo2.output.output_utility.FileGenerator" title="endemo2.output.output_utility.FileGenerator"><em>FileGenerator</em></a>) – </p></li>
+<li><p><strong>demand</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand" title="endemo2.data_structures.containers.Demand"><em>Demand</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.shortcut_save_timeseries_print">
+<span class="sig-name descname"><span class="pre">shortcut_save_timeseries_print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#shortcut_save_timeseries_print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.shortcut_save_timeseries_print" title="Permalink to this definition"></a></dt>
+<dd><p>Shortcut to correctly output a timeseries, when data does potentially not cover every year.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interval</strong> (<em>(</em><em>&lt;class 'float'&gt;</em><em>, </em><em>&lt;class 'float'&gt;</em><em>)</em>) – </p></li>
+<li><p><strong>data</strong> (<em>[</em><em>(</em><em>&lt;class 'float'&gt;</em><em>, </em><em>&lt;class 'float'&gt;</em><em>)</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility.shortcut_sc_output">
+<span class="sig-name descname"><span class="pre">shortcut_sc_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility.html#shortcut_sc_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility.shortcut_sc_output" title="Permalink to this definition"></a></dt>
+<dd><p>A shortcut to output the contents of a specific consumption object.</p>
+</dd></dl>
+
+</section>
+<section id="module-endemo2.output.output_utility_visual">
+<span id="endemo2-output-output-utility-visual-module"></span><h2>endemo2.output.output_utility_visual module<a class="headerlink" href="#module-endemo2.output.output_utility_visual" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility_visual.plot_coef_in_range">
+<span class="sig-name descname"><span class="pre">plot_coef_in_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_lin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_log</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_quadr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_exp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility_visual.html#plot_coef_in_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility_visual.plot_coef_in_range" title="Permalink to this definition"></a></dt>
+<dd><p>Adds all possible functions of a coefficient object to a plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – What the coefficients represent.</p></li>
+<li><p><strong>start_end</strong> ((<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>)) – The range, that the function should be plotted within.</p></li>
+<li><p><strong>coef</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef" title="endemo2.data_structures.prediction_models.Coef"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coef</span></code></a>) – The coef object that should be plotted.</p></li>
+<li><p><strong>color_lin</strong> – The line color of the linear function.</p></li>
+<li><p><strong>color_quadr</strong> – The line color of the quadratic function.</p></li>
+<li><p><strong>color_exp</strong> – The line color of the exponential function.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility_visual.plot_coef_with_method_in_range">
+<span class="sig-name descname"><span class="pre">plot_coef_with_method_in_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility_visual.html#plot_coef_with_method_in_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility_visual.plot_coef_with_method_in_range" title="Permalink to this definition"></a></dt>
+<dd><p>Adds the function of a coefficient object with chosen method to the current plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – What the coefficients represent.</p></li>
+<li><p><strong>start_end</strong> ((<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>)) – The range, that the function should be plotted within.</p></li>
+<li><p><strong>coef</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef" title="endemo2.data_structures.prediction_models.Coef"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coef</span></code></a>) – The coef object, whose chosen method function should be plotted.</p></li>
+<li><p><strong>color</strong> – The color of the line of the function.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility_visual.plot_historical_data">
+<span class="sig-name descname"><span class="pre">plot_historical_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility_visual.html#plot_historical_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility_visual.plot_historical_data" title="Permalink to this definition"></a></dt>
+<dd><p>Add the data of a TwoDseries to a plot. If there is only one data point, a dot is plotted, else a line over the
+whole data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tds</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries" title="endemo2.data_structures.prediction_models.TwoDseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoDseries</span></code></a>) – The series whose historical data should be plotted.</p></li>
+<li><p><strong>color</strong> – The color of the plotted historical data.</p></li>
+<li><p><strong>label</strong> – The label for the historical data line.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility_visual.plot_series_detailed">
+<span class="sig-name descname"><span class="pre">plot_series_detailed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility_visual.html#plot_series_detailed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility_visual.plot_series_detailed" title="Permalink to this definition"></a></dt>
+<dd><p>Add a series to a plot. Plot historical data and all coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>series</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries" title="endemo2.data_structures.prediction_models.TwoDseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoDseries</span></code></a>) – The series that should be plotted.</p></li>
+<li><p><strong>colors</strong> – A color palette to use.</p></li>
+<li><p><strong>country_name</strong> – The name of the country the TwoDseries belongs to.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility_visual.plot_series_simple">
+<span class="sig-name descname"><span class="pre">plot_series_simple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility_visual.html#plot_series_simple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility_visual.plot_series_simple" title="Permalink to this definition"></a></dt>
+<dd><p>Plot a series historical data and coefficients of the chosen method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>series</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries" title="endemo2.data_structures.prediction_models.TwoDseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoDseries</span></code></a>) – The series to plot.</p></li>
+<li><p><strong>colors</strong> – The color palette to use.</p></li>
+<li><p><strong>label</strong> – The label of the series.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility_visual.save_multiple_series_plot">
+<span class="sig-name descname"><span class="pre">save_multiple_series_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tdss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">back_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">front_label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility_visual.html#save_multiple_series_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility_visual.save_multiple_series_plot" title="Permalink to this definition"></a></dt>
+<dd><p>Plots multiple TwoDseries into the same image and saves the plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputManager</span></code></a>) – The input_manager to get the output path from.</p></li>
+<li><p><strong>folder</strong> – The path, relative to the output folder, the result should be saved to.</p></li>
+<li><p><strong>tdss</strong> (<em>[</em><em>&lt;class 'endemo2.data_structures.prediction_models.TwoDseries'&gt;</em><em>]</em>) – The TwoDseries that should be plotted.</p></li>
+<li><p><strong>labels</strong> (<em>[</em><em>&lt;class 'str'&gt;</em><em>]</em>) – The labels for all TwoDseries in order.</p></li>
+<li><p><strong>x_label</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The label for the x-axis.</p></li>
+<li><p><strong>y_label</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The label for the y-axis.</p></li>
+<li><p><strong>front_label</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Label used at the front of the image name and file name.</p></li>
+<li><p><strong>back_label</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Label used at the back of the image name and file name.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility_visual.save_plot">
+<span class="sig-name descname"><span class="pre">save_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility_visual.html#save_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility_visual.save_plot" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the image and axis labels and saves the current plot to the given directory as filename.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_label</strong> – The label of the image.</p></li>
+<li><p><strong>x_label</strong> – The label of the x-axis.</p></li>
+<li><p><strong>y_label</strong> – The label of the y-axis.</p></li>
+<li><p><strong>directory</strong> – The directory to save the plot into.</p></li>
+<li><p><strong>file_name</strong> – The filename to save the plot as.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.output.output_utility_visual.save_series_plot">
+<span class="sig-name descname"><span class="pre">save_series_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">back_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">front_label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/output/output_utility_visual.html#save_series_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.output.output_utility_visual.save_series_plot" title="Permalink to this definition"></a></dt>
+<dd><p>Saves a series plot of a product in a country to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">InputManager</span></code></a>) – The input_manager to get the output path from.</p></li>
+<li><p><strong>folder</strong> – The path, relative to the output folder, the result should be saved to.</p></li>
+<li><p><strong>series</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries" title="endemo2.data_structures.prediction_models.TwoDseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoDseries</span></code></a>) – The TwoDseries that should be plotted.</p></li>
+<li><p><strong>x_label</strong> – The label for the x-axis.</p></li>
+<li><p><strong>y_label</strong> – The label for the y-axis.</p></li>
+<li><p><strong>front_label</strong> – Label used at the front of the image name and file name.</p></li>
+<li><p><strong>back_label</strong> – Label used at the back of the image name and file name.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-endemo2.output">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-endemo2.output" title="Permalink to this heading"></a></h2>
+<p>This package holds all modules that contribute to the actual output of the program.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="endemo2.model_instance.model.transport.html" class="btn btn-neutral float-left" title="endemo2.model_instance.model.transport package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="endemo2.preprocessing.html" class="btn btn-neutral float-right" title="endemo2.preprocessing package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

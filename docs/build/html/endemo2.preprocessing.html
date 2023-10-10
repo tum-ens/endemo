@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.preprocessing package &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="endemo2.output package" href="endemo2.output.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="endemo2.html">endemo2 package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="endemo2.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html">endemo2.data_structures package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html">endemo2.input_and_settings package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.model_instance.html">endemo2.model_instance package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html">endemo2.output package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">endemo2.preprocessing package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.preprocessing.preproccessing_step_two">endemo2.preprocessing.preproccessing_step_two module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.preprocessing.preprocessing_step_one">endemo2.preprocessing.preprocessing_step_one module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.preprocessing.preprocessing_utility">endemo2.preprocessing.preprocessing_utility module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.preprocessing.preprocessor">endemo2.preprocessing.preprocessor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.preprocessing">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.endemo">endemo2.endemo module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.utility">endemo2.utility module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="endemo2.html">endemo2 package</a></li>
+      <li class="breadcrumb-item active">endemo2.preprocessing package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/endemo2.preprocessing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="endemo2-preprocessing-package">
+<h1>endemo2.preprocessing package<a class="headerlink" href="#endemo2-preprocessing-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-endemo2.preprocessing.preproccessing_step_two">
+<span id="endemo2-preprocessing-preproccessing-step-two-module"></span><h2>endemo2.preprocessing.preproccessing_step_two module<a class="headerlink" href="#module-endemo2.preprocessing.preproccessing_step_two" title="Permalink to this heading"></a></h2>
+<p>This module contains all classed used for the first stage of preprocessing.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preproccessing_step_two.CountryGroup">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CountryGroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">countries_in_group</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preproccessing_step_two.html#CountryGroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preproccessing_step_two.CountryGroup" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A group of countries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>_countries_in_group</strong> (<em>[</em><em>str</em><em>]</em>) – List of countries that belong to this group.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>countries_in_group</strong> (<em>[</em><em>&lt;class 'str'&gt;</em><em>]</em>) – </p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preproccessing_step_two.CountryGroup.get_countries_in_group">
+<span class="sig-name descname"><span class="pre">get_countries_in_group</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preproccessing_step_two.html#CountryGroup.get_countries_in_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preproccessing_step_two.CountryGroup.get_countries_in_group" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the countries in group.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CountryGroupJoined</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_in_group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preproccessing_step_two.html#CountryGroupJoined"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#endemo2.preprocessing.preproccessing_step_two.CountryGroup" title="endemo2.preprocessing.preproccessing_step_two.CountryGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">CountryGroup</span></code></a></p>
+<p>Represents one country group of type “joined”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_group_coef</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef" title="endemo2.data_structures.prediction_models.Coef"><em>Coef</em></a>) – The coefficients calculated for the whole group.</p></li>
+<li><p><strong>_joined_data</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries" title="endemo2.data_structures.prediction_models.TwoDseries"><em>TwoDseries</em></a>) – The TwoDseries combining the data from all countries in this group.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ctrl</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ControlParameters" title="endemo2.input_and_settings.control_parameters.ControlParameters"><em>ControlParameters</em></a>) – </p></li>
+<li><p><strong>product_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>countries_in_group</strong> (<em>[</em><em>&lt;class 'str'&gt;</em><em>]</em>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined.get_all_historical_data">
+<span class="sig-name descname"><span class="pre">get_all_historical_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preproccessing_step_two.html#CountryGroupJoined.get_all_historical_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined.get_all_historical_data" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for all historical data contributing to this group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[(&lt;class ‘str’&gt;, &lt;class ‘endemo2.data_structures.prediction_models.TwoDseries’&gt;)]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined.get_coef">
+<span class="sig-name descname"><span class="pre">get_coef</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preproccessing_step_two.html#CountryGroupJoined.get_coef"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined.get_coef" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the group coefficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef" title="endemo2.data_structures.prediction_models.Coef"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coef</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CountryGroupJoinedDiversified</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_in_group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preproccessing_step_two.html#CountryGroupJoinedDiversified"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#endemo2.preprocessing.preproccessing_step_two.CountryGroup" title="endemo2.preprocessing.preproccessing_step_two.CountryGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">CountryGroup</span></code></a></p>
+<p>Represents one country group of type “joined diversified”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_joined_data</strong> (<em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries" title="endemo2.data_structures.prediction_models.TwoDseries"><em>TwoDseries</em></a><em>]</em>) – The TwoDseries combining the data from all countries in this group.</p></li>
+<li><p><strong>_coef_tuple</strong> (<em>(</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>)</em>) – The coefficients calculated for the whole group.</p></li>
+<li><p><strong>_offset_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) – The offsets for each country in this group.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ctrl</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ControlParameters" title="endemo2.input_and_settings.control_parameters.ControlParameters"><em>ControlParameters</em></a>) – </p></li>
+<li><p><strong>product_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>countries_in_group</strong> (<em>[</em><em>&lt;class 'str'&gt;</em><em>]</em>) – </p></li>
+<li><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified.get_all_historical_data">
+<span class="sig-name descname"><span class="pre">get_all_historical_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preproccessing_step_two.html#CountryGroupJoinedDiversified.get_all_historical_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified.get_all_historical_data" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for all historical data contributing to this group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[(&lt;class ‘str’&gt;, &lt;class ‘endemo2.data_structures.prediction_models.TwoDseries’&gt;)]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified.get_coef_for_country">
+<span class="sig-name descname"><span class="pre">get_coef_for_country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preproccessing_step_two.html#CountryGroupJoinedDiversified.get_coef_for_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified.get_coef_for_country" title="Permalink to this definition"></a></dt>
+<dd><p>Get the coefficient object for a country in this group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef" title="endemo2.data_structures.prediction_models.Coef"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coef</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preproccessing_step_two.GroupManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GroupManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countries_pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preproccessing_step_two.html#GroupManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preproccessing_step_two.GroupManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The group manager is responsible for pre-processing the coefficients for all country groups and providing the
+results. These can be obtained via calling the provided methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>separate_countries_group</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>set</em><em>[</em><em>str</em><em>]</em><em>]</em>) – The countries calculated separately for each product.
+Is of the form {front_label -&gt; [separate countries]}.</p></li>
+<li><p><strong>joined_groups</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>[</em><a class="reference internal" href="#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified" title="endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified"><em>CountryGroupJoinedDiversified</em></a><em>]</em><em>]</em>) – The dictionary containing all joined groups for a product.
+Is of form {front_label -&gt; [grp1, grp2, …]}</p></li>
+<li><p><strong>joined_groups</strong> – The dictionary containing all joined_diversified
+groups for a product. Is of form {front_label -&gt; [grp1, grp2, …]}</p></li>
+<li><p><strong>country_to_group_map</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>(</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.GroupType" title="endemo2.data_structures.enumerations.GroupType"><em>GroupType</em></a><em>, </em><em>int</em><em>)</em><em>]</em><em>]</em>) – A dictionary that for each product maps a
+country name to its group_id and group_type. Is of form {front_label -&gt; back_label -&gt; (group_type, group_id)}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>countries_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><em>endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed</em></a><em>]</em>) – </p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preproccessing_step_two.GroupManager.get_coef_for_country_and_product">
+<span class="sig-name descname"><span class="pre">get_coef_for_country_and_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preproccessing_step_two.html#GroupManager.get_coef_for_country_and_product"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preproccessing_step_two.GroupManager.get_coef_for_country_and_product" title="Permalink to this definition"></a></dt>
+<dd><p>Get the calculated group coefficient for a certain country and a certain product.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country_name</strong> – The name of the country.</p></li>
+<li><p><strong>product_name</strong> – The name of the product.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef" title="endemo2.data_structures.prediction_models.Coef"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coef</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The group-calculated coefficients.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preproccessing_step_two.GroupManager.is_in_separate_group">
+<span class="sig-name descname"><span class="pre">is_in_separate_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preproccessing_step_two.html#GroupManager.is_in_separate_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preproccessing_step_two.GroupManager.is_in_separate_group" title="Permalink to this definition"></a></dt>
+<dd><p>Return whether country should be calculated separately or is member of a group and should therefore
+use the group coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country_name</strong> – The name of the country.</p></li>
+<li><p><strong>product_name</strong> – The name of the product.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The bool indicating whether the country is not in a country group for the given product.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-endemo2.preprocessing.preprocessing_step_one">
+<span id="endemo2-preprocessing-preprocessing-step-one-module"></span><h2>endemo2.preprocessing.preprocessing_step_one module<a class="headerlink" href="#module-endemo2.preprocessing.preprocessing_step_one" title="Permalink to this heading"></a></h2>
+<p>This module contains all classed used for the first stage of preprocessing.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CountryPreprocessed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preprocessing_step_one.html#CountryPreprocessed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A preprocessed country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>population_pp</strong> (<a class="reference internal" href="#endemo2.preprocessing.preprocessing_step_one.PopulationPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.PopulationPreprocessed"><em>PopulationPreprocessed</em></a>) – The preprocessed country-wide population.</p></li>
+<li><p><strong>gdp_pp</strong> (<a class="reference internal" href="#endemo2.preprocessing.preprocessing_step_one.GDPPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.GDPPreprocessed"><em>GDPPreprocessed</em></a>) – The preprocessed gdp data.</p></li>
+<li><p><strong>has_nuts2</strong> (<em>bool</em>) – Indicates whether country has data for nuts2 regions.</p></li>
+<li><p><strong>nuts2_pp</strong> (<a class="reference internal" href="#endemo2.preprocessing.preprocessing_step_one.NUTS2Preprocessed" title="endemo2.preprocessing.preprocessing_step_one.NUTS2Preprocessed"><em>NUTS2Preprocessed</em></a>) – The preprocessed nuts2 data.</p></li>
+<li><p><strong>industry_pp</strong> (<a class="reference internal" href="#endemo2.preprocessing.preprocessing_step_one.IndustryPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.IndustryPreprocessed"><em>IndustryPreprocessed</em></a>) – The preprocessed industry data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preprocessing_step_one.CtsPreprocessed">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CtsPreprocessed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">general_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cts_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_his</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_nuts2_his</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preprocessing_step_one.html#CtsPreprocessed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preprocessing_step_one.CtsPreprocessed" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Preprocesses everything of the cts sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>specific_consumption</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType" title="endemo2.data_structures.enumerations.DemandType"><em>DemandType</em></a><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a><em>]</em>) – The specific consumption timeseries for each demand type
+of form {demand_type -&gt; timeseries}.</p></li>
+<li><p><strong>employee_share_in_subsector_country</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a><em>]</em>) – The timeseries of the share of the population that
+is an employee in a certain subsector. Is of form {country_name -&gt; timeseries}</p></li>
+<li><p><strong>employee_share_in_subsector_nuts2</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a><em>]</em><em>]</em>) – The timeseries of the share of the
+population of a nuts2 region that is an employee in a certain subsector.
+Is of form {country_name -&gt; {region_name -&gt; timeseries}}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>country_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>general_input</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.GeneralInput" title="endemo2.input_and_settings.input_general.GeneralInput"><em>GeneralInput</em></a>) – </p></li>
+<li><p><strong>cts_input</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_cts.CtsInput" title="endemo2.input_and_settings.input_cts.CtsInput"><em>CtsInput</em></a>) – </p></li>
+<li><p><strong>pop_his</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a>) – </p></li>
+<li><p><strong>pop_nuts2_his</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode" title="endemo2.data_structures.nuts_tree.NutsRegionNode"><em>NutsRegionNode</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preprocessing_step_one.CtsPreprocessed.preprocess_specific_consumption">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">preprocess_specific_consumption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">general_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cts_input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preprocessing_step_one.html#CtsPreprocessed.preprocess_specific_consumption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preprocessing_step_one.CtsPreprocessed.preprocess_specific_consumption" title="Permalink to this definition"></a></dt>
+<dd><p>Preprocesses the specific consumption of the cts sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The name of the country to preprocess the specific consumption for</p></li>
+<li><p><strong>general_input</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.GeneralInput" title="endemo2.input_and_settings.input_general.GeneralInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralInput</span></code></a>) – The general input object.</p></li>
+<li><p><strong>cts_input</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_cts.CtsInput" title="endemo2.input_and_settings.input_cts.CtsInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">CtsInput</span></code></a>) – The cts sector input object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType" title="endemo2.data_structures.enumerations.DemandType"><code class="xref py py-class docutils literal notranslate"><span class="pre">DemandType</span></code></a>, <a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The specific consumption timeseries for each demand type of form {demand_type -&gt; timeseries}.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preprocessing_step_one.GDPPreprocessed">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GDPPreprocessed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">general_input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preprocessing_step_one.html#GDPPreprocessed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preprocessing_step_one.GDPPreprocessed" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The preprocessed GDP data for a give country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gdp_historical_pp</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a>) – The timeseries for the historical gdp data.</p></li>
+<li><p><strong>gdp_prognosis_pp</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.IntervalForecast" title="endemo2.data_structures.prediction_models.IntervalForecast"><em>IntervalForecast</em></a>) – The gdp’s forecast.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>general_input</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.GeneralInput" title="endemo2.input_and_settings.input_general.GeneralInput"><em>GeneralInput</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preprocessing_step_one.HouseholdsPreprocessed">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HouseholdsPreprocessed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">general_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">households_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population_historical</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preprocessing_step_one.html#HouseholdsPreprocessed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preprocessing_step_one.HouseholdsPreprocessed" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Preprocesses everything of the households sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sectors_pp</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId" title="endemo2.data_structures.enumerations.HouseholdsSubsectorId"><em>HouseholdsSubsectorId</em></a><em>, </em><em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType" title="endemo2.data_structures.enumerations.DemandType"><em>DemandType</em></a><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a><em>]</em><em>]</em>) – The timeseries for the energy
+consumption of each subsector and demand type.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>country_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>general_input</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.GeneralInput" title="endemo2.input_and_settings.input_general.GeneralInput"><em>GeneralInput</em></a>) – </p></li>
+<li><p><strong>households_input</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput" title="endemo2.input_and_settings.input_households.HouseholdsInput"><em>HouseholdsInput</em></a>) – </p></li>
+<li><p><strong>population_historical</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preprocessing_step_one.IndustryPreprocessed">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IndustryPreprocessed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_his</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gdp_his</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preprocessing_step_one.html#IndustryPreprocessed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preprocessing_step_one.IndustryPreprocessed" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The preprocessed industry sector for a given country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>products_pp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#endemo2.preprocessing.preprocessing_step_one.ProductPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.ProductPreprocessed"><em>ProductPreprocessed</em></a><em>]</em>) – All preprocessed products, accessible by product name.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p></li>
+<li><p><strong>pop_his</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a>) – </p></li>
+<li><p><strong>gdp_his</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preprocessing_step_one.NUTS2Preprocessed">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NUTS2Preprocessed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuts2_population_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preprocessing_step_one.html#NUTS2Preprocessed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preprocessing_step_one.NUTS2Preprocessed" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>All preprocessed data relating to nuts2 that are general. (For product-specific nuts2 data, see ProductPreprocessed)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>population_historical_tree_root</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode" title="endemo2.data_structures.nuts_tree.NutsRegionNode"><em>NutsRegionNode</em></a>) – The nuts2 tree containing all historical population data for
+a given country.</p></li>
+<li><p><strong>population_prognosis_tree_root</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode" title="endemo2.data_structures.nuts_tree.NutsRegionNode"><em>NutsRegionNode</em></a>) – The nuts2 tree containing all population prognosis data for a
+given country.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>nuts2_population_data</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.HisProg" title="endemo2.data_structures.containers.HisProg"><em>HisProg</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preprocessing_step_one.PopulationPreprocessed">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PopulationPreprocessed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">general_input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preprocessing_step_one.html#PopulationPreprocessed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preprocessing_step_one.PopulationPreprocessed" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The preprocessed population data for a whole country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>population_historical_whole_country</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a>) – The timeseries for the countries_in_group population.</p></li>
+<li><p><strong>population_whole_country_prognosis</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.RigidTimeseries" title="endemo2.data_structures.prediction_models.RigidTimeseries"><em>RigidTimeseries</em></a>) – The manual prediction data for the countries_in_group
+population.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preprocessing_step_one.ProductPreprocessed">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ProductPreprocessed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population_historical</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gdp_historical</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">general_input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preprocessing_step_one.html#ProductPreprocessed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preprocessing_step_one.ProductPreprocessed" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The preprocessed product information for a given country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>amount_vs_year</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a>) – Used to predict the product amount. The x-axis is time in years.</p></li>
+<li><p><strong>amount_vs_gdp</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries" title="endemo2.data_structures.prediction_models.TwoDseries"><em>TwoDseries</em></a>) – Used to predict the product amount. The x-axis is the countries_in_group’ gdp.</p></li>
+<li><p><strong>amount_per_capita_vs_year</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a>) – Used to predict the product amount per capita.
+The x-axis is time in years.</p></li>
+<li><p><strong>amount_per_capita_vs_gdp</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries" title="endemo2.data_structures.prediction_models.TwoDseries"><em>TwoDseries</em></a>) – Used to predict the product amount per capita.
+The x-axis is time in years.</p></li>
+<li><p><strong>specific_consumption_pp</strong> (<a class="reference internal" href="#endemo2.preprocessing.preprocessing_step_one.SpecificConsumptionPreprocessed" title="endemo2.preprocessing.preprocessing_step_one.SpecificConsumptionPreprocessed"><em>SpecificConsumptionPreprocessed</em></a>) – The preprocessed specific consumption data.</p></li>
+<li><p><strong>_nuts2_installed_capacity</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) – The installed capacity for this product in each NUTS2 region for the country this product belongs to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>country_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>product_input</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput" title="endemo2.input_and_settings.input_industry.ProductInput"><em>ProductInput</em></a>) – </p></li>
+<li><p><strong>population_historical</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a>) – </p></li>
+<li><p><strong>gdp_historical</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a>) – </p></li>
+<li><p><strong>general_input</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.GeneralInput" title="endemo2.input_and_settings.input_general.GeneralInput"><em>GeneralInput</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preprocessing_step_one.SpecificConsumptionPreprocessed">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SpecificConsumptionPreprocessed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">general_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantity_per_year</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preprocessing_step_one.html#SpecificConsumptionPreprocessed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preprocessing_step_one.SpecificConsumptionPreprocessed" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The preprocessed specific consumption for a given product.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>default_specific_consumption</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.SpecConsum" title="endemo2.data_structures.containers.SpecConsum"><em>SpecConsum</em></a>) – The specific consumption for a product type, that is used as default
+if there is no historical data to predict the specific consumption.</p></li>
+<li><p><strong>specific_consumption_historical</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType" title="endemo2.data_structures.enumerations.DemandType"><em>DemandType</em></a><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a><em>]</em>) – The dictionary holding the timeseries for each demand type’s historical demand.</p></li>
+<li><p><strong>historical_sc_available</strong> (<em>bool</em>) – Indicates whether there is any historical data for the given product in the
+given country.</p></li>
+<li><p><strong>bat</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.EH" title="endemo2.data_structures.containers.EH"><em>EH</em></a>) – The specific consumption of the best available technology.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>country_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>product_input</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput" title="endemo2.input_and_settings.input_industry.ProductInput"><em>ProductInput</em></a>) – </p></li>
+<li><p><strong>general_input</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.GeneralInput" title="endemo2.input_and_settings.input_general.GeneralInput"><em>GeneralInput</em></a>) – </p></li>
+<li><p><strong>quantity_per_year</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preprocessing_step_one.TransportPreprocessed">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TransportPreprocessed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">general_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport_input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preprocessing_step_one.html#TransportPreprocessed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preprocessing_step_one.TransportPreprocessed" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Preprocesses everything of the transport sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>modal_split_timeseries</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType" title="endemo2.data_structures.enumerations.TrafficType"><em>TrafficType</em></a><em>, </em><em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal" title="endemo2.data_structures.enumerations.TransportModal"><em>TransportModal</em></a><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><em>Timeseries</em></a><em>]</em><em>]</em>) – The preprocessed
+percentages of modal splits for each traffic type.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>country_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>general_input</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.GeneralInput" title="endemo2.input_and_settings.input_general.GeneralInput"><em>GeneralInput</em></a>) – </p></li>
+<li><p><strong>transport_input</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput" title="endemo2.input_and_settings.input_transport.TransportInput"><em>TransportInput</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-endemo2.preprocessing.preprocessing_utility">
+<span id="endemo2-preprocessing-preprocessing-utility-module"></span><h2>endemo2.preprocessing.preprocessing_utility module<a class="headerlink" href="#module-endemo2.preprocessing.preprocessing_utility" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preprocessing_utility.energy_carrier_to_energy_consumption">
+<span class="sig-name descname"><span class="pre">energy_carrier_to_energy_consumption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">efficiency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_ec_his</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preprocessing_utility.html#energy_carrier_to_energy_consumption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preprocessing_utility.energy_carrier_to_energy_consumption" title="Permalink to this definition"></a></dt>
+<dd><p>Convert the energy carriers to electricity and heat with efficiency and sum them up.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>efficiency</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.EH" title="endemo2.data_structures.containers.EH"><code class="xref py py-class docutils literal notranslate"><span class="pre">EH</span></code></a>]) – The efficiency of each energy carrier of the form {energy_carrier_name -&gt; efficiency_tuple}</p></li>
+<li><p><strong>dict_ec_his</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, [&lt;class ‘endemo2.data_structures.containers.Datapoint’&gt;]]) – The energy carrier consumption of form {energy_carrier_name -&gt; consumption_amount_data}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a>, <a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a>)</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>sum of energy consumption and sum of heat consumption.
+Of form (energy_consumption_sum, heat_consumption_sum)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-endemo2.preprocessing.preprocessor">
+<span id="endemo2-preprocessing-preprocessor-module"></span><h2>endemo2.preprocessing.preprocessor module<a class="headerlink" href="#module-endemo2.preprocessing.preprocessor" title="Permalink to this heading"></a></h2>
+<p>This module contains all things shared by the different preprocessing stages.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.preprocessing.preprocessor.Preprocessor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Preprocessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/preprocessing/preprocessor.html#Preprocessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.preprocessing.preprocessor.Preprocessor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The preprocessor controls the execution of the different preprocessing stages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager" title="endemo2.input_and_settings.input_manager.InputManager"><em>InputManager</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-endemo2.preprocessing">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-endemo2.preprocessing" title="Permalink to this heading"></a></h2>
+<p>This package holds all modules that contribute to reading the preprocessing files.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="endemo2.output.html" class="btn btn-neutral float-left" title="endemo2.output package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

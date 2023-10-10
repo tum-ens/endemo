@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.input_and_settings.input_manager &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.input_and_settings.input_manager</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.input_and_settings.input_manager</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.enumerations</span> <span class="kn">import</span> <span class="n">SectorIdentifier</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings</span> <span class="kn">import</span> <span class="n">control_parameters</span> <span class="k">as</span> <span class="n">cp</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.control_parameters</span> <span class="kn">import</span> <span class="n">ControlParameters</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_cts</span> <span class="kn">import</span> <span class="n">CtsInput</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_households</span> <span class="kn">import</span> <span class="n">HouseholdsInput</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_industry</span> <span class="kn">import</span> <span class="n">IndustryInput</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_general</span> <span class="kn">import</span> <span class="n">GeneralInput</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_transport</span> <span class="kn">import</span> <span class="n">TransportInput</span>
+
+
+<div class="viewcode-block" id="InputManager"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager">[docs]</a><span class="k">class</span> <span class="nc">InputManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The InputManager class connects all types of preprocessing data, that is in the form of excel/csv sheets in the</span>
+<span class="sd">    &#39;preprocessing&#39; folder.</span>
+
+<span class="sd">    :ivar str super_path: Path of project folder</span>
+<span class="sd">    :ivar str input_path: Path of preprocessing files</span>
+<span class="sd">    :ivar str output_path: Path for output files</span>
+<span class="sd">    :ivar str general_path: Path for preprocessing files in &quot;general&quot; folder</span>
+<span class="sd">    :ivar str industry_path: Path for preprocessing files in &quot;industry&quot; folder</span>
+
+<span class="sd">    :ivar ControlParameters ctrl: Holds all information received from Set_and_Control_Parameters.xlsx</span>
+<span class="sd">    :ivar GeneralInput general_input: Holds all information of the preprocessing files from the &quot;preprocessing/general&quot;</span>
+<span class="sd">        folder.</span>
+<span class="sd">    :ivar IndustryInput industry_input: Holds all information of the preprocessing files from the</span>
+<span class="sd">        &quot;preprocessing/industry&quot; folder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">super_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+    <span class="n">input_path</span> <span class="o">=</span> <span class="n">super_path</span> <span class="o">/</span> <span class="s1">&#39;input&#39;</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">super_path</span> <span class="o">/</span> <span class="s1">&#39;output&#39;</span>
+    <span class="n">general_path</span> <span class="o">=</span> <span class="n">input_path</span> <span class="o">/</span> <span class="s1">&#39;general&#39;</span>
+    <span class="n">industry_path</span> <span class="o">=</span> <span class="n">input_path</span> <span class="o">/</span> <span class="s1">&#39;industry&#39;</span>
+    <span class="n">cts_path</span> <span class="o">=</span> <span class="n">input_path</span> <span class="o">/</span> <span class="s1">&#39;commercial_trade_and_services&#39;</span>
+    <span class="n">hh_path</span> <span class="o">=</span> <span class="n">input_path</span> <span class="o">/</span> <span class="s1">&#39;households&#39;</span>
+    <span class="n">transport_path</span> <span class="o">=</span> <span class="n">input_path</span> <span class="o">/</span> <span class="s1">&#39;traffic&#39;</span>
+
+    <span class="n">ctrl_path</span> <span class="o">=</span> <span class="n">input_path</span> <span class="o">/</span> <span class="s1">&#39;Set_and_Control_Parameters.xlsx&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># read set and control parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span> <span class="o">=</span> <span class="n">InputManager</span><span class="o">.</span><span class="n">read_set_and_control_parameters</span><span class="p">()</span>
+
+        <span class="c1"># read general</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">general_input</span> <span class="o">=</span> <span class="n">GeneralInput</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">InputManager</span><span class="o">.</span><span class="n">general_path</span><span class="p">)</span>
+
+        <span class="c1"># only read active sectors</span>
+        <span class="n">active_sectors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">get_active_sectors</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">INDUSTRY</span> <span class="ow">in</span> <span class="n">active_sectors</span><span class="p">:</span>
+            <span class="c1"># read industry</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">industry_input</span> <span class="o">=</span> <span class="n">IndustryInput</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">InputManager</span><span class="o">.</span><span class="n">industry_path</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">general_input</span><span class="o">.</span><span class="n">nuts2_valid_regions</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">active_countries</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">COMMERCIAL_TRADE_SERVICES</span> <span class="ow">in</span> <span class="n">active_sectors</span><span class="p">:</span>
+            <span class="c1"># read commercial_trade_and_services</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cts_input</span> <span class="o">=</span> <span class="n">CtsInput</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">InputManager</span><span class="o">.</span><span class="n">cts_path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">HOUSEHOLDS</span> <span class="ow">in</span> <span class="n">active_sectors</span><span class="p">:</span>
+            <span class="c1"># read households</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hh_input</span> <span class="o">=</span> <span class="n">HouseholdsInput</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">InputManager</span><span class="o">.</span><span class="n">hh_path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">TRANSPORT</span> <span class="ow">in</span> <span class="n">active_sectors</span><span class="p">:</span>
+            <span class="c1"># read transport</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transport_input</span> <span class="o">=</span> \
+                <span class="n">TransportInput</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">InputManager</span><span class="o">.</span><span class="n">transport_path</span><span class="p">)</span>
+
+<div class="viewcode-block" id="InputManager.update_set_and_control_parameters"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.update_set_and_control_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">update_set_and_control_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Updates Set_and_Control_Parameters.xlsx &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span> <span class="o">=</span> <span class="n">InputManager</span><span class="o">.</span><span class="n">read_set_and_control_parameters</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InputManager.read_set_and_control_parameters"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.read_set_and_control_parameters">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">read_set_and_control_parameters</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">cp</span><span class="o">.</span><span class="n">ControlParameters</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Reads Set_and_Control_Parameters.xlsx &quot;&quot;&quot;</span>
+        <span class="n">ctrl_ex</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">InputManager</span><span class="o">.</span><span class="n">ctrl_path</span><span class="p">)</span>
+
+        <span class="c1"># read control parameters</span>
+        <span class="n">general_settings</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">GeneralSettings</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ctrl_ex</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;GeneralSettings&quot;</span><span class="p">),</span>
+                                              <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ctrl_ex</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;Countries&quot;</span><span class="p">))</span>
+        <span class="n">industry_settings</span> <span class="o">=</span> \
+            <span class="n">cp</span><span class="o">.</span><span class="n">IndustrySettings</span><span class="p">(</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ctrl_ex</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;IND_general&quot;</span><span class="p">),</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ctrl_ex</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;IND_subsectors&quot;</span><span class="p">))</span>
+
+        <span class="n">cts_settings</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">CtsSettings</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ctrl_ex</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;CTS&quot;</span><span class="p">))</span>
+
+        <span class="n">hh_settings</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">HouseholdSettings</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ctrl_ex</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;HH&quot;</span><span class="p">))</span>
+
+        <span class="n">transport_settings</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">TransportSettings</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ctrl_ex</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;TRA&quot;</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">cp</span><span class="o">.</span><span class="n">ControlParameters</span><span class="p">(</span><span class="n">general_settings</span><span class="p">,</span> <span class="n">industry_settings</span><span class="p">,</span> <span class="n">cts_settings</span><span class="p">,</span> <span class="n">hh_settings</span><span class="p">,</span> <span class="n">transport_settings</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

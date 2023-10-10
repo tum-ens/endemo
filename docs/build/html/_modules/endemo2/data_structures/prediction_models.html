@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.data_structures.prediction_models &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.data_structures.prediction_models</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.data_structures.prediction_models</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains all classes directly representing in data series and prognosis calculations.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">statistics</span> <span class="k">as</span> <span class="nn">st</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.containers</span> <span class="kn">import</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">Datapoint</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.enumerations</span> <span class="kn">import</span> <span class="n">ForecastMethod</span>
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">utility</span> <span class="k">as</span> <span class="n">uty</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures</span> <span class="kn">import</span> <span class="n">containers</span> <span class="k">as</span> <span class="n">ctn</span>
+
+
+<div class="viewcode-block" id="Coef"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef">[docs]</a><span class="k">class</span> <span class="nc">Coef</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The container for the coefficients of different forecast methods.</span>
+
+<span class="sd">    :ivar (Datapoint, r) _exp:</span>
+<span class="sd">        (x0, y0) is the start point for the exponential calculation and r is the growth rate.</span>
+<span class="sd">        Used for calculation y(x) = y0 * (1+r)^(x - x0)</span>
+<span class="sd">    :ivar (k0, k1) _lin: Used for the calculation f(x) = k0 + k1 * x</span>
+<span class="sd">    :ivar (k0, k1, k2) _quadr: Used for the calculation f(x) = k0 + k1 * x + k2 * x^2</span>
+<span class="sd">    :ivar float _offset: Additional constant offset.</span>
+<span class="sd">    :ivar ForecastMethod _method: Method used for calculating output.</span>
+<span class="sd">    :ivar bool _fixed_forecast_method: indicates that the method should not be changed anymore for this coefficient</span>
+<span class="sd">        object. Example: Is used when setting the exponential forecast method for timeseries with only one data point.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span><span class="p">:</span> <span class="p">(</span><span class="n">Datapoint</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lin</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_quadr</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_offset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ForecastMethod</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fixed_forecast_method</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Coef.get_method"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_method">[docs]</a>    <span class="k">def</span> <span class="nf">get_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ForecastMethod</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the forecast method attribute. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_method</span></div>
+
+<div class="viewcode-block" id="Coef.set_method"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_method">[docs]</a>    <span class="k">def</span> <span class="nf">set_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">ForecastMethod</span><span class="p">,</span> <span class="n">fixate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter for the forecast method.</span>
+
+<span class="sd">        :param method: The method that should be used from now on.</span>
+<span class="sd">        :param fixate: If True, makes sure that method cannot be reset for this coefficient object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fixed_forecast_method</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="k">if</span> <span class="n">fixate</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fixed_forecast_method</span> <span class="o">=</span> <span class="n">fixate</span></div>
+
+<div class="viewcode-block" id="Coef.set_exp_start_point"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_exp_start_point">[docs]</a>    <span class="k">def</span> <span class="nf">set_exp_start_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_point</span><span class="p">:</span> <span class="n">Datapoint</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter for the exponential start point.</span>
+
+<span class="sd">        :param start_point: The new start point for the exponential forecast method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prior_growth_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span> <span class="o">=</span> <span class="p">(</span><span class="n">start_point</span><span class="p">,</span> <span class="n">prior_growth_rate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span> <span class="o">=</span> <span class="p">(</span><span class="n">start_point</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Coef.set_exp_growth_rate"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_exp_growth_rate">[docs]</a>    <span class="k">def</span> <span class="nf">set_exp_growth_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_growth_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter for the exponential growth rate.</span>
+
+<span class="sd">        :param exp_growth_rate: The new growth rate for the exponential forecast method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prior_start_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span> <span class="o">=</span> <span class="p">(</span><span class="n">prior_start_point</span><span class="p">,</span> <span class="n">exp_growth_rate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">exp_growth_rate</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Coef.set_exp"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_exp">[docs]</a>    <span class="k">def</span> <span class="nf">set_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_point</span><span class="p">:</span> <span class="n">Datapoint</span><span class="p">,</span> <span class="n">exp_growth_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter for the exponential coefficients.</span>
+
+<span class="sd">        :param start_point: The new start point for the exponential forecast method.</span>
+<span class="sd">        :param exp_growth_rate: The new growth rate for the exponential forecast method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span> <span class="o">=</span> <span class="p">(</span><span class="n">start_point</span><span class="p">,</span> <span class="n">exp_growth_rate</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Coef.set_log"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_log">[docs]</a>    <span class="k">def</span> <span class="nf">set_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">k1</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter for the logarithmic coefficients.</span>
+
+<span class="sd">        :param k0: The constant coefficient.</span>
+<span class="sd">        :param k1: The logarithmic coefficient.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log</span> <span class="o">=</span> <span class="p">(</span><span class="n">k0</span><span class="p">,</span> <span class="n">k1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Coef.set_lin"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_lin">[docs]</a>    <span class="k">def</span> <span class="nf">set_lin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">k1</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter for the linear coefficients.</span>
+
+<span class="sd">        :param k0: The constant coefficient.</span>
+<span class="sd">        :param k1: The linear coefficient.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lin</span> <span class="o">=</span> <span class="p">(</span><span class="n">k0</span><span class="p">,</span> <span class="n">k1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Coef.set_quadr"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_quadr">[docs]</a>    <span class="k">def</span> <span class="nf">set_quadr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">k1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">k2</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter for the quadratic coefficients.</span>
+
+<span class="sd">        :param k0: The constant coefficient.</span>
+<span class="sd">        :param k1: The linear coefficient.</span>
+<span class="sd">        :param k2: The quadratic coefficient.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_quadr</span> <span class="o">=</span> <span class="p">(</span><span class="n">k0</span><span class="p">,</span> <span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Coef.set_offset"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_offset">[docs]</a>    <span class="k">def</span> <span class="nf">set_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k0</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter for the additional offset.</span>
+
+<span class="sd">        :param k0: The additional constant offset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_offset</span> <span class="o">=</span> <span class="n">k0</span></div>
+
+<div class="viewcode-block" id="Coef.get_exp_y"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_exp_y">[docs]</a>    <span class="k">def</span> <span class="nf">get_exp_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the y-axis value of the function at the given x according to the exponential method.</span>
+
+<span class="sd">        :param target_x: The x_axis value the function should be applied on.</span>
+<span class="sd">        :return: The according y-axis value if exponential start point and growth rate is set, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">uty</span><span class="o">.</span><span class="n">exp_change</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">target_x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Coef.get_log_y"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_log_y">[docs]</a>    <span class="k">def</span> <span class="nf">get_log_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the y-axis value of the function at the given x according to the logarithmic method.</span>
+
+<span class="sd">        :param target_x: The x_axis value the function should be applied on.</span>
+<span class="sd">        :return: The according y-axis value if the logarithmic coefficients are set, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">uty</span><span class="o">.</span><span class="n">log_prediction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Coef.get_lin_y"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_lin_y">[docs]</a>    <span class="k">def</span> <span class="nf">get_lin_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the y-axis value of the function at the given x according to the linear method.</span>
+
+<span class="sd">        :param target_x: The x_axis value the function should be applied on.</span>
+<span class="sd">        :return: The according y-axis value if the linear coefficients are set, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">uty</span><span class="o">.</span><span class="n">lin_prediction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lin</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Coef.get_quadr_y"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_quadr_y">[docs]</a>    <span class="k">def</span> <span class="nf">get_quadr_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the y-axis value of the function at the given x according to the quadratic method.</span>
+
+<span class="sd">        :param target_x: The x_axis value the function should be applied on.</span>
+<span class="sd">        :return: The according y-axis value if the quadratic coefficients are set, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quadr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">uty</span><span class="o">.</span><span class="n">quadr_prediction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_quadr</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Coef.get_quadr_offset_y"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_quadr_offset_y">[docs]</a>    <span class="k">def</span> <span class="nf">get_quadr_offset_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the y-axis value of the function at the given x according to the quadratic offset method.</span>
+
+<span class="sd">        :param target_x: The x_axis value the function should be applied on.</span>
+<span class="sd">        :return: The according y-axis value if the quadratic coefficients and offset are set, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quadr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">quadr_offset</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_quadr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quadr</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quadr</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">uty</span><span class="o">.</span><span class="n">quadr_prediction</span><span class="p">(</span><span class="n">quadr_offset</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Coef.get_function_y"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_function_y">[docs]</a>    <span class="k">def</span> <span class="nf">get_function_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the y-axis value of the function at the given x according to the used method.</span>
+
+<span class="sd">        :param target_x: The x_axis value the function should be applied on.</span>
+<span class="sd">        :return: The according y-axis value if everything of the chosen method (and the method) is set, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">_method</span><span class="p">:</span>
+            <span class="k">case</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_lin_y</span><span class="p">(</span><span class="n">target_x</span><span class="p">)</span>
+            <span class="k">case</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">QUADRATIC</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_quadr_y</span><span class="p">(</span><span class="n">target_x</span><span class="p">)</span>
+            <span class="k">case</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">EXPONENTIAL</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_exp_y</span><span class="p">(</span><span class="n">target_x</span><span class="p">)</span>
+            <span class="k">case</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">QUADRATIC_OFFSET</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_quadr_offset_y</span><span class="p">(</span><span class="n">target_x</span><span class="p">)</span>
+            <span class="k">case</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LOGARITHMIC</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_log_y</span><span class="p">(</span><span class="n">target_x</span><span class="p">)</span>
+            <span class="n">case</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;No forecast method selected for coefficients.&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Coef.get_log"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_log">[docs]</a>    <span class="k">def</span> <span class="nf">get_log</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the logarithmic coefficient.</span>
+
+<span class="sd">        :return: The logarithmic coefficient of form (k0, k1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log</span></div>
+
+<div class="viewcode-block" id="Coef.get_lin"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_lin">[docs]</a>    <span class="k">def</span> <span class="nf">get_lin</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the linear coefficient.</span>
+
+<span class="sd">        :return: The linear coefficient of form (k0, k1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lin</span></div>
+
+<div class="viewcode-block" id="Coef.get_quadr"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_quadr">[docs]</a>    <span class="k">def</span> <span class="nf">get_quadr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the quadratic coefficient.</span>
+
+<span class="sd">        :return: The quadratic coefficient of form (k0, k1, k2).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quadr</span></div>
+
+<div class="viewcode-block" id="Coef.get_exp"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_exp">[docs]</a>    <span class="k">def</span> <span class="nf">get_exp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">Datapoint</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the exponential coefficient.</span>
+
+<span class="sd">        :return: The exponential execution variables of form ((start_x, start_y), growth_rate)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp</span></div>
+
+<div class="viewcode-block" id="Coef.get_offset"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_offset">[docs]</a>    <span class="k">def</span> <span class="nf">get_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the additional offset.</span>
+
+<span class="sd">        :return: The additional offset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offset</span></div></div>
+
+
+<div class="viewcode-block" id="RigidTimeseries"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.RigidTimeseries">[docs]</a><span class="k">class</span> <span class="nc">RigidTimeseries</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class representing data that should be taken just like it is. Without interpolation, without coefficients,</span>
+<span class="sd">    only the data over time.</span>
+
+<span class="sd">    :param data: The timeseries data, where the x-axis is Time and the y-axis is some value over time.</span>
+<span class="sd">        Can contain NaN and Inf values.</span>
+
+<span class="sd">    :ivar [Datapoint] _data: The timeseries data, where the x-axis is Time and the y-axis is some value over time.</span>
+<span class="sd">        Filtered to not contain any NaN or Inf values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]):</span>
+        <span class="c1"># clean data before saving; also copies the input_and_settings data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">filter_out_nan_and_inf</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RigidTimeseries.get_last_available_data_entry_or_zero"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.RigidTimeseries.get_last_available_data_entry_or_zero">[docs]</a>    <span class="k">def</span> <span class="nf">get_last_available_data_entry_or_zero</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Datapoint</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns the last data entry in the timeseries data if present, else 0.0. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Datapoint</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="RigidTimeseries.get_value_at_year"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.RigidTimeseries.get_value_at_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_value_at_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the value of the RigidTimeseries at the given year, if present. If the value is not present, throws an</span>
+<span class="sd">        error.</span>
+
+<span class="sd">        :param year: The year the value should be taken from.</span>
+<span class="sd">        :return: The value of the timeseries at year.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">year</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Trying to access value in RigidTimeseries at a year, where no value is present.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="TwoDseries"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries">[docs]</a><span class="k">class</span> <span class="nc">TwoDseries</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class representing a data series [(x, y)]. Both axis can be any type of data.</span>
+
+<span class="sd">    :param [Datapoint] data: The TwoDseries data, where the x-axis and the y-axis can be any floating point values.</span>
+<span class="sd">        Can contain NaN and Inf values.</span>
+
+<span class="sd">    :ivar [Datapoint] _data: Where the x-axis is first in tuple and the y-axis is second.</span>
+<span class="sd">    :ivar Coef coefficients: The coefficients for this data series.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]):</span>
+        <span class="c1"># clean data before saving; also copies the input_and_settings data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">filter_out_nan_and_inf</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TwoDseries.generate_coef"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.generate_coef">[docs]</a>    <span class="k">def</span> <span class="nf">generate_coef</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coef</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate and save the coefficients of all regression methods.</span>
+
+<span class="sd">        :return: The generated Coefficient object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">apply_all_regressions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="o">.</span><span class="n">set_exp_start_point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">EXPONENTIAL</span><span class="p">,</span> <span class="n">fixate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span></div>
+
+<div class="viewcode-block" id="TwoDseries.get_coef"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.get_coef">[docs]</a>    <span class="k">def</span> <span class="nf">get_coef</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coef</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Safely get the coefficients. If they were not generated before, generates them.</span>
+
+<span class="sd">        :return: The resulting coefficient object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_coef</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span></div>
+
+<div class="viewcode-block" id="TwoDseries.is_empty"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.is_empty">[docs]</a>    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Indicates whether there is no data present.</span>
+
+<span class="sd">        :return: True if data is empty, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="TwoDseries.is_zero"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.is_zero">[docs]</a>    <span class="k">def</span> <span class="nf">is_zero</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Indicates whether the data on the y-axis has only zeroes.</span>
+
+<span class="sd">        :return: True if data&#39;s y-axis only contains zeros, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">uty</span><span class="o">.</span><span class="n">is_tuple_list_zero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TwoDseries.get_data"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the data attribute. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span></div>
+
+<div class="viewcode-block" id="TwoDseries.get_mean_y"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.get_mean_y">[docs]</a>    <span class="k">def</span> <span class="nf">get_mean_y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get mean of all values on the y-axis of the data.</span>
+
+<span class="sd">        :return: The mean of all y values of the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">only_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">only_y</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TwoDseries.append_others_data"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.append_others_data">[docs]</a>    <span class="k">def</span> <span class="nf">append_others_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_tds</span><span class="p">:</span> <span class="n">TwoDseries</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TwoDseries</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Append all data of another timeseries to self and return self.</span>
+
+<span class="sd">        :param other_tds: The TwoDseries, whose data should be appended.</span>
+<span class="sd">        :return: self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">+=</span> <span class="n">other_tds</span><span class="o">.</span><span class="n">_data</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
+
+
+<div class="viewcode-block" id="Timeseries"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries">[docs]</a><span class="k">class</span> <span class="nc">Timeseries</span><span class="p">(</span><span class="n">TwoDseries</span><span class="p">,</span> <span class="n">RigidTimeseries</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class strictly representing a value over time. This usage is a class invariant and the class should not be used</span>
+<span class="sd">    in any other way.</span>
+
+<span class="sd">    :param [Datapoint] data: The timeseries data, where the x-axis is Time and the y-axis is some value over time.</span>
+<span class="sd">        Can contain NaN and Inf values.</span>
+
+<span class="sd">    :ivar [Datapoint] _data: Where the x-axis is Time and the y-axis is some value over time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Timeseries.merge_two_timeseries"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.merge_two_timeseries">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">merge_two_timeseries</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TwoDseries</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Merge the two Timeseries on the condition that the year is the same.</span>
+<span class="sd">        Note: The result is not a Timeseries!</span>
+
+<span class="sd">        :param t1: Timeseries to zip t1 [(a,b)]</span>
+<span class="sd">        :param t2: Timeseries to zip t2 [(c, d)]</span>
+<span class="sd">        :return: The zipped TwoDseries in format [(b, d)] for where a == c.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">t1</span><span class="o">.</span><span class="n">_data</span>
+        <span class="n">d2</span> <span class="o">=</span> <span class="n">t2</span><span class="o">.</span><span class="n">_data</span>
+        <span class="k">return</span> <span class="n">TwoDseries</span><span class="p">(</span><span class="n">uty</span><span class="o">.</span><span class="n">zip_data_on_x</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Timeseries.map_two_timeseries"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.map_two_timeseries">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">map_two_timeseries</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">,</span> <span class="n">function</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Map the two Timeseries according to the given function.</span>
+
+<span class="sd">        :param t1: Timeseries to zip t1 [(x, y1)]</span>
+<span class="sd">        :param t2: Timeseries to zip t2 [(x, y2)]</span>
+<span class="sd">        :param function: The function that is applied. Should be of form lambda x y1 y2 -&gt; ...</span>
+<span class="sd">        :return: The result of the applied function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">t1</span><span class="o">.</span><span class="n">_data</span>
+        <span class="n">d2</span> <span class="o">=</span> <span class="n">t2</span><span class="o">.</span><span class="n">_data</span>
+        <span class="k">return</span> <span class="n">TwoDseries</span><span class="p">(</span><span class="n">uty</span><span class="o">.</span><span class="n">zip_data_on_x_and_map</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">function</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Timeseries.map_y"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.map_y">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">map_y</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">,</span> <span class="n">function</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timeseries</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Map the y-axis of the Timeseries and return a newly created timeseries as a result.</span>
+
+<span class="sd">        :param t: The timeseries to map.</span>
+<span class="sd">        :param function: The mapping function of the form lambda x -&gt; ...</span>
+<span class="sd">        :return: A copy-mapped timeseries.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Timeseries</span><span class="p">(</span><span class="n">uty</span><span class="o">.</span><span class="n">map_data_y</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">function</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Timeseries.append_others_data"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.append_others_data">[docs]</a>    <span class="k">def</span> <span class="nf">append_others_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_ts</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timeseries</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Append all data of another timeseries to self and return self.</span>
+<span class="sd">        Timeseries also sorts the result, so it can remain a valid timeseries.</span>
+
+<span class="sd">        :param other_ts: The timeseries, whose data should be appended.</span>
+<span class="sd">        :return: self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">append_others_data</span><span class="p">(</span><span class="n">other_ts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">data_point</span><span class="p">:</span> <span class="n">data_point</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Timeseries.add"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_ts</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timeseries</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add the data of the other_ts to self. Also return a reference to self.</span>
+<span class="sd">        When a datapoint is only present in one of the timeseries it is added!</span>
+
+<span class="sd">        :param other_ts: The timeseries, whose data should be added to self.</span>
+<span class="sd">        :return: A reference to self.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">get_series_range</span><span class="p">([</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_ts</span><span class="p">])</span>
+        <span class="n">other_ts</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="o">.</span><span class="n">fill_empty_years_with_value</span><span class="p">(</span><span class="n">other_ts</span><span class="p">,</span> <span class="n">Interval</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fill_own_empty_years_with_value</span><span class="p">(</span><span class="n">Interval</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
+
+        <span class="n">zipped</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">other_ts</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">))</span>
+        <span class="n">added_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">),</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">zipped</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">y1</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="ow">and</span> <span class="n">y2</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">y1_nan_to_zero</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">y1</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="k">else</span> <span class="n">y1</span>
+            <span class="n">y2_nan_to_zero</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">y2</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="k">else</span> <span class="n">y2</span>
+            <span class="n">added_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Datapoint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1_nan_to_zero</span> <span class="o">+</span> <span class="n">y2_nan_to_zero</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">added_data</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Timeseries.divide_by"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.divide_by">[docs]</a>    <span class="k">def</span> <span class="nf">divide_by</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_ts</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timeseries</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Divide the data of self by the data of other_ts. Also return a reference to self.</span>
+
+<span class="sd">        :param other_ts: The timeseries, whose data should be divided by.</span>
+<span class="sd">        :return: A reference to self.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">others_data_without_zeros</span> <span class="o">=</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="n">other_ts</span><span class="o">.</span><span class="n">_data</span> <span class="k">if</span> <span class="n">y</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">zip_data_on_x_and_map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">others_data_without_zeros</span><span class="p">,</span>
+                                               <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">:</span> <span class="n">Datapoint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1</span> <span class="o">/</span> <span class="n">y2</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Timeseries.scale"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scalar</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timeseries</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scale own data by scalar. Also return a reference to self.</span>
+
+<span class="sd">        :param scalar: The scalar that should be scaled by.</span>
+<span class="sd">        :return: A reference to self.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">scalar</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Timeseries.get_last_data_entry"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.get_last_data_entry">[docs]</a>    <span class="k">def</span> <span class="nf">get_last_data_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Datapoint</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for the last available entry in data.</span>
+
+<span class="sd">        :return: The last entry, or a string if data is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Timeseries.get_value_at_year"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.get_value_at_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_value_at_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the value of the RigidTimeseries at the given year, if present. If the value is not present, throws an</span>
+<span class="sd">        error.</span>
+
+<span class="sd">        :param year: The year, the data should be taken from.</span>
+<span class="sd">        :return: The value of the timeseries at year.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">year</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Trying to access value in RigidTimeseries at a year, where no value is present.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Timeseries.get_value_at_year_else_zero"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.get_value_at_year_else_zero">[docs]</a>    <span class="k">def</span> <span class="nf">get_value_at_year_else_zero</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the value of the RigidTimeseries at the given year, if present. If the value is not present, returns</span>
+<span class="sd">        zero.</span>
+
+<span class="sd">        :param year: The year, the data should be taken from.</span>
+<span class="sd">        :return: The value of the timeseries at year, or zero if no data is present.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">year</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Timeseries.fill_own_empty_years_with_value"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.fill_own_empty_years_with_value">[docs]</a>    <span class="k">def</span> <span class="nf">fill_own_empty_years_with_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">:</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fill own data in interval with fill value</span>
+
+<span class="sd">        :param interval: The interval that should be filled.</span>
+<span class="sd">        :param fill_value: The value that should be used to fill gaps</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">current_year</span> <span class="o">=</span> <span class="n">interval</span><span class="o">.</span><span class="n">start</span>
+        <span class="k">for</span> <span class="n">year</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+            <span class="c1"># add zeros before the next year that is in timeseries to fill gaps</span>
+            <span class="k">while</span> <span class="n">current_year</span> <span class="o">&lt;</span> <span class="n">year</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Datapoint</span><span class="p">(</span><span class="n">current_year</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">))</span>
+                <span class="n">current_year</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Datapoint</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+            <span class="n">current_year</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">while</span> <span class="n">current_year</span> <span class="o">&lt;=</span> <span class="n">interval</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Datapoint</span><span class="p">(</span><span class="n">current_year</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">))</span>
+            <span class="n">current_year</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Timeseries.fill_empty_years_with_value"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.fill_empty_years_with_value">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">fill_empty_years_with_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">,</span> <span class="n">interval</span><span class="p">:</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timeseries</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a timeseries that has data for each year in interval. Take value from given timeseries if present, else</span>
+<span class="sd">        fill with given value.</span>
+
+<span class="sd">        :param ts: The given timeseries, which values are copied.</span>
+<span class="sd">        :param interval: The interval in which data has to be present for every year.</span>
+<span class="sd">        :param fill_value: Value with which gaps in the data should be filled.</span>
+<span class="sd">        :return: The created timeseries with values from ts and filled gaps with given value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">fill_own_empty_years_with_value</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div></div>
+
+
+<div class="viewcode-block" id="IntervalForecast"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.IntervalForecast">[docs]</a><span class="k">class</span> <span class="nc">IntervalForecast</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The class depicting a given exponential prediction with different growth rates in certain intervals.</span>
+
+<span class="sd">    :param list[(Interval, float)] progression_data: The input_and_settings progression data given as a list of</span>
+<span class="sd">        intervals and their corresponding growth rate. For example [(Interval(start, end), percentage_growth)].</span>
+
+<span class="sd">    :ivar list[(Interval, float)] _interval_changeRate: The same as progression_data, just the growth rate is not in</span>
+<span class="sd">        percentage anymore, but percentage/100</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">progression_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[(</span><span class="n">Interval</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]):</span>
+        <span class="c1"># map percentage to its hundredth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interval_changeRate</span> <span class="o">=</span> <span class="p">[(</span><span class="n">prog</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">prog</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">prog</span> <span class="ow">in</span> <span class="n">progression_data</span><span class="p">]</span>
+
+<div class="viewcode-block" id="IntervalForecast.get_forecast"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.prediction_models.IntervalForecast.get_forecast">[docs]</a>    <span class="k">def</span> <span class="nf">get_forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">start_point</span><span class="p">:</span> <span class="n">Datapoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the prognosis of the y-axis value for a target x-axis value from the manual exponential</span>
+<span class="sd">        interval-growth-rate forecast.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            y=s_x*(1+r_{1})^{(intvl^{(1)}_{b}-s_y)}*(1+r_{2})^{(intvl^{(2)}_{b}-intvl^{(2)}_{a})}*\\text{...}*(1+r_{3})^</span>
+<span class="sd">            {(x-intvl^{(3)}_{a})}</span>
+
+<span class="sd">        :param start_point: The (x, y) Tuple, that is used as the first value for the exponential growth.</span>
+<span class="sd">        :param target_x: The target x-axis value.</span>
+<span class="sd">        :return: The predicted y value at x-axis value x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">start_point</span><span class="o">.</span><span class="n">y</span>
+        <span class="k">for</span> <span class="n">interval_change</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval_changeRate</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">start_point</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">interval_change</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>  <span class="c1"># cut off protruding years at start</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">target_x</span><span class="p">,</span> <span class="n">interval_change</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>  <span class="c1"># cut off protruding years at end</span>
+            <span class="n">exp</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>  <span class="c1"># clamp to 0, to ignore certain intervals</span>
+            <span class="n">result</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">interval_change</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="n">exp</span>
+
+        <span class="k">return</span> <span class="n">result</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

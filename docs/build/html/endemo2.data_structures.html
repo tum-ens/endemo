@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.data_structures package &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="endemo2.input_and_settings package" href="endemo2.input_and_settings.html" />
+    <link rel="prev" title="endemo2 package" href="endemo2.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="endemo2.html">endemo2 package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="endemo2.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">endemo2.data_structures package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.data_structures.containers">endemo2.data_structures.containers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.data_structures.conversions_string">endemo2.data_structures.conversions_string module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.data_structures.conversions_unit">endemo2.data_structures.conversions_unit module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.data_structures.enumerations">endemo2.data_structures.enumerations module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.data_structures.nuts_tree">endemo2.data_structures.nuts_tree module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.data_structures.prediction_models">endemo2.data_structures.prediction_models module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.data_structures">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html">endemo2.input_and_settings package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.model_instance.html">endemo2.model_instance package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html">endemo2.output package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html">endemo2.preprocessing package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.endemo">endemo2.endemo module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.utility">endemo2.utility module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="endemo2.html">endemo2 package</a></li>
+      <li class="breadcrumb-item active">endemo2.data_structures package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/endemo2.data_structures.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="endemo2-data-structures-package">
+<h1>endemo2.data_structures package<a class="headerlink" href="#endemo2-data-structures-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-endemo2.data_structures.containers">
+<span id="endemo2-data-structures-containers-module"></span><h2>endemo2.data_structures.containers module<a class="headerlink" href="#module-endemo2.data_structures.containers" title="Permalink to this heading"></a></h2>
+<p>This module contains all simple data containers used in endemo.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.CA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">german_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#endemo2.data_structures.containers.CA" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.CA.alpha2">
+<span class="sig-name descname"><span class="pre">alpha2</span></span><a class="headerlink" href="#endemo2.data_structures.containers.CA.alpha2" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.CA.alpha3">
+<span class="sig-name descname"><span class="pre">alpha3</span></span><a class="headerlink" href="#endemo2.data_structures.containers.CA.alpha3" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.CA.german_name">
+<span class="sig-name descname"><span class="pre">german_name</span></span><a class="headerlink" href="#endemo2.data_structures.containers.CA.german_name" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Datapoint">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Datapoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#endemo2.data_structures.containers.Datapoint" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Datapoint.x">
+<span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#endemo2.data_structures.containers.Datapoint.x" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Datapoint.y">
+<span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#endemo2.data_structures.containers.Datapoint.y" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Demand">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">electricity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hydrogen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fuel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Demand" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A container for the amount of demand split into different categories. Provides arithmetic operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>electricity</strong> (<em>float</em>) – Amount of electricity demand.</p></li>
+<li><p><strong>heat</strong> (<a class="reference internal" href="#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><em>Heat</em></a>) – Amount of heat demand.</p></li>
+<li><p><strong>hydrogen</strong> (<em>float</em>) – Amount of hydrogen demand.</p></li>
+<li><p><strong>fuel</strong> (<em>float</em>) – Amount of fuel demand (only transport sector).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>electricity</strong> (<em>float</em>) – Amount of electricity demand.</p></li>
+<li><p><strong>heat</strong> (<a class="reference internal" href="#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><em>Heat</em></a>) – Amount of heat demand.</p></li>
+<li><p><strong>hydrogen</strong> (<em>float</em>) – Amount of hydrogen demand.</p></li>
+<li><p><strong>fuel</strong> (<em>float</em>) – Amount of fuel demand.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Demand.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Demand.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Demand.add" title="Permalink to this definition"></a></dt>
+<dd><p>Add the values of “other” demand component-wise to own member variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>other</strong> (<a class="reference internal" href="#endemo2.data_structures.containers.Demand" title="endemo2.data_structures.containers.Demand"><em>Demand</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Demand.copy_multiply">
+<span class="sig-name descname"><span class="pre">copy_multiply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Demand.copy_multiply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Demand.copy_multiply" title="Permalink to this definition"></a></dt>
+<dd><p>Multiplies the values of “other” demand component-wise to own member variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#endemo2.data_structures.containers.Demand" title="endemo2.data_structures.containers.Demand"><code class="xref py py-class docutils literal notranslate"><span class="pre">Demand</span></code></a></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>other</strong> (<a class="reference internal" href="#endemo2.data_structures.containers.Demand" title="endemo2.data_structures.containers.Demand"><em>Demand</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Demand.copy_scale">
+<span class="sig-name descname"><span class="pre">copy_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scalar</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Demand.copy_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Demand.copy_scale" title="Permalink to this definition"></a></dt>
+<dd><p>Create a new Demand object, that is the scaled version of self.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#endemo2.data_structures.containers.Demand" title="endemo2.data_structures.containers.Demand"><code class="xref py py-class docutils literal notranslate"><span class="pre">Demand</span></code></a></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>scalar</strong> (<em>float</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Demand.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Demand.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Demand.get" title="Permalink to this definition"></a></dt>
+<dd><p>Get the attribute value according to demand type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dt</strong> (<a class="reference internal" href="#endemo2.data_structures.enumerations.DemandType" title="endemo2.data_structures.enumerations.DemandType"><code class="xref py py-class docutils literal notranslate"><span class="pre">DemandType</span></code></a>) – The type of demand that should be returned.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Demand.get_sum">
+<span class="sig-name descname"><span class="pre">get_sum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Demand.get_sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Demand.get_sum" title="Permalink to this definition"></a></dt>
+<dd><p>Returns energy demand sum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Demand.scale">
+<span class="sig-name descname"><span class="pre">scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scalar</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Demand.scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Demand.scale" title="Permalink to this definition"></a></dt>
+<dd><p>Scale member variables component-wise with scalar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>scalar</strong> (<em>float</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Demand.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Demand.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Demand.set" title="Permalink to this definition"></a></dt>
+<dd><p>Set the attribute value according to demand type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt</strong> (<a class="reference internal" href="#endemo2.data_structures.enumerations.DemandType" title="endemo2.data_structures.enumerations.DemandType"><code class="xref py py-class docutils literal notranslate"><span class="pre">DemandType</span></code></a>) – The type of demand that should be set.</p></li>
+<li><p><strong>value</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – The value the demand should be set to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.EH">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EH</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">electricity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heat</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#endemo2.data_structures.containers.EH" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.EH.electricity">
+<span class="sig-name descname"><span class="pre">electricity</span></span><a class="headerlink" href="#endemo2.data_structures.containers.EH.electricity" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.EH.heat">
+<span class="sig-name descname"><span class="pre">heat</span></span><a class="headerlink" href="#endemo2.data_structures.containers.EH.heat" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Heat">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Heat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q4</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Heat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Heat" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A container for heat split into heat levels. Offers arithmetic operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q1</strong> (<em>float</em>) – Amount for heat level Q1</p></li>
+<li><p><strong>q2</strong> (<em>float</em>) – Amount for heat level Q2</p></li>
+<li><p><strong>q3</strong> (<em>float</em>) – Amount for heat level Q3</p></li>
+<li><p><strong>q4</strong> (<em>float</em>) – Amount for heat level Q4</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>q1</strong> (<em>float</em>) – Amount for heat level Q1</p></li>
+<li><p><strong>q2</strong> (<em>float</em>) – Amount for heat level Q2</p></li>
+<li><p><strong>q3</strong> (<em>float</em>) – Amount for heat level Q3</p></li>
+<li><p><strong>q4</strong> (<em>float</em>) – Amount for heat level Q4</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Heat.copy_add">
+<span class="sig-name descname"><span class="pre">copy_add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Heat.copy_add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Heat.copy_add" title="Permalink to this definition"></a></dt>
+<dd><p>Performs addition between self and parameter heat and returns the result as a fresh object.
+Does not change self.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>heat</strong> (<a class="reference internal" href="#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><code class="xref py py-class docutils literal notranslate"><span class="pre">Heat</span></code></a>) – The other heat that is part of the addition.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><code class="xref py py-class docutils literal notranslate"><span class="pre">Heat</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The result of the addition.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Heat.copy_multiply">
+<span class="sig-name descname"><span class="pre">copy_multiply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Heat.copy_multiply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Heat.copy_multiply" title="Permalink to this definition"></a></dt>
+<dd><p>Performs multiplication between self and parameter heat and returns the result as a fresh object.
+Does not change self.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>heat</strong> (<a class="reference internal" href="#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><code class="xref py py-class docutils literal notranslate"><span class="pre">Heat</span></code></a>) – The other heat that is part of the multiplication.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><code class="xref py py-class docutils literal notranslate"><span class="pre">Heat</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The result of the multiplication.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Heat.copy_multiply_scalar">
+<span class="sig-name descname"><span class="pre">copy_multiply_scalar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scalar</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Heat.copy_multiply_scalar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Heat.copy_multiply_scalar" title="Permalink to this definition"></a></dt>
+<dd><p>Performs scaling between self and parameter scalar and returns the result as a fresh object.
+Does not change self.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scalar</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The scalar to scale the heat.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><code class="xref py py-class docutils literal notranslate"><span class="pre">Heat</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The result of the scaling.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Heat.get_sum">
+<span class="sig-name descname"><span class="pre">get_sum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Heat.get_sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Heat.get_sum" title="Permalink to this definition"></a></dt>
+<dd><p>Sums all heat levels and returns the result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Heat.mutable_add">
+<span class="sig-name descname"><span class="pre">mutable_add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Heat.mutable_add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Heat.mutable_add" title="Permalink to this definition"></a></dt>
+<dd><p>Adds the parameter heat component-wise to self.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>heat</strong> (<a class="reference internal" href="#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><code class="xref py py-class docutils literal notranslate"><span class="pre">Heat</span></code></a>) – The heat that is added to self.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Heat.mutable_multiply_scalar">
+<span class="sig-name descname"><span class="pre">mutable_multiply_scalar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scalar</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Heat.mutable_multiply_scalar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Heat.mutable_multiply_scalar" title="Permalink to this definition"></a></dt>
+<dd><p>Scales the heat by a scalar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scalar</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The scalar to scale the heat.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Heat.mutable_sub">
+<span class="sig-name descname"><span class="pre">mutable_sub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#Heat.mutable_sub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.Heat.mutable_sub" title="Permalink to this definition"></a></dt>
+<dd><p>Subtracts the parameter heat component-wise from self.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>heat</strong> (<a class="reference internal" href="#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><code class="xref py py-class docutils literal notranslate"><span class="pre">Heat</span></code></a>) – The heat that is subtracted from self.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.HisProg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HisProg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">historical</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prognosis</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#endemo2.data_structures.containers.HisProg" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.HisProg.historical">
+<span class="sig-name descname"><span class="pre">historical</span></span><a class="headerlink" href="#endemo2.data_structures.containers.HisProg.historical" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.HisProg.prognosis">
+<span class="sig-name descname"><span class="pre">prognosis</span></span><a class="headerlink" href="#endemo2.data_structures.containers.HisProg.prognosis" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Interval">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#endemo2.data_structures.containers.Interval" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Interval.end">
+<span class="sig-name descname"><span class="pre">end</span></span><a class="headerlink" href="#endemo2.data_structures.containers.Interval.end" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.Interval.start">
+<span class="sig-name descname"><span class="pre">start</span></span><a class="headerlink" href="#endemo2.data_structures.containers.Interval.start" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.SpecConsum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SpecConsum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">electricity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hydrogen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_subst_h2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#SpecConsum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.SpecConsum" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A container for specific consumption. Offers arithmetic operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>electricity</strong> (<em>float</em>) – Amount of electricity consumption.</p></li>
+<li><p><strong>heat</strong> (<em>float</em>) – Amount of heat consumption.</p></li>
+<li><p><strong>hydrogen</strong> (<em>float</em>) – Amount of hydrogen consumption.</p></li>
+<li><p><strong>max_subst_h2</strong> (<em>float</em>) – TODO: what is this?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>electricity</strong> (<em>float</em>) – Amount of electricity consumption.</p></li>
+<li><p><strong>heat</strong> (<em>float</em>) – Amount of heat consumption.</p></li>
+<li><p><strong>hydrogen</strong> (<em>float</em>) – Amount of hydrogen consumption.</p></li>
+<li><p><strong>max_subst_h2</strong> (<em>float</em>) – TODO: what is this?</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.SpecConsum.cap_at_bat">
+<span class="sig-name descname"><span class="pre">cap_at_bat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#SpecConsum.cap_at_bat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.SpecConsum.cap_at_bat" title="Permalink to this definition"></a></dt>
+<dd><p>Caps the specific consumption, as it cannot be better than the best available technology.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bat</strong> (<a class="reference internal" href="#endemo2.data_structures.containers.EH" title="endemo2.data_structures.containers.EH"><code class="xref py py-class docutils literal notranslate"><span class="pre">EH</span></code></a>) – The best available technology consumption to cap this specific consumption.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.containers.SpecConsum.scale">
+<span class="sig-name descname"><span class="pre">scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scalar</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/containers.html#SpecConsum.scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.containers.SpecConsum.scale" title="Permalink to this definition"></a></dt>
+<dd><p>Scales member variables component-wise with scalar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scalar</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The scalar to scale the components.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-endemo2.data_structures.conversions_string">
+<span id="endemo2-data-structures-conversions-string-module"></span><h2>endemo2.data_structures.conversions_string module<a class="headerlink" href="#module-endemo2.data_structures.conversions_string" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-endemo2.data_structures.conversions_unit">
+<span id="endemo2-data-structures-conversions-unit-module"></span><h2>endemo2.data_structures.conversions_unit module<a class="headerlink" href="#module-endemo2.data_structures.conversions_unit" title="Permalink to this heading"></a></h2>
+<p>This module holds any information and utility functions related to unit conversion.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/conversions_unit.html#Unit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Enum for any unity that are used in the model.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit.Billion">
+<span class="sig-name descname"><span class="pre">Billion</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit.Billion" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit.GJ">
+<span class="sig-name descname"><span class="pre">GJ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit.GJ" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit.GWh">
+<span class="sig-name descname"><span class="pre">GWh</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit.GWh" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit.MJ">
+<span class="sig-name descname"><span class="pre">MJ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">13</span></em><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit.MJ" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit.MWh">
+<span class="sig-name descname"><span class="pre">MWh</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit.MWh" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit.Million">
+<span class="sig-name descname"><span class="pre">Million</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9</span></em><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit.Million" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit.PJ">
+<span class="sig-name descname"><span class="pre">PJ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">12</span></em><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit.PJ" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit.Standard">
+<span class="sig-name descname"><span class="pre">Standard</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit.Standard" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit.TJ">
+<span class="sig-name descname"><span class="pre">TJ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit.TJ" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit.TWh">
+<span class="sig-name descname"><span class="pre">TWh</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit.TWh" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit.kWh">
+<span class="sig-name descname"><span class="pre">kWh</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit.kWh" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit.kilo">
+<span class="sig-name descname"><span class="pre">kilo</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">11</span></em><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit.kilo" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit.liter">
+<span class="sig-name descname"><span class="pre">liter</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit.liter" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.Unit.m3">
+<span class="sig-name descname"><span class="pre">m3</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#endemo2.data_structures.conversions_unit.Unit.m3" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.convert">
+<span class="sig-name descname"><span class="pre">convert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/conversions_unit.html#convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.conversions_unit.convert" title="Permalink to this definition"></a></dt>
+<dd><p>Converts a value from one unit to another.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>from_unit</strong> (<a class="reference internal" href="#endemo2.data_structures.conversions_unit.Unit" title="endemo2.data_structures.conversions_unit.Unit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Unit</span></code></a>) – The unit the input value is.</p></li>
+<li><p><strong>to_unit</strong> (<a class="reference internal" href="#endemo2.data_structures.conversions_unit.Unit" title="endemo2.data_structures.conversions_unit.Unit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Unit</span></code></a>) – The unit the output value should be</p></li>
+<li><p><strong>value</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The value to convert.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The converted value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.data_structures.conversions_unit.get_conversion_scalar">
+<span class="sig-name descname"><span class="pre">get_conversion_scalar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_unit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/conversions_unit.html#get_conversion_scalar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.conversions_unit.get_conversion_scalar" title="Permalink to this definition"></a></dt>
+<dd><p>Get the scalar that converts one unit to another.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>from_unit</strong> (<a class="reference internal" href="#endemo2.data_structures.conversions_unit.Unit" title="endemo2.data_structures.conversions_unit.Unit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Unit</span></code></a>) – The unit of the value that should be converted.</p></li>
+<li><p><strong>to_unit</strong> (<a class="reference internal" href="#endemo2.data_structures.conversions_unit.Unit" title="endemo2.data_structures.conversions_unit.Unit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Unit</span></code></a>) – The resulting unit.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The scalar for unit conversion.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-endemo2.data_structures.enumerations">
+<span id="endemo2-data-structures-enumerations-module"></span><h2>endemo2.data_structures.enumerations module<a class="headerlink" href="#module-endemo2.data_structures.enumerations" title="Permalink to this heading"></a></h2>
+<p>This module contains all Enums of endemo.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.DemandType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DemandType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/enumerations.html#DemandType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.enumerations.DemandType" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Enum to easily differentiate the type of demand.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.DemandType.ELECTRICITY">
+<span class="sig-name descname"><span class="pre">ELECTRICITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.DemandType.ELECTRICITY" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.DemandType.FUEL">
+<span class="sig-name descname"><span class="pre">FUEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.DemandType.FUEL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.DemandType.HEAT">
+<span class="sig-name descname"><span class="pre">HEAT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.DemandType.HEAT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.DemandType.HYDROGEN">
+<span class="sig-name descname"><span class="pre">HYDROGEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.DemandType.HYDROGEN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.ForecastMethod">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ForecastMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/enumerations.html#ForecastMethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.enumerations.ForecastMethod" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>The ForecastMethod indicates the preferred way to extrapolate historical data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>LINEAR</strong> – The forecast method utilizing linear regression.</p></li>
+<li><p><strong>QUADRATIC</strong> – The forecast method utilizing quadratic regression.</p></li>
+<li><p><strong>EXPONENTIAL</strong> – The forecast method utilizing exponential growth.</p></li>
+<li><p><strong>QUADRATIC_OFFSET</strong> – The forecast method utilizing quadratic regression and an additional offset.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.ForecastMethod.EXPONENTIAL">
+<span class="sig-name descname"><span class="pre">EXPONENTIAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.ForecastMethod.EXPONENTIAL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.ForecastMethod.LINEAR">
+<span class="sig-name descname"><span class="pre">LINEAR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.ForecastMethod.LINEAR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.ForecastMethod.LOGARITHMIC">
+<span class="sig-name descname"><span class="pre">LOGARITHMIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.ForecastMethod.LOGARITHMIC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.ForecastMethod.QUADRATIC">
+<span class="sig-name descname"><span class="pre">QUADRATIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.ForecastMethod.QUADRATIC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.ForecastMethod.QUADRATIC_OFFSET">
+<span class="sig-name descname"><span class="pre">QUADRATIC_OFFSET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.ForecastMethod.QUADRATIC_OFFSET" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.GroupType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GroupType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/enumerations.html#GroupType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.enumerations.GroupType" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Enum to differentiate different country group types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SEPARATE</strong> – All countries in this type of group are calculated separately.</p></li>
+<li><p><strong>JOINED</strong> – The data of all countries in a group of type joined is lumped together and shared coefficients are
+calculated.</p></li>
+<li><p><strong>JOINED_DIVERSIFIED</strong> – The data of all countries in a group of type joined_diversified is lumped together and
+shared coefficients are calculated. But each country has a differing offset additionally.</p></li>
+<li><p><strong>EMPTY</strong> – Indicates that no group type is chosen.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.GroupType.EMPTY">
+<span class="sig-name descname"><span class="pre">EMPTY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.GroupType.EMPTY" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.GroupType.JOINED">
+<span class="sig-name descname"><span class="pre">JOINED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.GroupType.JOINED" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.GroupType.JOINED_DIVERSIFIED">
+<span class="sig-name descname"><span class="pre">JOINED_DIVERSIFIED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.GroupType.JOINED_DIVERSIFIED" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.GroupType.SEPARATE">
+<span class="sig-name descname"><span class="pre">SEPARATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.GroupType.SEPARATE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.HouseholdsSubsectorId">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HouseholdsSubsectorId</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/enumerations.html#HouseholdsSubsectorId"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.enumerations.HouseholdsSubsectorId" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>The enum class to quickly recognise the different household sectors.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.HouseholdsSubsectorId.COOKING">
+<span class="sig-name descname"><span class="pre">COOKING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(3,)</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.HouseholdsSubsectorId.COOKING" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES">
+<span class="sig-name descname"><span class="pre">LIGHTING_AND_APPLIANCES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.HouseholdsSubsectorId.OTHER">
+<span class="sig-name descname"><span class="pre">OTHER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.HouseholdsSubsectorId.OTHER" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.HouseholdsSubsectorId.SPACE_COOLING">
+<span class="sig-name descname"><span class="pre">SPACE_COOLING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(1,)</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.HouseholdsSubsectorId.SPACE_COOLING" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.HouseholdsSubsectorId.SPACE_HEATING">
+<span class="sig-name descname"><span class="pre">SPACE_HEATING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(0,)</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.HouseholdsSubsectorId.SPACE_HEATING" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.HouseholdsSubsectorId.WATER_HEATING">
+<span class="sig-name descname"><span class="pre">WATER_HEATING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(2,)</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.HouseholdsSubsectorId.WATER_HEATING" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.ScForecastMethod">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ScForecastMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/enumerations.html#ScForecastMethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.enumerations.ScForecastMethod" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>The ScForecastMethod indicates type of forecast for specific consumption, primarily in the CTS sector.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.ScForecastMethod.CONST_LAST">
+<span class="sig-name descname"><span class="pre">CONST_LAST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.ScForecastMethod.CONST_LAST" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.ScForecastMethod.CONST_MEAN">
+<span class="sig-name descname"><span class="pre">CONST_MEAN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.ScForecastMethod.CONST_MEAN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.ScForecastMethod.LINEAR">
+<span class="sig-name descname"><span class="pre">LINEAR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.ScForecastMethod.LINEAR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.ScForecastMethod.LOGARITHMIC">
+<span class="sig-name descname"><span class="pre">LOGARITHMIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.ScForecastMethod.LOGARITHMIC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.SectorIdentifier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SectorIdentifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/enumerations.html#SectorIdentifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.enumerations.SectorIdentifier" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>The enum class to quickly discern sectors.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.SectorIdentifier.COMMERCIAL_TRADE_SERVICES">
+<span class="sig-name descname"><span class="pre">COMMERCIAL_TRADE_SERVICES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.SectorIdentifier.COMMERCIAL_TRADE_SERVICES" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.SectorIdentifier.HOUSEHOLDS">
+<span class="sig-name descname"><span class="pre">HOUSEHOLDS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.SectorIdentifier.HOUSEHOLDS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.SectorIdentifier.INDUSTRY">
+<span class="sig-name descname"><span class="pre">INDUSTRY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.SectorIdentifier.INDUSTRY" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.SectorIdentifier.TRANSPORT">
+<span class="sig-name descname"><span class="pre">TRANSPORT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.SectorIdentifier.TRANSPORT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.StartPoint">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StartPoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/enumerations.html#StartPoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.enumerations.StartPoint" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Denotes the type of start points used for the exponential forecast method.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.StartPoint.AVERAGE_VALUE">
+<span class="sig-name descname"><span class="pre">AVERAGE_VALUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.StartPoint.AVERAGE_VALUE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.StartPoint.LAST_AVAILABLE">
+<span class="sig-name descname"><span class="pre">LAST_AVAILABLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.StartPoint.LAST_AVAILABLE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.StartPoint.MANUAL">
+<span class="sig-name descname"><span class="pre">MANUAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.StartPoint.MANUAL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.SubsectorGroup">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SubsectorGroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/enumerations.html#SubsectorGroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.enumerations.SubsectorGroup" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Enum to group the industry _subsectors.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.SubsectorGroup.CHEMICALS_AND_PETROCHEMICALS">
+<span class="sig-name descname"><span class="pre">CHEMICALS_AND_PETROCHEMICALS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.SubsectorGroup.CHEMICALS_AND_PETROCHEMICALS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.SubsectorGroup.FOOD_AND_TOBACCO">
+<span class="sig-name descname"><span class="pre">FOOD_AND_TOBACCO</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.SubsectorGroup.FOOD_AND_TOBACCO" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.SubsectorGroup.IRON_AND_STEEL">
+<span class="sig-name descname"><span class="pre">IRON_AND_STEEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.SubsectorGroup.IRON_AND_STEEL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.SubsectorGroup.NON_METALIC_MINERALS">
+<span class="sig-name descname"><span class="pre">NON_METALIC_MINERALS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.SubsectorGroup.NON_METALIC_MINERALS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.SubsectorGroup.PAPER">
+<span class="sig-name descname"><span class="pre">PAPER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.SubsectorGroup.PAPER" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TrafficType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TrafficType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/enumerations.html#TrafficType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.enumerations.TrafficType" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>The type of traffic.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TrafficType.BOTH">
+<span class="sig-name descname"><span class="pre">BOTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TrafficType.BOTH" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TrafficType.FREIGHT">
+<span class="sig-name descname"><span class="pre">FREIGHT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TrafficType.FREIGHT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TrafficType.PERSON">
+<span class="sig-name descname"><span class="pre">PERSON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TrafficType.PERSON" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportFinalEnergyDemandScenario">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TransportFinalEnergyDemandScenario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/enumerations.html#TransportFinalEnergyDemandScenario"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportFinalEnergyDemandScenario" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>The enum indicating how the final energy demand should be split.
+Either by the given reference or user defined values.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportFinalEnergyDemandScenario.REFERENCE">
+<span class="sig-name descname"><span class="pre">REFERENCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportFinalEnergyDemandScenario.REFERENCE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportFinalEnergyDemandScenario.USER_DEFINED">
+<span class="sig-name descname"><span class="pre">USER_DEFINED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportFinalEnergyDemandScenario.USER_DEFINED" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportModal">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TransportModal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/enumerations.html#TransportModal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportModal" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>The enum to differentiate different modes of transport or combinations of them.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportModal.bus">
+<span class="sig-name descname"><span class="pre">bus</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportModal.bus" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportModal.car">
+<span class="sig-name descname"><span class="pre">car</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportModal.car" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportModal.flight">
+<span class="sig-name descname"><span class="pre">flight</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportModal.flight" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportModal.rail">
+<span class="sig-name descname"><span class="pre">rail</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportModal.rail" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportModal.road">
+<span class="sig-name descname"><span class="pre">road</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportModal.road" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportModal.road_rail">
+<span class="sig-name descname"><span class="pre">road_rail</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportModal.road_rail" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportModal.road_rail_ship">
+<span class="sig-name descname"><span class="pre">road_rail_ship</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportModal.road_rail_ship" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportModal.ship">
+<span class="sig-name descname"><span class="pre">ship</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportModal.ship" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportModalSplitMethod">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TransportModalSplitMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/enumerations.html#TransportModalSplitMethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportModalSplitMethod" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>The enum indicating how the modal split for the transport sector should be obtained.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportModalSplitMethod.HISTORICAL_CONSTANT">
+<span class="sig-name descname"><span class="pre">HISTORICAL_CONSTANT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportModalSplitMethod.HISTORICAL_CONSTANT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportModalSplitMethod.HISTORICAL_TIME_TREND">
+<span class="sig-name descname"><span class="pre">HISTORICAL_TIME_TREND</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportModalSplitMethod.HISTORICAL_TIME_TREND" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.data_structures.enumerations.TransportModalSplitMethod.USER_DEFINED">
+<span class="sig-name descname"><span class="pre">USER_DEFINED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#endemo2.data_structures.enumerations.TransportModalSplitMethod.USER_DEFINED" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-endemo2.data_structures.nuts_tree">
+<span id="endemo2-data-structures-nuts-tree-module"></span><h2>endemo2.data_structures.nuts_tree module<a class="headerlink" href="#module-endemo2.data_structures.nuts_tree" title="Permalink to this heading"></a></h2>
+<p>This module contains everything one needs to represent NUTS regions as a tree structure.
+The leafs are NUTS2 regions, the root is the 2-letter country code and the in-between-nodes are for navigation.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.nuts_tree.NutsRegion">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NutsRegion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/nuts_tree.html#NutsRegion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.nuts_tree.NutsRegion" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents one NUTS Region according to individual codes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>region_name</strong> (<em>str</em>) – The NUTS tag of the region. For example: DE, DE1, DE11, …</p>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>region_name</strong> (<em>str</em>) – The NUTS tag of the region. For example: DE, DE1, DE11, …</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.nuts_tree.NutsRegionLeaf">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NutsRegionLeaf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/nuts_tree.html#NutsRegionLeaf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.nuts_tree.NutsRegionLeaf" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#endemo2.data_structures.nuts_tree.NutsRegion" title="endemo2.data_structures.nuts_tree.NutsRegion"><code class="xref py py-class docutils literal notranslate"><span class="pre">NutsRegion</span></code></a></p>
+<p>Represents one NUTS2 Region according to individual codes. It is the leaf of the NUTS tree.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region_name</strong> (<em>str</em>) – The NUTS tag of the region. For example: DE11, DE12 …</p></li>
+<li><p><strong>data</strong> (<em>Any</em>) – The timeseries for the value the tree is associated with. This can be any type of data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>region_name</strong> (<em>str</em>) – The NUTS tag of the region. For example: DE11, DE12 …</p></li>
+<li><p><strong>data</strong> (<em>Any</em>) – The timeseries for the value the tree is associated with. This can be any type of data.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.nuts_tree.NutsRegionLeaf.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/nuts_tree.html#NutsRegionLeaf.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.nuts_tree.NutsRegionLeaf.get" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the leaf’s data.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.nuts_tree.NutsRegionNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NutsRegionNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/nuts_tree.html#NutsRegionNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.nuts_tree.NutsRegionNode" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#endemo2.data_structures.nuts_tree.NutsRegion" title="endemo2.data_structures.nuts_tree.NutsRegion"><code class="xref py py-class docutils literal notranslate"><span class="pre">NutsRegion</span></code></a></p>
+<p>Represents one NUTS Region according to individual codes. Not a NUTS2 region, but a node in the tree.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>region_name</strong> (<em>str</em>) – The NUTS tag of the region. For example: DE, DE1, DE2, …</p>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>region_name</strong> (<em>str</em>) – The NUTS tag of the region. For example: DE, DE1, DE2, …</p></li>
+<li><p><strong>_subregions</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#endemo2.data_structures.nuts_tree.NutsRegion" title="endemo2.data_structures.nuts_tree.NutsRegion"><em>NutsRegion</em></a><em>]</em>) – The child regions, accessible per NUTS tag. For DE: {DE1 -&gt; .., DE2 -&gt; ..}</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.nuts_tree.NutsRegionNode.add_leaf_region">
+<span class="sig-name descname"><span class="pre">add_leaf_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuts2region_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/nuts_tree.html#NutsRegionNode.add_leaf_region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.nuts_tree.NutsRegionNode.add_leaf_region" title="Permalink to this definition"></a></dt>
+<dd><p>Traverses the NUTS Tree recursively to insert a leaf node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nuts2region_obj</strong> (<a class="reference internal" href="#endemo2.data_structures.nuts_tree.NutsRegionLeaf" title="endemo2.data_structures.nuts_tree.NutsRegionLeaf"><code class="xref py py-class docutils literal notranslate"><span class="pre">NutsRegionLeaf</span></code></a>) – The NutsRegionLeaf object to insert into the tree</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.nuts_tree.NutsRegionNode.get_all_leaf_nodes">
+<span class="sig-name descname"><span class="pre">get_all_leaf_nodes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/nuts_tree.html#NutsRegionNode.get_all_leaf_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.nuts_tree.NutsRegionNode.get_all_leaf_nodes" title="Permalink to this definition"></a></dt>
+<dd><p>Get a list of all leaf nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<a class="reference internal" href="#endemo2.data_structures.nuts_tree.NutsRegionLeaf" title="endemo2.data_structures.nuts_tree.NutsRegionLeaf"><code class="xref py py-class docutils literal notranslate"><span class="pre">NutsRegionLeaf</span></code></a>]</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The list of leaf nodes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.nuts_tree.NutsRegionNode.get_nodes_dfs">
+<span class="sig-name descname"><span class="pre">get_nodes_dfs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/nuts_tree.html#NutsRegionNode.get_nodes_dfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.nuts_tree.NutsRegionNode.get_nodes_dfs" title="Permalink to this definition"></a></dt>
+<dd><p>Get a list of all nodes in Depth-First-Search order.
+Used mostly for debugging purposes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<a class="reference internal" href="#endemo2.data_structures.nuts_tree.NutsRegion" title="endemo2.data_structures.nuts_tree.NutsRegion"><code class="xref py py-class docutils literal notranslate"><span class="pre">NutsRegion</span></code></a>]</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The list of nodes in DFS-order.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.nuts_tree.NutsRegionNode.get_region_name">
+<span class="sig-name descname"><span class="pre">get_region_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/nuts_tree.html#NutsRegionNode.get_region_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.nuts_tree.NutsRegionNode.get_region_name" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the region_name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.nuts_tree.NutsRegionNode.get_specific_node">
+<span class="sig-name descname"><span class="pre">get_specific_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region_code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/nuts_tree.html#NutsRegionNode.get_specific_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.nuts_tree.NutsRegionNode.get_specific_node" title="Permalink to this definition"></a></dt>
+<dd><p>Traverse tree and find the node with region code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>region_code</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The region code of the node to find.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#endemo2.data_structures.nuts_tree.NutsRegion" title="endemo2.data_structures.nuts_tree.NutsRegion"><code class="xref py py-class docutils literal notranslate"><span class="pre">NutsRegion</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The NutsRegion object of the region with region_code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-endemo2.data_structures.prediction_models">
+<span id="endemo2-data-structures-prediction-models-module"></span><h2>endemo2.data_structures.prediction_models module<a class="headerlink" href="#module-endemo2.data_structures.prediction_models" title="Permalink to this heading"></a></h2>
+<p>This module contains all classes directly representing in data series and prognosis calculations.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Coef</span></span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The container for the coefficients of different forecast methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_exp</strong> (<em>(</em><a class="reference internal" href="#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>, </em><em>r</em><em>)</em>) – (x0, y0) is the start point for the exponential calculation and r is the growth rate.
+Used for calculation y(x) = y0 * (1+r)^(x - x0)</p></li>
+<li><p><strong>_lin</strong> (<em>(</em><em>k0</em><em>, </em><em>k1</em><em>)</em>) – Used for the calculation f(x) = k0 + k1 * x</p></li>
+<li><p><strong>_quadr</strong> (<em>(</em><em>k0</em><em>, </em><em>k1</em><em>, </em><em>k2</em><em>)</em>) – Used for the calculation f(x) = k0 + k1 * x + k2 * x^2</p></li>
+<li><p><strong>_offset</strong> (<em>float</em>) – Additional constant offset.</p></li>
+<li><p><strong>_method</strong> (<a class="reference internal" href="#endemo2.data_structures.enumerations.ForecastMethod" title="endemo2.data_structures.enumerations.ForecastMethod"><em>ForecastMethod</em></a>) – Method used for calculating output.</p></li>
+<li><p><strong>_fixed_forecast_method</strong> (<em>bool</em>) – indicates that the method should not be changed anymore for this coefficient
+object. Example: Is used when setting the exponential forecast method for timeseries with only one data point.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.get_exp">
+<span class="sig-name descname"><span class="pre">get_exp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.get_exp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.get_exp" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the exponential coefficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The exponential execution variables of form ((start_x, start_y), growth_rate)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(<a class="reference internal" href="#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint">Datapoint</a>, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.get_exp_y">
+<span class="sig-name descname"><span class="pre">get_exp_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.get_exp_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.get_exp_y" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the y-axis value of the function at the given x according to the exponential method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_x</strong> – The x_axis value the function should be applied on.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The according y-axis value if exponential start point and growth rate is set, otherwise None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.get_function_y">
+<span class="sig-name descname"><span class="pre">get_function_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.get_function_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.get_function_y" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the y-axis value of the function at the given x according to the used method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_x</strong> – The x_axis value the function should be applied on.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The according y-axis value if everything of the chosen method (and the method) is set, otherwise None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.get_lin">
+<span class="sig-name descname"><span class="pre">get_lin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.get_lin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.get_lin" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the linear coefficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The linear coefficient of form (k0, k1).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(float, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.get_lin_y">
+<span class="sig-name descname"><span class="pre">get_lin_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.get_lin_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.get_lin_y" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the y-axis value of the function at the given x according to the linear method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_x</strong> – The x_axis value the function should be applied on.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The according y-axis value if the linear coefficients are set, otherwise None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.get_log">
+<span class="sig-name descname"><span class="pre">get_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.get_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.get_log" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the logarithmic coefficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The logarithmic coefficient of form (k0, k1).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(float, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.get_log_y">
+<span class="sig-name descname"><span class="pre">get_log_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.get_log_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.get_log_y" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the y-axis value of the function at the given x according to the logarithmic method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_x</strong> – The x_axis value the function should be applied on.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The according y-axis value if the logarithmic coefficients are set, otherwise None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.get_method">
+<span class="sig-name descname"><span class="pre">get_method</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.get_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.get_method" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the forecast method attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#endemo2.data_structures.enumerations.ForecastMethod" title="endemo2.data_structures.enumerations.ForecastMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForecastMethod</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.get_offset">
+<span class="sig-name descname"><span class="pre">get_offset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.get_offset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.get_offset" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the additional offset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The additional offset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.get_quadr">
+<span class="sig-name descname"><span class="pre">get_quadr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.get_quadr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.get_quadr" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the quadratic coefficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The quadratic coefficient of form (k0, k1, k2).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(float, float, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.get_quadr_offset_y">
+<span class="sig-name descname"><span class="pre">get_quadr_offset_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.get_quadr_offset_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.get_quadr_offset_y" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the y-axis value of the function at the given x according to the quadratic offset method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_x</strong> – The x_axis value the function should be applied on.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The according y-axis value if the quadratic coefficients and offset are set, otherwise None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.get_quadr_y">
+<span class="sig-name descname"><span class="pre">get_quadr_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.get_quadr_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.get_quadr_y" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the y-axis value of the function at the given x according to the quadratic method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_x</strong> – The x_axis value the function should be applied on.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The according y-axis value if the quadratic coefficients are set, otherwise None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.set_exp">
+<span class="sig-name descname"><span class="pre">set_exp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_growth_rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.set_exp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.set_exp" title="Permalink to this definition"></a></dt>
+<dd><p>Setter for the exponential coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_point</strong> (<a class="reference internal" href="#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datapoint</span></code></a>) – The new start point for the exponential forecast method.</p></li>
+<li><p><strong>exp_growth_rate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The new growth rate for the exponential forecast method.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.set_exp_growth_rate">
+<span class="sig-name descname"><span class="pre">set_exp_growth_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_growth_rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.set_exp_growth_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.set_exp_growth_rate" title="Permalink to this definition"></a></dt>
+<dd><p>Setter for the exponential growth rate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>exp_growth_rate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The new growth rate for the exponential forecast method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.set_exp_start_point">
+<span class="sig-name descname"><span class="pre">set_exp_start_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.set_exp_start_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.set_exp_start_point" title="Permalink to this definition"></a></dt>
+<dd><p>Setter for the exponential start point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>start_point</strong> (<a class="reference internal" href="#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datapoint</span></code></a>) – The new start point for the exponential forecast method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.set_lin">
+<span class="sig-name descname"><span class="pre">set_lin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.set_lin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.set_lin" title="Permalink to this definition"></a></dt>
+<dd><p>Setter for the linear coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The constant coefficient.</p></li>
+<li><p><strong>k1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The linear coefficient.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.set_log">
+<span class="sig-name descname"><span class="pre">set_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.set_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.set_log" title="Permalink to this definition"></a></dt>
+<dd><p>Setter for the logarithmic coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The constant coefficient.</p></li>
+<li><p><strong>k1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The logarithmic coefficient.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.set_method">
+<span class="sig-name descname"><span class="pre">set_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.set_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.set_method" title="Permalink to this definition"></a></dt>
+<dd><p>Setter for the forecast method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<a class="reference internal" href="#endemo2.data_structures.enumerations.ForecastMethod" title="endemo2.data_structures.enumerations.ForecastMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForecastMethod</span></code></a>) – The method that should be used from now on.</p></li>
+<li><p><strong>fixate</strong> – If True, makes sure that method cannot be reset for this coefficient object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.set_offset">
+<span class="sig-name descname"><span class="pre">set_offset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.set_offset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.set_offset" title="Permalink to this definition"></a></dt>
+<dd><p>Setter for the additional offset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>k0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The additional constant offset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Coef.set_quadr">
+<span class="sig-name descname"><span class="pre">set_quadr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Coef.set_quadr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Coef.set_quadr" title="Permalink to this definition"></a></dt>
+<dd><p>Setter for the quadratic coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The constant coefficient.</p></li>
+<li><p><strong>k1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The linear coefficient.</p></li>
+<li><p><strong>k2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The quadratic coefficient.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.IntervalForecast">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IntervalForecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progression_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#IntervalForecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.IntervalForecast" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The class depicting a given exponential prediction with different growth rates in certain intervals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>progression_data</strong> (<em>list</em><em>[</em><a class="reference internal" href="#endemo2.data_structures.containers.Interval" title="endemo2.data_structures.containers.Interval"><em>Interval</em></a><em>, </em><em>float</em><em>]</em>) – The input_and_settings progression data given as a list of
+intervals and their corresponding growth rate. For example [(Interval(start, end), percentage_growth)].</p></li>
+<li><p><strong>progression_data</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_interval_changeRate</strong> (<em>list</em><em>[</em><em>(</em><a class="reference internal" href="#endemo2.data_structures.containers.Interval" title="endemo2.data_structures.containers.Interval"><em>Interval</em></a><em>, </em><em>float</em><em>)</em><em>]</em>) – The same as progression_data, just the growth rate is not in
+percentage anymore, but percentage/100</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.IntervalForecast.get_forecast">
+<span class="sig-name descname"><span class="pre">get_forecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#IntervalForecast.get_forecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.IntervalForecast.get_forecast" title="Permalink to this definition"></a></dt>
+<dd><p>Get the prognosis of the y-axis value for a target x-axis value from the manual exponential
+interval-growth-rate forecast.</p>
+<div class="math notranslate nohighlight">
+\[y=s_x*(1+r_{1})^{(intvl^{(1)}_{b}-s_y)}*(1+r_{2})^{(intvl^{(2)}_{b}-intvl^{(2)}_{a})}*\text{...}*(1+r_{3})^
+{(x-intvl^{(3)}_{a})}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_point</strong> (<a class="reference internal" href="#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datapoint</span></code></a>) – The (x, y) Tuple, that is used as the first value for the exponential growth.</p></li>
+<li><p><strong>target_x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The target x-axis value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The predicted y value at x-axis value x.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.RigidTimeseries">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RigidTimeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#RigidTimeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.RigidTimeseries" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class representing data that should be taken just like it is. Without interpolation, without coefficients,
+only the data over time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – The timeseries data, where the x-axis is Time and the y-axis is some value over time.
+Can contain NaN and Inf values.</p>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_data</strong> (<em>[</em><a class="reference internal" href="#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em>) – The timeseries data, where the x-axis is Time and the y-axis is some value over time.
+Filtered to not contain any NaN or Inf values.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.RigidTimeseries.get_last_available_data_entry_or_zero">
+<span class="sig-name descname"><span class="pre">get_last_available_data_entry_or_zero</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#RigidTimeseries.get_last_available_data_entry_or_zero"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.RigidTimeseries.get_last_available_data_entry_or_zero" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the last data entry in the timeseries data if present, else 0.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datapoint</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.RigidTimeseries.get_value_at_year">
+<span class="sig-name descname"><span class="pre">get_value_at_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#RigidTimeseries.get_value_at_year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.RigidTimeseries.get_value_at_year" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the value of the RigidTimeseries at the given year, if present. If the value is not present, throws an
+error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The year the value should be taken from.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The value of the timeseries at year.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Timeseries">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Timeseries" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#endemo2.data_structures.prediction_models.TwoDseries" title="endemo2.data_structures.prediction_models.TwoDseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoDseries</span></code></a>, <a class="reference internal" href="#endemo2.data_structures.prediction_models.RigidTimeseries" title="endemo2.data_structures.prediction_models.RigidTimeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">RigidTimeseries</span></code></a></p>
+<p>A class strictly representing a value over time. This usage is a class invariant and the class should not be used
+in any other way.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>[</em><a class="reference internal" href="#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em>) – The timeseries data, where the x-axis is Time and the y-axis is some value over time.
+Can contain NaN and Inf values.</p>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_data</strong> (<em>[</em><a class="reference internal" href="#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em>) – Where the x-axis is Time and the y-axis is some value over time.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Timeseries.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other_ts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Timeseries.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Timeseries.add" title="Permalink to this definition"></a></dt>
+<dd><p>Add the data of the other_ts to self. Also return a reference to self.
+When a datapoint is only present in one of the timeseries it is added!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other_ts</strong> (<a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a>) – The timeseries, whose data should be added to self.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A reference to self.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Timeseries.append_others_data">
+<span class="sig-name descname"><span class="pre">append_others_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other_ts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Timeseries.append_others_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Timeseries.append_others_data" title="Permalink to this definition"></a></dt>
+<dd><p>Append all data of another timeseries to self and return self.
+Timeseries also sorts the result, so it can remain a valid timeseries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other_ts</strong> (<a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a>) – The timeseries, whose data should be appended.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Timeseries.divide_by">
+<span class="sig-name descname"><span class="pre">divide_by</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other_ts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Timeseries.divide_by"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Timeseries.divide_by" title="Permalink to this definition"></a></dt>
+<dd><p>Divide the data of self by the data of other_ts. Also return a reference to self.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other_ts</strong> (<a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a>) – The timeseries, whose data should be divided by.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A reference to self.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Timeseries.fill_empty_years_with_value">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fill_empty_years_with_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Timeseries.fill_empty_years_with_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Timeseries.fill_empty_years_with_value" title="Permalink to this definition"></a></dt>
+<dd><p>Create a timeseries that has data for each year in interval. Take value from given timeseries if present, else
+fill with given value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ts</strong> (<a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a>) – The given timeseries, which values are copied.</p></li>
+<li><p><strong>interval</strong> (<a class="reference internal" href="#endemo2.data_structures.containers.Interval" title="endemo2.data_structures.containers.Interval"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interval</span></code></a>) – The interval in which data has to be present for every year.</p></li>
+<li><p><strong>fill_value</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Value with which gaps in the data should be filled.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The created timeseries with values from ts and filled gaps with given value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Timeseries.fill_own_empty_years_with_value">
+<span class="sig-name descname"><span class="pre">fill_own_empty_years_with_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Timeseries.fill_own_empty_years_with_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Timeseries.fill_own_empty_years_with_value" title="Permalink to this definition"></a></dt>
+<dd><p>Fill own data in interval with fill value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interval</strong> (<a class="reference internal" href="#endemo2.data_structures.containers.Interval" title="endemo2.data_structures.containers.Interval"><code class="xref py py-class docutils literal notranslate"><span class="pre">Interval</span></code></a>) – The interval that should be filled.</p></li>
+<li><p><strong>fill_value</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The value that should be used to fill gaps</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Timeseries.get_last_data_entry">
+<span class="sig-name descname"><span class="pre">get_last_data_entry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Timeseries.get_last_data_entry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Timeseries.get_last_data_entry" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the last available entry in data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datapoint</span></code></a></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The last entry, or a string if data is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Timeseries.get_value_at_year">
+<span class="sig-name descname"><span class="pre">get_value_at_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Timeseries.get_value_at_year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Timeseries.get_value_at_year" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the value of the RigidTimeseries at the given year, if present. If the value is not present, throws an
+error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The year, the data should be taken from.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The value of the timeseries at year.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Timeseries.get_value_at_year_else_zero">
+<span class="sig-name descname"><span class="pre">get_value_at_year_else_zero</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Timeseries.get_value_at_year_else_zero"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Timeseries.get_value_at_year_else_zero" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the value of the RigidTimeseries at the given year, if present. If the value is not present, returns
+zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The year, the data should be taken from.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The value of the timeseries at year, or zero if no data is present.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Timeseries.map_two_timeseries">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">map_two_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Timeseries.map_two_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Timeseries.map_two_timeseries" title="Permalink to this definition"></a></dt>
+<dd><p>Map the two Timeseries according to the given function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t1</strong> (<a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a>) – Timeseries to zip t1 [(x, y1)]</p></li>
+<li><p><strong>t2</strong> (<a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a>) – Timeseries to zip t2 [(x, y2)]</p></li>
+<li><p><strong>function</strong> – The function that is applied. Should be of form lambda x y1 y2 -&gt; …</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The result of the applied function.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Timeseries.map_y">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">map_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Timeseries.map_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Timeseries.map_y" title="Permalink to this definition"></a></dt>
+<dd><p>Map the y-axis of the Timeseries and return a newly created timeseries as a result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a>) – The timeseries to map.</p></li>
+<li><p><strong>function</strong> – The mapping function of the form lambda x -&gt; …</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A copy-mapped timeseries.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Timeseries.merge_two_timeseries">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">merge_two_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Timeseries.merge_two_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Timeseries.merge_two_timeseries" title="Permalink to this definition"></a></dt>
+<dd><p>Merge the two Timeseries on the condition that the year is the same.
+Note: The result is not a Timeseries!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t1</strong> (<a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a>) – Timeseries to zip t1 [(a,b)]</p></li>
+<li><p><strong>t2</strong> (<a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a>) – Timeseries to zip t2 [(c, d)]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#endemo2.data_structures.prediction_models.TwoDseries" title="endemo2.data_structures.prediction_models.TwoDseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoDseries</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The zipped TwoDseries in format [(b, d)] for where a == c.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.Timeseries.scale">
+<span class="sig-name descname"><span class="pre">scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scalar</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#Timeseries.scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.Timeseries.scale" title="Permalink to this definition"></a></dt>
+<dd><p>Scale own data by scalar. Also return a reference to self.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scalar</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The scalar that should be scaled by.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#endemo2.data_structures.prediction_models.Timeseries" title="endemo2.data_structures.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A reference to self.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.TwoDseries">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TwoDseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#TwoDseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.TwoDseries" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class representing a data series [(x, y)]. Both axis can be any type of data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>[</em><a class="reference internal" href="#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em>) – The TwoDseries data, where the x-axis and the y-axis can be any floating point values.
+Can contain NaN and Inf values.</p>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>_data</strong> (<em>[</em><a class="reference internal" href="#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em>) – Where the x-axis is first in tuple and the y-axis is second.</p></li>
+<li><p><strong>coefficients</strong> (<a class="reference internal" href="#endemo2.data_structures.prediction_models.Coef" title="endemo2.data_structures.prediction_models.Coef"><em>Coef</em></a>) – The coefficients for this data series.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.TwoDseries.append_others_data">
+<span class="sig-name descname"><span class="pre">append_others_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other_tds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#TwoDseries.append_others_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.TwoDseries.append_others_data" title="Permalink to this definition"></a></dt>
+<dd><p>Append all data of another timeseries to self and return self.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other_tds</strong> (<a class="reference internal" href="#endemo2.data_structures.prediction_models.TwoDseries" title="endemo2.data_structures.prediction_models.TwoDseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoDseries</span></code></a>) – The TwoDseries, whose data should be appended.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#endemo2.data_structures.prediction_models.TwoDseries" title="endemo2.data_structures.prediction_models.TwoDseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoDseries</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.TwoDseries.generate_coef">
+<span class="sig-name descname"><span class="pre">generate_coef</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#TwoDseries.generate_coef"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.TwoDseries.generate_coef" title="Permalink to this definition"></a></dt>
+<dd><p>Generate and save the coefficients of all regression methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#endemo2.data_structures.prediction_models.Coef" title="endemo2.data_structures.prediction_models.Coef"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coef</span></code></a></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated Coefficient object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.TwoDseries.get_coef">
+<span class="sig-name descname"><span class="pre">get_coef</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#TwoDseries.get_coef"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.TwoDseries.get_coef" title="Permalink to this definition"></a></dt>
+<dd><p>Safely get the coefficients. If they were not generated before, generates them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#endemo2.data_structures.prediction_models.Coef" title="endemo2.data_structures.prediction_models.Coef"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coef</span></code></a></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The resulting coefficient object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.TwoDseries.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#TwoDseries.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.TwoDseries.get_data" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the data attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[<a class="reference internal" href="#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint">Datapoint</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.TwoDseries.get_mean_y">
+<span class="sig-name descname"><span class="pre">get_mean_y</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#TwoDseries.get_mean_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.TwoDseries.get_mean_y" title="Permalink to this definition"></a></dt>
+<dd><p>Get mean of all values on the y-axis of the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The mean of all y values of the data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.TwoDseries.is_empty">
+<span class="sig-name descname"><span class="pre">is_empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#TwoDseries.is_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.TwoDseries.is_empty" title="Permalink to this definition"></a></dt>
+<dd><p>Indicates whether there is no data present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if data is empty, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.data_structures.prediction_models.TwoDseries.is_zero">
+<span class="sig-name descname"><span class="pre">is_zero</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/data_structures/prediction_models.html#TwoDseries.is_zero"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.data_structures.prediction_models.TwoDseries.is_zero" title="Permalink to this definition"></a></dt>
+<dd><p>Indicates whether the data on the y-axis has only zeroes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if data’s y-axis only contains zeros, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-endemo2.data_structures">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-endemo2.data_structures" title="Permalink to this heading"></a></h2>
+<p>This package holds all modules that can be reused in very different contexts, therefore being data_structures.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="endemo2.html" class="btn btn-neutral float-left" title="endemo2 package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="endemo2.input_and_settings.html" class="btn btn-neutral float-right" title="endemo2.input_and_settings package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

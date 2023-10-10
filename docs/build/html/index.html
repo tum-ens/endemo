@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to Endemo’s documentation! &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="endemo2 package" href="endemo2.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to Endemo’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-endemo-s-documentation">
+<h1>Welcome to Endemo’s documentation!<a class="headerlink" href="#welcome-to-endemo-s-documentation" title="Permalink to this heading"></a></h1>
+<p>This is the documentation for the Useful Energy Demand Model <em>Endemo</em></p>
+</section>
+<section id="how-to-maintain-the-code-base">
+<h1>How to maintain the code base<a class="headerlink" href="#how-to-maintain-the-code-base" title="Permalink to this heading"></a></h1>
+<p>When a package import is added to the conda environment, call</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">conda</span> <span class="n">env</span> <span class="n">export</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">conda</span> <span class="n">environment</span> <span class="n">name</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">endemo</span><span class="o">-</span><span class="n">env</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>to update the file for the git repository.</p>
+<p>When changing code in a function, always check if the docstring is still correct. Change the docstring accordingly.</p>
+</section>
+<section id="how-to-maintain-the-documentation">
+<h1>How to maintain the documentation<a class="headerlink" href="#how-to-maintain-the-documentation" title="Permalink to this heading"></a></h1>
+<p>Whenever you change something in the code and/or the doc strings, please update the documentation using</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">make</span> <span class="n">html</span>
+</pre></div>
+</div>
+<p>in a command line within the docs folder!</p>
+<p>When structural things (like package name) change, please first delete all .rst files (excluding index.rst!) and execute</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">sphinx</span><span class="o">-</span><span class="n">apidoc</span> <span class="o">-</span><span class="n">o</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">docs</span><span class="o">/</span><span class="n">source</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">endemo2</span> <span class="n">package</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;</span> <span class="n">make</span> <span class="n">html</span>
+</pre></div>
+</div>
+<p>to update this documentation properly.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.html">endemo2 package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html">endemo2.data_structures package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#module-endemo2.data_structures.containers">endemo2.data_structures.containers module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.CA"><code class="docutils literal notranslate"><span class="pre">CA</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.CA.alpha2"><code class="docutils literal notranslate"><span class="pre">CA.alpha2</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.CA.alpha3"><code class="docutils literal notranslate"><span class="pre">CA.alpha3</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.CA.german_name"><code class="docutils literal notranslate"><span class="pre">CA.german_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint"><code class="docutils literal notranslate"><span class="pre">Datapoint</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint.x"><code class="docutils literal notranslate"><span class="pre">Datapoint.x</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint.y"><code class="docutils literal notranslate"><span class="pre">Datapoint.y</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand"><code class="docutils literal notranslate"><span class="pre">Demand</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand.add"><code class="docutils literal notranslate"><span class="pre">Demand.add()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand.copy_multiply"><code class="docutils literal notranslate"><span class="pre">Demand.copy_multiply()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand.copy_scale"><code class="docutils literal notranslate"><span class="pre">Demand.copy_scale()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand.get"><code class="docutils literal notranslate"><span class="pre">Demand.get()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand.get_sum"><code class="docutils literal notranslate"><span class="pre">Demand.get_sum()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand.scale"><code class="docutils literal notranslate"><span class="pre">Demand.scale()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand.set"><code class="docutils literal notranslate"><span class="pre">Demand.set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.EH"><code class="docutils literal notranslate"><span class="pre">EH</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.EH.electricity"><code class="docutils literal notranslate"><span class="pre">EH.electricity</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.EH.heat"><code class="docutils literal notranslate"><span class="pre">EH.heat</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat"><code class="docutils literal notranslate"><span class="pre">Heat</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat.copy_add"><code class="docutils literal notranslate"><span class="pre">Heat.copy_add()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat.copy_multiply"><code class="docutils literal notranslate"><span class="pre">Heat.copy_multiply()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat.copy_multiply_scalar"><code class="docutils literal notranslate"><span class="pre">Heat.copy_multiply_scalar()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat.get_sum"><code class="docutils literal notranslate"><span class="pre">Heat.get_sum()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat.mutable_add"><code class="docutils literal notranslate"><span class="pre">Heat.mutable_add()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat.mutable_multiply_scalar"><code class="docutils literal notranslate"><span class="pre">Heat.mutable_multiply_scalar()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat.mutable_sub"><code class="docutils literal notranslate"><span class="pre">Heat.mutable_sub()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.HisProg"><code class="docutils literal notranslate"><span class="pre">HisProg</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.HisProg.historical"><code class="docutils literal notranslate"><span class="pre">HisProg.historical</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.HisProg.prognosis"><code class="docutils literal notranslate"><span class="pre">HisProg.prognosis</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Interval"><code class="docutils literal notranslate"><span class="pre">Interval</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Interval.end"><code class="docutils literal notranslate"><span class="pre">Interval.end</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Interval.start"><code class="docutils literal notranslate"><span class="pre">Interval.start</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.SpecConsum"><code class="docutils literal notranslate"><span class="pre">SpecConsum</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.SpecConsum.cap_at_bat"><code class="docutils literal notranslate"><span class="pre">SpecConsum.cap_at_bat()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.SpecConsum.scale"><code class="docutils literal notranslate"><span class="pre">SpecConsum.scale()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#module-endemo2.data_structures.conversions_string">endemo2.data_structures.conversions_string module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#module-endemo2.data_structures.conversions_unit">endemo2.data_structures.conversions_unit module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit"><code class="docutils literal notranslate"><span class="pre">Unit</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.Billion"><code class="docutils literal notranslate"><span class="pre">Unit.Billion</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.GJ"><code class="docutils literal notranslate"><span class="pre">Unit.GJ</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.GWh"><code class="docutils literal notranslate"><span class="pre">Unit.GWh</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.MJ"><code class="docutils literal notranslate"><span class="pre">Unit.MJ</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.MWh"><code class="docutils literal notranslate"><span class="pre">Unit.MWh</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.Million"><code class="docutils literal notranslate"><span class="pre">Unit.Million</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.PJ"><code class="docutils literal notranslate"><span class="pre">Unit.PJ</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.Standard"><code class="docutils literal notranslate"><span class="pre">Unit.Standard</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.TJ"><code class="docutils literal notranslate"><span class="pre">Unit.TJ</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.TWh"><code class="docutils literal notranslate"><span class="pre">Unit.TWh</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.kWh"><code class="docutils literal notranslate"><span class="pre">Unit.kWh</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.kilo"><code class="docutils literal notranslate"><span class="pre">Unit.kilo</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.liter"><code class="docutils literal notranslate"><span class="pre">Unit.liter</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.m3"><code class="docutils literal notranslate"><span class="pre">Unit.m3</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.convert"><code class="docutils literal notranslate"><span class="pre">convert()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.get_conversion_scalar"><code class="docutils literal notranslate"><span class="pre">get_conversion_scalar()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#module-endemo2.data_structures.enumerations">endemo2.data_structures.enumerations module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType"><code class="docutils literal notranslate"><span class="pre">DemandType</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType.ELECTRICITY"><code class="docutils literal notranslate"><span class="pre">DemandType.ELECTRICITY</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType.FUEL"><code class="docutils literal notranslate"><span class="pre">DemandType.FUEL</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType.HEAT"><code class="docutils literal notranslate"><span class="pre">DemandType.HEAT</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType.HYDROGEN"><code class="docutils literal notranslate"><span class="pre">DemandType.HYDROGEN</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod"><code class="docutils literal notranslate"><span class="pre">ForecastMethod</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod.EXPONENTIAL"><code class="docutils literal notranslate"><span class="pre">ForecastMethod.EXPONENTIAL</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod.LINEAR"><code class="docutils literal notranslate"><span class="pre">ForecastMethod.LINEAR</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod.LOGARITHMIC"><code class="docutils literal notranslate"><span class="pre">ForecastMethod.LOGARITHMIC</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod.QUADRATIC"><code class="docutils literal notranslate"><span class="pre">ForecastMethod.QUADRATIC</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod.QUADRATIC_OFFSET"><code class="docutils literal notranslate"><span class="pre">ForecastMethod.QUADRATIC_OFFSET</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.GroupType"><code class="docutils literal notranslate"><span class="pre">GroupType</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.GroupType.EMPTY"><code class="docutils literal notranslate"><span class="pre">GroupType.EMPTY</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.GroupType.JOINED"><code class="docutils literal notranslate"><span class="pre">GroupType.JOINED</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.GroupType.JOINED_DIVERSIFIED"><code class="docutils literal notranslate"><span class="pre">GroupType.JOINED_DIVERSIFIED</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.GroupType.SEPARATE"><code class="docutils literal notranslate"><span class="pre">GroupType.SEPARATE</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsectorId</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId.COOKING"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsectorId.COOKING</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId.OTHER"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsectorId.OTHER</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId.SPACE_COOLING"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsectorId.SPACE_COOLING</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId.SPACE_HEATING"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsectorId.SPACE_HEATING</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId.WATER_HEATING"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsectorId.WATER_HEATING</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ScForecastMethod"><code class="docutils literal notranslate"><span class="pre">ScForecastMethod</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ScForecastMethod.CONST_LAST"><code class="docutils literal notranslate"><span class="pre">ScForecastMethod.CONST_LAST</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ScForecastMethod.CONST_MEAN"><code class="docutils literal notranslate"><span class="pre">ScForecastMethod.CONST_MEAN</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ScForecastMethod.LINEAR"><code class="docutils literal notranslate"><span class="pre">ScForecastMethod.LINEAR</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ScForecastMethod.LOGARITHMIC"><code class="docutils literal notranslate"><span class="pre">ScForecastMethod.LOGARITHMIC</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SectorIdentifier"><code class="docutils literal notranslate"><span class="pre">SectorIdentifier</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SectorIdentifier.COMMERCIAL_TRADE_SERVICES"><code class="docutils literal notranslate"><span class="pre">SectorIdentifier.COMMERCIAL_TRADE_SERVICES</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SectorIdentifier.HOUSEHOLDS"><code class="docutils literal notranslate"><span class="pre">SectorIdentifier.HOUSEHOLDS</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SectorIdentifier.INDUSTRY"><code class="docutils literal notranslate"><span class="pre">SectorIdentifier.INDUSTRY</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SectorIdentifier.TRANSPORT"><code class="docutils literal notranslate"><span class="pre">SectorIdentifier.TRANSPORT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.StartPoint"><code class="docutils literal notranslate"><span class="pre">StartPoint</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.StartPoint.AVERAGE_VALUE"><code class="docutils literal notranslate"><span class="pre">StartPoint.AVERAGE_VALUE</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.StartPoint.LAST_AVAILABLE"><code class="docutils literal notranslate"><span class="pre">StartPoint.LAST_AVAILABLE</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.StartPoint.MANUAL"><code class="docutils literal notranslate"><span class="pre">StartPoint.MANUAL</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup"><code class="docutils literal notranslate"><span class="pre">SubsectorGroup</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup.CHEMICALS_AND_PETROCHEMICALS"><code class="docutils literal notranslate"><span class="pre">SubsectorGroup.CHEMICALS_AND_PETROCHEMICALS</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup.FOOD_AND_TOBACCO"><code class="docutils literal notranslate"><span class="pre">SubsectorGroup.FOOD_AND_TOBACCO</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup.IRON_AND_STEEL"><code class="docutils literal notranslate"><span class="pre">SubsectorGroup.IRON_AND_STEEL</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup.NON_METALIC_MINERALS"><code class="docutils literal notranslate"><span class="pre">SubsectorGroup.NON_METALIC_MINERALS</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup.PAPER"><code class="docutils literal notranslate"><span class="pre">SubsectorGroup.PAPER</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType"><code class="docutils literal notranslate"><span class="pre">TrafficType</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType.BOTH"><code class="docutils literal notranslate"><span class="pre">TrafficType.BOTH</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType.FREIGHT"><code class="docutils literal notranslate"><span class="pre">TrafficType.FREIGHT</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType.PERSON"><code class="docutils literal notranslate"><span class="pre">TrafficType.PERSON</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportFinalEnergyDemandScenario"><code class="docutils literal notranslate"><span class="pre">TransportFinalEnergyDemandScenario</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportFinalEnergyDemandScenario.REFERENCE"><code class="docutils literal notranslate"><span class="pre">TransportFinalEnergyDemandScenario.REFERENCE</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportFinalEnergyDemandScenario.USER_DEFINED"><code class="docutils literal notranslate"><span class="pre">TransportFinalEnergyDemandScenario.USER_DEFINED</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal"><code class="docutils literal notranslate"><span class="pre">TransportModal</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.bus"><code class="docutils literal notranslate"><span class="pre">TransportModal.bus</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.car"><code class="docutils literal notranslate"><span class="pre">TransportModal.car</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.flight"><code class="docutils literal notranslate"><span class="pre">TransportModal.flight</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.rail"><code class="docutils literal notranslate"><span class="pre">TransportModal.rail</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.road"><code class="docutils literal notranslate"><span class="pre">TransportModal.road</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.road_rail"><code class="docutils literal notranslate"><span class="pre">TransportModal.road_rail</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.road_rail_ship"><code class="docutils literal notranslate"><span class="pre">TransportModal.road_rail_ship</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.ship"><code class="docutils literal notranslate"><span class="pre">TransportModal.ship</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModalSplitMethod"><code class="docutils literal notranslate"><span class="pre">TransportModalSplitMethod</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModalSplitMethod.HISTORICAL_CONSTANT"><code class="docutils literal notranslate"><span class="pre">TransportModalSplitMethod.HISTORICAL_CONSTANT</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModalSplitMethod.HISTORICAL_TIME_TREND"><code class="docutils literal notranslate"><span class="pre">TransportModalSplitMethod.HISTORICAL_TIME_TREND</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModalSplitMethod.USER_DEFINED"><code class="docutils literal notranslate"><span class="pre">TransportModalSplitMethod.USER_DEFINED</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#module-endemo2.data_structures.nuts_tree">endemo2.data_structures.nuts_tree module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegion"><code class="docutils literal notranslate"><span class="pre">NutsRegion</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionLeaf"><code class="docutils literal notranslate"><span class="pre">NutsRegionLeaf</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionLeaf.get"><code class="docutils literal notranslate"><span class="pre">NutsRegionLeaf.get()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode"><code class="docutils literal notranslate"><span class="pre">NutsRegionNode</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.add_leaf_region"><code class="docutils literal notranslate"><span class="pre">NutsRegionNode.add_leaf_region()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.get_all_leaf_nodes"><code class="docutils literal notranslate"><span class="pre">NutsRegionNode.get_all_leaf_nodes()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.get_nodes_dfs"><code class="docutils literal notranslate"><span class="pre">NutsRegionNode.get_nodes_dfs()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.get_region_name"><code class="docutils literal notranslate"><span class="pre">NutsRegionNode.get_region_name()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.get_specific_node"><code class="docutils literal notranslate"><span class="pre">NutsRegionNode.get_specific_node()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#module-endemo2.data_structures.prediction_models">endemo2.data_structures.prediction_models module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef"><code class="docutils literal notranslate"><span class="pre">Coef</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_exp"><code class="docutils literal notranslate"><span class="pre">Coef.get_exp()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_exp_y"><code class="docutils literal notranslate"><span class="pre">Coef.get_exp_y()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_function_y"><code class="docutils literal notranslate"><span class="pre">Coef.get_function_y()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_lin"><code class="docutils literal notranslate"><span class="pre">Coef.get_lin()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_lin_y"><code class="docutils literal notranslate"><span class="pre">Coef.get_lin_y()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_log"><code class="docutils literal notranslate"><span class="pre">Coef.get_log()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_log_y"><code class="docutils literal notranslate"><span class="pre">Coef.get_log_y()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_method"><code class="docutils literal notranslate"><span class="pre">Coef.get_method()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_offset"><code class="docutils literal notranslate"><span class="pre">Coef.get_offset()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_quadr"><code class="docutils literal notranslate"><span class="pre">Coef.get_quadr()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_quadr_offset_y"><code class="docutils literal notranslate"><span class="pre">Coef.get_quadr_offset_y()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_quadr_y"><code class="docutils literal notranslate"><span class="pre">Coef.get_quadr_y()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_exp"><code class="docutils literal notranslate"><span class="pre">Coef.set_exp()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_exp_growth_rate"><code class="docutils literal notranslate"><span class="pre">Coef.set_exp_growth_rate()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_exp_start_point"><code class="docutils literal notranslate"><span class="pre">Coef.set_exp_start_point()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_lin"><code class="docutils literal notranslate"><span class="pre">Coef.set_lin()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_log"><code class="docutils literal notranslate"><span class="pre">Coef.set_log()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_method"><code class="docutils literal notranslate"><span class="pre">Coef.set_method()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_offset"><code class="docutils literal notranslate"><span class="pre">Coef.set_offset()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_quadr"><code class="docutils literal notranslate"><span class="pre">Coef.set_quadr()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.IntervalForecast"><code class="docutils literal notranslate"><span class="pre">IntervalForecast</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.IntervalForecast.get_forecast"><code class="docutils literal notranslate"><span class="pre">IntervalForecast.get_forecast()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.RigidTimeseries"><code class="docutils literal notranslate"><span class="pre">RigidTimeseries</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.RigidTimeseries.get_last_available_data_entry_or_zero"><code class="docutils literal notranslate"><span class="pre">RigidTimeseries.get_last_available_data_entry_or_zero()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.RigidTimeseries.get_value_at_year"><code class="docutils literal notranslate"><span class="pre">RigidTimeseries.get_value_at_year()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries"><code class="docutils literal notranslate"><span class="pre">Timeseries</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.add"><code class="docutils literal notranslate"><span class="pre">Timeseries.add()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.append_others_data"><code class="docutils literal notranslate"><span class="pre">Timeseries.append_others_data()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.divide_by"><code class="docutils literal notranslate"><span class="pre">Timeseries.divide_by()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.fill_empty_years_with_value"><code class="docutils literal notranslate"><span class="pre">Timeseries.fill_empty_years_with_value()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.fill_own_empty_years_with_value"><code class="docutils literal notranslate"><span class="pre">Timeseries.fill_own_empty_years_with_value()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.get_last_data_entry"><code class="docutils literal notranslate"><span class="pre">Timeseries.get_last_data_entry()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.get_value_at_year"><code class="docutils literal notranslate"><span class="pre">Timeseries.get_value_at_year()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.get_value_at_year_else_zero"><code class="docutils literal notranslate"><span class="pre">Timeseries.get_value_at_year_else_zero()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.map_two_timeseries"><code class="docutils literal notranslate"><span class="pre">Timeseries.map_two_timeseries()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.map_y"><code class="docutils literal notranslate"><span class="pre">Timeseries.map_y()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.merge_two_timeseries"><code class="docutils literal notranslate"><span class="pre">Timeseries.merge_two_timeseries()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.scale"><code class="docutils literal notranslate"><span class="pre">Timeseries.scale()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries"><code class="docutils literal notranslate"><span class="pre">TwoDseries</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.append_others_data"><code class="docutils literal notranslate"><span class="pre">TwoDseries.append_others_data()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.generate_coef"><code class="docutils literal notranslate"><span class="pre">TwoDseries.generate_coef()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.get_coef"><code class="docutils literal notranslate"><span class="pre">TwoDseries.get_coef()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.get_data"><code class="docutils literal notranslate"><span class="pre">TwoDseries.get_data()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.get_mean_y"><code class="docutils literal notranslate"><span class="pre">TwoDseries.get_mean_y()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.is_empty"><code class="docutils literal notranslate"><span class="pre">TwoDseries.is_empty()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.is_zero"><code class="docutils literal notranslate"><span class="pre">TwoDseries.is_zero()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#module-endemo2.data_structures">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html">endemo2.input_and_settings package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.control_parameters">endemo2.input_and_settings.control_parameters module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ControlParameters"><code class="docutils literal notranslate"><span class="pre">ControlParameters</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.CtsSettings"><code class="docutils literal notranslate"><span class="pre">CtsSettings</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.CtsSettings.map_sc_forecast_method"><code class="docutils literal notranslate"><span class="pre">CtsSettings.map_sc_forecast_method</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.GeneralSettings"><code class="docutils literal notranslate"><span class="pre">GeneralSettings</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.GeneralSettings.get_active_sectors"><code class="docutils literal notranslate"><span class="pre">GeneralSettings.get_active_sectors()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.GeneralSettings.get_parameter"><code class="docutils literal notranslate"><span class="pre">GeneralSettings.get_parameter()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.GeneralSettings.sector_id_map"><code class="docutils literal notranslate"><span class="pre">GeneralSettings.sector_id_map</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.HouseholdSettings"><code class="docutils literal notranslate"><span class="pre">HouseholdSettings</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.IndustrySettings"><code class="docutils literal notranslate"><span class="pre">IndustrySettings</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.IndustrySettings.forecast_map"><code class="docutils literal notranslate"><span class="pre">IndustrySettings.forecast_map</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ProductSettings"><code class="docutils literal notranslate"><span class="pre">ProductSettings</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ProductSettings.active"><code class="docutils literal notranslate"><span class="pre">ProductSettings.active</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ProductSettings.efficiency_improvement"><code class="docutils literal notranslate"><span class="pre">ProductSettings.efficiency_improvement</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ProductSettings.manual_exp_change_rate"><code class="docutils literal notranslate"><span class="pre">ProductSettings.manual_exp_change_rate</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ProductSettings.perc_used"><code class="docutils literal notranslate"><span class="pre">ProductSettings.perc_used</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.TransportSettings"><code class="docutils literal notranslate"><span class="pre">TransportSettings</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.TransportSettings.map_final_energy_demand_scenario_to_enum"><code class="docutils literal notranslate"><span class="pre">TransportSettings.map_final_energy_demand_scenario_to_enum</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.TransportSettings.map_model_split_method_string_to_enum"><code class="docutils literal notranslate"><span class="pre">TransportSettings.map_model_split_method_string_to_enum</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.input_cts">endemo2.input_and_settings.input_cts module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_cts.CtsInput"><code class="docutils literal notranslate"><span class="pre">CtsInput</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_cts.CtsInput.read_employee_per_subsector"><code class="docutils literal notranslate"><span class="pre">CtsInput.read_employee_per_subsector()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_cts.CtsInput.read_number_employees_cts"><code class="docutils literal notranslate"><span class="pre">CtsInput.read_number_employees_cts()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_cts.CtsInput.subsector_names"><code class="docutils literal notranslate"><span class="pre">CtsInput.subsector_names</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.input_general">endemo2.input_and_settings.input_general module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.Abbreviations"><code class="docutils literal notranslate"><span class="pre">Abbreviations</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.Abbreviations.dict_alpha2_en_map"><code class="docutils literal notranslate"><span class="pre">Abbreviations.dict_alpha2_en_map</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.Abbreviations.dict_de_en_map"><code class="docutils literal notranslate"><span class="pre">Abbreviations.dict_de_en_map</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.Abbreviations.dict_en_alpha2_map"><code class="docutils literal notranslate"><span class="pre">Abbreviations.dict_en_alpha2_map</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.GeneralInput"><code class="docutils literal notranslate"><span class="pre">GeneralInput</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.GeneralInput.sc_historical_sheet_names"><code class="docutils literal notranslate"><span class="pre">GeneralInput.sc_historical_sheet_names</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.PopulationInput"><code class="docutils literal notranslate"><span class="pre">PopulationInput</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.input_households">endemo2.input_and_settings.input_households module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput"><code class="docutils literal notranslate"><span class="pre">HouseholdsInput</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.hh_energy_carrier_unit_conversion"><code class="docutils literal notranslate"><span class="pre">HouseholdsInput.hh_energy_carrier_unit_conversion</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.hh_his_sheets_skip_rows"><code class="docutils literal notranslate"><span class="pre">HouseholdsInput.hh_his_sheets_skip_rows</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.hh_input_sheet_names"><code class="docutils literal notranslate"><span class="pre">HouseholdsInput.hh_input_sheet_names</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.hw_read_hot_water_input"><code class="docutils literal notranslate"><span class="pre">HouseholdsInput.hw_read_hot_water_input()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.read_historical_consumption"><code class="docutils literal notranslate"><span class="pre">HouseholdsInput.read_historical_consumption()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.sh_read_space_heating_input"><code class="docutils literal notranslate"><span class="pre">HouseholdsInput.sh_read_space_heating_input()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.input_industry">endemo2.input_and_settings.input_industry module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput"><code class="docutils literal notranslate"><span class="pre">IndustryInput</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput.product_data_access"><code class="docutils literal notranslate"><span class="pre">IndustryInput.product_data_access</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput.read_heat_levels"><code class="docutils literal notranslate"><span class="pre">IndustryInput.read_heat_levels()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput.read_load_timeseries"><code class="docutils literal notranslate"><span class="pre">IndustryInput.read_load_timeseries()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput.read_subsector_groups"><code class="docutils literal notranslate"><span class="pre">IndustryInput.read_subsector_groups()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput.sc_historical_data_file_names"><code class="docutils literal notranslate"><span class="pre">IndustryInput.sc_historical_data_file_names</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput.subsector_groups_hotmaps_filenames"><code class="docutils literal notranslate"><span class="pre">IndustryInput.subsector_groups_hotmaps_filenames</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput.subsector_groups_str_to_enum_map"><code class="docutils literal notranslate"><span class="pre">IndustryInput.subsector_groups_str_to_enum_map</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput"><code class="docutils literal notranslate"><span class="pre">ProductInput</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput.read_best_available_technology"><code class="docutils literal notranslate"><span class="pre">ProductInput.read_best_available_technology()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput.read_country_groups"><code class="docutils literal notranslate"><span class="pre">ProductInput.read_country_groups()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput.read_energy_carrier_consumption_historical"><code class="docutils literal notranslate"><span class="pre">ProductInput.read_energy_carrier_consumption_historical()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput.read_nuts2_installed_capacities"><code class="docutils literal notranslate"><span class="pre">ProductInput.read_nuts2_installed_capacities()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput.read_production_data"><code class="docutils literal notranslate"><span class="pre">ProductInput.read_production_data()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput.read_specific_consumption_default"><code class="docutils literal notranslate"><span class="pre">ProductInput.read_specific_consumption_default()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.RestSectorInput"><code class="docutils literal notranslate"><span class="pre">RestSectorInput</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.input_manager">endemo2.input_and_settings.input_manager module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager"><code class="docutils literal notranslate"><span class="pre">InputManager</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.ctrl_path"><code class="docutils literal notranslate"><span class="pre">InputManager.ctrl_path</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.cts_path"><code class="docutils literal notranslate"><span class="pre">InputManager.cts_path</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.general_path"><code class="docutils literal notranslate"><span class="pre">InputManager.general_path</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.hh_path"><code class="docutils literal notranslate"><span class="pre">InputManager.hh_path</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.industry_path"><code class="docutils literal notranslate"><span class="pre">InputManager.industry_path</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.input_path"><code class="docutils literal notranslate"><span class="pre">InputManager.input_path</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.output_path"><code class="docutils literal notranslate"><span class="pre">InputManager.output_path</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.read_set_and_control_parameters"><code class="docutils literal notranslate"><span class="pre">InputManager.read_set_and_control_parameters()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.super_path"><code class="docutils literal notranslate"><span class="pre">InputManager.super_path</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.transport_path"><code class="docutils literal notranslate"><span class="pre">InputManager.transport_path</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.update_set_and_control_parameters"><code class="docutils literal notranslate"><span class="pre">InputManager.update_set_and_control_parameters()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.input_transport">endemo2.input_and_settings.input_transport module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput"><code class="docutils literal notranslate"><span class="pre">TransportInput</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.read_energy_per_source"><code class="docutils literal notranslate"><span class="pre">TransportInput.read_energy_per_source()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.read_modal_split_sheets"><code class="docutils literal notranslate"><span class="pre">TransportInput.read_modal_split_sheets()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.read_specific_km"><code class="docutils literal notranslate"><span class="pre">TransportInput.read_specific_km()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.read_timeline_perc"><code class="docutils literal notranslate"><span class="pre">TransportInput.read_timeline_perc()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.tra_modal_lists"><code class="docutils literal notranslate"><span class="pre">TransportInput.tra_modal_lists</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.tra_modal_split_groups"><code class="docutils literal notranslate"><span class="pre">TransportInput.tra_modal_split_groups</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.tra_traffic_types"><code class="docutils literal notranslate"><span class="pre">TransportInput.tra_traffic_types</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.input_utility">endemo2.input_and_settings.input_utility module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_utility.FileReadingHelper"><code class="docutils literal notranslate"><span class="pre">FileReadingHelper</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_utility.FileReadingHelper.get"><code class="docutils literal notranslate"><span class="pre">FileReadingHelper.get()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_utility.FileReadingHelper.set_path_and_read"><code class="docutils literal notranslate"><span class="pre">FileReadingHelper.set_path_and_read()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_utility.FileReadingHelper.skip_years"><code class="docutils literal notranslate"><span class="pre">FileReadingHelper.skip_years()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_utility.read_energy_carrier_consumption_historical"><code class="docutils literal notranslate"><span class="pre">read_energy_carrier_consumption_historical()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_utility.skip_years_in_df"><code class="docutils literal notranslate"><span class="pre">skip_years_in_df()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.model_instance.html">endemo2.model_instance package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.model_instance.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.model_instance.instance_filter.html">endemo2.model_instance.instance_filter package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#submodules">Submodules</a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#module-endemo2.model_instance.instance_filter.cts_instance_filter">endemo2.model_instance.instance_filter.cts_instance_filter module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter"><code class="docutils literal notranslate"><span class="pre">CtsInstanceFilter</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_cts_subsector_names"><code class="docutils literal notranslate"><span class="pre">CtsInstanceFilter.get_cts_subsector_names()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_employee_share_of_population_country"><code class="docutils literal notranslate"><span class="pre">CtsInstanceFilter.get_employee_share_of_population_country()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_employee_share_of_population_nuts2"><code class="docutils literal notranslate"><span class="pre">CtsInstanceFilter.get_employee_share_of_population_nuts2()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_heat_levels"><code class="docutils literal notranslate"><span class="pre">CtsInstanceFilter.get_heat_levels()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_heat_substitution"><code class="docutils literal notranslate"><span class="pre">CtsInstanceFilter.get_heat_substitution()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_load_profile"><code class="docutils literal notranslate"><span class="pre">CtsInstanceFilter.get_load_profile()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_nuts2_regions"><code class="docutils literal notranslate"><span class="pre">CtsInstanceFilter.get_nuts2_regions()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_nuts2_spec_demand_scalar"><code class="docutils literal notranslate"><span class="pre">CtsInstanceFilter.get_nuts2_spec_demand_scalar()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_population_country"><code class="docutils literal notranslate"><span class="pre">CtsInstanceFilter.get_population_country()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_population_nuts2"><code class="docutils literal notranslate"><span class="pre">CtsInstanceFilter.get_population_nuts2()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_specific_consumption"><code class="docutils literal notranslate"><span class="pre">CtsInstanceFilter.get_specific_consumption()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#module-endemo2.model_instance.instance_filter.general_instance_filter">endemo2.model_instance.instance_filter.general_instance_filter module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter"><code class="docutils literal notranslate"><span class="pre">CountryInstanceFilter</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter.get_active_sectors"><code class="docutils literal notranslate"><span class="pre">CountryInstanceFilter.get_active_sectors()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter.get_country_abbreviations"><code class="docutils literal notranslate"><span class="pre">CountryInstanceFilter.get_country_abbreviations()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter.get_gdp_in_target_year"><code class="docutils literal notranslate"><span class="pre">CountryInstanceFilter.get_gdp_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter.get_population_country_in_target_year"><code class="docutils literal notranslate"><span class="pre">CountryInstanceFilter.get_population_country_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter.get_population_nuts2_in_target_year"><code class="docutils literal notranslate"><span class="pre">CountryInstanceFilter.get_population_nuts2_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter.get_population_nuts2_percentages_in_target_year"><code class="docutils literal notranslate"><span class="pre">CountryInstanceFilter.get_population_nuts2_percentages_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter.get_population_nuts2_sum"><code class="docutils literal notranslate"><span class="pre">CountryInstanceFilter.get_population_nuts2_sum()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.InstanceFilter"><code class="docutils literal notranslate"><span class="pre">InstanceFilter</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#module-endemo2.model_instance.instance_filter.households_instance_filter">endemo2.model_instance.instance_filter.households_instance_filter module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_area_per_household_in_target_year"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_area_per_household_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_avg_persons_per_household_in_target_year"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_avg_persons_per_household_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_energy_consumption_in_target_year"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_energy_consumption_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_energy_consumption_lighting_and_appliances_in_target_year"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_energy_consumption_lighting_and_appliances_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_heat_levels"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_heat_levels()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_hot_water_calibration_factor"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_hot_water_calibration_factor()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_hot_water_inlet_temperature"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_hot_water_inlet_temperature()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_hot_water_liter_per_capita"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_hot_water_liter_per_capita()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_hot_water_outlet_temperature"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_hot_water_outlet_temperature()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_hot_water_specific_capacity"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_hot_water_specific_capacity()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_load_profile_efh"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_load_profile_efh()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_load_profile_mfh"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_load_profile_mfh()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_nuts2_distribution"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_nuts2_distribution()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_population_in_target_year"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_population_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_single_household_share"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_single_household_share()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_space_heating_calibration_factor"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_space_heating_calibration_factor()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_space_heating_specific_heat_in_target_year"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_space_heating_specific_heat_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_subsectors"><code class="docutils literal notranslate"><span class="pre">HouseholdsInstanceFilter.get_subsectors()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#module-endemo2.model_instance.instance_filter.industry_instance_filter">endemo2.model_instance.instance_filter.industry_instance_filter module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter"><code class="docutils literal notranslate"><span class="pre">IndustryInstanceFilter</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_active_product_names"><code class="docutils literal notranslate"><span class="pre">IndustryInstanceFilter.get_active_product_names()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_active_products_for_this_country"><code class="docutils literal notranslate"><span class="pre">IndustryInstanceFilter.get_active_products_for_this_country()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_nuts2_regions"><code class="docutils literal notranslate"><span class="pre">IndustryInstanceFilter.get_nuts2_regions()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_nuts2_rest_sector_distribution"><code class="docutils literal notranslate"><span class="pre">IndustryInstanceFilter.get_nuts2_rest_sector_distribution()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_rest_sector_basis_year"><code class="docutils literal notranslate"><span class="pre">IndustryInstanceFilter.get_rest_sector_basis_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_rest_sector_growth_rate"><code class="docutils literal notranslate"><span class="pre">IndustryInstanceFilter.get_rest_sector_growth_rate()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_rest_sector_heat_levels"><code class="docutils literal notranslate"><span class="pre">IndustryInstanceFilter.get_rest_sector_heat_levels()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_rest_sector_hourly_profile"><code class="docutils literal notranslate"><span class="pre">IndustryInstanceFilter.get_rest_sector_hourly_profile()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_rest_sector_proportion_in_basis_year"><code class="docutils literal notranslate"><span class="pre">IndustryInstanceFilter.get_rest_sector_proportion_in_basis_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.IndustryInstanceFilter.get_target_year"><code class="docutils literal notranslate"><span class="pre">IndustryInstanceFilter.get_target_year()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter"><code class="docutils literal notranslate"><span class="pre">ProductInstanceFilter</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_amount"><code class="docutils literal notranslate"><span class="pre">ProductInstanceFilter.get_amount()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_bat"><code class="docutils literal notranslate"><span class="pre">ProductInstanceFilter.get_bat()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_heat_levels"><code class="docutils literal notranslate"><span class="pre">ProductInstanceFilter.get_heat_levels()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_heat_substitution"><code class="docutils literal notranslate"><span class="pre">ProductInstanceFilter.get_heat_substitution()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_historical_amount"><code class="docutils literal notranslate"><span class="pre">ProductInstanceFilter.get_historical_amount()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_hourly_profile"><code class="docutils literal notranslate"><span class="pre">ProductInstanceFilter.get_hourly_profile()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_nuts2_capacities"><code class="docutils literal notranslate"><span class="pre">ProductInstanceFilter.get_nuts2_capacities()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_perc_used"><code class="docutils literal notranslate"><span class="pre">ProductInstanceFilter.get_perc_used()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_product_amount_historical_in_year"><code class="docutils literal notranslate"><span class="pre">ProductInstanceFilter.get_product_amount_historical_in_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_product_amount_sum_country_in_target_year"><code class="docutils literal notranslate"><span class="pre">ProductInstanceFilter.get_product_amount_sum_country_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_product_amount_sum_nuts2_in_target_year"><code class="docutils literal notranslate"><span class="pre">ProductInstanceFilter.get_product_amount_sum_nuts2_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.industry_instance_filter.ProductInstanceFilter.get_specific_consumption"><code class="docutils literal notranslate"><span class="pre">ProductInstanceFilter.get_specific_consumption()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#module-endemo2.model_instance.instance_filter.transport_instance_filter">endemo2.model_instance.instance_filter.transport_instance_filter module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_energy_consumption_of_modal"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter.get_energy_consumption_of_modal()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_historical_population_in_certain_year"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter.get_historical_population_in_certain_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_modal_group_parent"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter.get_modal_group_parent()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_modal_group_percentages_in_target_year"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter.get_modal_group_percentages_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_modal_share_in_target_year"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter.get_modal_share_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_modals_for_traffic_type"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter.get_modals_for_traffic_type()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_nuts2_distribution_scalars"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter.get_nuts2_distribution_scalars()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_nuts2_region_names"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter.get_nuts2_region_names()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_perc_modal_to_demand_type_in_target_year"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter.get_perc_modal_to_demand_type_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_population_country_in_target_year"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter.get_population_country_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_population_nuts2_in_target_year"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter.get_population_nuts2_in_target_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_specific_unit_km_in_reference_year"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter.get_specific_unit_km_in_reference_year()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_unit_km_in_target_year_country"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter.get_unit_km_in_target_year_country()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.transport_instance_filter.TransportInstanceFilter.get_unit_km_in_target_year_nuts2"><code class="docutils literal notranslate"><span class="pre">TransportInstanceFilter.get_unit_km_in_target_year_nuts2()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#module-endemo2.model_instance.instance_filter">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.model_instance.model.html">endemo2.model_instance.model package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.model_instance.model.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="endemo2.model_instance.model.cts.html">endemo2.model_instance.model.cts package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.cts.html#submodules">Submodules</a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.cts.html#module-endemo2.model_instance.model.cts.cts_sector">endemo2.model_instance.model.cts.cts_sector module</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="endemo2.model_instance.model.cts.html#endemo2.model_instance.model.cts.cts_sector.CommercialTradeServices"><code class="docutils literal notranslate"><span class="pre">CommercialTradeServices</span></code></a><ul>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.cts.html#endemo2.model_instance.model.cts.cts_sector.CommercialTradeServices.calculate_demand"><code class="docutils literal notranslate"><span class="pre">CommercialTradeServices.calculate_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.cts.html#endemo2.model_instance.model.cts.cts_sector.CommercialTradeServices.calculate_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">CommercialTradeServices.calculate_demand_distributed_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.cts.html#endemo2.model_instance.model.cts.cts_sector.CommercialTradeServices.calculate_hourly_demand"><code class="docutils literal notranslate"><span class="pre">CommercialTradeServices.calculate_hourly_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.cts.html#endemo2.model_instance.model.cts.cts_sector.CommercialTradeServices.calculate_hourly_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">CommercialTradeServices.calculate_hourly_demand_distributed_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.cts.html#endemo2.model_instance.model.cts.cts_sector.CommercialTradeServices.get_subsectors"><code class="docutils literal notranslate"><span class="pre">CommercialTradeServices.get_subsectors()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.cts.html#module-endemo2.model_instance.model.cts.cts_subsector">endemo2.model_instance.model.cts.cts_subsector module</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="endemo2.model_instance.model.cts.html#endemo2.model_instance.model.cts.cts_subsector.CtsSubsector"><code class="docutils literal notranslate"><span class="pre">CtsSubsector</span></code></a><ul>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.cts.html#endemo2.model_instance.model.cts.cts_subsector.CtsSubsector.calculate_demand"><code class="docutils literal notranslate"><span class="pre">CtsSubsector.calculate_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.cts.html#endemo2.model_instance.model.cts.cts_subsector.CtsSubsector.calculate_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">CtsSubsector.calculate_demand_distributed_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.cts.html#endemo2.model_instance.model.cts.cts_subsector.CtsSubsector.calculate_hourly_demand"><code class="docutils literal notranslate"><span class="pre">CtsSubsector.calculate_hourly_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.cts.html#endemo2.model_instance.model.cts.cts_subsector.CtsSubsector.calculate_hourly_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">CtsSubsector.calculate_hourly_demand_distributed_by_nuts2()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.cts.html#module-endemo2.model_instance.model.cts">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="endemo2.model_instance.model.households.html">endemo2.model_instance.model.households package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.households.html#submodules">Submodules</a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.households.html#module-endemo2.model_instance.model.households.hh_subsectors">endemo2.model_instance.model.households.hh_subsectors module</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.hh_subsectors.HotWater"><code class="docutils literal notranslate"><span class="pre">HotWater</span></code></a><ul>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.hh_subsectors.HotWater.calculate_demand"><code class="docutils literal notranslate"><span class="pre">HotWater.calculate_demand()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l9"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.hh_subsectors.HouseholdsSubsector"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsector</span></code></a><ul>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.hh_subsectors.HouseholdsSubsector.calculate_demand"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsector.calculate_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.hh_subsectors.HouseholdsSubsector.calculate_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsector.calculate_demand_distributed_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.hh_subsectors.HouseholdsSubsector.calculate_hourly_demand_efh"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsector.calculate_hourly_demand_efh()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.hh_subsectors.HouseholdsSubsector.calculate_hourly_demand_mfh"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsector.calculate_hourly_demand_mfh()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l9"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.hh_subsectors.SpaceHeating"><code class="docutils literal notranslate"><span class="pre">SpaceHeating</span></code></a><ul>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.hh_subsectors.SpaceHeating.calculate_demand"><code class="docutils literal notranslate"><span class="pre">SpaceHeating.calculate_demand()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.households.html#module-endemo2.model_instance.model.households.household_sector">endemo2.model_instance.model.households.household_sector module</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.household_sector.Households"><code class="docutils literal notranslate"><span class="pre">Households</span></code></a><ul>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.household_sector.Households.calculate_demand"><code class="docutils literal notranslate"><span class="pre">Households.calculate_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.household_sector.Households.calculate_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Households.calculate_demand_distributed_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.household_sector.Households.calculate_hourly_demand_efh"><code class="docutils literal notranslate"><span class="pre">Households.calculate_hourly_demand_efh()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.household_sector.Households.calculate_hourly_demand_efh_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Households.calculate_hourly_demand_efh_distributed_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.household_sector.Households.calculate_hourly_demand_mfh"><code class="docutils literal notranslate"><span class="pre">Households.calculate_hourly_demand_mfh()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.households.html#endemo2.model_instance.model.households.household_sector.Households.calculate_hourly_demand_mfh_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Households.calculate_hourly_demand_mfh_distributed_by_nuts2()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.households.html#module-endemo2.model_instance.model.households">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="endemo2.model_instance.model.industry.html">endemo2.model_instance.model.industry package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.industry.html#submodules">Submodules</a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.industry.html#module-endemo2.model_instance.model.industry.industry_sector">endemo2.model_instance.model.industry.industry_sector module</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.industry_sector.Industry"><code class="docutils literal notranslate"><span class="pre">Industry</span></code></a><ul>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.industry_sector.Industry.calculate_forecasted_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_forecasted_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.industry_sector.Industry.calculate_forecasted_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_forecasted_demand_distributed_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.industry_sector.Industry.calculate_forecasted_hourly_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_forecasted_hourly_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.industry_sector.Industry.calculate_forecasted_hourly_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_forecasted_hourly_demand_distributed_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.industry_sector.Industry.calculate_rest_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_rest_demand_distributed_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.industry_sector.Industry.calculate_rest_sector_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_rest_sector_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.industry_sector.Industry.calculate_rest_sector_hourly_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_rest_sector_hourly_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.industry_sector.Industry.calculate_rest_sector_hourly_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_rest_sector_hourly_demand_distributed_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.industry_sector.Industry.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_total_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.industry_sector.Industry.calculate_total_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_total_demand_distributed_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.industry_sector.Industry.calculate_total_hourly_demand"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_total_hourly_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.industry_sector.Industry.calculate_total_hourly_demand_distributes_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Industry.calculate_total_hourly_demand_distributes_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.industry_sector.Industry.get_product"><code class="docutils literal notranslate"><span class="pre">Industry.get_product()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.industry.html#module-endemo2.model_instance.model.industry.products">endemo2.model_instance.model.industry.products module</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.products.Product"><code class="docutils literal notranslate"><span class="pre">Product</span></code></a><ul>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.products.Product.calculate_demand"><code class="docutils literal notranslate"><span class="pre">Product.calculate_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.products.Product.calculate_hourly_demand"><code class="docutils literal notranslate"><span class="pre">Product.calculate_hourly_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.products.Product.calculate_hourly_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Product.calculate_hourly_demand_distributed_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.industry.html#endemo2.model_instance.model.industry.products.Product.get_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Product.get_demand_distributed_by_nuts2()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.industry.html#module-endemo2.model_instance.model.industry">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="endemo2.model_instance.model.transport.html">endemo2.model_instance.model.transport package</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.transport.html#submodules">Submodules</a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.transport.html#module-endemo2.model_instance.model.transport.transport_sector">endemo2.model_instance.model.transport.transport_sector module</a><ul>
+<li class="toctree-l9"><a class="reference internal" href="endemo2.model_instance.model.transport.html#endemo2.model_instance.model.transport.transport_sector.Transport"><code class="docutils literal notranslate"><span class="pre">Transport</span></code></a><ul>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.transport.html#endemo2.model_instance.model.transport.transport_sector.Transport.calculate_demand"><code class="docutils literal notranslate"><span class="pre">Transport.calculate_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.transport.html#endemo2.model_instance.model.transport.transport_sector.Transport.calculate_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Transport.calculate_demand_distributed_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.transport.html#endemo2.model_instance.model.transport.transport_sector.Transport.calculate_demand_for_traffic_type"><code class="docutils literal notranslate"><span class="pre">Transport.calculate_demand_for_traffic_type()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.transport.html#endemo2.model_instance.model.transport.transport_sector.Transport.calculate_demand_for_traffic_type_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Transport.calculate_demand_for_traffic_type_distributed_by_nuts2()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.transport.html#endemo2.model_instance.model.transport.transport_sector.Transport.calculate_subsector_demand"><code class="docutils literal notranslate"><span class="pre">Transport.calculate_subsector_demand()</span></code></a></li>
+<li class="toctree-l10"><a class="reference internal" href="endemo2.model_instance.model.transport.html#endemo2.model_instance.model.transport.transport_sector.Transport.calculate_subsector_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Transport.calculate_subsector_demand_distributed_by_nuts2()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.transport.html#module-endemo2.model_instance.model.transport">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.model_instance.model.html#submodules">Submodules</a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.model_instance.model.html#module-endemo2.model_instance.model.country">endemo2.model_instance.model.country module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="endemo2.model_instance.model.html#endemo2.model_instance.model.country.Country"><code class="docutils literal notranslate"><span class="pre">Country</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.html#endemo2.model_instance.model.country.Country.calculate_total_demand"><code class="docutils literal notranslate"><span class="pre">Country.calculate_total_demand()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.html#endemo2.model_instance.model.country.Country.get_sector"><code class="docutils literal notranslate"><span class="pre">Country.get_sector()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.model_instance.model.html#module-endemo2.model_instance.model.sector">endemo2.model_instance.model.sector module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="endemo2.model_instance.model.html#endemo2.model_instance.model.sector.Sector"><code class="docutils literal notranslate"><span class="pre">Sector</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.html#endemo2.model_instance.model.sector.Sector.calculate_demand"><code class="docutils literal notranslate"><span class="pre">Sector.calculate_demand()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="endemo2.model_instance.model.html#endemo2.model_instance.model.sector.Sector.calculate_demand_distributed_by_nuts2"><code class="docutils literal notranslate"><span class="pre">Sector.calculate_demand_distributed_by_nuts2()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.model_instance.model.html#module-endemo2.model_instance.model">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.model_instance.html#module-endemo2.model_instance">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html">endemo2.output package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.output.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.output.html#module-endemo2.output.output_instance">endemo2.output.output_instance module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.generate_instance_output"><code class="docutils literal notranslate"><span class="pre">generate_instance_output()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_cts_demand_country"><code class="docutils literal notranslate"><span class="pre">output_cts_demand_country()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_cts_demand_hourly_country"><code class="docutils literal notranslate"><span class="pre">output_cts_demand_hourly_country()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_cts_demand_hourly_nuts2"><code class="docutils literal notranslate"><span class="pre">output_cts_demand_hourly_nuts2()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_cts_demand_nuts2"><code class="docutils literal notranslate"><span class="pre">output_cts_demand_nuts2()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_cts_employee_number"><code class="docutils literal notranslate"><span class="pre">output_cts_employee_number()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_cts_specific_consumption"><code class="docutils literal notranslate"><span class="pre">output_cts_specific_consumption()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_gen_gdp"><code class="docutils literal notranslate"><span class="pre">output_gen_gdp()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_gen_population_forecast"><code class="docutils literal notranslate"><span class="pre">output_gen_population_forecast()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_gen_population_forecast_details"><code class="docutils literal notranslate"><span class="pre">output_gen_population_forecast_details()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_hh_characteristics"><code class="docutils literal notranslate"><span class="pre">output_hh_characteristics()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_hh_demand_country"><code class="docutils literal notranslate"><span class="pre">output_hh_demand_country()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_hh_demand_hourly_country"><code class="docutils literal notranslate"><span class="pre">output_hh_demand_hourly_country()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_hh_demand_hourly_nuts2"><code class="docutils literal notranslate"><span class="pre">output_hh_demand_hourly_nuts2()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_hh_demand_nuts2"><code class="docutils literal notranslate"><span class="pre">output_hh_demand_nuts2()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_hh_subsectors_demand"><code class="docutils literal notranslate"><span class="pre">output_hh_subsectors_demand()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_ind_demand_country"><code class="docutils literal notranslate"><span class="pre">output_ind_demand_country()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_ind_demand_hourly_country"><code class="docutils literal notranslate"><span class="pre">output_ind_demand_hourly_country()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_ind_demand_hourly_nuts2"><code class="docutils literal notranslate"><span class="pre">output_ind_demand_hourly_nuts2()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_ind_demand_nuts2"><code class="docutils literal notranslate"><span class="pre">output_ind_demand_nuts2()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_ind_product_amount"><code class="docutils literal notranslate"><span class="pre">output_ind_product_amount()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_ind_specific_consumption"><code class="docutils literal notranslate"><span class="pre">output_ind_specific_consumption()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_demand_hourly_country"><code class="docutils literal notranslate"><span class="pre">output_tra_demand_hourly_country()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_demand_hourly_nuts2"><code class="docutils literal notranslate"><span class="pre">output_tra_demand_hourly_nuts2()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_energy_demand_country"><code class="docutils literal notranslate"><span class="pre">output_tra_energy_demand_country()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_energy_demand_detail"><code class="docutils literal notranslate"><span class="pre">output_tra_energy_demand_detail()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_energy_demand_nuts2"><code class="docutils literal notranslate"><span class="pre">output_tra_energy_demand_nuts2()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_kilometers"><code class="docutils literal notranslate"><span class="pre">output_tra_kilometers()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_kilometers_nuts2"><code class="docutils literal notranslate"><span class="pre">output_tra_kilometers_nuts2()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_modal_split"><code class="docutils literal notranslate"><span class="pre">output_tra_modal_split()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_pkm_tkm_hourly_country"><code class="docutils literal notranslate"><span class="pre">output_tra_pkm_tkm_hourly_country()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_pkm_tkm_hourly_nuts2"><code class="docutils literal notranslate"><span class="pre">output_tra_pkm_tkm_hourly_nuts2()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_production_volume"><code class="docutils literal notranslate"><span class="pre">output_tra_production_volume()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.output.html#module-endemo2.output.output_preprocessing">endemo2.output.output_preprocessing module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.generate_preprocessing_output"><code class="docutils literal notranslate"><span class="pre">generate_preprocessing_output()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_cts_coef_employee_number"><code class="docutils literal notranslate"><span class="pre">output_cts_coef_employee_number()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_cts_employee_number_visual_country"><code class="docutils literal notranslate"><span class="pre">output_cts_employee_number_visual_country()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_cts_employee_number_visual_nuts2"><code class="docutils literal notranslate"><span class="pre">output_cts_employee_number_visual_nuts2()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_cts_specific_consumption"><code class="docutils literal notranslate"><span class="pre">output_cts_specific_consumption()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_cts_specific_consumption_visual"><code class="docutils literal notranslate"><span class="pre">output_cts_specific_consumption_visual()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_hh_coef_historical_consumption"><code class="docutils literal notranslate"><span class="pre">output_hh_coef_historical_consumption()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_hh_consumption_visual_country"><code class="docutils literal notranslate"><span class="pre">output_hh_consumption_visual_country()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_hh_demand_historical_2018"><code class="docutils literal notranslate"><span class="pre">output_hh_demand_historical_2018()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_ind_coef_product_amount"><code class="docutils literal notranslate"><span class="pre">output_ind_coef_product_amount()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_ind_country_group"><code class="docutils literal notranslate"><span class="pre">output_ind_country_group()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_ind_country_group_visual"><code class="docutils literal notranslate"><span class="pre">output_ind_country_group_visual()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_ind_product_amount_visual"><code class="docutils literal notranslate"><span class="pre">output_ind_product_amount_visual()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_ind_specific_consumption"><code class="docutils literal notranslate"><span class="pre">output_ind_specific_consumption()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_ind_specific_consumption_visual"><code class="docutils literal notranslate"><span class="pre">output_ind_specific_consumption_visual()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_tra_coef_modal_split"><code class="docutils literal notranslate"><span class="pre">output_tra_coef_modal_split()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_tra_modal_split_visual"><code class="docutils literal notranslate"><span class="pre">output_tra_modal_split_visual()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.output.html#module-endemo2.output.output_utility">endemo2.output.output_utility module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator"><code class="docutils literal notranslate"><span class="pre">FileGenerator</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.add_complete_column"><code class="docutils literal notranslate"><span class="pre">FileGenerator.add_complete_column()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.add_entry"><code class="docutils literal notranslate"><span class="pre">FileGenerator.add_entry()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.end_sheet"><code class="docutils literal notranslate"><span class="pre">FileGenerator.end_sheet()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.get_day_directory"><code class="docutils literal notranslate"><span class="pre">FileGenerator.get_day_directory()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.print_all_entries"><code class="docutils literal notranslate"><span class="pre">FileGenerator.print_all_entries()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.print_length_of_all_entries"><code class="docutils literal notranslate"><span class="pre">FileGenerator.print_length_of_all_entries()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.save_file"><code class="docutils literal notranslate"><span class="pre">FileGenerator.save_file()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.start_sheet"><code class="docutils literal notranslate"><span class="pre">FileGenerator.start_sheet()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.ensure_directory_exists"><code class="docutils literal notranslate"><span class="pre">ensure_directory_exists()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.generate_timeseries_output"><code class="docutils literal notranslate"><span class="pre">generate_timeseries_output()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.get_day_folder_path"><code class="docutils literal notranslate"><span class="pre">get_day_folder_path()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.shortcut_coef_output"><code class="docutils literal notranslate"><span class="pre">shortcut_coef_output()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.shortcut_demand_table"><code class="docutils literal notranslate"><span class="pre">shortcut_demand_table()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.shortcut_save_timeseries_print"><code class="docutils literal notranslate"><span class="pre">shortcut_save_timeseries_print()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.shortcut_sc_output"><code class="docutils literal notranslate"><span class="pre">shortcut_sc_output()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.output.html#module-endemo2.output.output_utility_visual">endemo2.output.output_utility_visual module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.plot_coef_in_range"><code class="docutils literal notranslate"><span class="pre">plot_coef_in_range()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.plot_coef_with_method_in_range"><code class="docutils literal notranslate"><span class="pre">plot_coef_with_method_in_range()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.plot_historical_data"><code class="docutils literal notranslate"><span class="pre">plot_historical_data()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.plot_series_detailed"><code class="docutils literal notranslate"><span class="pre">plot_series_detailed()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.plot_series_simple"><code class="docutils literal notranslate"><span class="pre">plot_series_simple()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.save_multiple_series_plot"><code class="docutils literal notranslate"><span class="pre">save_multiple_series_plot()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.save_plot"><code class="docutils literal notranslate"><span class="pre">save_plot()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.save_series_plot"><code class="docutils literal notranslate"><span class="pre">save_series_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.output.html#module-endemo2.output">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html">endemo2.preprocessing package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.preprocessing.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.preprocessing.html#module-endemo2.preprocessing.preproccessing_step_two">endemo2.preprocessing.preproccessing_step_two module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroup"><code class="docutils literal notranslate"><span class="pre">CountryGroup</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroup.get_countries_in_group"><code class="docutils literal notranslate"><span class="pre">CountryGroup.get_countries_in_group()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined"><code class="docutils literal notranslate"><span class="pre">CountryGroupJoined</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined.get_all_historical_data"><code class="docutils literal notranslate"><span class="pre">CountryGroupJoined.get_all_historical_data()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined.get_coef"><code class="docutils literal notranslate"><span class="pre">CountryGroupJoined.get_coef()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified"><code class="docutils literal notranslate"><span class="pre">CountryGroupJoinedDiversified</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified.get_all_historical_data"><code class="docutils literal notranslate"><span class="pre">CountryGroupJoinedDiversified.get_all_historical_data()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified.get_coef_for_country"><code class="docutils literal notranslate"><span class="pre">CountryGroupJoinedDiversified.get_coef_for_country()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.GroupManager"><code class="docutils literal notranslate"><span class="pre">GroupManager</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.GroupManager.get_coef_for_country_and_product"><code class="docutils literal notranslate"><span class="pre">GroupManager.get_coef_for_country_and_product()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.GroupManager.is_in_separate_group"><code class="docutils literal notranslate"><span class="pre">GroupManager.is_in_separate_group()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.preprocessing.html#module-endemo2.preprocessing.preprocessing_step_one">endemo2.preprocessing.preprocessing_step_one module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><code class="docutils literal notranslate"><span class="pre">CountryPreprocessed</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CtsPreprocessed"><code class="docutils literal notranslate"><span class="pre">CtsPreprocessed</span></code></a><ul>
+<li class="toctree-l6"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CtsPreprocessed.preprocess_specific_consumption"><code class="docutils literal notranslate"><span class="pre">CtsPreprocessed.preprocess_specific_consumption()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.GDPPreprocessed"><code class="docutils literal notranslate"><span class="pre">GDPPreprocessed</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.HouseholdsPreprocessed"><code class="docutils literal notranslate"><span class="pre">HouseholdsPreprocessed</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.IndustryPreprocessed"><code class="docutils literal notranslate"><span class="pre">IndustryPreprocessed</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.NUTS2Preprocessed"><code class="docutils literal notranslate"><span class="pre">NUTS2Preprocessed</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.PopulationPreprocessed"><code class="docutils literal notranslate"><span class="pre">PopulationPreprocessed</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.ProductPreprocessed"><code class="docutils literal notranslate"><span class="pre">ProductPreprocessed</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.SpecificConsumptionPreprocessed"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionPreprocessed</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.TransportPreprocessed"><code class="docutils literal notranslate"><span class="pre">TransportPreprocessed</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.preprocessing.html#module-endemo2.preprocessing.preprocessing_utility">endemo2.preprocessing.preprocessing_utility module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_utility.energy_carrier_to_energy_consumption"><code class="docutils literal notranslate"><span class="pre">energy_carrier_to_energy_consumption()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.preprocessing.html#module-endemo2.preprocessing.preprocessor">endemo2.preprocessing.preprocessor module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessor.Preprocessor"><code class="docutils literal notranslate"><span class="pre">Preprocessor</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.preprocessing.html#module-endemo2.preprocessing">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.endemo">endemo2.endemo module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.endemo.Endemo"><code class="docutils literal notranslate"><span class="pre">Endemo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.endemo.Endemo.create_instance"><code class="docutils literal notranslate"><span class="pre">Endemo.create_instance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.endemo.Endemo.execute_with_preprocessing"><code class="docutils literal notranslate"><span class="pre">Endemo.execute_with_preprocessing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.endemo.Endemo.execute_without_preprocessing"><code class="docutils literal notranslate"><span class="pre">Endemo.execute_without_preprocessing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.endemo.Endemo.update_settings"><code class="docutils literal notranslate"><span class="pre">Endemo.update_settings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.endemo.Endemo.write_all_output"><code class="docutils literal notranslate"><span class="pre">Endemo.write_all_output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.endemo.Endemo.write_model_output"><code class="docutils literal notranslate"><span class="pre">Endemo.write_model_output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.html#endemo2.endemo.Endemo.write_preprocessing_output"><code class="docutils literal notranslate"><span class="pre">Endemo.write_preprocessing_output()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.utility">endemo2.utility module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.apply_all_regressions"><code class="docutils literal notranslate"><span class="pre">apply_all_regressions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.convert_table_to_filtered_data_series_per_country"><code class="docutils literal notranslate"><span class="pre">convert_table_to_filtered_data_series_per_country()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.cut_after_x"><code class="docutils literal notranslate"><span class="pre">cut_after_x()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.exp_change"><code class="docutils literal notranslate"><span class="pre">exp_change()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.exponential_interpolation"><code class="docutils literal notranslate"><span class="pre">exponential_interpolation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.filter_out_nan_and_inf"><code class="docutils literal notranslate"><span class="pre">filter_out_nan_and_inf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.find_interval_between_datapoints"><code class="docutils literal notranslate"><span class="pre">find_interval_between_datapoints()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.float_lists_to_datapoint_list"><code class="docutils literal notranslate"><span class="pre">float_lists_to_datapoint_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.get_series_range"><code class="docutils literal notranslate"><span class="pre">get_series_range()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.is_permissible_float"><code class="docutils literal notranslate"><span class="pre">is_permissible_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.is_tuple_list_zero"><code class="docutils literal notranslate"><span class="pre">is_tuple_list_zero()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.is_zero"><code class="docutils literal notranslate"><span class="pre">is_zero()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.lin_prediction"><code class="docutils literal notranslate"><span class="pre">lin_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.linear_regression"><code class="docutils literal notranslate"><span class="pre">linear_regression()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.log_prediction"><code class="docutils literal notranslate"><span class="pre">log_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.logarithmic_regression"><code class="docutils literal notranslate"><span class="pre">logarithmic_regression()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.map_data_y"><code class="docutils literal notranslate"><span class="pre">map_data_y()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.multiply_demand_dictionary_with_scalar"><code class="docutils literal notranslate"><span class="pre">multiply_demand_dictionary_with_scalar()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.multiply_dictionary_with_demand"><code class="docutils literal notranslate"><span class="pre">multiply_dictionary_with_demand()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.multiply_dictionary_with_scalar"><code class="docutils literal notranslate"><span class="pre">multiply_dictionary_with_scalar()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.plot_timeseries_regression"><code class="docutils literal notranslate"><span class="pre">plot_timeseries_regression()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.quadr_prediction"><code class="docutils literal notranslate"><span class="pre">quadr_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.quadratic_regression"><code class="docutils literal notranslate"><span class="pre">quadratic_regression()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.quadratic_regression_delta"><code class="docutils literal notranslate"><span class="pre">quadratic_regression_delta()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.str_dict"><code class="docutils literal notranslate"><span class="pre">str_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.zip_data_on_x"><code class="docutils literal notranslate"><span class="pre">zip_data_on_x()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.html#endemo2.utility.zip_data_on_x_and_map"><code class="docutils literal notranslate"><span class="pre">zip_data_on_x_and_map()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="endemo2.html" class="btn btn-neutral float-right" title="endemo2 package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

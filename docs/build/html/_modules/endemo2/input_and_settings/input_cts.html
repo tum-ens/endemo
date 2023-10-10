@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.input_and_settings.input_cts &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.input_and_settings.input_cts</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.input_and_settings.input_cts</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">utility</span> <span class="k">as</span> <span class="n">uty</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.containers</span> <span class="kn">import</span> <span class="n">Heat</span><span class="p">,</span> <span class="n">Datapoint</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.enumerations</span> <span class="kn">import</span> <span class="n">DemandType</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.control_parameters</span> <span class="kn">import</span> <span class="n">ControlParameters</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_general</span> <span class="kn">import</span> <span class="n">Abbreviations</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_utility</span> <span class="kn">import</span> <span class="n">skip_years_in_df</span><span class="p">,</span> <span class="n">read_energy_carrier_consumption_historical</span>
+
+
+<div class="viewcode-block" id="CtsInput"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_cts.CtsInput">[docs]</a><span class="k">class</span> <span class="nc">CtsInput</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CtsInput denoted input that is read from the &quot;input/industry&quot; folder.</span>
+
+<span class="sd">    :param ControlParameters ctrl: The control parameters object.</span>
+<span class="sd">    :param Path cts_path: The path to the input files for the CTS sector.</span>
+
+<span class="sd">    :ivar dict[str, dict[str, [Datapoint] dict_employee_number_country: Contains the number ob employees per</span>
+<span class="sd">        subsector for every country. Is of form {country_name -&gt; {subsector -&gt; [Datapoint]}}</span>
+<span class="sd">    :ivar dict[str, dict[str, dict[str, [Datapoint]] dict_employee_number_nuts2: Contains the number ob employees</span>
+<span class="sd">        per subsector for every NUTS2 region. Is of form</span>
+<span class="sd">        {country_name -&gt; {nuts2_region -&gt; {subsector -&gt; [Datapoint]}}}</span>
+<span class="sd">    :ivar dict[str, [Datapoint]] dict_employee_number_country_cts: Contains the number of employees in the whole</span>
+<span class="sd">        cts sector.</span>
+<span class="sd">    :ivar dict[str, [Datapoint]] energy_carrier_consumption: The historical quantity of energy carrier in</span>
+<span class="sd">        subsector. Of form: {country_name -&gt; {energy_carrier -&gt; [Datapoint]}}</span>
+<span class="sd">    :ivar dict[DemandType, Any] load_profile: The load profile for the cts sector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">subsector_names</span> <span class="o">=</span> <span class="p">[</span>  <span class="c1"># &quot;Land- und Forstwirtschaft, Fischerei&quot;, ???</span>
+        <span class="s2">&quot;Groß- und Einzelhandel&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Private Büros&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Hotel und Restaurants&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Öffentliche Büros&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Gesundheits- und Sozialwesen&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Bildung&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Sonstige&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span><span class="p">,</span> <span class="n">cts_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+
+        <span class="c1"># read per country per subsector employee numbers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_employee_number_country</span> <span class="o">=</span> \
+            <span class="nb">dict</span><span class="p">([(</span><span class="n">Abbreviations</span><span class="o">.</span><span class="n">dict_alpha2_en_map</span><span class="p">[</span><span class="n">code</span><span class="p">],</span> <span class="n">content</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span> <span class="ow">in</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">read_employee_per_subsector</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span>
+                                                   <span class="n">cts_path</span> <span class="o">/</span> <span class="s2">&quot;Employee_Nuts0.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Employee_per_sector&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                  <span class="k">if</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">Abbreviations</span><span class="o">.</span><span class="n">dict_alpha2_en_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>  <span class="c1"># if code is from an active country</span>
+
+        <span class="c1"># read per nuts2 region per subsector employee numbers</span>
+        <span class="n">dict_employee_number_nuts2_unstructured</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_employee_per_subsector</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">cts_path</span> <span class="o">/</span> <span class="s2">&quot;Employee_Nuts2.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Employee_per_sector&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_employee_number_nuts2</span> <span class="o">=</span> \
+            <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]()</span>  <span class="c1"># country_name -&gt; nuts2_region -&gt; subsector -&gt; [Datapoint]</span>
+        <span class="k">for</span> <span class="n">region_name</span><span class="p">,</span> <span class="n">dict_subsec_data</span> <span class="ow">in</span> <span class="n">dict_employee_number_nuts2_unstructured</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">region_name</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Abbreviations</span><span class="o">.</span><span class="n">dict_alpha2_en_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="c1"># skip inactive countries</span>
+                <span class="k">continue</span>
+            <span class="n">country_name</span> <span class="o">=</span> <span class="n">Abbreviations</span><span class="o">.</span><span class="n">dict_alpha2_en_map</span><span class="p">[</span><span class="n">region_name</span><span class="p">[:</span><span class="mi">2</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">country_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_employee_number_nuts2</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dict_employee_number_nuts2</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dict_employee_number_nuts2</span><span class="p">[</span><span class="n">country_name</span><span class="p">][</span><span class="n">region_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_subsec_data</span>
+
+        <span class="c1"># read total number of employees per country (for specific consumption calculation)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_employee_number_country_cts</span> <span class="o">=</span> \
+            <span class="n">CtsInput</span><span class="o">.</span><span class="n">read_number_employees_cts</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">cts_path</span> <span class="o">/</span> <span class="s2">&quot;Employee_Nuts0.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;Raw data Eurostat&quot;</span><span class="p">)</span>
+
+        <span class="c1"># read energy carrier historical data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">energy_carrier_consumption</span> <span class="o">=</span> \
+            <span class="n">read_energy_carrier_consumption_historical</span><span class="p">(</span><span class="n">cts_path</span><span class="p">,</span> <span class="s2">&quot;nrg_bal_s_GHD.xls&quot;</span><span class="p">)</span>
+
+        <span class="c1"># read load profile</span>
+        <span class="k">if</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">toggle_hourly_forecast</span><span class="p">:</span>
+            <span class="n">df_load_profile</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">cts_path</span> <span class="o">/</span> <span class="s2">&quot;CTS_Loadprofile.xlsx&quot;</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;Data&quot;</span><span class="p">)</span>
+
+            <span class="n">electricity</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;Elec&quot;</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">heat_q1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;Heat_Q1&quot;</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">heat_q2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;Heat_Q2&quot;</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">h2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;H2&quot;</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="n">Any</span><span class="p">]()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span> <span class="o">=</span> <span class="n">electricity</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Heat</span><span class="p">(</span><span class="n">q1</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span> <span class="k">for</span> <span class="n">q1</span><span class="p">,</span> <span class="n">q2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">heat_q1</span><span class="p">,</span> <span class="n">heat_q2</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span> <span class="o">=</span> <span class="n">h2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="CtsInput.read_number_employees_cts"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_cts.CtsInput.read_number_employees_cts">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">read_number_employees_cts</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span><span class="p">,</span> <span class="n">path_to_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads employees per subsector from the euro-stats input sheets.</span>
+
+<span class="sd">        :param ctrl: The control Parameters</span>
+<span class="sd">        :param path_to_file: Path of the file that should be read.</span>
+<span class="sd">        :param sheet_name: The name of the sheet that should be read.</span>
+<span class="sd">        :return: The data on number of employees (in thousands) in the whole cts sector of a country.</span>
+<span class="sd">            Is of form {country_name -&gt; data}.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df_employee_num</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">path_to_file</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">)</span>
+
+        <span class="c1"># skip years</span>
+        <span class="n">skip_years_in_df</span><span class="p">(</span><span class="n">df_employee_num</span><span class="p">,</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">cts_settings</span><span class="o">.</span><span class="n">skip_years</span><span class="p">)</span>
+
+        <span class="n">dict_employee_number</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">]]()</span>  <span class="c1"># country_name -&gt; subsector -&gt; [Datapoint]</span>
+        <span class="n">years</span> <span class="o">=</span> <span class="n">df_employee_num</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_employee_num</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="c1"># only take the GUD lines and skip everything else</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;NACE_R2 (Codes)&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;GHD&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">alpha2</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">alpha2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Abbreviations</span><span class="o">.</span><span class="n">dict_alpha2_en_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="c1"># inactive country, skip</span>
+                <span class="k">continue</span>
+            <span class="n">country_name</span> <span class="o">=</span> <span class="n">Abbreviations</span><span class="o">.</span><span class="n">dict_alpha2_en_map</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+
+            <span class="c1"># get values over time</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="n">zipped</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">float_lists_to_datapoint_list</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">filter_out_nan_and_inf</span><span class="p">(</span><span class="n">zipped</span><span class="p">)</span>
+            <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">cut_after_x</span><span class="p">(</span><span class="n">his_data</span><span class="p">,</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">cts_settings</span><span class="o">.</span><span class="n">last_available_year</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># save</span>
+            <span class="n">dict_employee_number</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">his_data</span>
+
+        <span class="k">return</span> <span class="n">dict_employee_number</span></div>
+
+<div class="viewcode-block" id="CtsInput.read_employee_per_subsector"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_cts.CtsInput.read_employee_per_subsector">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">read_employee_per_subsector</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">path_to_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">]]():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads employees per subsector from the Employee...xlsx input sheets</span>
+
+<span class="sd">        :param ctrl: The control Parameters</span>
+<span class="sd">        :param path_to_file: Path of the file that should be read.</span>
+<span class="sd">        :param sheet_name: The name of the sheet that should be read.</span>
+<span class="sd">        :return: The data on number of employees in each subsector of form {region_name -&gt; {subsector_name -&gt; data}},</span>
+<span class="sd">            where region_name can be a country or a nuts2 region, depending on input file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df_employee_num_per_subsector</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">path_to_file</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">)</span>
+
+        <span class="c1"># skip years</span>
+        <span class="n">skip_years_in_df</span><span class="p">(</span><span class="n">df_employee_num_per_subsector</span><span class="p">,</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">cts_settings</span><span class="o">.</span><span class="n">skip_years</span><span class="p">)</span>
+
+        <span class="n">dict_employee_number</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">]]()</span>  <span class="c1"># country_name -&gt; subsector -&gt; [Datapoint]</span>
+        <span class="n">years</span> <span class="o">=</span> <span class="n">df_employee_num_per_subsector</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_employee_num_per_subsector</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">region_column</span> <span class="o">=</span> <span class="s2">&quot;Land&quot;</span> <span class="k">if</span> <span class="s2">&quot;Land&quot;</span> <span class="ow">in</span> <span class="n">df_employee_num_per_subsector</span><span class="o">.</span><span class="n">columns</span> <span class="k">else</span> <span class="s2">&quot;NUTS2&quot;</span>
+            <span class="n">region_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">region_column</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">subsector</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Sektor&quot;</span><span class="p">]</span>
+
+            <span class="c1"># get values over time</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
+            <span class="n">zipped</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">float_lists_to_datapoint_list</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">filter_out_nan_and_inf</span><span class="p">(</span><span class="n">zipped</span><span class="p">)</span>
+            <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">map_data_y</span><span class="p">(</span><span class="n">his_data</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+            <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">cut_after_x</span><span class="p">(</span><span class="n">his_data</span><span class="p">,</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">cts_settings</span><span class="o">.</span><span class="n">last_available_year</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># save</span>
+            <span class="k">if</span> <span class="n">region_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_employee_number</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">dict_employee_number</span><span class="p">[</span><span class="n">region_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">dict_employee_number</span><span class="p">[</span><span class="n">region_name</span><span class="p">][</span><span class="n">subsector</span><span class="p">]</span> <span class="o">=</span> <span class="n">his_data</span>
+
+        <span class="k">return</span> <span class="n">dict_employee_number</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

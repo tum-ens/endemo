@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2 package &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="endemo2.data_structures package" href="endemo2.data_structures.html" />
+    <link rel="prev" title="Welcome to Endemo’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">endemo2 package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html">endemo2.data_structures package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html">endemo2.input_and_settings package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.model_instance.html">endemo2.model_instance package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html">endemo2.output package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html">endemo2.preprocessing package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-endemo2.endemo">endemo2.endemo module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.endemo.Endemo"><code class="docutils literal notranslate"><span class="pre">Endemo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.endemo.Endemo.create_instance"><code class="docutils literal notranslate"><span class="pre">Endemo.create_instance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.endemo.Endemo.execute_with_preprocessing"><code class="docutils literal notranslate"><span class="pre">Endemo.execute_with_preprocessing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.endemo.Endemo.execute_without_preprocessing"><code class="docutils literal notranslate"><span class="pre">Endemo.execute_without_preprocessing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.endemo.Endemo.update_settings"><code class="docutils literal notranslate"><span class="pre">Endemo.update_settings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.endemo.Endemo.write_all_output"><code class="docutils literal notranslate"><span class="pre">Endemo.write_all_output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.endemo.Endemo.write_model_output"><code class="docutils literal notranslate"><span class="pre">Endemo.write_model_output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.endemo.Endemo.write_preprocessing_output"><code class="docutils literal notranslate"><span class="pre">Endemo.write_preprocessing_output()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-endemo2.utility">endemo2.utility module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.apply_all_regressions"><code class="docutils literal notranslate"><span class="pre">apply_all_regressions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.convert_table_to_filtered_data_series_per_country"><code class="docutils literal notranslate"><span class="pre">convert_table_to_filtered_data_series_per_country()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.cut_after_x"><code class="docutils literal notranslate"><span class="pre">cut_after_x()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.exp_change"><code class="docutils literal notranslate"><span class="pre">exp_change()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.exponential_interpolation"><code class="docutils literal notranslate"><span class="pre">exponential_interpolation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.filter_out_nan_and_inf"><code class="docutils literal notranslate"><span class="pre">filter_out_nan_and_inf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.find_interval_between_datapoints"><code class="docutils literal notranslate"><span class="pre">find_interval_between_datapoints()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.float_lists_to_datapoint_list"><code class="docutils literal notranslate"><span class="pre">float_lists_to_datapoint_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.get_series_range"><code class="docutils literal notranslate"><span class="pre">get_series_range()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.is_permissible_float"><code class="docutils literal notranslate"><span class="pre">is_permissible_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.is_tuple_list_zero"><code class="docutils literal notranslate"><span class="pre">is_tuple_list_zero()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.is_zero"><code class="docutils literal notranslate"><span class="pre">is_zero()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.lin_prediction"><code class="docutils literal notranslate"><span class="pre">lin_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.linear_regression"><code class="docutils literal notranslate"><span class="pre">linear_regression()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.log_prediction"><code class="docutils literal notranslate"><span class="pre">log_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.logarithmic_regression"><code class="docutils literal notranslate"><span class="pre">logarithmic_regression()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.map_data_y"><code class="docutils literal notranslate"><span class="pre">map_data_y()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.multiply_demand_dictionary_with_scalar"><code class="docutils literal notranslate"><span class="pre">multiply_demand_dictionary_with_scalar()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.multiply_dictionary_with_demand"><code class="docutils literal notranslate"><span class="pre">multiply_dictionary_with_demand()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.multiply_dictionary_with_scalar"><code class="docutils literal notranslate"><span class="pre">multiply_dictionary_with_scalar()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.plot_timeseries_regression"><code class="docutils literal notranslate"><span class="pre">plot_timeseries_regression()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.quadr_prediction"><code class="docutils literal notranslate"><span class="pre">quadr_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.quadratic_regression"><code class="docutils literal notranslate"><span class="pre">quadratic_regression()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.quadratic_regression_delta"><code class="docutils literal notranslate"><span class="pre">quadratic_regression_delta()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.str_dict"><code class="docutils literal notranslate"><span class="pre">str_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.zip_data_on_x"><code class="docutils literal notranslate"><span class="pre">zip_data_on_x()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#endemo2.utility.zip_data_on_x_and_map"><code class="docutils literal notranslate"><span class="pre">zip_data_on_x_and_map()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-endemo2">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">endemo2 package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/endemo2.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="endemo2-package">
+<h1>endemo2 package<a class="headerlink" href="#endemo2-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.data_structures.html">endemo2.data_structures package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.data_structures.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.data_structures.html#module-endemo2.data_structures.containers">endemo2.data_structures.containers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.CA"><code class="docutils literal notranslate"><span class="pre">CA</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.CA.alpha2"><code class="docutils literal notranslate"><span class="pre">CA.alpha2</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.CA.alpha3"><code class="docutils literal notranslate"><span class="pre">CA.alpha3</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.CA.german_name"><code class="docutils literal notranslate"><span class="pre">CA.german_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint"><code class="docutils literal notranslate"><span class="pre">Datapoint</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint.x"><code class="docutils literal notranslate"><span class="pre">Datapoint.x</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint.y"><code class="docutils literal notranslate"><span class="pre">Datapoint.y</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand"><code class="docutils literal notranslate"><span class="pre">Demand</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand.add"><code class="docutils literal notranslate"><span class="pre">Demand.add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand.copy_multiply"><code class="docutils literal notranslate"><span class="pre">Demand.copy_multiply()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand.copy_scale"><code class="docutils literal notranslate"><span class="pre">Demand.copy_scale()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand.get"><code class="docutils literal notranslate"><span class="pre">Demand.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand.get_sum"><code class="docutils literal notranslate"><span class="pre">Demand.get_sum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand.scale"><code class="docutils literal notranslate"><span class="pre">Demand.scale()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand.set"><code class="docutils literal notranslate"><span class="pre">Demand.set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.EH"><code class="docutils literal notranslate"><span class="pre">EH</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.EH.electricity"><code class="docutils literal notranslate"><span class="pre">EH.electricity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.EH.heat"><code class="docutils literal notranslate"><span class="pre">EH.heat</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat"><code class="docutils literal notranslate"><span class="pre">Heat</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat.copy_add"><code class="docutils literal notranslate"><span class="pre">Heat.copy_add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat.copy_multiply"><code class="docutils literal notranslate"><span class="pre">Heat.copy_multiply()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat.copy_multiply_scalar"><code class="docutils literal notranslate"><span class="pre">Heat.copy_multiply_scalar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat.get_sum"><code class="docutils literal notranslate"><span class="pre">Heat.get_sum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat.mutable_add"><code class="docutils literal notranslate"><span class="pre">Heat.mutable_add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat.mutable_multiply_scalar"><code class="docutils literal notranslate"><span class="pre">Heat.mutable_multiply_scalar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat.mutable_sub"><code class="docutils literal notranslate"><span class="pre">Heat.mutable_sub()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.HisProg"><code class="docutils literal notranslate"><span class="pre">HisProg</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.HisProg.historical"><code class="docutils literal notranslate"><span class="pre">HisProg.historical</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.HisProg.prognosis"><code class="docutils literal notranslate"><span class="pre">HisProg.prognosis</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Interval"><code class="docutils literal notranslate"><span class="pre">Interval</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Interval.end"><code class="docutils literal notranslate"><span class="pre">Interval.end</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Interval.start"><code class="docutils literal notranslate"><span class="pre">Interval.start</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.SpecConsum"><code class="docutils literal notranslate"><span class="pre">SpecConsum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.SpecConsum.cap_at_bat"><code class="docutils literal notranslate"><span class="pre">SpecConsum.cap_at_bat()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.SpecConsum.scale"><code class="docutils literal notranslate"><span class="pre">SpecConsum.scale()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.data_structures.html#module-endemo2.data_structures.conversions_string">endemo2.data_structures.conversions_string module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.data_structures.html#module-endemo2.data_structures.conversions_unit">endemo2.data_structures.conversions_unit module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit"><code class="docutils literal notranslate"><span class="pre">Unit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.Billion"><code class="docutils literal notranslate"><span class="pre">Unit.Billion</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.GJ"><code class="docutils literal notranslate"><span class="pre">Unit.GJ</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.GWh"><code class="docutils literal notranslate"><span class="pre">Unit.GWh</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.MJ"><code class="docutils literal notranslate"><span class="pre">Unit.MJ</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.MWh"><code class="docutils literal notranslate"><span class="pre">Unit.MWh</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.Million"><code class="docutils literal notranslate"><span class="pre">Unit.Million</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.PJ"><code class="docutils literal notranslate"><span class="pre">Unit.PJ</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.Standard"><code class="docutils literal notranslate"><span class="pre">Unit.Standard</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.TJ"><code class="docutils literal notranslate"><span class="pre">Unit.TJ</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.TWh"><code class="docutils literal notranslate"><span class="pre">Unit.TWh</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.kWh"><code class="docutils literal notranslate"><span class="pre">Unit.kWh</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.kilo"><code class="docutils literal notranslate"><span class="pre">Unit.kilo</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.liter"><code class="docutils literal notranslate"><span class="pre">Unit.liter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit.m3"><code class="docutils literal notranslate"><span class="pre">Unit.m3</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.convert"><code class="docutils literal notranslate"><span class="pre">convert()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.get_conversion_scalar"><code class="docutils literal notranslate"><span class="pre">get_conversion_scalar()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.data_structures.html#module-endemo2.data_structures.enumerations">endemo2.data_structures.enumerations module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType"><code class="docutils literal notranslate"><span class="pre">DemandType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType.ELECTRICITY"><code class="docutils literal notranslate"><span class="pre">DemandType.ELECTRICITY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType.FUEL"><code class="docutils literal notranslate"><span class="pre">DemandType.FUEL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType.HEAT"><code class="docutils literal notranslate"><span class="pre">DemandType.HEAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType.HYDROGEN"><code class="docutils literal notranslate"><span class="pre">DemandType.HYDROGEN</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod"><code class="docutils literal notranslate"><span class="pre">ForecastMethod</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod.EXPONENTIAL"><code class="docutils literal notranslate"><span class="pre">ForecastMethod.EXPONENTIAL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod.LINEAR"><code class="docutils literal notranslate"><span class="pre">ForecastMethod.LINEAR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod.LOGARITHMIC"><code class="docutils literal notranslate"><span class="pre">ForecastMethod.LOGARITHMIC</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod.QUADRATIC"><code class="docutils literal notranslate"><span class="pre">ForecastMethod.QUADRATIC</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod.QUADRATIC_OFFSET"><code class="docutils literal notranslate"><span class="pre">ForecastMethod.QUADRATIC_OFFSET</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.GroupType"><code class="docutils literal notranslate"><span class="pre">GroupType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.GroupType.EMPTY"><code class="docutils literal notranslate"><span class="pre">GroupType.EMPTY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.GroupType.JOINED"><code class="docutils literal notranslate"><span class="pre">GroupType.JOINED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.GroupType.JOINED_DIVERSIFIED"><code class="docutils literal notranslate"><span class="pre">GroupType.JOINED_DIVERSIFIED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.GroupType.SEPARATE"><code class="docutils literal notranslate"><span class="pre">GroupType.SEPARATE</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsectorId</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId.COOKING"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsectorId.COOKING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId.OTHER"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsectorId.OTHER</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId.SPACE_COOLING"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsectorId.SPACE_COOLING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId.SPACE_HEATING"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsectorId.SPACE_HEATING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId.WATER_HEATING"><code class="docutils literal notranslate"><span class="pre">HouseholdsSubsectorId.WATER_HEATING</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ScForecastMethod"><code class="docutils literal notranslate"><span class="pre">ScForecastMethod</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ScForecastMethod.CONST_LAST"><code class="docutils literal notranslate"><span class="pre">ScForecastMethod.CONST_LAST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ScForecastMethod.CONST_MEAN"><code class="docutils literal notranslate"><span class="pre">ScForecastMethod.CONST_MEAN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ScForecastMethod.LINEAR"><code class="docutils literal notranslate"><span class="pre">ScForecastMethod.LINEAR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ScForecastMethod.LOGARITHMIC"><code class="docutils literal notranslate"><span class="pre">ScForecastMethod.LOGARITHMIC</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SectorIdentifier"><code class="docutils literal notranslate"><span class="pre">SectorIdentifier</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SectorIdentifier.COMMERCIAL_TRADE_SERVICES"><code class="docutils literal notranslate"><span class="pre">SectorIdentifier.COMMERCIAL_TRADE_SERVICES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SectorIdentifier.HOUSEHOLDS"><code class="docutils literal notranslate"><span class="pre">SectorIdentifier.HOUSEHOLDS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SectorIdentifier.INDUSTRY"><code class="docutils literal notranslate"><span class="pre">SectorIdentifier.INDUSTRY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SectorIdentifier.TRANSPORT"><code class="docutils literal notranslate"><span class="pre">SectorIdentifier.TRANSPORT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.StartPoint"><code class="docutils literal notranslate"><span class="pre">StartPoint</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.StartPoint.AVERAGE_VALUE"><code class="docutils literal notranslate"><span class="pre">StartPoint.AVERAGE_VALUE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.StartPoint.LAST_AVAILABLE"><code class="docutils literal notranslate"><span class="pre">StartPoint.LAST_AVAILABLE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.StartPoint.MANUAL"><code class="docutils literal notranslate"><span class="pre">StartPoint.MANUAL</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup"><code class="docutils literal notranslate"><span class="pre">SubsectorGroup</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup.CHEMICALS_AND_PETROCHEMICALS"><code class="docutils literal notranslate"><span class="pre">SubsectorGroup.CHEMICALS_AND_PETROCHEMICALS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup.FOOD_AND_TOBACCO"><code class="docutils literal notranslate"><span class="pre">SubsectorGroup.FOOD_AND_TOBACCO</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup.IRON_AND_STEEL"><code class="docutils literal notranslate"><span class="pre">SubsectorGroup.IRON_AND_STEEL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup.NON_METALIC_MINERALS"><code class="docutils literal notranslate"><span class="pre">SubsectorGroup.NON_METALIC_MINERALS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup.PAPER"><code class="docutils literal notranslate"><span class="pre">SubsectorGroup.PAPER</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType"><code class="docutils literal notranslate"><span class="pre">TrafficType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType.BOTH"><code class="docutils literal notranslate"><span class="pre">TrafficType.BOTH</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType.FREIGHT"><code class="docutils literal notranslate"><span class="pre">TrafficType.FREIGHT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType.PERSON"><code class="docutils literal notranslate"><span class="pre">TrafficType.PERSON</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportFinalEnergyDemandScenario"><code class="docutils literal notranslate"><span class="pre">TransportFinalEnergyDemandScenario</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportFinalEnergyDemandScenario.REFERENCE"><code class="docutils literal notranslate"><span class="pre">TransportFinalEnergyDemandScenario.REFERENCE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportFinalEnergyDemandScenario.USER_DEFINED"><code class="docutils literal notranslate"><span class="pre">TransportFinalEnergyDemandScenario.USER_DEFINED</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal"><code class="docutils literal notranslate"><span class="pre">TransportModal</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.bus"><code class="docutils literal notranslate"><span class="pre">TransportModal.bus</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.car"><code class="docutils literal notranslate"><span class="pre">TransportModal.car</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.flight"><code class="docutils literal notranslate"><span class="pre">TransportModal.flight</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.rail"><code class="docutils literal notranslate"><span class="pre">TransportModal.rail</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.road"><code class="docutils literal notranslate"><span class="pre">TransportModal.road</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.road_rail"><code class="docutils literal notranslate"><span class="pre">TransportModal.road_rail</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.road_rail_ship"><code class="docutils literal notranslate"><span class="pre">TransportModal.road_rail_ship</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal.ship"><code class="docutils literal notranslate"><span class="pre">TransportModal.ship</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModalSplitMethod"><code class="docutils literal notranslate"><span class="pre">TransportModalSplitMethod</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModalSplitMethod.HISTORICAL_CONSTANT"><code class="docutils literal notranslate"><span class="pre">TransportModalSplitMethod.HISTORICAL_CONSTANT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModalSplitMethod.HISTORICAL_TIME_TREND"><code class="docutils literal notranslate"><span class="pre">TransportModalSplitMethod.HISTORICAL_TIME_TREND</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModalSplitMethod.USER_DEFINED"><code class="docutils literal notranslate"><span class="pre">TransportModalSplitMethod.USER_DEFINED</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.data_structures.html#module-endemo2.data_structures.nuts_tree">endemo2.data_structures.nuts_tree module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegion"><code class="docutils literal notranslate"><span class="pre">NutsRegion</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionLeaf"><code class="docutils literal notranslate"><span class="pre">NutsRegionLeaf</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionLeaf.get"><code class="docutils literal notranslate"><span class="pre">NutsRegionLeaf.get()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode"><code class="docutils literal notranslate"><span class="pre">NutsRegionNode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.add_leaf_region"><code class="docutils literal notranslate"><span class="pre">NutsRegionNode.add_leaf_region()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.get_all_leaf_nodes"><code class="docutils literal notranslate"><span class="pre">NutsRegionNode.get_all_leaf_nodes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.get_nodes_dfs"><code class="docutils literal notranslate"><span class="pre">NutsRegionNode.get_nodes_dfs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.get_region_name"><code class="docutils literal notranslate"><span class="pre">NutsRegionNode.get_region_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.get_specific_node"><code class="docutils literal notranslate"><span class="pre">NutsRegionNode.get_specific_node()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.data_structures.html#module-endemo2.data_structures.prediction_models">endemo2.data_structures.prediction_models module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef"><code class="docutils literal notranslate"><span class="pre">Coef</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_exp"><code class="docutils literal notranslate"><span class="pre">Coef.get_exp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_exp_y"><code class="docutils literal notranslate"><span class="pre">Coef.get_exp_y()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_function_y"><code class="docutils literal notranslate"><span class="pre">Coef.get_function_y()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_lin"><code class="docutils literal notranslate"><span class="pre">Coef.get_lin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_lin_y"><code class="docutils literal notranslate"><span class="pre">Coef.get_lin_y()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_log"><code class="docutils literal notranslate"><span class="pre">Coef.get_log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_log_y"><code class="docutils literal notranslate"><span class="pre">Coef.get_log_y()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_method"><code class="docutils literal notranslate"><span class="pre">Coef.get_method()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_offset"><code class="docutils literal notranslate"><span class="pre">Coef.get_offset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_quadr"><code class="docutils literal notranslate"><span class="pre">Coef.get_quadr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_quadr_offset_y"><code class="docutils literal notranslate"><span class="pre">Coef.get_quadr_offset_y()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.get_quadr_y"><code class="docutils literal notranslate"><span class="pre">Coef.get_quadr_y()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_exp"><code class="docutils literal notranslate"><span class="pre">Coef.set_exp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_exp_growth_rate"><code class="docutils literal notranslate"><span class="pre">Coef.set_exp_growth_rate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_exp_start_point"><code class="docutils literal notranslate"><span class="pre">Coef.set_exp_start_point()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_lin"><code class="docutils literal notranslate"><span class="pre">Coef.set_lin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_log"><code class="docutils literal notranslate"><span class="pre">Coef.set_log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_method"><code class="docutils literal notranslate"><span class="pre">Coef.set_method()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_offset"><code class="docutils literal notranslate"><span class="pre">Coef.set_offset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef.set_quadr"><code class="docutils literal notranslate"><span class="pre">Coef.set_quadr()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.IntervalForecast"><code class="docutils literal notranslate"><span class="pre">IntervalForecast</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.IntervalForecast.get_forecast"><code class="docutils literal notranslate"><span class="pre">IntervalForecast.get_forecast()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.RigidTimeseries"><code class="docutils literal notranslate"><span class="pre">RigidTimeseries</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.RigidTimeseries.get_last_available_data_entry_or_zero"><code class="docutils literal notranslate"><span class="pre">RigidTimeseries.get_last_available_data_entry_or_zero()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.RigidTimeseries.get_value_at_year"><code class="docutils literal notranslate"><span class="pre">RigidTimeseries.get_value_at_year()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries"><code class="docutils literal notranslate"><span class="pre">Timeseries</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.add"><code class="docutils literal notranslate"><span class="pre">Timeseries.add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.append_others_data"><code class="docutils literal notranslate"><span class="pre">Timeseries.append_others_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.divide_by"><code class="docutils literal notranslate"><span class="pre">Timeseries.divide_by()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.fill_empty_years_with_value"><code class="docutils literal notranslate"><span class="pre">Timeseries.fill_empty_years_with_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.fill_own_empty_years_with_value"><code class="docutils literal notranslate"><span class="pre">Timeseries.fill_own_empty_years_with_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.get_last_data_entry"><code class="docutils literal notranslate"><span class="pre">Timeseries.get_last_data_entry()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.get_value_at_year"><code class="docutils literal notranslate"><span class="pre">Timeseries.get_value_at_year()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.get_value_at_year_else_zero"><code class="docutils literal notranslate"><span class="pre">Timeseries.get_value_at_year_else_zero()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.map_two_timeseries"><code class="docutils literal notranslate"><span class="pre">Timeseries.map_two_timeseries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.map_y"><code class="docutils literal notranslate"><span class="pre">Timeseries.map_y()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.merge_two_timeseries"><code class="docutils literal notranslate"><span class="pre">Timeseries.merge_two_timeseries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Timeseries.scale"><code class="docutils literal notranslate"><span class="pre">Timeseries.scale()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries"><code class="docutils literal notranslate"><span class="pre">TwoDseries</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.append_others_data"><code class="docutils literal notranslate"><span class="pre">TwoDseries.append_others_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.generate_coef"><code class="docutils literal notranslate"><span class="pre">TwoDseries.generate_coef()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.get_coef"><code class="docutils literal notranslate"><span class="pre">TwoDseries.get_coef()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.get_data"><code class="docutils literal notranslate"><span class="pre">TwoDseries.get_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.get_mean_y"><code class="docutils literal notranslate"><span class="pre">TwoDseries.get_mean_y()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.is_empty"><code class="docutils literal notranslate"><span class="pre">TwoDseries.is_empty()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries.is_zero"><code class="docutils literal notranslate"><span class="pre">TwoDseries.is_zero()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.data_structures.html#module-endemo2.data_structures">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.input_and_settings.html">endemo2.input_and_settings package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.input_and_settings.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.control_parameters">endemo2.input_and_settings.control_parameters module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ControlParameters"><code class="docutils literal notranslate"><span class="pre">ControlParameters</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.CtsSettings"><code class="docutils literal notranslate"><span class="pre">CtsSettings</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.CtsSettings.map_sc_forecast_method"><code class="docutils literal notranslate"><span class="pre">CtsSettings.map_sc_forecast_method</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.GeneralSettings"><code class="docutils literal notranslate"><span class="pre">GeneralSettings</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.GeneralSettings.get_active_sectors"><code class="docutils literal notranslate"><span class="pre">GeneralSettings.get_active_sectors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.GeneralSettings.get_parameter"><code class="docutils literal notranslate"><span class="pre">GeneralSettings.get_parameter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.GeneralSettings.sector_id_map"><code class="docutils literal notranslate"><span class="pre">GeneralSettings.sector_id_map</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.HouseholdSettings"><code class="docutils literal notranslate"><span class="pre">HouseholdSettings</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.IndustrySettings"><code class="docutils literal notranslate"><span class="pre">IndustrySettings</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.IndustrySettings.forecast_map"><code class="docutils literal notranslate"><span class="pre">IndustrySettings.forecast_map</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ProductSettings"><code class="docutils literal notranslate"><span class="pre">ProductSettings</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ProductSettings.active"><code class="docutils literal notranslate"><span class="pre">ProductSettings.active</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ProductSettings.efficiency_improvement"><code class="docutils literal notranslate"><span class="pre">ProductSettings.efficiency_improvement</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ProductSettings.manual_exp_change_rate"><code class="docutils literal notranslate"><span class="pre">ProductSettings.manual_exp_change_rate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ProductSettings.perc_used"><code class="docutils literal notranslate"><span class="pre">ProductSettings.perc_used</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.TransportSettings"><code class="docutils literal notranslate"><span class="pre">TransportSettings</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.TransportSettings.map_final_energy_demand_scenario_to_enum"><code class="docutils literal notranslate"><span class="pre">TransportSettings.map_final_energy_demand_scenario_to_enum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.TransportSettings.map_model_split_method_string_to_enum"><code class="docutils literal notranslate"><span class="pre">TransportSettings.map_model_split_method_string_to_enum</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.input_cts">endemo2.input_and_settings.input_cts module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_cts.CtsInput"><code class="docutils literal notranslate"><span class="pre">CtsInput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_cts.CtsInput.read_employee_per_subsector"><code class="docutils literal notranslate"><span class="pre">CtsInput.read_employee_per_subsector()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_cts.CtsInput.read_number_employees_cts"><code class="docutils literal notranslate"><span class="pre">CtsInput.read_number_employees_cts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_cts.CtsInput.subsector_names"><code class="docutils literal notranslate"><span class="pre">CtsInput.subsector_names</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.input_general">endemo2.input_and_settings.input_general module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.Abbreviations"><code class="docutils literal notranslate"><span class="pre">Abbreviations</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.Abbreviations.dict_alpha2_en_map"><code class="docutils literal notranslate"><span class="pre">Abbreviations.dict_alpha2_en_map</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.Abbreviations.dict_de_en_map"><code class="docutils literal notranslate"><span class="pre">Abbreviations.dict_de_en_map</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.Abbreviations.dict_en_alpha2_map"><code class="docutils literal notranslate"><span class="pre">Abbreviations.dict_en_alpha2_map</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.GeneralInput"><code class="docutils literal notranslate"><span class="pre">GeneralInput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.GeneralInput.sc_historical_sheet_names"><code class="docutils literal notranslate"><span class="pre">GeneralInput.sc_historical_sheet_names</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_general.PopulationInput"><code class="docutils literal notranslate"><span class="pre">PopulationInput</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.input_households">endemo2.input_and_settings.input_households module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput"><code class="docutils literal notranslate"><span class="pre">HouseholdsInput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.hh_energy_carrier_unit_conversion"><code class="docutils literal notranslate"><span class="pre">HouseholdsInput.hh_energy_carrier_unit_conversion</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.hh_his_sheets_skip_rows"><code class="docutils literal notranslate"><span class="pre">HouseholdsInput.hh_his_sheets_skip_rows</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.hh_input_sheet_names"><code class="docutils literal notranslate"><span class="pre">HouseholdsInput.hh_input_sheet_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.hw_read_hot_water_input"><code class="docutils literal notranslate"><span class="pre">HouseholdsInput.hw_read_hot_water_input()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.read_historical_consumption"><code class="docutils literal notranslate"><span class="pre">HouseholdsInput.read_historical_consumption()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.sh_read_space_heating_input"><code class="docutils literal notranslate"><span class="pre">HouseholdsInput.sh_read_space_heating_input()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.input_industry">endemo2.input_and_settings.input_industry module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput"><code class="docutils literal notranslate"><span class="pre">IndustryInput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput.product_data_access"><code class="docutils literal notranslate"><span class="pre">IndustryInput.product_data_access</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput.read_heat_levels"><code class="docutils literal notranslate"><span class="pre">IndustryInput.read_heat_levels()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput.read_load_timeseries"><code class="docutils literal notranslate"><span class="pre">IndustryInput.read_load_timeseries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput.read_subsector_groups"><code class="docutils literal notranslate"><span class="pre">IndustryInput.read_subsector_groups()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput.sc_historical_data_file_names"><code class="docutils literal notranslate"><span class="pre">IndustryInput.sc_historical_data_file_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput.subsector_groups_hotmaps_filenames"><code class="docutils literal notranslate"><span class="pre">IndustryInput.subsector_groups_hotmaps_filenames</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.IndustryInput.subsector_groups_str_to_enum_map"><code class="docutils literal notranslate"><span class="pre">IndustryInput.subsector_groups_str_to_enum_map</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput"><code class="docutils literal notranslate"><span class="pre">ProductInput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput.read_best_available_technology"><code class="docutils literal notranslate"><span class="pre">ProductInput.read_best_available_technology()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput.read_country_groups"><code class="docutils literal notranslate"><span class="pre">ProductInput.read_country_groups()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput.read_energy_carrier_consumption_historical"><code class="docutils literal notranslate"><span class="pre">ProductInput.read_energy_carrier_consumption_historical()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput.read_nuts2_installed_capacities"><code class="docutils literal notranslate"><span class="pre">ProductInput.read_nuts2_installed_capacities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput.read_production_data"><code class="docutils literal notranslate"><span class="pre">ProductInput.read_production_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.ProductInput.read_specific_consumption_default"><code class="docutils literal notranslate"><span class="pre">ProductInput.read_specific_consumption_default()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_industry.RestSectorInput"><code class="docutils literal notranslate"><span class="pre">RestSectorInput</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.input_manager">endemo2.input_and_settings.input_manager module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager"><code class="docutils literal notranslate"><span class="pre">InputManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.ctrl_path"><code class="docutils literal notranslate"><span class="pre">InputManager.ctrl_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.cts_path"><code class="docutils literal notranslate"><span class="pre">InputManager.cts_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.general_path"><code class="docutils literal notranslate"><span class="pre">InputManager.general_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.hh_path"><code class="docutils literal notranslate"><span class="pre">InputManager.hh_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.industry_path"><code class="docutils literal notranslate"><span class="pre">InputManager.industry_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.input_path"><code class="docutils literal notranslate"><span class="pre">InputManager.input_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.output_path"><code class="docutils literal notranslate"><span class="pre">InputManager.output_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.read_set_and_control_parameters"><code class="docutils literal notranslate"><span class="pre">InputManager.read_set_and_control_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.super_path"><code class="docutils literal notranslate"><span class="pre">InputManager.super_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.transport_path"><code class="docutils literal notranslate"><span class="pre">InputManager.transport_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_manager.InputManager.update_set_and_control_parameters"><code class="docutils literal notranslate"><span class="pre">InputManager.update_set_and_control_parameters()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.input_transport">endemo2.input_and_settings.input_transport module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput"><code class="docutils literal notranslate"><span class="pre">TransportInput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.read_energy_per_source"><code class="docutils literal notranslate"><span class="pre">TransportInput.read_energy_per_source()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.read_modal_split_sheets"><code class="docutils literal notranslate"><span class="pre">TransportInput.read_modal_split_sheets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.read_specific_km"><code class="docutils literal notranslate"><span class="pre">TransportInput.read_specific_km()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.read_timeline_perc"><code class="docutils literal notranslate"><span class="pre">TransportInput.read_timeline_perc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.tra_modal_lists"><code class="docutils literal notranslate"><span class="pre">TransportInput.tra_modal_lists</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.tra_modal_split_groups"><code class="docutils literal notranslate"><span class="pre">TransportInput.tra_modal_split_groups</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_transport.TransportInput.tra_traffic_types"><code class="docutils literal notranslate"><span class="pre">TransportInput.tra_traffic_types</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings.input_utility">endemo2.input_and_settings.input_utility module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_utility.FileReadingHelper"><code class="docutils literal notranslate"><span class="pre">FileReadingHelper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_utility.FileReadingHelper.get"><code class="docutils literal notranslate"><span class="pre">FileReadingHelper.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_utility.FileReadingHelper.set_path_and_read"><code class="docutils literal notranslate"><span class="pre">FileReadingHelper.set_path_and_read()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_utility.FileReadingHelper.skip_years"><code class="docutils literal notranslate"><span class="pre">FileReadingHelper.skip_years()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_utility.read_energy_carrier_consumption_historical"><code class="docutils literal notranslate"><span class="pre">read_energy_carrier_consumption_historical()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.input_and_settings.html#endemo2.input_and_settings.input_utility.skip_years_in_df"><code class="docutils literal notranslate"><span class="pre">skip_years_in_df()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.input_and_settings.html#module-endemo2.input_and_settings">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.model_instance.html">endemo2.model_instance package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.model_instance.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.model_instance.instance_filter.html">endemo2.model_instance.instance_filter package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#module-endemo2.model_instance.instance_filter.cts_instance_filter">endemo2.model_instance.instance_filter.cts_instance_filter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#module-endemo2.model_instance.instance_filter.general_instance_filter">endemo2.model_instance.instance_filter.general_instance_filter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#module-endemo2.model_instance.instance_filter.households_instance_filter">endemo2.model_instance.instance_filter.households_instance_filter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#module-endemo2.model_instance.instance_filter.industry_instance_filter">endemo2.model_instance.instance_filter.industry_instance_filter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#module-endemo2.model_instance.instance_filter.transport_instance_filter">endemo2.model_instance.instance_filter.transport_instance_filter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.model_instance.instance_filter.html#module-endemo2.model_instance.instance_filter">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.model_instance.model.html">endemo2.model_instance.model package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.model_instance.model.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.model_instance.model.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.model_instance.model.html#module-endemo2.model_instance.model.country">endemo2.model_instance.model.country module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.model_instance.model.html#module-endemo2.model_instance.model.sector">endemo2.model_instance.model.sector module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.model_instance.model.html#module-endemo2.model_instance.model">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.model_instance.html#module-endemo2.model_instance">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.output.html">endemo2.output package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.output.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.output.html#module-endemo2.output.output_instance">endemo2.output.output_instance module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.generate_instance_output"><code class="docutils literal notranslate"><span class="pre">generate_instance_output()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_cts_demand_country"><code class="docutils literal notranslate"><span class="pre">output_cts_demand_country()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_cts_demand_hourly_country"><code class="docutils literal notranslate"><span class="pre">output_cts_demand_hourly_country()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_cts_demand_hourly_nuts2"><code class="docutils literal notranslate"><span class="pre">output_cts_demand_hourly_nuts2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_cts_demand_nuts2"><code class="docutils literal notranslate"><span class="pre">output_cts_demand_nuts2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_cts_employee_number"><code class="docutils literal notranslate"><span class="pre">output_cts_employee_number()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_cts_specific_consumption"><code class="docutils literal notranslate"><span class="pre">output_cts_specific_consumption()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_gen_gdp"><code class="docutils literal notranslate"><span class="pre">output_gen_gdp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_gen_population_forecast"><code class="docutils literal notranslate"><span class="pre">output_gen_population_forecast()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_gen_population_forecast_details"><code class="docutils literal notranslate"><span class="pre">output_gen_population_forecast_details()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_hh_characteristics"><code class="docutils literal notranslate"><span class="pre">output_hh_characteristics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_hh_demand_country"><code class="docutils literal notranslate"><span class="pre">output_hh_demand_country()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_hh_demand_hourly_country"><code class="docutils literal notranslate"><span class="pre">output_hh_demand_hourly_country()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_hh_demand_hourly_nuts2"><code class="docutils literal notranslate"><span class="pre">output_hh_demand_hourly_nuts2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_hh_demand_nuts2"><code class="docutils literal notranslate"><span class="pre">output_hh_demand_nuts2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_hh_subsectors_demand"><code class="docutils literal notranslate"><span class="pre">output_hh_subsectors_demand()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_ind_demand_country"><code class="docutils literal notranslate"><span class="pre">output_ind_demand_country()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_ind_demand_hourly_country"><code class="docutils literal notranslate"><span class="pre">output_ind_demand_hourly_country()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_ind_demand_hourly_nuts2"><code class="docutils literal notranslate"><span class="pre">output_ind_demand_hourly_nuts2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_ind_demand_nuts2"><code class="docutils literal notranslate"><span class="pre">output_ind_demand_nuts2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_ind_product_amount"><code class="docutils literal notranslate"><span class="pre">output_ind_product_amount()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_ind_specific_consumption"><code class="docutils literal notranslate"><span class="pre">output_ind_specific_consumption()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_demand_hourly_country"><code class="docutils literal notranslate"><span class="pre">output_tra_demand_hourly_country()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_demand_hourly_nuts2"><code class="docutils literal notranslate"><span class="pre">output_tra_demand_hourly_nuts2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_energy_demand_country"><code class="docutils literal notranslate"><span class="pre">output_tra_energy_demand_country()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_energy_demand_detail"><code class="docutils literal notranslate"><span class="pre">output_tra_energy_demand_detail()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_energy_demand_nuts2"><code class="docutils literal notranslate"><span class="pre">output_tra_energy_demand_nuts2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_kilometers"><code class="docutils literal notranslate"><span class="pre">output_tra_kilometers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_kilometers_nuts2"><code class="docutils literal notranslate"><span class="pre">output_tra_kilometers_nuts2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_modal_split"><code class="docutils literal notranslate"><span class="pre">output_tra_modal_split()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_pkm_tkm_hourly_country"><code class="docutils literal notranslate"><span class="pre">output_tra_pkm_tkm_hourly_country()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_pkm_tkm_hourly_nuts2"><code class="docutils literal notranslate"><span class="pre">output_tra_pkm_tkm_hourly_nuts2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_instance.output_tra_production_volume"><code class="docutils literal notranslate"><span class="pre">output_tra_production_volume()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.output.html#module-endemo2.output.output_preprocessing">endemo2.output.output_preprocessing module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.generate_preprocessing_output"><code class="docutils literal notranslate"><span class="pre">generate_preprocessing_output()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_cts_coef_employee_number"><code class="docutils literal notranslate"><span class="pre">output_cts_coef_employee_number()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_cts_employee_number_visual_country"><code class="docutils literal notranslate"><span class="pre">output_cts_employee_number_visual_country()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_cts_employee_number_visual_nuts2"><code class="docutils literal notranslate"><span class="pre">output_cts_employee_number_visual_nuts2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_cts_specific_consumption"><code class="docutils literal notranslate"><span class="pre">output_cts_specific_consumption()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_cts_specific_consumption_visual"><code class="docutils literal notranslate"><span class="pre">output_cts_specific_consumption_visual()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_hh_coef_historical_consumption"><code class="docutils literal notranslate"><span class="pre">output_hh_coef_historical_consumption()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_hh_consumption_visual_country"><code class="docutils literal notranslate"><span class="pre">output_hh_consumption_visual_country()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_hh_demand_historical_2018"><code class="docutils literal notranslate"><span class="pre">output_hh_demand_historical_2018()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_ind_coef_product_amount"><code class="docutils literal notranslate"><span class="pre">output_ind_coef_product_amount()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_ind_country_group"><code class="docutils literal notranslate"><span class="pre">output_ind_country_group()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_ind_country_group_visual"><code class="docutils literal notranslate"><span class="pre">output_ind_country_group_visual()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_ind_product_amount_visual"><code class="docutils literal notranslate"><span class="pre">output_ind_product_amount_visual()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_ind_specific_consumption"><code class="docutils literal notranslate"><span class="pre">output_ind_specific_consumption()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_ind_specific_consumption_visual"><code class="docutils literal notranslate"><span class="pre">output_ind_specific_consumption_visual()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_tra_coef_modal_split"><code class="docutils literal notranslate"><span class="pre">output_tra_coef_modal_split()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_preprocessing.output_tra_modal_split_visual"><code class="docutils literal notranslate"><span class="pre">output_tra_modal_split_visual()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.output.html#module-endemo2.output.output_utility">endemo2.output.output_utility module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator"><code class="docutils literal notranslate"><span class="pre">FileGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.add_complete_column"><code class="docutils literal notranslate"><span class="pre">FileGenerator.add_complete_column()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.add_entry"><code class="docutils literal notranslate"><span class="pre">FileGenerator.add_entry()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.end_sheet"><code class="docutils literal notranslate"><span class="pre">FileGenerator.end_sheet()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.get_day_directory"><code class="docutils literal notranslate"><span class="pre">FileGenerator.get_day_directory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.print_all_entries"><code class="docutils literal notranslate"><span class="pre">FileGenerator.print_all_entries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.print_length_of_all_entries"><code class="docutils literal notranslate"><span class="pre">FileGenerator.print_length_of_all_entries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.save_file"><code class="docutils literal notranslate"><span class="pre">FileGenerator.save_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.FileGenerator.start_sheet"><code class="docutils literal notranslate"><span class="pre">FileGenerator.start_sheet()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.ensure_directory_exists"><code class="docutils literal notranslate"><span class="pre">ensure_directory_exists()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.generate_timeseries_output"><code class="docutils literal notranslate"><span class="pre">generate_timeseries_output()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.get_day_folder_path"><code class="docutils literal notranslate"><span class="pre">get_day_folder_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.shortcut_coef_output"><code class="docutils literal notranslate"><span class="pre">shortcut_coef_output()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.shortcut_demand_table"><code class="docutils literal notranslate"><span class="pre">shortcut_demand_table()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.shortcut_save_timeseries_print"><code class="docutils literal notranslate"><span class="pre">shortcut_save_timeseries_print()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility.shortcut_sc_output"><code class="docutils literal notranslate"><span class="pre">shortcut_sc_output()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.output.html#module-endemo2.output.output_utility_visual">endemo2.output.output_utility_visual module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.plot_coef_in_range"><code class="docutils literal notranslate"><span class="pre">plot_coef_in_range()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.plot_coef_with_method_in_range"><code class="docutils literal notranslate"><span class="pre">plot_coef_with_method_in_range()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.plot_historical_data"><code class="docutils literal notranslate"><span class="pre">plot_historical_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.plot_series_detailed"><code class="docutils literal notranslate"><span class="pre">plot_series_detailed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.plot_series_simple"><code class="docutils literal notranslate"><span class="pre">plot_series_simple()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.save_multiple_series_plot"><code class="docutils literal notranslate"><span class="pre">save_multiple_series_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.save_plot"><code class="docutils literal notranslate"><span class="pre">save_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html#endemo2.output.output_utility_visual.save_series_plot"><code class="docutils literal notranslate"><span class="pre">save_series_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.output.html#module-endemo2.output">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.preprocessing.html">endemo2.preprocessing package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.preprocessing.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.preprocessing.html#module-endemo2.preprocessing.preproccessing_step_two">endemo2.preprocessing.preproccessing_step_two module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroup"><code class="docutils literal notranslate"><span class="pre">CountryGroup</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroup.get_countries_in_group"><code class="docutils literal notranslate"><span class="pre">CountryGroup.get_countries_in_group()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined"><code class="docutils literal notranslate"><span class="pre">CountryGroupJoined</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined.get_all_historical_data"><code class="docutils literal notranslate"><span class="pre">CountryGroupJoined.get_all_historical_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoined.get_coef"><code class="docutils literal notranslate"><span class="pre">CountryGroupJoined.get_coef()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified"><code class="docutils literal notranslate"><span class="pre">CountryGroupJoinedDiversified</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified.get_all_historical_data"><code class="docutils literal notranslate"><span class="pre">CountryGroupJoinedDiversified.get_all_historical_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.CountryGroupJoinedDiversified.get_coef_for_country"><code class="docutils literal notranslate"><span class="pre">CountryGroupJoinedDiversified.get_coef_for_country()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.GroupManager"><code class="docutils literal notranslate"><span class="pre">GroupManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.GroupManager.get_coef_for_country_and_product"><code class="docutils literal notranslate"><span class="pre">GroupManager.get_coef_for_country_and_product()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preproccessing_step_two.GroupManager.is_in_separate_group"><code class="docutils literal notranslate"><span class="pre">GroupManager.is_in_separate_group()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.preprocessing.html#module-endemo2.preprocessing.preprocessing_step_one">endemo2.preprocessing.preprocessing_step_one module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed"><code class="docutils literal notranslate"><span class="pre">CountryPreprocessed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CtsPreprocessed"><code class="docutils literal notranslate"><span class="pre">CtsPreprocessed</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CtsPreprocessed.preprocess_specific_consumption"><code class="docutils literal notranslate"><span class="pre">CtsPreprocessed.preprocess_specific_consumption()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.GDPPreprocessed"><code class="docutils literal notranslate"><span class="pre">GDPPreprocessed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.HouseholdsPreprocessed"><code class="docutils literal notranslate"><span class="pre">HouseholdsPreprocessed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.IndustryPreprocessed"><code class="docutils literal notranslate"><span class="pre">IndustryPreprocessed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.NUTS2Preprocessed"><code class="docutils literal notranslate"><span class="pre">NUTS2Preprocessed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.PopulationPreprocessed"><code class="docutils literal notranslate"><span class="pre">PopulationPreprocessed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.ProductPreprocessed"><code class="docutils literal notranslate"><span class="pre">ProductPreprocessed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.SpecificConsumptionPreprocessed"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionPreprocessed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.TransportPreprocessed"><code class="docutils literal notranslate"><span class="pre">TransportPreprocessed</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.preprocessing.html#module-endemo2.preprocessing.preprocessing_utility">endemo2.preprocessing.preprocessing_utility module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_utility.energy_carrier_to_energy_consumption"><code class="docutils literal notranslate"><span class="pre">energy_carrier_to_energy_consumption()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.preprocessing.html#module-endemo2.preprocessing.preprocessor">endemo2.preprocessing.preprocessor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessor.Preprocessor"><code class="docutils literal notranslate"><span class="pre">Preprocessor</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.preprocessing.html#module-endemo2.preprocessing">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-endemo2.endemo">
+<span id="endemo2-endemo-module"></span><h2>endemo2.endemo module<a class="headerlink" href="#module-endemo2.endemo" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.endemo.Endemo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Endemo</span></span><a class="reference internal" href="_modules/endemo2/endemo.html#Endemo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.endemo.Endemo" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This is the whole program. From here we control what the model does on the highest level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<em>Input</em>) – holds all the processed input_and_settings from the Excel sheets for the current run of
+the program.</p></li>
+<li><p><strong>countries_in_group</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.model_instance.model.html#endemo2.model_instance.model.country.Country" title="endemo2.model_instance.model.country.Country"><em>Country</em></a><em>]</em>) – holds all the country objects, accessible by the countries_in_group english name.</p></li>
+<li><p><strong>preprocessor</strong> (<a class="reference internal" href="endemo2.preprocessing.html#endemo2.preprocessing.preprocessor.Preprocessor" title="endemo2.preprocessing.preprocessor.Preprocessor"><em>Preprocessor</em></a>) – holds an additional layer of preprocessed data, building upon the input_manager.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.endemo.Endemo.create_instance">
+<span class="sig-name descname"><span class="pre">create_instance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/endemo.html#Endemo.create_instance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.endemo.Endemo.create_instance" title="Permalink to this definition"></a></dt>
+<dd><p>Creates an instance of the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.endemo.Endemo.execute_with_preprocessing">
+<span class="sig-name descname"><span class="pre">execute_with_preprocessing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/endemo.html#Endemo.execute_with_preprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.endemo.Endemo.execute_with_preprocessing" title="Permalink to this definition"></a></dt>
+<dd><p>Executes the whole program from start to end.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.endemo.Endemo.execute_without_preprocessing">
+<span class="sig-name descname"><span class="pre">execute_without_preprocessing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/endemo.html#Endemo.execute_without_preprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.endemo.Endemo.execute_without_preprocessing" title="Permalink to this definition"></a></dt>
+<dd><p>Executes only the model with the updated settings.
+Builds upon, but does not recalculate preprocessing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.endemo.Endemo.update_settings">
+<span class="sig-name descname"><span class="pre">update_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/endemo.html#Endemo.update_settings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.endemo.Endemo.update_settings" title="Permalink to this definition"></a></dt>
+<dd><p>Rereads the instance settings.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.endemo.Endemo.write_all_output">
+<span class="sig-name descname"><span class="pre">write_all_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/endemo.html#Endemo.write_all_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.endemo.Endemo.write_all_output" title="Permalink to this definition"></a></dt>
+<dd><p>Writes the whole output to the output folder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.endemo.Endemo.write_model_output">
+<span class="sig-name descname"><span class="pre">write_model_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/endemo.html#Endemo.write_model_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.endemo.Endemo.write_model_output" title="Permalink to this definition"></a></dt>
+<dd><p>Writes all the output that comes from the model instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.endemo.Endemo.write_preprocessing_output">
+<span class="sig-name descname"><span class="pre">write_preprocessing_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/endemo.html#Endemo.write_preprocessing_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.endemo.Endemo.write_preprocessing_output" title="Permalink to this definition"></a></dt>
+<dd><p>Writes all the output that comes from preprocessing.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-endemo2.utility">
+<span id="endemo2-utility-module"></span><h2>endemo2.utility module<a class="headerlink" href="#module-endemo2.utility" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.apply_all_regressions">
+<span class="sig-name descname"><span class="pre">apply_all_regressions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#apply_all_regressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.apply_all_regressions" title="Permalink to this definition"></a></dt>
+<dd><p>Applies all available regression algorithms to given data and returns coefficient object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datapoint</span></code></a>]) – Data that regression is applied on.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.Coef" title="endemo2.data_structures.prediction_models.Coef"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coef</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A coefficient object summarizing the results from all regressions.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.convert_table_to_filtered_data_series_per_country">
+<span class="sig-name descname"><span class="pre">convert_table_to_filtered_data_series_per_country</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#convert_table_to_filtered_data_series_per_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.convert_table_to_filtered_data_series_per_country" title="Permalink to this definition"></a></dt>
+<dd><p>Create a dictionary from a table.
+A key is the first value in row. The corresponding value is a list [column_name, column_value] for the whole row.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – The dataframe to process</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, [&lt;class ‘endemo2.data_structures.containers.Datapoint’&gt;]]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The row-oriented dictionary { first_row_entry -&gt; [(column_name, column_value)]}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.cut_after_x">
+<span class="sig-name descname"><span class="pre">cut_after_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#cut_after_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.cut_after_x" title="Permalink to this definition"></a></dt>
+<dd><p>Cuts the tail of a list, according to first entry of tuple being larger than last_x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – The data list, whose tail will be cut off.</p></li>
+<li><p><strong>last_x</strong> – The x-axis value indicating where to cut the list. (last_x is kept)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The cut data list.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint">Datapoint</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.exp_change">
+<span class="sig-name descname"><span class="pre">exp_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">change_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#exp_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.exp_change" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the result of exponential growth on a start point.</p>
+<div class="math notranslate nohighlight">
+\[y_{new} = y_{start} * (1+r)^{x_{new}-x_{start}}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_point</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datapoint</span></code></a>) – (x_start, y_start)</p></li>
+<li><p><strong>change_rate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – r</p></li>
+<li><p><strong>target_x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – x_new</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>y_new</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.exponential_interpolation">
+<span class="sig-name descname"><span class="pre">exponential_interpolation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpol_y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#exponential_interpolation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.exponential_interpolation" title="Permalink to this definition"></a></dt>
+<dd><p>Interpolate between the given datapoints and return the interpolated value at given y-axis point interpol_y.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datapoint</span></code></a>) – The left data point.</p></li>
+<li><p><strong>end</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datapoint</span></code></a>) – The right data point.</p></li>
+<li><p><strong>interpol_y</strong> – The y value at which the interpolated x value should be obtained.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The interpolated x value at y value interpol_y.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.filter_out_nan_and_inf">
+<span class="sig-name descname"><span class="pre">filter_out_nan_and_inf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#filter_out_nan_and_inf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.filter_out_nan_and_inf" title="Permalink to this definition"></a></dt>
+<dd><p>Filters out all entries in the list of tuples, where one of the values is either Inf or NaN.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – The list of tuples to filter</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The filtered list of tuples</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint">Datapoint</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.find_interval_between_datapoints">
+<span class="sig-name descname"><span class="pre">find_interval_between_datapoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datapoints</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#find_interval_between_datapoints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.find_interval_between_datapoints" title="Permalink to this definition"></a></dt>
+<dd><p>Finds the neighboring datapoints for a given target_y in a list of datapoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datapoints</strong> – The list of datapoints that should be searched for the right interval.</p></li>
+<li><p><strong>target_y</strong> – The y-axis value for which the enclosing interval should be found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The interval from the datapoint list that encloses the target_y value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Interval" title="endemo2.data_structures.containers.Interval">Interval</a>[<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint">Datapoint</a>, <a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint">Datapoint</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.float_lists_to_datapoint_list">
+<span class="sig-name descname"><span class="pre">float_lists_to_datapoint_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#float_lists_to_datapoint_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.float_lists_to_datapoint_list" title="Permalink to this definition"></a></dt>
+<dd><p>Converts two lists to a list of data points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>list1</strong> – List that will represent the x-axis.</p></li>
+<li><p><strong>list2</strong> – List that will represent the y-axis.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The list of data points gained from zipping the given lists.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint">Datapoint</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.get_series_range">
+<span class="sig-name descname"><span class="pre">get_series_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tss</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#get_series_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.get_series_range" title="Permalink to this definition"></a></dt>
+<dd><p>Takes multiple timeseries and finds out in which range of years all data falls into.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tss</strong> – The list of timeseries.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The series x-range, which all data falls into.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(int, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.is_permissible_float">
+<span class="sig-name descname"><span class="pre">is_permissible_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#is_permissible_float"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.is_permissible_float" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if a string could be converted to a float that is not NaN or Inf, without throwing an exception.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The string to check for float conversion.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if it can be converted to float, else False.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.is_tuple_list_zero">
+<span class="sig-name descname"><span class="pre">is_tuple_list_zero</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#is_tuple_list_zero"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.is_tuple_list_zero" title="Permalink to this definition"></a></dt>
+<dd><p>A wrapper for the is_zero function that applies it on a list of tuples, where only the second entries in a tuple
+are checked for being zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>xys</strong> – The tuple list which should be checked for zeroes.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the left column/entries of the list of tuples only contains zeros.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.is_zero">
+<span class="sig-name descname"><span class="pre">is_zero</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#is_zero"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.is_zero" title="Permalink to this definition"></a></dt>
+<dd><p>Checks for a list of floats if there are only zeroes present in it. Returns also true for empty list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>xs</strong> – The list to check</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if contains only zeros, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.lin_prediction">
+<span class="sig-name descname"><span class="pre">lin_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#lin_prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.lin_prediction" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the result of a linear function according to given coefficients.</p>
+<div class="math notranslate nohighlight">
+\[f(x)=k_0+k_1*x\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coef</strong> – (k_0, k_1)</p></li>
+<li><p><strong>target_x</strong> – x</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>f(x)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.linear_regression">
+<span class="sig-name descname"><span class="pre">linear_regression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visualize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#linear_regression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.linear_regression" title="Permalink to this definition"></a></dt>
+<dd><p>Apply linear regression on data and return the coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – The data on which linear regression is applied on.</p></li>
+<li><p><strong>visualize</strong> – Indicate, whether the result should be immediately plotted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The calculated coefficients (k0, k1)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(float, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.log_prediction">
+<span class="sig-name descname"><span class="pre">log_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#log_prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.log_prediction" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the result of a logarithmic function according to given coefficients.</p>
+<div class="math notranslate nohighlight">
+\[f(x)=k_0+k_1*ln(x)\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coef</strong> – (k_0, k_1)</p></li>
+<li><p><strong>target_x</strong> – x</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>f(x)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.logarithmic_regression">
+<span class="sig-name descname"><span class="pre">logarithmic_regression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#logarithmic_regression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.logarithmic_regression" title="Permalink to this definition"></a></dt>
+<dd><p>Apply logarithmic regression on data and return the coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – The data on which logarithmic regression is applied on.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The calculated coefficients (k0, k1)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(float, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.map_data_y">
+<span class="sig-name descname"><span class="pre">map_data_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#map_data_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.map_data_y" title="Permalink to this definition"></a></dt>
+<dd><p>Applies the given function component-wise on the y-axis of the given data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xys</strong> – The given data.</p></li>
+<li><p><strong>function</strong> – Function to apply to y-axis. Should be of form lambda x -&gt; …</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The mapped data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint">Datapoint</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.multiply_demand_dictionary_with_scalar">
+<span class="sig-name descname"><span class="pre">multiply_demand_dictionary_with_scalar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalar</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#multiply_demand_dictionary_with_scalar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.multiply_demand_dictionary_with_scalar" title="Permalink to this definition"></a></dt>
+<dd><p>Multiplies every dictionary demand entry with value and returns the result</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dictionary</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand" title="endemo2.data_structures.containers.Demand"><code class="xref py py-class docutils literal notranslate"><span class="pre">Demand</span></code></a>]) – The dictionary that should be used.</p></li>
+<li><p><strong>scalar</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The value the dictionary entries should be multiplied with.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand" title="endemo2.data_structures.containers.Demand"><code class="xref py py-class docutils literal notranslate"><span class="pre">Demand</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The resulting dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.multiply_dictionary_with_demand">
+<span class="sig-name descname"><span class="pre">multiply_dictionary_with_demand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">demand</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#multiply_dictionary_with_demand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.multiply_dictionary_with_demand" title="Permalink to this definition"></a></dt>
+<dd><p>Multiplies every dictionary entry with demand and returns the result</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dictionary</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – The dictionary that should be used.</p></li>
+<li><p><strong>demand</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand" title="endemo2.data_structures.containers.Demand"><code class="xref py py-class docutils literal notranslate"><span class="pre">Demand</span></code></a>) – The demand the dictionary entries should be multiplied with.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand" title="endemo2.data_structures.containers.Demand"><code class="xref py py-class docutils literal notranslate"><span class="pre">Demand</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The resulting dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.multiply_dictionary_with_scalar">
+<span class="sig-name descname"><span class="pre">multiply_dictionary_with_scalar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalar</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#multiply_dictionary_with_scalar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.multiply_dictionary_with_scalar" title="Permalink to this definition"></a></dt>
+<dd><p>Multiplies every dictionary entry with value and returns the result</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dictionary</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – The dictionary that should be used.</p></li>
+<li><p><strong>scalar</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The value the dictionary entries should be multiplied with.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The resulting dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.plot_timeseries_regression">
+<span class="sig-name descname"><span class="pre">plot_timeseries_regression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#plot_timeseries_regression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.plot_timeseries_regression" title="Permalink to this definition"></a></dt>
+<dd><p>Show a TwoDseries plotted with different optional labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dr</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.prediction_models.TwoDseries" title="endemo2.data_structures.prediction_models.TwoDseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoDseries</span></code></a>) – The TwoDseries to be plotted.</p></li>
+<li><p><strong>title</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The title of the plot.</p></li>
+<li><p><strong>x_label</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The label for the x-axis of the plot.</p></li>
+<li><p><strong>y_label</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The label for the y-axis of the plot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.quadr_prediction">
+<span class="sig-name descname"><span class="pre">quadr_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#quadr_prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.quadr_prediction" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the result of a quadratic function according to given coefficients.</p>
+<div class="math notranslate nohighlight">
+\[f(x)=k_0+k_1*x+k_2*x^2\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coef</strong> – (k_0, k_1, k_2)</p></li>
+<li><p><strong>target_x</strong> – x</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>f(x)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.quadratic_regression">
+<span class="sig-name descname"><span class="pre">quadratic_regression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visualize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#quadratic_regression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.quadratic_regression" title="Permalink to this definition"></a></dt>
+<dd><p>Apply quadratic regression on data and return the coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – The data on which linear regression is applied.</p></li>
+<li><p><strong>visualize</strong> – Indicate, whether the result should be immediately plotted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The calculated coefficients (k0, k1, k3)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(float, float, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.quadratic_regression_delta">
+<span class="sig-name descname"><span class="pre">quadratic_regression_delta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_series</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#quadratic_regression_delta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.quadratic_regression_delta" title="Permalink to this definition"></a></dt>
+<dd><p>Applies delta quadratic regression on multiple TwoDseries in a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dict_series</strong> – The TwoDseries on which the delta quadratic regression should be applied on.
+It should be structured like {tag -&gt; data list}.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The calculated coefficients (k0, k1, k2) and the offset for each tag {tag -&gt; offset}.
+Is of form {group_coefficients, {tag -&gt; offset}}</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>((float, float, float), dict[str, float])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.str_dict">
+<span class="sig-name descname"><span class="pre">str_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#str_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.str_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Used to convert a dictionary to a string in a more readable form than if we would use the regular python
+implementation.</p>
+<p>Dictionary: {
+key : value,
+key : value,
+…
+}</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dictionary</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – The dictionary to convert to string.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The string representation of the dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.zip_data_on_x">
+<span class="sig-name descname"><span class="pre">zip_data_on_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xys1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xys2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ascending_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#zip_data_on_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.zip_data_on_x" title="Permalink to this definition"></a></dt>
+<dd><p>Zip the two lists of tuples on the condition that the first tuple entry matches.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xys1</strong> – List to zip nr1 [(a,b)]</p></li>
+<li><p><strong>xys2</strong> – List to zip nr2 [(c, d)]</p></li>
+<li><p><strong>ascending_x</strong> – Indicates that the first tuple entry is ascending in the lists.
+If true, a more efficient algorithm can be used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The zipped list in format [(b, d)] for where a == c</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint">Datapoint</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.utility.zip_data_on_x_and_map">
+<span class="sig-name descname"><span class="pre">zip_data_on_x_and_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xys1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xys2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/utility.html#zip_data_on_x_and_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.zip_data_on_x_and_map" title="Permalink to this definition"></a></dt>
+<dd><p>Combines two data lists and applies the given function to them.
+x-axis has to be ascending.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xys1</strong> (<em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em>) – Data list one.</p></li>
+<li><p><strong>xys2</strong> (<em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em>) – Data list two.</p></li>
+<li><p><strong>function</strong> – The function that is applied. Should be of form lambda x y1 y2 -&gt; …</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the applied function.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-endemo2">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-endemo2" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Endemo’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="endemo2.data_structures.html" class="btn btn-neutral float-right" title="endemo2.data_structures package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.preprocessing.preprocessing_utility &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.preprocessing.preprocessing_utility</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.preprocessing.preprocessing_utility</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.containers</span> <span class="kn">import</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">EH</span><span class="p">,</span> <span class="n">Datapoint</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.prediction_models</span> <span class="kn">import</span> <span class="n">Timeseries</span>
+
+
+<div class="viewcode-block" id="energy_carrier_to_energy_consumption"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_utility.energy_carrier_to_energy_consumption">[docs]</a><span class="k">def</span> <span class="nf">energy_carrier_to_energy_consumption</span><span class="p">(</span><span class="n">efficiency</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">EH</span><span class="p">],</span>
+                                         <span class="n">dict_ec_his</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">Timeseries</span><span class="p">,</span> <span class="n">Timeseries</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert the energy carriers to electricity and heat with efficiency and sum them up.</span>
+
+<span class="sd">    :param efficiency: The efficiency of each energy carrier of the form {energy_carrier_name -&gt; efficiency_tuple}</span>
+<span class="sd">    :param dict_ec_his: The energy carrier consumption of form {energy_carrier_name -&gt; consumption_amount_data}</span>
+<span class="sd">    :return: sum of energy consumption and sum of heat consumption.</span>
+<span class="sd">        Of form (energy_consumption_sum, heat_consumption_sum)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">electricity_demand_sum</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">([])</span>
+    <span class="n">heat_demand_sum</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">([])</span>
+
+    <span class="k">for</span> <span class="n">energy_carrier_name</span><span class="p">,</span> <span class="n">ec_his_am</span> <span class="ow">in</span> <span class="n">dict_ec_his</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">ts_historical_energy_carrier_amount</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">(</span><span class="n">ec_his_am</span><span class="p">)</span>
+        <span class="n">energy_carrier_efficiency_electricity</span> <span class="o">=</span> <span class="n">efficiency</span><span class="p">[</span><span class="n">energy_carrier_name</span><span class="p">]</span><span class="o">.</span><span class="n">electricity</span>
+        <span class="n">energy_carrier_efficiency_heat</span> <span class="o">=</span> <span class="n">efficiency</span><span class="p">[</span><span class="n">energy_carrier_name</span><span class="p">]</span><span class="o">.</span><span class="n">heat</span>
+
+        <span class="c1"># multipy with efficiency of energy carrier to get demand</span>
+        <span class="n">energy_carrier_electricity</span> <span class="o">=</span> \
+            <span class="n">Timeseries</span><span class="o">.</span><span class="n">map_y</span><span class="p">(</span><span class="n">ts_historical_energy_carrier_amount</span><span class="p">,</span>
+                             <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">energy_carrier_efficiency_electricity</span><span class="p">)</span>
+        <span class="n">energy_carrier_heat</span> <span class="o">=</span> \
+            <span class="n">Timeseries</span><span class="o">.</span><span class="n">map_y</span><span class="p">(</span><span class="n">ts_historical_energy_carrier_amount</span><span class="p">,</span>
+                             <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">energy_carrier_efficiency_heat</span><span class="p">)</span>
+
+        <span class="c1"># sum total demand over all energy carriers</span>
+        <span class="n">electricity_demand_sum</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">energy_carrier_electricity</span><span class="p">)</span>
+        <span class="n">heat_demand_sum</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">energy_carrier_heat</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">electricity_demand_sum</span><span class="p">,</span> <span class="n">heat_demand_sum</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

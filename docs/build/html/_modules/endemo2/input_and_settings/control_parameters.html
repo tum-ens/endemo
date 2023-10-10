@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.input_and_settings.control_parameters &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.input_and_settings.control_parameters</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.input_and_settings.control_parameters</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains the in-model representation of all settings found in Set_and_Control_Parameters.xlsx</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.containers</span> <span class="kn">import</span> <span class="n">Heat</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.enumerations</span> <span class="kn">import</span> <span class="n">ForecastMethod</span><span class="p">,</span> <span class="n">SectorIdentifier</span><span class="p">,</span> <span class="n">DemandType</span><span class="p">,</span> <span class="n">ScForecastMethod</span><span class="p">,</span> \
+    <span class="n">TransportModalSplitMethod</span><span class="p">,</span> <span class="n">TransportFinalEnergyDemandScenario</span>
+
+<span class="n">ProductSettings</span> <span class="o">=</span> \
+    <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;ProductSettings&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;active&quot;</span><span class="p">,</span> <span class="s2">&quot;manual_exp_change_rate&quot;</span><span class="p">,</span> <span class="s2">&quot;perc_used&quot;</span><span class="p">,</span> <span class="s2">&quot;efficiency_improvement&quot;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="ControlParameters"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.ControlParameters">[docs]</a><span class="k">class</span> <span class="nc">ControlParameters</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The ControlParameter class holds the data given by the Set_and_Control_Parameters.xlsx file.</span>
+<span class="sd">    It is split in general settings, and settings for each sector, indicating non-overlapping parameters for our model.</span>
+
+<span class="sd">    :ivar GeneralSettings general_settings: The settings contained in the &quot;GeneralSettings&quot;-sheet.</span>
+<span class="sd">    :ivar IndustrySettings industry_settings: The settings contained in the &quot;IND_*&quot;-sheets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">general_settings</span><span class="p">:</span> <span class="n">GeneralSettings</span><span class="p">,</span> <span class="n">industry_settings</span><span class="p">:</span> <span class="n">IndustrySettings</span><span class="p">,</span>
+                 <span class="n">cts_settings</span><span class="p">:</span> <span class="n">CtsSettings</span><span class="p">,</span> <span class="n">hh_settings</span><span class="p">:</span> <span class="n">HouseholdSettings</span><span class="p">,</span> <span class="n">transport_settings</span><span class="p">:</span> <span class="n">TransportSettings</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">general_settings</span> <span class="o">=</span> <span class="n">general_settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">industry_settings</span> <span class="o">=</span> <span class="n">industry_settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cts_settings</span> <span class="o">=</span> <span class="n">cts_settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hh_settings</span> <span class="o">=</span> <span class="n">hh_settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transport_settings</span> <span class="o">=</span> <span class="n">transport_settings</span></div>
+
+
+<div class="viewcode-block" id="GeneralSettings"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.GeneralSettings">[docs]</a><span class="k">class</span> <span class="nc">GeneralSettings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The GeneralSettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the</span>
+<span class="sd">    GeneralSettings and Countries sheets.</span>
+
+<span class="sd">    :param pd.DataFrame ex_general: The dataframe of the &quot;GeneralSettings&quot;-sheet in Set_and_Control_Parameters.xlsx</span>
+<span class="sd">    :param pd.DataFrame ex_country: The dataframe of the &quot;Countries&quot;-sheet in Set_and_Control_Parameters.xlsx</span>
+
+<span class="sd">    :ivar dict[str, bool] _sectors_active_values: Contains information, whether a sector is activ,</span>
+<span class="sd">        as indicated by the settings.</span>
+<span class="sd">    :ivar dict[str, bool] _parameter_values: Holds the values from the GeneralSettings</span>
+<span class="sd">        table in a dictionary {Parameter_string -&gt; bool}</span>
+
+<span class="sd">    :ivar int target_year: This is the year, the model makes predictions for.</span>
+<span class="sd">    :ivar [str] recognized_countries:</span>
+<span class="sd">        This is the list of countries_in_group that are in the &quot;Countries&quot;-sheet of Set_and_Control_Parameters.xlsx</span>
+<span class="sd">    :ivar [str] active_countries: This is the list of active countries_in_group.</span>
+<span class="sd">        Only for these countries_in_group, calculations are performed.</span>
+<span class="sd">    :ivar int nuts2_version: The version of NUTS2 used for reading the files that hold information per NUTS2 Region.</span>
+<span class="sd">        Currently, it should be either 2016 or 2021.</span>
+<span class="sd">    :ivar bool toggle_hourly_forecast: Indicates whether to distribute demand over hours according to load profiles.</span>
+<span class="sd">    :ivar bool toggle_nuts2_resolution: Indicates whether to distribute demand over nuts2 regions.</span>
+<span class="sd">    :ivar bool toggle_graphical_output: Indicates whether to generate visual output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">sector_id_map</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Sector: industry&quot;</span><span class="p">:</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">INDUSTRY</span><span class="p">,</span>
+                     <span class="s2">&quot;Sector: households&quot;</span><span class="p">:</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">HOUSEHOLDS</span><span class="p">,</span>
+                     <span class="s2">&quot;Sector: transport&quot;</span><span class="p">:</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">TRANSPORT</span><span class="p">,</span>
+                     <span class="s2">&quot;Sector: commertial, trade, services&quot;</span><span class="p">:</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">COMMERCIAL_TRADE_SERVICES</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ex_general</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">ex_country</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sectors_active_values</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_values</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ex_general</span><span class="p">[</span><span class="n">ex_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Forecast year&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recognized_countries</span> <span class="o">=</span> <span class="n">ex_country</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Country&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_countries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ex_country</span><span class="p">[</span><span class="n">ex_country</span><span class="p">[</span><span class="s2">&quot;Active&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Country&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_version</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ex_general</span><span class="p">[</span><span class="n">ex_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NUTS2 classification&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_hourly_forecast</span> <span class="o">=</span> <span class="n">ex_general</span><span class="p">[</span><span class="n">ex_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Timeseries forecast&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_nuts2_resolution</span> <span class="o">=</span> \
+            <span class="nb">bool</span><span class="p">(</span><span class="n">ex_general</span><span class="p">[</span><span class="n">ex_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NUTS2 geographical resolution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_graphical_output</span> <span class="o">=</span> <span class="n">ex_general</span><span class="p">[</span><span class="n">ex_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Graphical output&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">rows_it</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">ex_general</span><span class="p">)</span><span class="o">.</span><span class="n">itertuples</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows_it</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Sector: &#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sectors_active_values</span><span class="p">[</span><span class="n">GeneralSettings</span><span class="o">.</span><span class="n">sector_id_map</span><span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">Parameter</span><span class="p">]]</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">Value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_values</span><span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">Parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">Value</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;sectors_active_values: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sectors_active_values</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
+                <span class="s2">&quot;parameter_values: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameter_values</span><span class="p">))</span>
+
+<div class="viewcode-block" id="GeneralSettings.get_active_sectors"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.GeneralSettings.get_active_sectors">[docs]</a>    <span class="k">def</span> <span class="nf">get_active_sectors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">SectorIdentifier</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: The list of transport activated for calculation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">sector</span> <span class="k">for</span> <span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">isActive</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sectors_active_values</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">isActive</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="GeneralSettings.get_parameter"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.GeneralSettings.get_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :ivar name: The parameter name in the table.</span>
+<span class="sd">        :return: The parameter value by parameter name with meaningful error message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_values</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="s2">&quot;Parameter name not found. Does the parameter access string in the code match a parameter in the &quot;</span>
+                <span class="s2">&quot;Set_and_Control_Parameters.xlsx preprocessing table?&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="IndustrySettings"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.IndustrySettings">[docs]</a><span class="k">class</span> <span class="nc">IndustrySettings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The IndustrySettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the</span>
+<span class="sd">    IND_general and IND_subsectors sheets.</span>
+
+<span class="sd">    :ivar dict[str, ForecastMethod] forecast_map: Maps the forecast method string, used in the setting tables,</span>
+<span class="sd">        to the internal enum representation.</span>
+<span class="sd">    :ivar ForecastMethod forecast_method: Contains the currently selected forecast method.</span>
+<span class="sd">    :ivar bool time_trend_model_activation_quadratic:</span>
+<span class="sd">        &quot;If the time trend model is deactivated, the traditional approach is selected&quot;</span>
+<span class="sd">    :ivar bool production_quantity_calc_per_capita:</span>
+<span class="sd">        Decides, whether the production quantity prognosis should use per-capita projection.</span>
+<span class="sd">    :ivar bool trend_calc_for_spec:</span>
+<span class="sd">        Decides, whether specific consumption should be predicted from historical data, when available.</span>
+<span class="sd">    :ivar bool nuts2_distribution_based_on_installed_ind_capacity: &quot;If false, distribution per population density.&quot;</span>
+<span class="sd">    :ivar [int] skip_years: Years that are skipped while reading files, to remove outliers.</span>
+<span class="sd">    :ivar int last_available_year: Last year that&#39;s read from historical production files (exclusive).</span>
+<span class="sd">    :ivar dict[str, ProductSettings] product_settings: Contains settings for each product.</span>
+<span class="sd">        Of the form {front_label -&gt; product_settings_obj}</span>
+<span class="sd">    :ivar [str] active_product_names: A list of the names of active products.</span>
+<span class="sd">        Only for these products, calculations are performed.</span>
+<span class="sd">    :ivar float rest_sector_growth_rate: The growth rate of the rest sector.</span>
+<span class="sd">    :ivar bool use_gdp_as_x: Indicates that prediction x-axis should be gdp instead of time.</span>
+<span class="sd">    :ivar dict[DemandType, Heat] heat_substitution: The percentage/100 of heat that is substituted by another</span>
+<span class="sd">        demand type. Is of form {demand_type -&gt; heat_substitution}.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">forecast_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span><span class="s2">&quot;Linear time trend&quot;</span><span class="p">:</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">,</span>
+                         <span class="s2">&quot;Linear GDP function&quot;</span><span class="p">:</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">,</span>
+                         <span class="s2">&quot;Quadratic GDP function&quot;</span><span class="p">:</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">QUADRATIC</span><span class="p">,</span>
+                         <span class="s2">&quot;Exponential&quot;</span><span class="p">:</span> <span class="n">ForecastMethod</span><span class="o">.</span><span class="n">EXPONENTIAL</span><span class="p">})</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_general</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">df_subsectors</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">product_settings</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_product_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">forecast_method_string</span> <span class="o">=</span> <span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Forecast method&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forecast_method</span> <span class="o">=</span> <span class="n">IndustrySettings</span><span class="o">.</span><span class="n">forecast_map</span><span class="p">[</span><span class="n">forecast_method_string</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_gdp_as_x</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="s2">&quot;GDP&quot;</span> <span class="ow">in</span> <span class="n">forecast_method_string</span> <span class="k">else</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_trend_model_activation_quadratic</span> <span class="o">=</span> \
+            <span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Time trend model activation for U-shape method&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">production_quantity_calc_per_capita</span> <span class="o">=</span> \
+            <span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Production quantity calculated per capita&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">trend_calc_for_spec</span> <span class="o">=</span> \
+            <span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Trend calculation for specific energy requirements&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_distribution_based_on_installed_ind_capacity</span> <span class="o">=</span> \
+            <span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NUTS2 distribution based on installed industrial capacity&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">skip_years_string</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Skip years&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skip_years</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">skip_years_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">))]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_available_year</span> <span class="o">=</span> \
+            <span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Last available year&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rest_sector_growth_rate</span> <span class="o">=</span> \
+            <span class="n">df_subsectors</span><span class="p">[</span><span class="n">df_subsectors</span><span class="p">[</span><span class="s2">&quot;Subsectors&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;unspecified industry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;Parameter: production quantity change in %/year&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span>
+
+        <span class="c1"># read substitution of heat by electricity and hydrogen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heat_substitution</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="n">Heat</span><span class="p">]()</span>
+        <span class="n">str1</span> <span class="o">=</span> <span class="s2">&quot;Proportion of &quot;</span>
+        <span class="n">str2</span> <span class="o">=</span> <span class="s2">&quot; usage for heat supply at &quot;</span>
+        <span class="n">str3</span> <span class="o">=</span> <span class="s2">&quot; level&quot;</span>
+        <span class="n">str_electricity</span> <span class="o">=</span> <span class="n">str1</span> <span class="o">+</span> <span class="s2">&quot;electricity&quot;</span> <span class="o">+</span> <span class="n">str2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heat_substitution</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">Heat</span><span class="p">(</span><span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">str_electricity</span> <span class="o">+</span> <span class="s2">&quot;Q1&quot;</span> <span class="o">+</span> <span class="n">str3</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                 <span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">str_electricity</span> <span class="o">+</span> <span class="s2">&quot;Q2&quot;</span> <span class="o">+</span> <span class="n">str3</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                 <span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">str_electricity</span> <span class="o">+</span> <span class="s2">&quot;Q3&quot;</span> <span class="o">+</span> <span class="n">str3</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                 <span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">str_electricity</span> <span class="o">+</span> <span class="s2">&quot;Q4&quot;</span> <span class="o">+</span> <span class="n">str3</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">str_hydrogen</span> <span class="o">=</span> <span class="n">str1</span> <span class="o">+</span> <span class="s2">&quot;hydrogen&quot;</span> <span class="o">+</span> <span class="n">str2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heat_substitution</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">Heat</span><span class="p">(</span><span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">str_hydrogen</span> <span class="o">+</span> <span class="s2">&quot;Q1&quot;</span> <span class="o">+</span> <span class="n">str3</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                 <span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">str_hydrogen</span> <span class="o">+</span> <span class="s2">&quot;Q2&quot;</span> <span class="o">+</span> <span class="n">str3</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                 <span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">str_hydrogen</span> <span class="o">+</span> <span class="s2">&quot;Q3&quot;</span> <span class="o">+</span> <span class="n">str3</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                 <span class="n">df_general</span><span class="p">[</span><span class="n">df_general</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">str_hydrogen</span> <span class="o">+</span> <span class="s2">&quot;Q4&quot;</span> <span class="o">+</span> <span class="n">str3</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">product_list</span> <span class="o">=</span> <span class="n">df_subsectors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Subsectors&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">product</span> <span class="ow">in</span> <span class="n">product_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">product</span> <span class="o">==</span> <span class="s2">&quot;unspecified industry&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">active</span> <span class="o">=</span> \
+                <span class="n">df_subsectors</span><span class="p">[</span><span class="n">df_subsectors</span><span class="p">[</span><span class="s2">&quot;Subsectors&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">product</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="s2">&quot;Active subsectors&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">prod_quant_change</span> <span class="o">=</span> \
+                <span class="n">df_subsectors</span><span class="p">[</span><span class="n">df_subsectors</span><span class="p">[</span><span class="s2">&quot;Subsectors&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">product</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="s2">&quot;Parameter: production quantity change in %/year&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span>
+            <span class="n">sub_perc_used_string</span> <span class="o">=</span> \
+                <span class="n">df_subsectors</span><span class="p">[</span><span class="n">df_subsectors</span><span class="p">[</span><span class="s2">&quot;Subsectors&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">product</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="s2">&quot;Parameter: technology substitution in %&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">sub_perc_used_float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sub_perc_used_string</span><span class="p">)</span>
+                <span class="n">sub_perc_used</span> <span class="o">=</span> <span class="n">sub_perc_used_float</span> <span class="o">/</span> <span class="mi">100</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">sub_perc_used</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">efficiency_improvement_string</span> <span class="o">=</span> \
+                <span class="n">df_subsectors</span><span class="p">[</span><span class="n">df_subsectors</span><span class="p">[</span><span class="s2">&quot;Subsectors&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">product</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="s2">&quot;Parameter: efficiency improvement in %/year&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">efficiency_improvement_float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">efficiency_improvement_string</span><span class="p">)</span>
+                <span class="n">efficiency_improvement</span> <span class="o">=</span> <span class="n">efficiency_improvement_float</span> <span class="o">/</span> <span class="mi">100</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">efficiency_improvement</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">product_settings</span><span class="p">[</span><span class="n">product</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">ProductSettings</span><span class="p">(</span><span class="n">active</span><span class="p">,</span> <span class="n">prod_quant_change</span><span class="p">,</span> <span class="n">sub_perc_used</span><span class="p">,</span> <span class="n">efficiency_improvement</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_settings</span><span class="p">[</span><span class="n">product</span><span class="p">]</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">active_product_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">product</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CtsSettings"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.CtsSettings">[docs]</a><span class="k">class</span> <span class="nc">CtsSettings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The CtsSettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the</span>
+<span class="sd">    CTS sheet.</span>
+
+<span class="sd">    :param DataFrame df_cts: The CTS sheet of Set_and_Control_Parameters.xlsx</span>
+
+<span class="sd">    :ivar ScForecastMethod trend_calc_for_spec: Sets the forecast method to extrapolate the specific consumption in the</span>
+<span class="sd">        cts sector.</span>
+<span class="sd">    :ivar bool nuts2_distribution_per_pop_density: Indicates whether the nuts2 distribution should be done by population</span>
+<span class="sd">        density or employee percentages.</span>
+<span class="sd">    :ivar [int] skip_years: These years are skipped in historical data.</span>
+<span class="sd">    :ivar int last_available_year: Years after that are not included in calculations.</span>
+<span class="sd">    :ivar Heat heat_levels: How heat should be distributed among different heat levels.</span>
+<span class="sd">    :ivar dict[DemandType, Heat] heat_substitution: The amount of heat that can be substituted by electricity or</span>
+<span class="sd">        hydrogen.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">map_sc_forecast_method</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="n">ScForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">,</span>
+        <span class="s2">&quot;2&quot;</span><span class="p">:</span> <span class="n">ScForecastMethod</span><span class="o">.</span><span class="n">LOGARITHMIC</span><span class="p">,</span>
+        <span class="s2">&quot;0&quot;</span><span class="p">:</span> <span class="n">ScForecastMethod</span><span class="o">.</span><span class="n">CONST_MEAN</span><span class="p">,</span>
+        <span class="s2">&quot;3&quot;</span><span class="p">:</span> <span class="n">ScForecastMethod</span><span class="o">.</span><span class="n">CONST_LAST</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_cts</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+
+        <span class="c1"># read parameters</span>
+        <span class="n">str_trend_calc_for_spec</span> <span class="o">=</span> \
+            <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">df_cts</span><span class="p">[</span><span class="n">df_cts</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Trend calculation for specific energy requirements&quot;</span><span class="p">]</span>
+                    <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trend_calc_for_spec</span> <span class="o">=</span> <span class="n">CtsSettings</span><span class="o">.</span><span class="n">map_sc_forecast_method</span><span class="p">[</span><span class="n">str_trend_calc_for_spec</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_distribution_per_pop_density</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span>
+            <span class="n">df_cts</span><span class="p">[</span><span class="n">df_cts</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NUTS2 distribution based on population&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">skip_years_string</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">df_cts</span><span class="p">[</span><span class="n">df_cts</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Skip years&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skip_years</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">skip_years_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">))]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_available_year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">df_cts</span><span class="p">[</span><span class="n">df_cts</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Last available year&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">heat_level_q1</span> <span class="o">=</span> \
+            <span class="n">df_cts</span><span class="p">[</span><span class="n">df_cts</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Predefined ratio of Q1 heat level (below 60°C)&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heat_levels</span> <span class="o">=</span> <span class="n">Heat</span><span class="p">(</span><span class="n">heat_level_q1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">heat_level_q1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">heat_substitution</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heat_substitution</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="nb">float</span><span class="p">(</span><span class="n">df_cts</span><span class="p">[</span><span class="n">df_cts</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Proportion of electricity usage for heat supply&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heat_substitution</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="nb">float</span><span class="p">(</span><span class="n">df_cts</span><span class="p">[</span><span class="n">df_cts</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Proportion of hydrogen usage for heat supply&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="HouseholdSettings"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.HouseholdSettings">[docs]</a><span class="k">class</span> <span class="nc">HouseholdSettings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The HouseholdSettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the</span>
+<span class="sd">    HH sheet.</span>
+
+<span class="sd">    :param DataFrame df_hh: The HH sheet of Set_and_Control_Parameters.xlsx</span>
+
+<span class="sd">    :ivar Heat heat_levels: How heat should be distributed among different heat levels.</span>
+<span class="sd">    :ivar float single_households_share: The percentage/100 of single households.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_hh</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+
+        <span class="c1"># read heat levels</span>
+        <span class="n">heat_level_q1</span> <span class="o">=</span> \
+            <span class="n">df_hh</span><span class="p">[</span><span class="n">df_hh</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Predefined ratio of Q1 heat level (below 60°C)&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heat_levels</span> <span class="o">=</span> <span class="n">Heat</span><span class="p">(</span><span class="n">heat_level_q1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">heat_level_q1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># read single household share compared to multiple households</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">single_households_share</span> <span class="o">=</span> \
+            <span class="n">df_hh</span><span class="p">[</span><span class="n">df_hh</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Predefined ratio of single households&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TransportSettings"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.control_parameters.TransportSettings">[docs]</a><span class="k">class</span> <span class="nc">TransportSettings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The TransportSettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the</span>
+<span class="sd">    TRA sheet.</span>
+
+<span class="sd">    :param DataFrame df_transport: The TRA sheet of Set_and_Control_Parameters.xlsx</span>
+
+<span class="sd">    :ivar TransportModalSplitMethod split_method: How the demand should be split among modals.</span>
+<span class="sd">    :ivar str scenario_selection_final_energy_demand: Scenario selection for final energy demand calculation -</span>
+<span class="sd">        electricity and hydrogen vehicles shares based on reference case or user inputs</span>
+<span class="sd">    :ivar bool toggle_calculate_rest_subsector: Scenario selection for final energy demand calculation - electricity</span>
+<span class="sd">        and hydrogen vehicles shares</span>
+<span class="sd">    :ivar int ind_production_reference_year: Freight transport is dependent on industrial production. Reference</span>
+<span class="sd">        historical year selection.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">map_model_split_method_string_to_enum</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">(</span><span class="s2">&quot;Historical&quot;</span><span class="p">,</span> <span class="s2">&quot;Trend&quot;</span><span class="p">):</span> <span class="n">TransportModalSplitMethod</span><span class="o">.</span><span class="n">HISTORICAL_TIME_TREND</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">&quot;Historical&quot;</span><span class="p">,</span> <span class="s2">&quot;Constant&quot;</span><span class="p">):</span> <span class="n">TransportModalSplitMethod</span><span class="o">.</span><span class="n">HISTORICAL_CONSTANT</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">&quot;User-defined&quot;</span><span class="p">,</span> <span class="s2">&quot;Trend&quot;</span><span class="p">):</span> <span class="n">TransportModalSplitMethod</span><span class="o">.</span><span class="n">USER_DEFINED</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">&quot;User-defined&quot;</span><span class="p">,</span> <span class="s2">&quot;Constant&quot;</span><span class="p">):</span> <span class="n">TransportModalSplitMethod</span><span class="o">.</span><span class="n">USER_DEFINED</span>
+    <span class="p">}</span>
+
+    <span class="n">map_final_energy_demand_scenario_to_enum</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Reference&quot;</span><span class="p">:</span> <span class="n">TransportFinalEnergyDemandScenario</span><span class="o">.</span><span class="n">REFERENCE</span><span class="p">,</span>
+        <span class="s2">&quot;User-defined&quot;</span><span class="p">:</span> <span class="n">TransportFinalEnergyDemandScenario</span><span class="o">.</span><span class="n">USER_DEFINED</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_transport</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+
+        <span class="c1"># read modal split method</span>
+        <span class="n">scenario_selection_modal_split</span> <span class="o">=</span> \
+            <span class="n">df_transport</span><span class="p">[</span><span class="n">df_transport</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Scenario selection for modal split&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">method_for_modal_split</span> <span class="o">=</span> \
+            <span class="n">df_transport</span><span class="p">[</span><span class="n">df_transport</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Method for modal split&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">split_method</span> <span class="o">=</span> <span class="n">TransportSettings</span><span class="o">.</span><span class="n">map_model_split_method_string_to_enum</span><span class="p">[(</span><span class="n">scenario_selection_modal_split</span><span class="p">,</span>
+                                                                                    <span class="n">method_for_modal_split</span><span class="p">)]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scenario_selection_final_energy_demand</span> <span class="o">=</span> \
+            <span class="n">TransportSettings</span><span class="o">.</span><span class="n">map_final_energy_demand_scenario_to_enum</span><span class="p">[</span>
+                <span class="n">df_transport</span><span class="p">[</span>
+                    <span class="n">df_transport</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Scenario selection for final energy demand&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toggle_calculate_rest_subsector</span> <span class="o">=</span> \
+            <span class="n">df_transport</span><span class="p">[</span><span class="n">df_transport</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Calculation for rest subsector&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ind_production_reference_year</span> <span class="o">=</span> \
+            <span class="n">df_transport</span><span class="p">[</span><span class="n">df_transport</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Reference year for industrial production&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

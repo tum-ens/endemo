@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.input_and_settings package &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="endemo2.model_instance package" href="endemo2.model_instance.html" />
+    <link rel="prev" title="endemo2.data_structures package" href="endemo2.data_structures.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="endemo2.html">endemo2 package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="endemo2.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="endemo2.data_structures.html">endemo2.data_structures package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">endemo2.input_and_settings package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.input_and_settings.control_parameters">endemo2.input_and_settings.control_parameters module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.input_and_settings.input_cts">endemo2.input_and_settings.input_cts module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.input_and_settings.input_general">endemo2.input_and_settings.input_general module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.input_and_settings.input_households">endemo2.input_and_settings.input_households module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.input_and_settings.input_industry">endemo2.input_and_settings.input_industry module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.input_and_settings.input_manager">endemo2.input_and_settings.input_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.input_and_settings.input_transport">endemo2.input_and_settings.input_transport module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.input_and_settings.input_utility">endemo2.input_and_settings.input_utility module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-endemo2.input_and_settings">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.model_instance.html">endemo2.model_instance package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.output.html">endemo2.output package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.preprocessing.html">endemo2.preprocessing package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.endemo">endemo2.endemo module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2.utility">endemo2.utility module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.html#module-endemo2">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="endemo2.html">endemo2 package</a></li>
+      <li class="breadcrumb-item active">endemo2.input_and_settings package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/endemo2.input_and_settings.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="endemo2-input-and-settings-package">
+<h1>endemo2.input_and_settings package<a class="headerlink" href="#endemo2-input-and-settings-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-endemo2.input_and_settings.control_parameters">
+<span id="endemo2-input-and-settings-control-parameters-module"></span><h2>endemo2.input_and_settings.control_parameters module<a class="headerlink" href="#module-endemo2.input_and_settings.control_parameters" title="Permalink to this heading"></a></h2>
+<p>This module contains the in-model representation of all settings found in Set_and_Control_Parameters.xlsx</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.ControlParameters">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ControlParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">general_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">industry_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cts_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hh_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport_settings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/control_parameters.html#ControlParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.ControlParameters" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The ControlParameter class holds the data given by the Set_and_Control_Parameters.xlsx file.
+It is split in general settings, and settings for each sector, indicating non-overlapping parameters for our model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>general_settings</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.GeneralSettings" title="endemo2.input_and_settings.control_parameters.GeneralSettings"><em>GeneralSettings</em></a>) – The settings contained in the “GeneralSettings”-sheet.</p></li>
+<li><p><strong>industry_settings</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.IndustrySettings" title="endemo2.input_and_settings.control_parameters.IndustrySettings"><em>IndustrySettings</em></a>) – The settings contained in the “IND_*”-sheets.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>general_settings</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.GeneralSettings" title="endemo2.input_and_settings.control_parameters.GeneralSettings"><em>GeneralSettings</em></a>) – </p></li>
+<li><p><strong>industry_settings</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.IndustrySettings" title="endemo2.input_and_settings.control_parameters.IndustrySettings"><em>IndustrySettings</em></a>) – </p></li>
+<li><p><strong>cts_settings</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.CtsSettings" title="endemo2.input_and_settings.control_parameters.CtsSettings"><em>CtsSettings</em></a>) – </p></li>
+<li><p><strong>hh_settings</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.HouseholdSettings" title="endemo2.input_and_settings.control_parameters.HouseholdSettings"><em>HouseholdSettings</em></a>) – </p></li>
+<li><p><strong>transport_settings</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.TransportSettings" title="endemo2.input_and_settings.control_parameters.TransportSettings"><em>TransportSettings</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.CtsSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CtsSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_cts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/control_parameters.html#CtsSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.CtsSettings" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The CtsSettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
+CTS sheet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df_cts</strong> (<em>DataFrame</em>) – The CTS sheet of Set_and_Control_Parameters.xlsx</p>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>trend_calc_for_spec</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ScForecastMethod" title="endemo2.data_structures.enumerations.ScForecastMethod"><em>ScForecastMethod</em></a>) – Sets the forecast method to extrapolate the specific consumption in the
+cts sector.</p></li>
+<li><p><strong>nuts2_distribution_per_pop_density</strong> (<em>bool</em>) – Indicates whether the nuts2 distribution should be done by population
+density or employee percentages.</p></li>
+<li><p><strong>skip_years</strong> (<em>[</em><em>int</em><em>]</em>) – These years are skipped in historical data.</p></li>
+<li><p><strong>last_available_year</strong> (<em>int</em>) – Years after that are not included in calculations.</p></li>
+<li><p><strong>heat_levels</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><em>Heat</em></a>) – How heat should be distributed among different heat levels.</p></li>
+<li><p><strong>heat_substitution</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType" title="endemo2.data_structures.enumerations.DemandType"><em>DemandType</em></a><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><em>Heat</em></a><em>]</em>) – The amount of heat that can be substituted by electricity or
+hydrogen.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.CtsSettings.map_sc_forecast_method">
+<span class="sig-name descname"><span class="pre">map_sc_forecast_method</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'0':</span> <span class="pre">ScForecastMethod.CONST_MEAN,</span> <span class="pre">'1':</span> <span class="pre">ScForecastMethod.LINEAR,</span> <span class="pre">'2':</span> <span class="pre">ScForecastMethod.LOGARITHMIC,</span> <span class="pre">'3':</span> <span class="pre">ScForecastMethod.CONST_LAST}</span></em><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.CtsSettings.map_sc_forecast_method" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.GeneralSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GeneralSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_general</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ex_country</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/control_parameters.html#GeneralSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.GeneralSettings" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The GeneralSettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
+GeneralSettings and Countries sheets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ex_general</strong> (<em>pd.DataFrame</em>) – The dataframe of the “GeneralSettings”-sheet in Set_and_Control_Parameters.xlsx</p></li>
+<li><p><strong>ex_country</strong> (<em>pd.DataFrame</em>) – The dataframe of the “Countries”-sheet in Set_and_Control_Parameters.xlsx</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>_sectors_active_values</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>bool</em><em>]</em>) – Contains information, whether a sector is activ,
+as indicated by the settings.</p></li>
+<li><p><strong>_parameter_values</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>bool</em><em>]</em>) – Holds the values from the GeneralSettings
+table in a dictionary {Parameter_string -&gt; bool}</p></li>
+<li><p><strong>target_year</strong> (<em>int</em>) – This is the year, the model makes predictions for.</p></li>
+<li><p><strong>recognized_countries</strong> (<em>[</em><em>str</em><em>]</em>) – This is the list of countries_in_group that are in the “Countries”-sheet of Set_and_Control_Parameters.xlsx</p></li>
+<li><p><strong>active_countries</strong> (<em>[</em><em>str</em><em>]</em>) – This is the list of active countries_in_group.
+Only for these countries_in_group, calculations are performed.</p></li>
+<li><p><strong>nuts2_version</strong> (<em>int</em>) – The version of NUTS2 used for reading the files that hold information per NUTS2 Region.
+Currently, it should be either 2016 or 2021.</p></li>
+<li><p><strong>toggle_hourly_forecast</strong> (<em>bool</em>) – Indicates whether to distribute demand over hours according to load profiles.</p></li>
+<li><p><strong>toggle_nuts2_resolution</strong> (<em>bool</em>) – Indicates whether to distribute demand over nuts2 regions.</p></li>
+<li><p><strong>toggle_graphical_output</strong> (<em>bool</em>) – Indicates whether to generate visual output.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.GeneralSettings.get_active_sectors">
+<span class="sig-name descname"><span class="pre">get_active_sectors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/control_parameters.html#GeneralSettings.get_active_sectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.GeneralSettings.get_active_sectors" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The list of transport activated for calculation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>[<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SectorIdentifier" title="endemo2.data_structures.enumerations.SectorIdentifier">SectorIdentifier</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.GeneralSettings.get_parameter">
+<span class="sig-name descname"><span class="pre">get_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/control_parameters.html#GeneralSettings.get_parameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.GeneralSettings.get_parameter" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The parameter name in the table.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The parameter value by parameter name with meaningful error message.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>name</strong> (<em>str</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.GeneralSettings.sector_id_map">
+<span class="sig-name descname"><span class="pre">sector_id_map</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'Sector:</span> <span class="pre">commertial,</span> <span class="pre">trade,</span> <span class="pre">services':</span> <span class="pre">SectorIdentifier.COMMERCIAL_TRADE_SERVICES,</span> <span class="pre">'Sector:</span> <span class="pre">households':</span> <span class="pre">SectorIdentifier.HOUSEHOLDS,</span> <span class="pre">'Sector:</span> <span class="pre">industry':</span> <span class="pre">SectorIdentifier.INDUSTRY,</span> <span class="pre">'Sector:</span> <span class="pre">transport':</span> <span class="pre">SectorIdentifier.TRANSPORT}</span></em><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.GeneralSettings.sector_id_map" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.HouseholdSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HouseholdSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_hh</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/control_parameters.html#HouseholdSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.HouseholdSettings" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The HouseholdSettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
+HH sheet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df_hh</strong> (<em>DataFrame</em>) – The HH sheet of Set_and_Control_Parameters.xlsx</p>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>heat_levels</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><em>Heat</em></a>) – How heat should be distributed among different heat levels.</p></li>
+<li><p><strong>single_households_share</strong> (<em>float</em>) – The percentage/100 of single households.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.IndustrySettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IndustrySettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_general</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_subsectors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/control_parameters.html#IndustrySettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.IndustrySettings" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The IndustrySettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
+IND_general and IND_subsectors sheets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>forecast_map</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod" title="endemo2.data_structures.enumerations.ForecastMethod"><em>ForecastMethod</em></a><em>]</em>) – Maps the forecast method string, used in the setting tables,
+to the internal enum representation.</p></li>
+<li><p><strong>forecast_method</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod" title="endemo2.data_structures.enumerations.ForecastMethod"><em>ForecastMethod</em></a>) – Contains the currently selected forecast method.</p></li>
+<li><p><strong>time_trend_model_activation_quadratic</strong> (<em>bool</em>) – “If the time trend model is deactivated, the traditional approach is selected”</p></li>
+<li><p><strong>production_quantity_calc_per_capita</strong> (<em>bool</em>) – Decides, whether the production quantity prognosis should use per-capita projection.</p></li>
+<li><p><strong>trend_calc_for_spec</strong> (<em>bool</em>) – Decides, whether specific consumption should be predicted from historical data, when available.</p></li>
+<li><p><strong>nuts2_distribution_based_on_installed_ind_capacity</strong> (<em>bool</em>) – “If false, distribution per population density.”</p></li>
+<li><p><strong>skip_years</strong> (<em>[</em><em>int</em><em>]</em>) – Years that are skipped while reading files, to remove outliers.</p></li>
+<li><p><strong>last_available_year</strong> (<em>int</em>) – Last year that’s read from historical production files (exclusive).</p></li>
+<li><p><strong>product_settings</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#endemo2.input_and_settings.control_parameters.ProductSettings" title="endemo2.input_and_settings.control_parameters.ProductSettings"><em>ProductSettings</em></a><em>]</em>) – Contains settings for each product.
+Of the form {front_label -&gt; product_settings_obj}</p></li>
+<li><p><strong>active_product_names</strong> (<em>[</em><em>str</em><em>]</em>) – A list of the names of active products.
+Only for these products, calculations are performed.</p></li>
+<li><p><strong>rest_sector_growth_rate</strong> (<em>float</em>) – The growth rate of the rest sector.</p></li>
+<li><p><strong>use_gdp_as_x</strong> (<em>bool</em>) – Indicates that prediction x-axis should be gdp instead of time.</p></li>
+<li><p><strong>heat_substitution</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType" title="endemo2.data_structures.enumerations.DemandType"><em>DemandType</em></a><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><em>Heat</em></a><em>]</em>) – The percentage/100 of heat that is substituted by another
+demand type. Is of form {demand_type -&gt; heat_substitution}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>df_general</strong> (<em>pd.DataFrame</em>) – </p></li>
+<li><p><strong>df_subsectors</strong> (<em>pd.DataFrame</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.IndustrySettings.forecast_map">
+<span class="sig-name descname"><span class="pre">forecast_map</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'Exponential':</span> <span class="pre">ForecastMethod.EXPONENTIAL,</span> <span class="pre">'Linear</span> <span class="pre">GDP</span> <span class="pre">function':</span> <span class="pre">ForecastMethod.LINEAR,</span> <span class="pre">'Linear</span> <span class="pre">time</span> <span class="pre">trend':</span> <span class="pre">ForecastMethod.LINEAR,</span> <span class="pre">'Quadratic</span> <span class="pre">GDP</span> <span class="pre">function':</span> <span class="pre">ForecastMethod.QUADRATIC}</span></em><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.IndustrySettings.forecast_map" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.ProductSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ProductSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manual_exp_change_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perc_used</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efficiency_improvement</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.ProductSettings" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.ProductSettings.active">
+<span class="sig-name descname"><span class="pre">active</span></span><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.ProductSettings.active" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.ProductSettings.efficiency_improvement">
+<span class="sig-name descname"><span class="pre">efficiency_improvement</span></span><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.ProductSettings.efficiency_improvement" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.ProductSettings.manual_exp_change_rate">
+<span class="sig-name descname"><span class="pre">manual_exp_change_rate</span></span><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.ProductSettings.manual_exp_change_rate" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.ProductSettings.perc_used">
+<span class="sig-name descname"><span class="pre">perc_used</span></span><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.ProductSettings.perc_used" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.TransportSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TransportSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_transport</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/control_parameters.html#TransportSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.TransportSettings" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The TransportSettings contain the parameters for the model given in Set_and_Control_Parameters.xlsx in the
+TRA sheet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df_transport</strong> (<em>DataFrame</em>) – The TRA sheet of Set_and_Control_Parameters.xlsx</p>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>split_method</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModalSplitMethod" title="endemo2.data_structures.enumerations.TransportModalSplitMethod"><em>TransportModalSplitMethod</em></a>) – How the demand should be split among modals.</p></li>
+<li><p><strong>scenario_selection_final_energy_demand</strong> (<em>str</em>) – Scenario selection for final energy demand calculation -
+electricity and hydrogen vehicles shares based on reference case or user inputs</p></li>
+<li><p><strong>toggle_calculate_rest_subsector</strong> (<em>bool</em>) – Scenario selection for final energy demand calculation - electricity
+and hydrogen vehicles shares</p></li>
+<li><p><strong>ind_production_reference_year</strong> (<em>int</em>) – Freight transport is dependent on industrial production. Reference
+historical year selection.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.TransportSettings.map_final_energy_demand_scenario_to_enum">
+<span class="sig-name descname"><span class="pre">map_final_energy_demand_scenario_to_enum</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'Reference':</span> <span class="pre">TransportFinalEnergyDemandScenario.REFERENCE,</span> <span class="pre">'User-defined':</span> <span class="pre">TransportFinalEnergyDemandScenario.USER_DEFINED}</span></em><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.TransportSettings.map_final_energy_demand_scenario_to_enum" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.control_parameters.TransportSettings.map_model_split_method_string_to_enum">
+<span class="sig-name descname"><span class="pre">map_model_split_method_string_to_enum</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{('Historical',</span> <span class="pre">'Constant'):</span> <span class="pre">TransportModalSplitMethod.HISTORICAL_CONSTANT,</span> <span class="pre">('Historical',</span> <span class="pre">'Trend'):</span> <span class="pre">TransportModalSplitMethod.HISTORICAL_TIME_TREND,</span> <span class="pre">('User-defined',</span> <span class="pre">'Constant'):</span> <span class="pre">TransportModalSplitMethod.USER_DEFINED,</span> <span class="pre">('User-defined',</span> <span class="pre">'Trend'):</span> <span class="pre">TransportModalSplitMethod.USER_DEFINED}</span></em><a class="headerlink" href="#endemo2.input_and_settings.control_parameters.TransportSettings.map_model_split_method_string_to_enum" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-endemo2.input_and_settings.input_cts">
+<span id="endemo2-input-and-settings-input-cts-module"></span><h2>endemo2.input_and_settings.input_cts module<a class="headerlink" href="#module-endemo2.input_and_settings.input_cts" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_cts.CtsInput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CtsInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cts_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_cts.html#CtsInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_cts.CtsInput" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>CtsInput denoted input that is read from the “input/industry” folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ctrl</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.ControlParameters" title="endemo2.input_and_settings.control_parameters.ControlParameters"><em>ControlParameters</em></a>) – The control parameters object.</p></li>
+<li><p><strong>cts_path</strong> (<em>Path</em>) – The path to the input files for the CTS sector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>dict_employee_number_country</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em>) – Contains the number ob employees per
+subsector for every country. Is of form {country_name -&gt; {subsector -&gt; [Datapoint]}}</p></li>
+<li><p><strong>dict_employee_number_nuts2</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em><em>]</em>) – Contains the number ob employees
+per subsector for every NUTS2 region. Is of form
+{country_name -&gt; {nuts2_region -&gt; {subsector -&gt; [Datapoint]}}}</p></li>
+<li><p><strong>dict_employee_number_country_cts</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em><em>]</em>) – Contains the number of employees in the whole
+cts sector.</p></li>
+<li><p><strong>energy_carrier_consumption</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em><em>]</em>) – The historical quantity of energy carrier in
+subsector. Of form: {country_name -&gt; {energy_carrier -&gt; [Datapoint]}}</p></li>
+<li><p><strong>load_profile</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType" title="endemo2.data_structures.enumerations.DemandType"><em>DemandType</em></a><em>, </em><em>Any</em><em>]</em>) – The load profile for the cts sector.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_cts.CtsInput.read_employee_per_subsector">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_employee_per_subsector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_cts.html#CtsInput.read_employee_per_subsector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_cts.CtsInput.read_employee_per_subsector" title="Permalink to this definition"></a></dt>
+<dd><p>Reads employees per subsector from the Employee…xlsx input sheets</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ctrl</strong> – The control Parameters</p></li>
+<li><p><strong>path_to_file</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) – Path of the file that should be read.</p></li>
+<li><p><strong>sheet_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The name of the sheet that should be read.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>{}</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The data on number of employees in each subsector of form {region_name -&gt; {subsector_name -&gt; data}},
+where region_name can be a country or a nuts2 region, depending on input file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_cts.CtsInput.read_number_employees_cts">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_number_employees_cts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_cts.html#CtsInput.read_number_employees_cts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_cts.CtsInput.read_number_employees_cts" title="Permalink to this definition"></a></dt>
+<dd><p>Reads employees per subsector from the euro-stats input sheets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ctrl</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.ControlParameters" title="endemo2.input_and_settings.control_parameters.ControlParameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">ControlParameters</span></code></a>) – The control Parameters</p></li>
+<li><p><strong>path_to_file</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) – Path of the file that should be read.</p></li>
+<li><p><strong>sheet_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The name of the sheet that should be read.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, [&lt;class ‘endemo2.data_structures.containers.Datapoint’&gt;]]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The data on number of employees (in thousands) in the whole cts sector of a country.
+Is of form {country_name -&gt; data}.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_cts.CtsInput.subsector_names">
+<span class="sig-name descname"><span class="pre">subsector_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Groß-</span> <span class="pre">und</span> <span class="pre">Einzelhandel',</span> <span class="pre">'Private</span> <span class="pre">Büros',</span> <span class="pre">'Hotel</span> <span class="pre">und</span> <span class="pre">Restaurants',</span> <span class="pre">'Öffentliche</span> <span class="pre">Büros',</span> <span class="pre">'Gesundheits-</span> <span class="pre">und</span> <span class="pre">Sozialwesen',</span> <span class="pre">'Bildung',</span> <span class="pre">'Sonstige']</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_cts.CtsInput.subsector_names" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-endemo2.input_and_settings.input_general">
+<span id="endemo2-input-and-settings-input-general-module"></span><h2>endemo2.input_and_settings.input_general module<a class="headerlink" href="#module-endemo2.input_and_settings.input_general" title="Permalink to this heading"></a></h2>
+<p>This module is responsible for reading the input data form files.
+(except the Set_and_Control_Parameters. That would be in control_parameters.)</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_general.Abbreviations">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Abbreviations</span></span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_general.html#Abbreviations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_general.Abbreviations" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_general.Abbreviations.dict_alpha2_en_map">
+<span class="sig-name descname"><span class="pre">dict_alpha2_en_map</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_general.Abbreviations.dict_alpha2_en_map" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_general.Abbreviations.dict_de_en_map">
+<span class="sig-name descname"><span class="pre">dict_de_en_map</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_general.Abbreviations.dict_de_en_map" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_general.Abbreviations.dict_en_alpha2_map">
+<span class="sig-name descname"><span class="pre">dict_en_alpha2_map</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_general.Abbreviations.dict_en_alpha2_map" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_general.GeneralInput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GeneralInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_general.html#GeneralInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_general.GeneralInput" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>General Input contains all preprocessing that is read from the “preprocessing/general” folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ctrl</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.ControlParameters" title="endemo2.input_and_settings.control_parameters.ControlParameters"><em>ControlParameters</em></a>) – The parsed Set_and_Control_Parameters.xlsx</p></li>
+<li><p><strong>path</strong> (<em>Path</em>) – The path to the preprocessing/general folder</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>population</strong> (<em>PopulationData</em>) – All data from the population preprocessing.</p></li>
+<li><p><strong>gdp</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.HisProg" title="endemo2.data_structures.containers.HisProg"><em>HisProg</em></a><em>[</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em><em>, </em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Interval" title="endemo2.data_structures.containers.Interval"><em>Interval</em></a><em>, </em><em>float</em><em>]</em><em>]</em><em>]</em>) – The gdp for each country.</p></li>
+<li><p><strong>efficiency</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>(</em><em>&quot;electricity&quot;</em><em>, </em><em>&quot;heat&quot;</em><em>)</em><em>]</em>) – The efficiency for each energy carrier.</p></li>
+<li><p><strong>efficiency_hh</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>(</em><em>&quot;electricity&quot;</em><em>, </em><em>&quot;heat&quot;</em><em>)</em><em>]</em>) – The efficiency for each energy carrier using the households
+names.</p></li>
+<li><p><strong>nuts2_valid_regions</strong> (<em>set</em>) – The set of valid nuts2 regions within the selected NUTS2 code.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_general.GeneralInput.sc_historical_sheet_names">
+<span class="sig-name descname"><span class="pre">sc_historical_sheet_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Feste</span> <span class="pre">fossile</span> <span class="pre">Brennstoffe',</span> <span class="pre">'Synthetische</span> <span class="pre">Gase',</span> <span class="pre">'Erdgas',</span> <span class="pre">'Oel',</span> <span class="pre">'Erneuerbare</span> <span class="pre">Energien',</span> <span class="pre">'Abfaelle',</span> <span class="pre">'Elektrizitaet',</span> <span class="pre">'Waerme']</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_general.GeneralInput.sc_historical_sheet_names" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_general.PopulationInput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PopulationInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuts2_valid_regions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abbreviations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_country_pop_his</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_country_pop_prog</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_nuts2_pop_his</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_nuts2_pop_prog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_general.html#PopulationInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_general.PopulationInput" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Holds all data on population. That includes historical data, prognosis data for each country and nuts2 region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ctrl</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.ControlParameters" title="endemo2.input_and_settings.control_parameters.ControlParameters"><em>ControlParameters</em></a>) – The parsed Set_and_Control_Parameters.xlsx file.</p></li>
+<li><p><strong>nuts2_valid_regions</strong> (<em>set</em>) – The set of nuts2 regions that are recognized.
+They are used to filter the preprocessing data.</p></li>
+<li><p><strong>abbreviations</strong> (<em>dict</em>) – The countries_in_group abbreviations, used to access nuts2 data.</p></li>
+<li><p><strong>df_country_pop_his</strong> (<em>pd.DataFrame</em>) – The sheet containing data of population history per country.</p></li>
+<li><p><strong>df_country_pop_prog</strong> (<em>pd.DataFrame</em>) – The sheet containing the manual prognosis of population amount per country.</p></li>
+<li><p><strong>df_nuts2_pop_his</strong> (<em>pd.DataFrame</em>) – The sheet containing data of population history per NUTS2 region.</p></li>
+<li><p><strong>df_nuts2_pop_prog</strong> (<em>pd.DataFrame</em>) – The sheet containing the prognosis intervals and growth rate for nuts2 regions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>country_population</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.HisProg" title="endemo2.data_structures.containers.HisProg"><em>HisProg</em></a><em>]</em>) – Data for the population of whole countries_in_group.
+It is of the form historical:{country_name -&gt; [Datapoint]}, prognosis:{country_name -&gt; [Datapoint]}</p></li>
+<li><p><strong>nuts2_population</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>[</em><em>(</em><em>str</em><em>, </em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>)</em><em>]</em><em>]</em>) – Data for the population of NUTS2 regions.
+It is of the form {country_name -&gt; (code -&gt; (historical: [(float,float)], prognosis: [interval, growth rate]))}</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-endemo2.input_and_settings.input_households">
+<span id="endemo2-input-and-settings-input-households-module"></span><h2>endemo2.input_and_settings.input_households module<a class="headerlink" href="#module-endemo2.input_and_settings.input_households" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_households.HouseholdsInput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HouseholdsInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hh_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_households.html#HouseholdsInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_households.HouseholdsInput" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The HouseholdInput is responsible for reading all input data related to the Households sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>historical_consumption</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId" title="endemo2.data_structures.enumerations.HouseholdsSubsectorId"><em>HouseholdsSubsectorId</em></a><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em><em>]</em><em>]</em><em>]</em>) – The historical energy consumption for each subsector in each country.
+Is of form {country_name -&gt; {subsector_id -&gt; {energy_carrier -&gt; data}}}.</p></li>
+<li><p><strong>hw_dict_hot_water_per_person_per_day</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) – The amount of hot water per person per day in liter
+for each country. Is of form {country_name -&gt; liters}.</p></li>
+<li><p><strong>hw_dict_hot_water_calibration</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) – The hot water calibration value for each country.
+Is of form {country_name -&gt; calibration value}.</p></li>
+<li><p><strong>hw_specific_capacity</strong> (<em>float</em>) – The hot water specific capacity.</p></li>
+<li><p><strong>hw_outlet_temperature</strong> (<em>float</em>) – The hot water outlet temperature.</p></li>
+<li><p><strong>hw_inlet_temperature</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) – The hot water inlet temperature for each country.
+Is of form {country_name -&gt; float}.</p></li>
+<li><p><strong>sh_specific_heat</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>(</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>, </em><em>float</em><em>)</em><em>]</em>) – The specific heat forecast start point and change rate
+for each country. Is of form {country_name -&gt; (start_point, change_rate)}</p></li>
+<li><p><strong>sh_area_per_household</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>(</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>, </em><em>float</em><em>)</em><em>]</em>) – The area per household forecast start point and
+change rate for each country. Is of form {country_name -&gt; (start_point, change_rate)}</p></li>
+<li><p><strong>sh_persons_per_household</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.HisProg" title="endemo2.data_structures.containers.HisProg"><em>HisProg</em></a><em>(</em><em>dict</em><em>[</em><em>str</em><em>, </em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em><em>]</em><em>(</em><em>)</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em><em>]</em><em>(</em><em>)</em><em>)</em>) – The datapoints for the persons per household in every year to interpolate between.
+Is of form {country_name -&gt; [(year, value)]}.</p></li>
+<li><p><strong>hw_dict_space_heating_calibration</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) – The space heating calibration value for each country.
+Is of form {country_name -&gt; calibration value}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ctrl</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.ControlParameters" title="endemo2.input_and_settings.control_parameters.ControlParameters"><em>ControlParameters</em></a>) – </p></li>
+<li><p><strong>hh_path</strong> (<em>Path</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_households.HouseholdsInput.hh_energy_carrier_unit_conversion">
+<span class="sig-name descname"><span class="pre">hh_energy_carrier_unit_conversion</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'derived</span> <span class="pre">heat':</span> <span class="pre">0.0002777777777777778,</span> <span class="pre">'electricity':</span> <span class="pre">0.001,</span> <span class="pre">'gas':</span> <span class="pre">0.0002777777777777778,</span> <span class="pre">'solid</span> <span class="pre">fossil</span> <span class="pre">fuels':</span> <span class="pre">0.007821538148752638,</span> <span class="pre">'total</span> <span class="pre">oil</span> <span class="pre">&amp;</span> <span class="pre">petroleum</span> <span class="pre">products':</span> <span class="pre">0.012002320102842252,</span> <span class="pre">'total</span> <span class="pre">renew.</span> <span class="pre">&amp;</span> <span class="pre">wastes':</span> <span class="pre">0.0002777777777777778}</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_households.HouseholdsInput.hh_energy_carrier_unit_conversion" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_households.HouseholdsInput.hh_his_sheets_skip_rows">
+<span class="sig-name descname"><span class="pre">hh_his_sheets_skip_rows</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3]</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_households.HouseholdsInput.hh_his_sheets_skip_rows" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_households.HouseholdsInput.hh_input_sheet_names">
+<span class="sig-name descname"><span class="pre">hh_input_sheet_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{&lt;HouseholdsSubsectorId.SPACE_HEATING:</span> <span class="pre">(0,)&gt;:</span> <span class="pre">'1a_SpaceHeating',</span> <span class="pre">&lt;HouseholdsSubsectorId.SPACE_COOLING:</span> <span class="pre">(1,)&gt;:</span> <span class="pre">'1b_SpaceCooling',</span> <span class="pre">&lt;HouseholdsSubsectorId.WATER_HEATING:</span> <span class="pre">(2,)&gt;:</span> <span class="pre">'1c_WaterHeating',</span> <span class="pre">&lt;HouseholdsSubsectorId.COOKING:</span> <span class="pre">(3,)&gt;:</span> <span class="pre">'1d_Cooking',</span> <span class="pre">&lt;HouseholdsSubsectorId.LIGHTING_AND_APPLIANCES:</span> <span class="pre">4&gt;:</span> <span class="pre">'1e_LightingAndAppliances',</span> <span class="pre">&lt;HouseholdsSubsectorId.OTHER:</span> <span class="pre">5&gt;:</span> <span class="pre">'1f_OtherEndUses'}</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_households.HouseholdsInput.hh_input_sheet_names" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_households.HouseholdsInput.hw_read_hot_water_input">
+<span class="sig-name descname"><span class="pre">hw_read_hot_water_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hh_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_households.html#HouseholdsInput.hw_read_hot_water_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_households.HouseholdsInput.hw_read_hot_water_input" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the input file for hot water in the households sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ctrl</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.ControlParameters" title="endemo2.input_and_settings.control_parameters.ControlParameters"><em>ControlParameters</em></a>) – </p></li>
+<li><p><strong>hh_path</strong> (<em>Path</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_households.HouseholdsInput.read_historical_consumption">
+<span class="sig-name descname"><span class="pre">read_historical_consumption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hh_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_households.html#HouseholdsInput.read_historical_consumption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_households.HouseholdsInput.read_historical_consumption" title="Permalink to this definition"></a></dt>
+<dd><p>Read the files for the historical energy consumption of each country in the households sector.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_households.HouseholdsInput.sh_read_space_heating_input">
+<span class="sig-name descname"><span class="pre">sh_read_space_heating_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hh_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_households.html#HouseholdsInput.sh_read_space_heating_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_households.HouseholdsInput.sh_read_space_heating_input" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the input file for space heating in the households sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ctrl</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.ControlParameters" title="endemo2.input_and_settings.control_parameters.ControlParameters"><em>ControlParameters</em></a>) – </p></li>
+<li><p><strong>hh_path</strong> (<em>Path</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-endemo2.input_and_settings.input_industry">
+<span id="endemo2-input-and-settings-input-industry-module"></span><h2>endemo2.input_and_settings.input_industry module<a class="headerlink" href="#module-endemo2.input_and_settings.input_industry" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.IndustryInput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IndustryInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">industry_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuts2_valid_regions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_industry.html#IndustryInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_industry.IndustryInput" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Industry Input denoted input that is read from the “input/industry” folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ctrl</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.ControlParameters" title="endemo2.input_and_settings.control_parameters.ControlParameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">ControlParameters</span></code></a>) – ControlSettings object.</p></li>
+<li><p><strong>industry_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) – The path to the industry input folder.</p></li>
+<li><p><strong>nuts2_valid_regions</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The valid nuts2 regions of set version.</p></li>
+<li><p><strong>active_countries</strong> (<em>[</em><em>&lt;class 'str'&gt;</em><em>]</em>) – The currently active countries.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>dict_product_input</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#endemo2.input_and_settings.input_industry.ProductInput" title="endemo2.input_and_settings.input_industry.ProductInput"><em>ProductInput</em></a><em>]</em>) – Stores the product specific preprocessing for all active products.</p></li>
+<li><p><strong>product_data_access</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Retrieve</em><em>]</em>) – Specify how data sheets for each product should be accessed</p></li>
+<li><p><strong>sc_historical_data_file_names</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – The file names of the files used for certain products to read
+historical information on specific consumption.</p></li>
+<li><p><strong>sc_historical_sheet_names</strong> (<em>[</em><em>str</em><em>]</em>) – The sheet names for the files used to read
+historical information on specific consumption for certain products.</p></li>
+<li><p><strong>rest_sector_input</strong> (<a class="reference internal" href="#endemo2.input_and_settings.input_industry.RestSectorInput" title="endemo2.input_and_settings.input_industry.RestSectorInput"><em>RestSectorInput</em></a>) – All preprocessing data relating to the rest sector.</p></li>
+<li><p><strong>dict_electricity_profiles</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>[</em><em>float</em><em>]</em><em>]</em>) – The hourly profiles for electricity demand for each country.</p></li>
+<li><p><strong>dict_heat_profiles</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup" title="endemo2.data_structures.enumerations.SubsectorGroup"><em>SubsectorGroup</em></a><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>[</em><em>float</em><em>]</em><em>]</em><em>]</em>) – The hourly profiles for heat demand for each
+subsector group and each country. Is of form {subsector_group -&gt; {back_label -&gt; [hourly_profile in %/100]}}</p></li>
+<li><p><strong>subsector_to_group_map</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup" title="endemo2.data_structures.enumerations.SubsectorGroup"><em>SubsectorGroup</em></a><em>]</em>) – Maps a certain subsector to their subsector group enum.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.IndustryInput.product_data_access">
+<span class="sig-name descname"><span class="pre">product_data_access</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'alu_prim':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'alu_sec':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'ammonia':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'ammonia_classic':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'aromate':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'aromate_classic':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'cement':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'chlorine':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'copper_prim':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'copper_sec':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'ethylene':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'ethylene_classic':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'glass':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'methanol':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'methanol_classic':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'paper':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'propylene':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'propylene_classic':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'steel':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'steel_direct':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'steel_prim':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;,</span> <span class="pre">'steel_sec':</span> <span class="pre">&lt;endemo2.input_and_settings.input_utility.FileReadingHelper</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_industry.IndustryInput.product_data_access" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.IndustryInput.read_heat_levels">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_heat_levels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">industry_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_industry.html#IndustryInput.read_heat_levels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_industry.IndustryInput.read_heat_levels" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><code class="xref py py-class docutils literal notranslate"><span class="pre">Heat</span></code></a>]</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>industry_path</strong> (<em>Path</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.IndustryInput.read_load_timeseries">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_load_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">industry_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_industry.html#IndustryInput.read_load_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_industry.IndustryInput.read_load_timeseries" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, [&lt;class ‘float’&gt;]], <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup" title="endemo2.data_structures.enumerations.SubsectorGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubsectorGroup</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, [&lt;class ‘float’&gt;]]])</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>industry_path</strong> (<em>Path</em>) – </p></li>
+<li><p><strong>active_countries</strong> (<em>[</em><em>&lt;class 'str'&gt;</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.IndustryInput.read_subsector_groups">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_subsector_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">industry_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_industry.html#IndustryInput.read_subsector_groups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_industry.IndustryInput.read_subsector_groups" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup" title="endemo2.data_structures.enumerations.SubsectorGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubsectorGroup</span></code></a>]</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>industry_path</strong> (<em>Path</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.IndustryInput.sc_historical_data_file_names">
+<span class="sig-name descname"><span class="pre">sc_historical_data_file_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'paper':</span> <span class="pre">'nrg_bal_s_paper.xls',</span> <span class="pre">'steel':</span> <span class="pre">'nrg_bal_s_steel.xls'}</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_industry.IndustryInput.sc_historical_data_file_names" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.IndustryInput.subsector_groups_hotmaps_filenames">
+<span class="sig-name descname"><span class="pre">subsector_groups_hotmaps_filenames</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{&lt;SubsectorGroup.NON_METALIC_MINERALS:</span> <span class="pre">3&gt;:</span> <span class="pre">'hotmaps_task_2.7_load_profile_industry_non_metalic_minerals_yearlong_2018.csv',</span> <span class="pre">&lt;SubsectorGroup.CHEMICALS_AND_PETROCHEMICALS:</span> <span class="pre">0&gt;:</span> <span class="pre">'hotmaps_task_2.7_load_profile_industry_chemicals_and_petrochemicals_yearlong_2018.csv',</span> <span class="pre">&lt;SubsectorGroup.FOOD_AND_TOBACCO:</span> <span class="pre">1&gt;:</span> <span class="pre">'hotmaps_task_2.7_load_profile_industry_food_and_tobacco_yearlong_2018.csv',</span> <span class="pre">&lt;SubsectorGroup.IRON_AND_STEEL:</span> <span class="pre">2&gt;:</span> <span class="pre">'hotmaps_task_2.7_load_profile_industry_iron_and_steel_yearlong_2018.csv',</span> <span class="pre">&lt;SubsectorGroup.PAPER:</span> <span class="pre">4&gt;:</span> <span class="pre">'hotmaps_task_2.7_load_profile_industry_paper_yearlong_2018.csv'}</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_industry.IndustryInput.subsector_groups_hotmaps_filenames" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.IndustryInput.subsector_groups_str_to_enum_map">
+<span class="sig-name descname"><span class="pre">subsector_groups_str_to_enum_map</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'chemicals_and_petrochemicals':</span> <span class="pre">SubsectorGroup.CHEMICALS_AND_PETROCHEMICALS,</span> <span class="pre">'food_and_tobacco':</span> <span class="pre">SubsectorGroup.FOOD_AND_TOBACCO,</span> <span class="pre">'iron_and_steel':</span> <span class="pre">SubsectorGroup.IRON_AND_STEEL,</span> <span class="pre">'non_metalic_minerals':</span> <span class="pre">SubsectorGroup.NON_METALIC_MINERALS,</span> <span class="pre">'paper':</span> <span class="pre">SubsectorGroup.PAPER}</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_industry.IndustryInput.subsector_groups_str_to_enum_map" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.ProductInput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ProductInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">industry_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">industry_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ex_specific_consumption</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ex_bat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ex_nuts2_ic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ex_country_groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_countries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_heat_levels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuts2_valid_regions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_industry.html#ProductInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_industry.ProductInput" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The ProductInput holds all input data that is specific to a subsector. Most of the input is also read within this
+class, except input that is more efficient to be read for all products at once. That input is read in the
+IndustryInput class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>product_name</strong> (<em>str</em>) – The name of the product this input is for.</p></li>
+<li><p><strong>industry_path</strong> (<em>Path</em>) – The path to the industry input folder.</p></li>
+<li><p><strong>industry_settings</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.IndustrySettings" title="endemo2.input_and_settings.control_parameters.IndustrySettings"><em>IndustrySettings</em></a>) – The settings for the industry sector.</p></li>
+<li><p><strong>ex_specific_consumption</strong> (<em>ExcelFile</em>) – The Excel sheet for specific consumption default values.</p></li>
+<li><p><strong>ex_bat</strong> (<em>ExcelFile</em>) – The Excel sheet for best available technology.</p></li>
+<li><p><strong>ex_nuts2_ic</strong> (<em>ExcelFile</em>) – The Excel sheet for nuts2 installed capacities.</p></li>
+<li><p><strong>ex_country_groups</strong> (<em>ExcelFile</em>) – The Excel sheet of the country groups.</p></li>
+<li><p><strong>active_countries</strong> (<em>[</em><em>str</em><em>]</em>) – The list of english names of the active countries.</p></li>
+<li><p><strong>dict_heat_levels</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><em>endemo2.data_structures.containers.Heat</em></a><em>]</em>) – The dictionary holding the heat levels for all products.
+Of form {front_label -&gt; heat_levels}.</p></li>
+<li><p><strong>dict_heat_levels</strong> – </p></li>
+<li><p><strong>nuts2_valid_regions</strong> (<em>set</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>front_label</strong> (<em>str</em>) – The name of the product.</p></li>
+<li><p><strong>specific_consumption_default</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.SpecConsum" title="endemo2.data_structures.containers.SpecConsum"><em>containers.SpecConsum</em></a><em>]</em>) – Default specific consumption value for this
+product.</p></li>
+<li><p><strong>specific_consumption_historical</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em>) – Historical specific consumption data
+for this product. Accessible per country.</p></li>
+<li><p><strong>bat</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.EH" title="endemo2.data_structures.containers.EH"><em>containers.EH</em></a><em>]</em>) – The best-available-technology consumption for this product.
+Accessible per country.</p></li>
+<li><p><strong>production</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em>) – The historical amount data for this product. Accessible per country.</p></li>
+<li><p><strong>heat_levels</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><em>Heat</em></a>) – How heat demand should be distributed across heat levels for this product.</p></li>
+<li><p><strong>manual_exp_change_rate</strong> (<em>float</em>) – If product amount projection will be calculated exponentially,
+this will be the change rate.</p></li>
+<li><p><strong>perc_used</strong> (<em>float</em>) – A scalar for the amount of a product.
+This is used to model modern technologies replacing old ones.</p></li>
+<li><p><strong>nuts2_installed_capacity</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) – Installed capacity in %/100 for each NUTS2 Region.
+Structure {country_name -&gt; {nuts2_region_name -&gt; capacity_value}}</p></li>
+<li><p><strong>country_groups</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>[</em><em>[</em><em>str</em><em>]</em><em>]</em><em>]</em>) – Input from country group file,
+structured as {group_type -&gt; list_of_groups}.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.ProductInput.read_best_available_technology">
+<span class="sig-name descname"><span class="pre">read_best_available_technology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_bat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_industry.html#ProductInput.read_best_available_technology"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_industry.ProductInput.read_best_available_technology" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the specific consumption input of the best available technology.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ex_bat</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ExcelFile</span></code>) – The Excel file of the best available technology.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.EH" title="endemo2.data_structures.containers.EH"><code class="xref py py-class docutils literal notranslate"><span class="pre">EH</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The bat consumption for each country. Of the form: {back_label -&gt; EH}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.ProductInput.read_country_groups">
+<span class="sig-name descname"><span class="pre">read_country_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_country_groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_countries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_industry.html#ProductInput.read_country_groups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_industry.ProductInput.read_country_groups" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the input for the country groups.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ex_country_groups</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ExcelFile</span></code>) – The Excel file that gives the country groups.</p></li>
+<li><p><strong>active_countries</strong> (<em>[</em><em>&lt;class 'str'&gt;</em><em>]</em>) – The list of active countries.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.GroupType" title="endemo2.data_structures.enumerations.GroupType"><code class="xref py py-class docutils literal notranslate"><span class="pre">GroupType</span></code></a>, [[&lt;class ‘str’&gt;]]]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The country groups of form: {group_type -&gt; [ grp1[country1, country2, …], grp2[country4, …], … ]}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.ProductInput.read_energy_carrier_consumption_historical">
+<span class="sig-name descname"><span class="pre">read_energy_carrier_consumption_historical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">industry_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_industry.html#ProductInput.read_energy_carrier_consumption_historical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_industry.ProductInput.read_energy_carrier_consumption_historical" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the historical consumption data for this subsector split by energy carriers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>industry_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) – The path to the industry input folder.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, [&lt;class ‘endemo2.data_structures.containers.Datapoint’&gt;]]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If present, the historical quantity of energy carrier in subsector.
+Of form: {country_name -&gt; {energy_carrier -&gt; [Datapoint]}}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.ProductInput.read_nuts2_installed_capacities">
+<span class="sig-name descname"><span class="pre">read_nuts2_installed_capacities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_nuts2_ic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuts2_valid_regions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_industry.html#ProductInput.read_nuts2_installed_capacities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_industry.ProductInput.read_nuts2_installed_capacities" title="Permalink to this definition"></a></dt>
+<dd><p>Reads all the installed capacities for the nuts2 regions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ex_nuts2_ic</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ExcelFile</span></code>) – The Excel sheet holding the installed capacities percentages.</p></li>
+<li><p><strong>nuts2_valid_regions</strong> (<em>set</em><em>[</em><em>str</em><em>]</em>) – The valid nuts2 regions according to the currently chosen nuts2 version.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The installed capacities for all nuts2 regions in an active country.
+Is of form: {back_label -&gt; {nuts2_region_name -&gt; installed_capacity}}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.ProductInput.read_production_data">
+<span class="sig-name descname"><span class="pre">read_production_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">industry_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">industry_settings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_industry.html#ProductInput.read_production_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_industry.ProductInput.read_production_data" title="Permalink to this definition"></a></dt>
+<dd><p>Reads historical production quantities for this subsector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>industry_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) – The path to the industry input folder.</p></li>
+<li><p><strong>industry_settings</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.IndustrySettings" title="endemo2.input_and_settings.control_parameters.IndustrySettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">IndustrySettings</span></code></a>) – The industry settings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, [&lt;class ‘endemo2.data_structures.containers.Datapoint’&gt;]]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The historical production data of all _subsectors for all countries.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.ProductInput.read_specific_consumption_default">
+<span class="sig-name descname"><span class="pre">read_specific_consumption_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_specific_consumption</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_industry.html#ProductInput.read_specific_consumption_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_industry.ProductInput.read_specific_consumption_default" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the default specific consumption data for this subsector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ex_specific_consumption</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ExcelFile</span></code>) – The Excel sheet for specific consumption default values.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.SpecConsum" title="endemo2.data_structures.containers.SpecConsum"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpecConsum</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The default specific consumptions for this subsector. Of form: {back_label -&gt; specific_consumption}</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_industry.RestSectorInput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RestSectorInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">industry_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_heat_levels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_industry.html#RestSectorInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_industry.RestSectorInput" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A container for the preprocessing data regarding the rest transport.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>industry_path</strong> (<em>Path</em>) – The path to the industry input folder.</p></li>
+<li><p><strong>dict_heat_levels</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Heat" title="endemo2.data_structures.containers.Heat"><em>endemo2.data_structures.containers.Heat</em></a><em>]</em>) – The heat levels.</p></li>
+<li><p><strong>dict_heat_levels</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>rest_demand_proportion_basis_year</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType" title="endemo2.data_structures.enumerations.DemandType"><em>DemandType</em></a><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em><em>]</em>) – Used for the calculation of the rest sector.
+It has the following structure: {back_label -&gt; {demand_type -&gt; (rest_sector_percent, demand_2018)}}</p></li>
+<li><p><strong>rest_calc_basis_year</strong> (<em>int</em>) – Year used as a starting point for calculating the rest sector demand.</p></li>
+<li><p><strong>rest_sector_heat_levels</strong> (<em>(</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>)</em>) – The heat levels used to separate the heat demand in the
+rest sector into the different heat levels.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-endemo2.input_and_settings.input_manager">
+<span id="endemo2-input-and-settings-input-manager-module"></span><h2>endemo2.input_and_settings.input_manager module<a class="headerlink" href="#module-endemo2.input_and_settings.input_manager" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_manager.InputManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">InputManager</span></span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_manager.html#InputManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_manager.InputManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The InputManager class connects all types of preprocessing data, that is in the form of excel/csv sheets in the
+‘preprocessing’ folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>super_path</strong> (<em>str</em>) – Path of project folder</p></li>
+<li><p><strong>input_path</strong> (<em>str</em>) – Path of preprocessing files</p></li>
+<li><p><strong>output_path</strong> (<em>str</em>) – Path for output files</p></li>
+<li><p><strong>general_path</strong> (<em>str</em>) – Path for preprocessing files in “general” folder</p></li>
+<li><p><strong>industry_path</strong> (<em>str</em>) – Path for preprocessing files in “industry” folder</p></li>
+<li><p><strong>ctrl</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.ControlParameters" title="endemo2.input_and_settings.control_parameters.ControlParameters"><em>ControlParameters</em></a>) – Holds all information received from Set_and_Control_Parameters.xlsx</p></li>
+<li><p><strong>general_input</strong> (<a class="reference internal" href="#endemo2.input_and_settings.input_general.GeneralInput" title="endemo2.input_and_settings.input_general.GeneralInput"><em>GeneralInput</em></a>) – Holds all information of the preprocessing files from the “preprocessing/general”
+folder.</p></li>
+<li><p><strong>industry_input</strong> (<a class="reference internal" href="#endemo2.input_and_settings.input_industry.IndustryInput" title="endemo2.input_and_settings.input_industry.IndustryInput"><em>IndustryInput</em></a>) – Holds all information of the preprocessing files from the
+“preprocessing/industry” folder.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_manager.InputManager.ctrl_path">
+<span class="sig-name descname"><span class="pre">ctrl_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">WindowsPath('C:/Users/Chris/OneDrive</span> <span class="pre">-</span> <span class="pre">TUM/Documents/Master_Semester_1/IDP/endemo2/docs/input/Set_and_Control_Parameters.xlsx')</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_manager.InputManager.ctrl_path" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_manager.InputManager.cts_path">
+<span class="sig-name descname"><span class="pre">cts_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">WindowsPath('C:/Users/Chris/OneDrive</span> <span class="pre">-</span> <span class="pre">TUM/Documents/Master_Semester_1/IDP/endemo2/docs/input/commercial_trade_and_services')</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_manager.InputManager.cts_path" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_manager.InputManager.general_path">
+<span class="sig-name descname"><span class="pre">general_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">WindowsPath('C:/Users/Chris/OneDrive</span> <span class="pre">-</span> <span class="pre">TUM/Documents/Master_Semester_1/IDP/endemo2/docs/input/general')</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_manager.InputManager.general_path" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_manager.InputManager.hh_path">
+<span class="sig-name descname"><span class="pre">hh_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">WindowsPath('C:/Users/Chris/OneDrive</span> <span class="pre">-</span> <span class="pre">TUM/Documents/Master_Semester_1/IDP/endemo2/docs/input/households')</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_manager.InputManager.hh_path" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_manager.InputManager.industry_path">
+<span class="sig-name descname"><span class="pre">industry_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">WindowsPath('C:/Users/Chris/OneDrive</span> <span class="pre">-</span> <span class="pre">TUM/Documents/Master_Semester_1/IDP/endemo2/docs/input/industry')</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_manager.InputManager.industry_path" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_manager.InputManager.input_path">
+<span class="sig-name descname"><span class="pre">input_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">WindowsPath('C:/Users/Chris/OneDrive</span> <span class="pre">-</span> <span class="pre">TUM/Documents/Master_Semester_1/IDP/endemo2/docs/input')</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_manager.InputManager.input_path" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_manager.InputManager.output_path">
+<span class="sig-name descname"><span class="pre">output_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">WindowsPath('C:/Users/Chris/OneDrive</span> <span class="pre">-</span> <span class="pre">TUM/Documents/Master_Semester_1/IDP/endemo2/docs/output')</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_manager.InputManager.output_path" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_manager.InputManager.read_set_and_control_parameters">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_set_and_control_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_manager.html#InputManager.read_set_and_control_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_manager.InputManager.read_set_and_control_parameters" title="Permalink to this definition"></a></dt>
+<dd><p>Reads Set_and_Control_Parameters.xlsx</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#endemo2.input_and_settings.control_parameters.ControlParameters" title="endemo2.input_and_settings.control_parameters.ControlParameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">ControlParameters</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_manager.InputManager.super_path">
+<span class="sig-name descname"><span class="pre">super_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">WindowsPath('C:/Users/Chris/OneDrive</span> <span class="pre">-</span> <span class="pre">TUM/Documents/Master_Semester_1/IDP/endemo2/docs')</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_manager.InputManager.super_path" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_manager.InputManager.transport_path">
+<span class="sig-name descname"><span class="pre">transport_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">WindowsPath('C:/Users/Chris/OneDrive</span> <span class="pre">-</span> <span class="pre">TUM/Documents/Master_Semester_1/IDP/endemo2/docs/input/traffic')</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_manager.InputManager.transport_path" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_manager.InputManager.update_set_and_control_parameters">
+<span class="sig-name descname"><span class="pre">update_set_and_control_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_manager.html#InputManager.update_set_and_control_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_manager.InputManager.update_set_and_control_parameters" title="Permalink to this definition"></a></dt>
+<dd><p>Updates Set_and_Control_Parameters.xlsx</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-endemo2.input_and_settings.input_transport">
+<span id="endemo2-input-and-settings-input-transport-module"></span><h2>endemo2.input_and_settings.input_transport module<a class="headerlink" href="#module-endemo2.input_and_settings.input_transport" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_transport.TransportInput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TransportInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traffic_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_transport.html#TransportInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_transport.TransportInput" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>CtsInput denoted input that is read from the “input/industry” folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ctrl</strong> (<a class="reference internal" href="#endemo2.input_and_settings.control_parameters.ControlParameters" title="endemo2.input_and_settings.control_parameters.ControlParameters"><em>ControlParameters</em></a>) – The control parameters object.</p></li>
+<li><p><strong>traffic_path</strong> (<em>Path</em>) – The path to the input files for the CTS sector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>kilometres</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType" title="endemo2.data_structures.enumerations.TrafficType"><em>TrafficType</em></a><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal" title="endemo2.data_structures.enumerations.TransportModal"><em>TransportModal</em></a><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em><em>]</em><em>]</em>) – The number of (million) kilometres
+travelled in one year by one unit of traffic type.
+Is of form {traffic_type -&gt; country_name -&gt; transport_modal -&gt; datapoint}.</p></li>
+<li><p><strong>modal_split_his</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType" title="endemo2.data_structures.enumerations.TrafficType"><em>TrafficType</em></a><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal" title="endemo2.data_structures.enumerations.TransportModal"><em>TransportModal</em></a><em>, </em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em><em>]</em><em>]</em><em>]</em>) – The historical data on model
+splits for each traffic type.</p></li>
+<li><p><strong>modal_split_user_def</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType" title="endemo2.data_structures.enumerations.TrafficType"><em>TrafficType</em></a><em>, </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal" title="endemo2.data_structures.enumerations.TransportModal"><em>TransportModal</em></a><em>, </em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em><em>]</em><em>]</em><em>]</em>) – The user defined model
+split points for each traffic type.</p></li>
+<li><p><strong>modal_ukm_energy_consumption</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType" title="endemo2.data_structures.enumerations.TrafficType"><em>TrafficType</em></a><em>, </em><em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal" title="endemo2.data_structures.enumerations.TransportModal"><em>TransportModal</em></a><em>, </em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand" title="endemo2.data_structures.containers.Demand"><em>Demand</em></a><em>]</em><em>]</em>) – The energy consumption for each
+pkm or tkm and each transport modal.</p></li>
+<li><p><strong>demand_split_reference</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType" title="endemo2.data_structures.enumerations.TrafficType"><em>TrafficType</em></a><em>, </em><em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal" title="endemo2.data_structures.enumerations.TransportModal"><em>TransportModal</em></a><em>, </em><em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType" title="endemo2.data_structures.enumerations.DemandType"><em>DemandType</em></a><em>, </em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em><em>]</em><em>]</em><em>]</em>) – How demand should be split over time. Reference from real data.</p></li>
+<li><p><strong>demand_split_user</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType" title="endemo2.data_structures.enumerations.TrafficType"><em>TrafficType</em></a><em>, </em><em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal" title="endemo2.data_structures.enumerations.TransportModal"><em>TransportModal</em></a><em>, </em><em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType" title="endemo2.data_structures.enumerations.DemandType"><em>DemandType</em></a><em>, </em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><em>Datapoint</em></a><em>]</em><em>]</em><em>]</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<p>How demand should be split over time. Defined by user.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_transport.TransportInput.read_energy_per_source">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_energy_per_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">traffic_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_energy_per_source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_transport.html#TransportInput.read_energy_per_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_transport.TransportInput.read_energy_per_source" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the energy per source sheet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal" title="endemo2.data_structures.enumerations.TransportModal"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransportModal</span></code></a>, <a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Demand" title="endemo2.data_structures.containers.Demand"><code class="xref py py-class docutils literal notranslate"><span class="pre">Demand</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_transport.TransportInput.read_modal_split_sheets">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_modal_split_sheets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_df_modal_split</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_transport.html#TransportInput.read_modal_split_sheets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_transport.TransportInput.read_modal_split_sheets" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the modal split sheets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal" title="endemo2.data_structures.enumerations.TransportModal"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransportModal</span></code></a>, [&lt;class ‘endemo2.data_structures.containers.Datapoint’&gt;]]]</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>dict_df_modal_split</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal" title="endemo2.data_structures.enumerations.TransportModal"><em>endemo2.data_structures.enumerations.TransportModal</em></a><em>, </em><em>pandas.core.frame.DataFrame</em><em>]</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_transport.TransportInput.read_specific_km">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_specific_km</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_specific_km</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desired_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_transport.html#TransportInput.read_specific_km"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_transport.TransportInput.read_specific_km" title="Permalink to this definition"></a></dt>
+<dd><p>Read the specific kilometers and convert unit to desired unit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal" title="endemo2.data_structures.enumerations.TransportModal"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransportModal</span></code></a>, <a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.containers.Datapoint" title="endemo2.data_structures.containers.Datapoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datapoint</span></code></a>]]</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>dict_specific_km</strong> (<em>dict</em><em>[</em><a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal" title="endemo2.data_structures.enumerations.TransportModal"><em>endemo2.data_structures.enumerations.TransportModal</em></a><em>, </em><em>(</em><em>&lt;enum 'Unit'&gt;</em><em>, </em><em>&lt;class 'pandas.core.frame.DataFrame'&gt;</em><em>)</em><em>]</em>) – </p></li>
+<li><p><strong>desired_unit</strong> (<a class="reference internal" href="endemo2.data_structures.html#endemo2.data_structures.conversions_unit.Unit" title="endemo2.data_structures.conversions_unit.Unit"><em>Unit</em></a>) – </p></li>
+<li><p><strong>reference_year</strong> (<em>int</em><em> | </em><em>None</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_transport.TransportInput.read_timeline_perc">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_timeline_perc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctrl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_transport.html#TransportInput.read_timeline_perc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_transport.TransportInput.read_timeline_perc" title="Permalink to this definition"></a></dt>
+<dd><p>Read a simple timeline of percentage values. Convert to %/100.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, [&lt;class ‘endemo2.data_structures.containers.Datapoint’&gt;]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_transport.TransportInput.tra_modal_lists">
+<span class="sig-name descname"><span class="pre">tra_modal_lists</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{&lt;TrafficType.PERSON:</span> <span class="pre">0&gt;:</span> <span class="pre">[&lt;TransportModal.car:</span> <span class="pre">1&gt;,</span> <span class="pre">&lt;TransportModal.bus:</span> <span class="pre">2&gt;,</span> <span class="pre">&lt;TransportModal.rail:</span> <span class="pre">3&gt;,</span> <span class="pre">&lt;TransportModal.flight:</span> <span class="pre">6&gt;],</span> <span class="pre">&lt;TrafficType.FREIGHT:</span> <span class="pre">1&gt;:</span> <span class="pre">[&lt;TransportModal.road:</span> <span class="pre">0&gt;,</span> <span class="pre">&lt;TransportModal.rail:</span> <span class="pre">3&gt;,</span> <span class="pre">&lt;TransportModal.ship:</span> <span class="pre">5&gt;,</span> <span class="pre">&lt;TransportModal.flight:</span> <span class="pre">6&gt;]}</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_transport.TransportInput.tra_modal_lists" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_transport.TransportInput.tra_modal_split_groups">
+<span class="sig-name descname"><span class="pre">tra_modal_split_groups</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{&lt;TrafficType.PERSON:</span> <span class="pre">0&gt;:</span> <span class="pre">{&lt;TransportModal.road_rail:</span> <span class="pre">4&gt;:</span> <span class="pre">[&lt;TransportModal.car:</span> <span class="pre">1&gt;,</span> <span class="pre">&lt;TransportModal.bus:</span> <span class="pre">2&gt;,</span> <span class="pre">&lt;TransportModal.rail:</span> <span class="pre">3&gt;]},</span> <span class="pre">&lt;TrafficType.FREIGHT:</span> <span class="pre">1&gt;:</span> <span class="pre">{&lt;TransportModal.road_rail_ship:</span> <span class="pre">7&gt;:</span> <span class="pre">[&lt;TransportModal.road:</span> <span class="pre">0&gt;,</span> <span class="pre">&lt;TransportModal.rail:</span> <span class="pre">3&gt;,</span> <span class="pre">&lt;TransportModal.ship:</span> <span class="pre">5&gt;]}}</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_transport.TransportInput.tra_modal_split_groups" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_transport.TransportInput.tra_traffic_types">
+<span class="sig-name descname"><span class="pre">tra_traffic_types</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;TrafficType.PERSON:</span> <span class="pre">0&gt;,</span> <span class="pre">&lt;TrafficType.FREIGHT:</span> <span class="pre">1&gt;]</span></em><a class="headerlink" href="#endemo2.input_and_settings.input_transport.TransportInput.tra_traffic_types" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-endemo2.input_and_settings.input_utility">
+<span id="endemo2-input-and-settings-input-utility-module"></span><h2>endemo2.input_and_settings.input_utility module<a class="headerlink" href="#module-endemo2.input_and_settings.input_utility" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_utility.FileReadingHelper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FileReadingHelper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_transform</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_utility.html#FileReadingHelper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_utility.FileReadingHelper" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A helper class to read products historical data. It provides some fixed transformation operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_name</strong> (<em>str</em>) – The files name, relative to the path variable.</p></li>
+<li><p><strong>sheet_name</strong> (<em>str</em>) – The name of the sheet that is to be read from the file.</p></li>
+<li><p><strong>skip_rows</strong> (<em>[</em><em>int</em><em>]</em>) – These rows(!) will be skipped when reading the dataframe. Done by numerical index.</p></li>
+<li><p><strong>sheet_transform</strong> (<em>lambda</em><em>[</em><em>pd.Dataframe -&gt; pd.Dataframe</em><em>]</em>) – A transformation operation on the dataframe</p></li>
+<li><p><strong>df</strong> (<em>pd.Dataframe</em>) – The current dataframe.</p></li>
+<li><p><strong>path</strong> (<em>Path</em>) – The path to the folder, where the file is.
+It can to be set after constructing the FileReadingHelper Object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>file_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>sheet_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>skip_rows</strong> (<em>[</em><em>&lt;class 'int'&gt;</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_utility.FileReadingHelper.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_utility.html#FileReadingHelper.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_utility.FileReadingHelper.get" title="Permalink to this definition"></a></dt>
+<dd><p>Getter for the dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The current dataframe, which is filtered depending on previous function calls on this class.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_utility.FileReadingHelper.set_path_and_read">
+<span class="sig-name descname"><span class="pre">set_path_and_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_utility.html#FileReadingHelper.set_path_and_read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_utility.FileReadingHelper.set_path_and_read" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the path variable and reads the file with name self.file_name in the path folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) – The path, where the file lies.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_utility.FileReadingHelper.skip_years">
+<span class="sig-name descname"><span class="pre">skip_years</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skip_years</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_utility.html#FileReadingHelper.skip_years"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_utility.FileReadingHelper.skip_years" title="Permalink to this definition"></a></dt>
+<dd><p>Filters the skip years from the current dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>skip_years</strong> (<em>[</em><em>&lt;class 'int'&gt;</em><em>]</em>) – The list of years to skip.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_utility.read_energy_carrier_consumption_historical">
+<span class="sig-name descname"><span class="pre">read_energy_carrier_consumption_historical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_utility.html#read_energy_carrier_consumption_historical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_utility.read_energy_carrier_consumption_historical" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the historical consumption data split by energy carriers from a nrg_bal file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) – The path to the folder of the file</p></li>
+<li><p><strong>filename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The filename of the file to read.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, [&lt;class ‘endemo2.data_structures.containers.Datapoint’&gt;]]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If present, the historical quantity of energy carrier in subsector.
+Of form: {country_name -&gt; {energy_carrier -&gt; [Datapoint]}}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="endemo2.input_and_settings.input_utility.skip_years_in_df">
+<span class="sig-name descname"><span class="pre">skip_years_in_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_years</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/endemo2/input_and_settings/input_utility.html#skip_years_in_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.input_and_settings.input_utility.skip_years_in_df" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>DataFrame</em>) – </p></li>
+<li><p><strong>skip_years</strong> (<em>[</em><em>&lt;class 'int'&gt;</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-endemo2.input_and_settings">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-endemo2.input_and_settings" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="endemo2.data_structures.html" class="btn btn-neutral float-left" title="endemo2.data_structures package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="endemo2.model_instance.html" class="btn btn-neutral float-right" title="endemo2.model_instance package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
