@@ -621,12 +621,20 @@ def industry_en_demand(CTRL, ind_data, spec_consum_const, efficiency_table, effi
                 idx_spec_consum=list(spec_consum["Country"]).index("all")
             idx_spec_consum_h2 = idx_spec_consum
             
-            spec_consum_el = (spec_consum["Spec electricity consumption [GJ/t]"][idx_spec_consum] 
-                              * (1 - getattr(CTRL, "spec_demand_improvement_" + industry)/100)**(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1))
-            
-            spec_consum_heat_total = (spec_consum["Spec heat consumption [GJ/t]"][idx_spec_consum] 
-                                * (1 - getattr(CTRL, "spec_demand_improvement_" + industry)/100)**(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1)
-                                * efficiency)
+            if CTRL.IND_CALC_METHOD == "exp":
+                spec_consum_el = (spec_consum["Spec electricity consumption [GJ/t]"][idx_spec_consum] 
+                                  * (1 - getattr(CTRL, "spec_demand_improvement_" + industry)/100)**(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1))
+                
+                spec_consum_heat_total = (spec_consum["Spec heat consumption [GJ/t]"][idx_spec_consum] 
+                                    * (1 - getattr(CTRL, "spec_demand_improvement_" + industry)/100)**(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1)
+                                    * efficiency)
+            elif CTRL.IND_CALC_METHOD == "lin":
+                spec_consum_el = (spec_consum["Spec electricity consumption [GJ/t]"][idx_spec_consum] 
+                                  * (1 - getattr(CTRL, "spec_demand_improvement_" + industry)/100*(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1)))
+                
+                spec_consum_heat_total = (spec_consum["Spec heat consumption [GJ/t]"][idx_spec_consum] 
+                                    * (1 - getattr(CTRL, "spec_demand_improvement_" + industry)/100*(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1))
+                                    * efficiency)
         
         ## Limiting minimal specific energy demand on BAT value
         spec_consum_el = max(spec_consum_el, ind_data.spec_consum_BAT[industry]["Spec electricity consumption [GJ/t]"][0])
@@ -687,11 +695,17 @@ def overall_ind_demand(CTRL, result_dem, result_dem_path, rest_table, heat_level
     for country in df["Country"]:
         idx = list(rest_table["Country"]).index(country)
         
-        rest_el = (rest_table["Rest el"][idx]/100 * rest_table["electricity TWh 2018"][idx] 
-                   * (1 + CTRL.IND_REST_PROGRESS/100)**(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1))
-        rest_heat = (rest_table["Rest heat"][idx]/100 * rest_table["fuel TWh 2018"][idx] 
-                   * (1 + CTRL.IND_REST_PROGRESS/100)**(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1))
-        
+        if CTRL.IND_CALC_METHOD == "exp":
+            rest_el = (rest_table["Rest el"][idx]/100 * rest_table["electricity TWh "+str(CTRL.REF_YEAR)][idx] 
+                       * (1 + CTRL.IND_REST_PROGRESS/100)**(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1))
+            rest_heat = (rest_table["Rest heat"][idx]/100 * rest_table["fuel TWh "+str(CTRL.REF_YEAR)][idx] 
+                       * (1 + CTRL.IND_REST_PROGRESS/100)**(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1))
+        elif CTRL.IND_CALC_METHOD == "lin":
+            rest_el = (rest_table["Rest el"][idx]/100 * rest_table["electricity TWh "+str(CTRL.REF_YEAR)][idx] 
+                       * (1 + CTRL.IND_REST_PROGRESS/100*(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1)))
+            rest_heat = (rest_table["Rest heat"][idx]/100 * rest_table["fuel TWh "+str(CTRL.REF_YEAR)][idx] 
+                       * (1 + CTRL.IND_REST_PROGRESS/100*(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1)))
+            
         idx_heat_level = list(heat_levels["Industry"]).index("rest")
         energy_heat_levels = []
         elec_from_heat = 0; h2_from_heat = 0; energy_heat_remaining = 0

@@ -40,6 +40,24 @@ def linear_regression_gdp_lin(corr_industry_table, corr_gdp_table, country, skip
 
 #------------------------------------------------------------------------------
 
+def lin_regression_time(df, country, skip_years):
+    varx_total = df.columns.values.tolist()
+    varx = []; var_y = []
+    idx_dismiss = [0] # first index skipped because it is a "Country" and not a number
+    for idx, element in enumerate(varx_total[1:]):
+        if element not in skip_years:
+            varx.append(element)
+        else:
+            idx_dismiss.append(idx+1) # since first index was skipped
+    vary_total = df.iloc[list(df["Country"]).index(country)].values.tolist()
+    vary = [element for idx, element in enumerate(vary_total) if idx not in idx_dismiss]
+    mask = (~np.isnan(varx) & ~np.isnan(vary)).tolist()
+    slope, intercept, r_value, p_value, std_err = scipy.stats.linregress([elem_x for idx, elem_x in enumerate(varx) if mask[idx]], 
+                                                                         [elem_y for idx, elem_y in enumerate(vary) if mask[idx]])
+    
+    return slope, intercept
+#------------------------------------------------------------------------------
+
 def linear_regression_single_country_time(CTRL, corr_industry_table, idx_country, sector): 
 
     N=1
@@ -234,13 +252,13 @@ def save_koef_lin(country, koef):
     return coeff_row 
 
 #------------------------------------------------------------------------------
-def foothold_year_forecast(FORECAST_YEAR, country, value_table, foothold_years):
+def foothold_exp_forecast(FORECAST_YEAR, REF_YEAR, country, value_table, foothold_years):
     
     idx_country = list(value_table["Country"]).index(country)
     
-    foothold_years = [2018] + foothold_years
+    foothold_years = [REF_YEAR] + foothold_years
 
-    if FORECAST_YEAR < 2018 or FORECAST_YEAR > foothold_years[-1]:
+    if FORECAST_YEAR < REF_YEAR or FORECAST_YEAR > foothold_years[-1]:
         print("The forcasted year has to be in range from 2018 to 2050!")
     
     elif FORECAST_YEAR in foothold_years:
@@ -254,7 +272,34 @@ def foothold_year_forecast(FORECAST_YEAR, country, value_table, foothold_years):
                 # calculate the change between the two foothold years
                 # to avoid dividaton with zero taking max of 0 and last foothold value from the table
                 trend = (((value_table[next_fh_year][idx_country]/max(0.01, value_table[fh_year][idx_country]))**(1/(next_fh_year-fh_year)))-1)*100 # %
-                value_forecast_year = value_table[fh_year][idx_country]*(1+(trend/100))**(FORECAST_YEAR-fh_year) # % 
+                value_forecast_year = value_table[fh_year][idx_country]*(1+(trend/100))**(FORECAST_YEAR-fh_year)
+                if math.isnan(value_forecast_year):
+                    value_forecast_year = 0
+                break
+       
+    
+    return value_forecast_year
+#------------------------------------------------------------------------------
+def foothold_lin_forecast(FORECAST_YEAR, REF_YEAR, country, value_table, foothold_years):
+    
+    idx_country = list(value_table["Country"]).index(country)
+    
+    foothold_years = [REF_YEAR] + foothold_years
+
+    if FORECAST_YEAR < REF_YEAR or FORECAST_YEAR > foothold_years[-1]:
+        print("The forcasted year has to be in range from 2018 to 2050!")
+    
+    elif FORECAST_YEAR in foothold_years:
+        value_forecast_year = value_table[FORECAST_YEAR][idx_country]
+    
+    else:
+        # find the two foothold years between which is the forecasted year 
+        for idx_year, fh_year in enumerate(foothold_years[:-1]):
+            next_fh_year = foothold_years[idx_year + 1]
+            if FORECAST_YEAR < next_fh_year:
+                # calculate the change between the two foothold years
+                k = ((value_table[next_fh_year][idx_country]- value_table[fh_year][idx_country])/(next_fh_year-fh_year))
+                value_forecast_year = value_table[fh_year][idx_country] + k*(FORECAST_YEAR-fh_year)
                 if math.isnan(value_forecast_year):
                     value_forecast_year = 0
                 break

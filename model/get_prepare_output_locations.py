@@ -15,7 +15,7 @@ import shutil
 class LOCATIONS():
 
     
-    def __init__(self, FILE_PATH, forecast_year, ind_volume_prognos, logger):
+    def __init__(self, FILE_PATH, forecast_year, ref_year, ind_volume_prognos, logger):
 
         # Define input and output file structure
         self.FILE_PATH_INPUT_DATA = os.path.join(
@@ -92,16 +92,17 @@ class LOCATIONS():
         self.FILENAME_OUTPUT_TIMESERIES = '_energy_demand_timeseries_'+str(forecast_year)+'.xlsx'
         self.FILENAME_OUTPUT_TIMESERIES_TRA_PKM_TKM = "TRA_pkm_tkm_demand_timeseries"+str(forecast_year) + ".xlsx"
         
-        self.FILENAME_OUTPUT_CHARACTERISTICS_HOUSEHOLDS = 'HH_household_characteristics.xlsx'
-        self.FILENAME_OUTPUT_ENERGYDEMAND_HIS_HOUSEHOLDS = 'HH_subsectors_energy_demand_2018_his.xlsx'
-        self.FILENAME_OUTPUT_DEMAND_HOUSEHOLD_SUBSECTORS = "HH_subsectors_energy_demand_" + str(forecast_year) + ".xlsx"
+        self.FILENAME_OUTPUT_HH_CHARACTERISTICS = 'HH_household_characteristics_'+str(forecast_year)+'.xlsx'
+        self.FILENAME_OUTPUT_HH_CHARACTERISTICS_HIS = 'HH_household_characteristics_'+str(ref_year)+'_his.xlsx'
+        self.FILENAME_OUTPUT_HH_DEMAND_SUBSECTORS = "HH_subsectors_energy_demand_" + str(forecast_year) + ".xlsx"
+        self.FILENAME_OUTPUT_HH_DEMAND_SUBSECTORS_HIS = 'HH_subsectors_energy_demand_'+str(ref_year)+'_his.xlsx'
         self.FILENAME_OUTPUT_HH_DEMAND_SUBSECTORS_NUTS2 = 'HH_energy_demand_NUTS2_subsector_'+str(forecast_year)+'.xlsx'
         
-        self.FILENAME_OUTPUT_KILOMETERS_TRAFFIC = "TRA_traffickilometers_" + str(forecast_year) + ".xlsx" # front page
-        self.FILENAME_OUTPUT_DEMAND_PERSONTRAFFIC = "TRA_persontraffic_energy_demand_" + str(forecast_year) + ".xlsx"
-        self.FILENAME_OUTPUT_MODALSPLIT_TRAFFIC = "TRA_modalsplit_" + str(forecast_year) + ".xlsx"
-        self.FILENAME_OUTPUT_DEMAND_FREIGHTTRAFFIC = "TRA_freighttraffic_energy_demand_" + str(forecast_year) + ".xlsx"
-        self.FILENAME_OUTPUT_PRODUCTION_VOLUME_TOTAL = "TRA_production_volume.xlsx" 
+        self.FILENAME_OUTPUT_TRA_KILOMETERS = "TRA_traffickilometers_" + str(forecast_year) + ".xlsx" # front page
+        self.FILENAME_OUTPUT_PT_DEMAND = "TRA_persontraffic_energy_demand_" + str(forecast_year) + ".xlsx"
+        self.FILENAME_OUTPUT_TRA_MODALSPLIT = "TRA_modalsplit_" + str(forecast_year) + ".xlsx"
+        self.FILENAME_OUTPUT_FT_DEMAND = "TRA_freighttraffic_energy_demand_" + str(forecast_year) + ".xlsx"
+        self.FILENAME_OUTPUT_TRA_PRODUCTION_VOLUME = "TRA_production_volume.xlsx" 
         
         self.FILENAME_OUTPUT_CTS_EMPLOYEE = 'CTS_employee_number.xlsx'
         self.FILENAME_OUTPUT_CTS_EMPL_COEF = 'CTS_employee_coeff.xlsx'

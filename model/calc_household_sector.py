@@ -30,8 +30,11 @@ class SUBSEC():
     def __init__(self, CTRL, FILE, hh_data, gen_data):
         
         #------------------------------------------------------------------------------
+        logger.info(" - Preprocessing (characterizing) households")
+        self.hh_data_forecast = subsec_hh_subsectors.datapreproces(CTRL, FILE, hh_data, gen_data)
+        #------------------------------------------------------------------------------
         logger.info(" - Space heating")
-        self.hh_sh = subsec_hh_subsectors.spaceheating(CTRL, FILE, hh_data, gen_data)
+        self.hh_sh = subsec_hh_subsectors.spaceheating(CTRL, FILE, hh_data, gen_data, self.hh_data_forecast)
 
         #------------------------------------------------------------------------------
         logger.info(" - Hot water")
@@ -47,7 +50,7 @@ class SUBSEC():
 
         #------------------------------------------------------------------------------
         logger.info(" - Space cooling")
-        self.hh_sc = subsec_hh_subsectors.spacecooling(CTRL, FILE, hh_data, gen_data)
+        self.hh_sc = subsec_hh_subsectors.spacecooling(CTRL, FILE, hh_data, gen_data, self.hh_data_forecast)
 
         #------------------------------------------------------------------------------
         

@@ -26,6 +26,7 @@ class CONTROL():
     
         # General settable parameters
         self.FORECAST_YEAR = settings_general["Value"][list(settings_general["Parameter"]).index("Forecast year")] # FORECAST_YEAR
+        self.REF_YEAR = 2018
         self.CONSIDERED_COUNTRIES = settings["Countries"]["Country"][settings["Countries"]["Active"]==True].tolist()
         
         ## Activate and deactivate main sectors
@@ -48,6 +49,7 @@ class CONTROL():
         self.IND_ACTIVATE_TIME_TREND_MODEL = False #bool(settings_IND_general["Value"][list(settings_IND_general["Parameter"]).index("Time trend model activation for U-shape method")])
         self.IND_PRODUCTION_QUANTITY_PER_CAPITA = bool(settings_IND_general["Value"][list(settings_IND_general["Parameter"]).index("Production quantity calculated per capita")])
         self.IND_CALC_SPEC_EN_TREND = bool(settings_IND_general["Value"][list(settings_IND_general["Parameter"]).index("Trend calculation for specific energy requirements")])
+        self.IND_CALC_METHOD = settings_IND_general["Value"][list(settings_IND_general["Parameter"]).index("Calculation of IND parametres change")]
         self.IND_H2_SUBSTITUTION_OF_HEAT_Q1 = float(settings_IND_general["Value"][list(settings_IND_general["Parameter"]).index("Proportion of hydrogen usage for heat supply at Q1 level")])
         self.IND_ELEC_SUBSTITUTION_OF_HEAT_Q1 = float(settings_IND_general["Value"][list(settings_IND_general["Parameter"]).index("Proportion of electricity usage for heat supply at Q1 level")])
         self.IND_H2_SUBSTITUTION_OF_HEAT_Q2 = float(settings_IND_general["Value"][list(settings_IND_general["Parameter"]).index("Proportion of hydrogen usage for heat supply at Q2 level")])
@@ -93,6 +95,9 @@ class CONTROL():
         #Household
         self.HH_HEAT_Q1 = settings["HH"]["Value"][list(settings["HH"]["Parameter"]).index("Predefined ratio of Q1 heat level (below 60°C)")]
         self.HH_HEAT_EFH = settings["HH"]["Value"][list(settings["HH"]["Parameter"]).index("Predefined ratio of single households")]
+        self.HH_CALC_METHOD_HH_AREA = settings["HH"]["Value"][list(settings["HH"]["Parameter"]).index("Calculation of parametre change: household surface")]
+        self.HH_CALC_METHOD_PER_HH = settings["HH"]["Value"][list(settings["HH"]["Parameter"]).index("Calculation of parametre change: occupants per household")]
+        self.HH_CALC_METHOD_SP_HEAT = settings["HH"]["Value"][list(settings["HH"]["Parameter"]).index("Calculation of parametre change: spec. space heating")]
         self.HH_H2_IN_SPACEHEAT = settings["HH"]["Value"][list(settings["HH"]["Parameter"]).index("Proportion of hydrogen usage for space heating")]
         self.HH_ELEC_IN_SPACEHEAT = settings["HH"]["Value"][list(settings["HH"]["Parameter"]).index("Proportion of electricity usage for space heating")]
         self.HH_ELEC_IN_HOTWATER = settings["HH"]["Value"][list(settings["HH"]["Parameter"]).index("Proportion of electricity usage for hot water")]

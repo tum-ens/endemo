@@ -140,11 +140,11 @@ class INDUSTRY():
                                        sheet_name=CTRL.IND_EN_DEMAND_SHEET,skiprows=0)
         self.en_demand_paper = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_INDUSTRY, "nrg_bal_s_paper.xls"),
                                        sheet_name=CTRL.IND_EN_DEMAND_SHEET,skiprows=0)
-        self.rest_table = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_INDUSTRY, "Ind_energy_demand_2018_Trend_Restcalcul.xlsx"),
+        self.rest_table = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_INDUSTRY, "Ind_energy_demand_"+str(CTRL.REF_YEAR)+"_Trend_Restcalcul.xlsx"),
                                         sheet_name=["Data"],skiprows=0)["Data"]
         self.heat_levels = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_INDUSTRY, "Heat_levels.xlsx"),
                                          sheet_name=["Data"],skiprows=0)["Data"]
-        self.load_profile = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_INDUSTRY, "IND_Loadprofile.xlsx"),
+        self.load_profile = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_INDUSTRY, "IND_Hourly_load_profile.xlsx"),
                                           sheet_name=["Data"],skiprows=0)["Data"]
 
         if CTRL.ACTIVATE_TIMESERIES:
@@ -176,7 +176,7 @@ class CTS():
                                             sheet_name=None,skiprows=0)
         self.endemand = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_COMMERCIAL_TRADE_AND_SERVICES, "nrg_bal_s_GHD.xlsx"),
                                       sheet_name=CTRL.CTS_EN_DEMAND_SHEET,skiprows=0)
-        self.load_profile = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_COMMERCIAL_TRADE_AND_SERVICES, "CTS_Loadprofile.xlsx"),
+        self.load_profile = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_COMMERCIAL_TRADE_AND_SERVICES, "CTS_Hourly_load_profile.xlsx"),
                                           sheet_name=["Data"],skiprows=0)["Data"]
 
         
@@ -188,11 +188,12 @@ class HOUSEHOLD():
         print("start HH data preparation")
         # Space heating
         xlsx_space_heating = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_HOUSEHOLDS, "Space_Heating.xlsx"),
-                                           sheet_name=['AreaPerHousehold','PersPerHousehold','SpecificEnergyUse', 'Calibration'],
+                                           sheet_name=['AreaPerHousehold','TotalFloorArea','PersPerHousehold','SpecificEnergyUse', 'Calibration'],
                                            skiprows=0)
-        self.area_per_household = xlsx_space_heating['AreaPerHousehold']
-        self.person_per_household = xlsx_space_heating['PersPerHousehold']
-        self.specific_energy_use = xlsx_space_heating['SpecificEnergyUse']
+        self.area_per_hh = xlsx_space_heating['AreaPerHousehold']
+        self.floor_area = xlsx_space_heating['TotalFloorArea']
+        self.person_per_hh = xlsx_space_heating['PersPerHousehold']
+        self.spec_energy_spheat = xlsx_space_heating['SpecificEnergyUse']
         self.calibration_spheat = xlsx_space_heating['Calibration']
         
         # hot water
@@ -202,7 +203,7 @@ class HOUSEHOLD():
         self.calibration_hw = xlsx_hot_water['Calibration']
 
         if CTRL.ACTIVATE_TIMESERIES:
-            self.timeseries = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_HOUSEHOLDS, "hh_timeseries.xlsx"), sheet_name=['timeseries'])['timeseries']
+            self.timeseries = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_HOUSEHOLDS, "HH_Hourly_load_profile.xlsx"), sheet_name=['timeseries'])['timeseries']
         
 class TRAFFIC():
 
@@ -263,12 +264,12 @@ class TRAFFIC():
            
         # Timeseries
         if CTRL.ACTIVATE_TIMESERIES:
-            timeseries = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_TRAFFIC, "tra_timeseries.xlsx"),sheet_name=["timeseries_LoadingProfile","timeseries_MobilityProfile"],skiprows=0)
+            timeseries = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_TRAFFIC, "TRA_Hourly_load_profile.xlsx"),sheet_name=["timeseries_LoadingProfile","timeseries_MobilityProfile"],skiprows=0)
             self.timeseries_loading = timeseries["timeseries_LoadingProfile"] 
             self.timeseries_mobility = timeseries["timeseries_MobilityProfile"]
 
         # Industry ammounts to be transported
-        self.rest_table = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_INDUSTRY, "Ind_energy_demand_2018_Trend_Restcalcul.xlsx"),
+        self.rest_table = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_INDUSTRY, "Ind_energy_demand_"+str(CTRL.REF_YEAR)+"_Trend_Restcalcul.xlsx"),
                                         sheet_name=["Data"],skiprows=0)["Data"]     
         self.steel_table = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_INDUSTRY, "Production_Steel.xlsx"),sheet_name=["Data_total"],skiprows=0)["Data_total"]
         self.alu_prim_table = pd.read_excel(os.path.join(FILE.FILE_PATH_INPUT_DATA_INDUSTRY, "Production_Aluminium.xlsx"),sheet_name=["Prim_Data"],skiprows=0)["Prim_Data"]

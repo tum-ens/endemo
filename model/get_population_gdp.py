@@ -99,7 +99,7 @@ def gdp_prognosis(CTRL, FILE, gen_data, result_name):
     end_gdp_year = 2020 #end_gdp_year=gen_data.gdp_table.columns[len(gen_data.gdp_table.columns)-3]
       
     if CTRL.FORECAST_YEAR>2050:
-        print("please enter CTRL.FORECAST_YEAR:  2018<= CTRL.FORECAST_YEAR <= 2050")
+        print("please enter CTRL.FORECAST_YEAR:  "+str(CTRL.REF_YEAR)+" <= CTRL.FORECAST_YEAR <= 2050")
     elif CTRL.FORECAST_YEAR==2050:
         h1=0; h2=10; h3=10; h4=10
     elif CTRL.FORECAST_YEAR>=2040:
@@ -112,12 +112,12 @@ def gdp_prognosis(CTRL, FILE, gen_data, result_name):
     elif CTRL.FORECAST_YEAR>=2020:
         h1=0; h2=CTRL.FORECAST_YEAR % 10
         h3=0; h4=0
-    elif CTRL.FORECAST_YEAR>=2018:
-        h1 = CTRL.FORECAST_YEAR-2018; 
+    elif CTRL.FORECAST_YEAR>=CTRL.REF_YEAR:
+        h1 = CTRL.FORECAST_YEAR - CTRL.REF_YEAR; 
         h2=0; h3=0; h4=0
-        end_gdp_year = 2018
+        end_gdp_year = CTRL.REF_YEAR
     else:
-        print("please enter CTRL.FORECAST_YEAR:  2018<= CTRL.FORECAST_YEAR <= 2050")
+        print("please enter CTRL.FORECAST_YEAR: "+str("+str(CTRL.REF_YEAR)+")+ "<= CTRL.FORECAST_YEAR <= 2050")
         
     col_content = []
     for country in CTRL.CONSIDERED_COUNTRIES:

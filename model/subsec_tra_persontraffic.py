@@ -42,7 +42,7 @@ def persontraffic(CTRL, FILE, tra_data, gen_data):
         if CTRL.TRA_MODALSPLIT_SCENARIO == "Historical":
             if CTRL.TRA_MODALSPLIT_METHOD == "Constant":
                 for tra_type, idx_modal_split in zip(["car", "rail", "bus"],[idx_modal_split_car,idx_modal_split_rail,idx_modal_split_bus]):
-                    dict_modal_split[tra_type] = getattr(tra_data,"modalsplit_pt_"+tra_type)[2018][idx_modal_split]
+                    dict_modal_split[tra_type] = getattr(tra_data,"modalsplit_pt_"+tra_type)[CTRL.REF_YEAR][idx_modal_split]
                     modalsplit_percountry.append(dict_modal_split[tra_type])
                 modalsplit_percountry_scaled = modalsplit_percountry
     
@@ -131,7 +131,7 @@ def persontraffic(CTRL, FILE, tra_data, gen_data):
             dict_forecast_energycarrier_distrib[energy_type] = {}
             for tra_type in ["car", "rail", "bus", "ship", "flight"]:
                 data_table = getattr(tra_data, "tra_pt_energysources_"+tra_type+"_"+energy_type)
-                dict_forecast_energycarrier_distrib[energy_type][tra_type] = foothold_year_forecast(CTRL.FORECAST_YEAR, country, data_table, [2020, 2030, 2040, 2050])
+                dict_forecast_energycarrier_distrib[energy_type][tra_type] = foothold_lin_forecast(CTRL.FORECAST_YEAR, CTRL.REF_YEAR, country, data_table, [2020, 2030, 2040, 2050])
         
         #######################################################################
         #Get energy demand

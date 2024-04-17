@@ -52,7 +52,7 @@ logger.info(SPACE)
 logger.info("Initialize: Set and control parameters & data locations")
 
 CTRL = get_set_and_control_parameters.CONTROL(FILE_PATH)
-FILE = get_prepare_output_locations.LOCATIONS(FILE_PATH, CTRL.FORECAST_YEAR, CTRL.IND_VOLUM_PROGNOS, logger)
+FILE = get_prepare_output_locations.LOCATIONS(FILE_PATH, CTRL.FORECAST_YEAR, CTRL.REF_YEAR, CTRL.IND_VOLUM_PROGNOS, logger)
 
 ###############################################################################
 # Initiate and prepare input data

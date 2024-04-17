@@ -46,7 +46,7 @@ def out_data(CTRL, FILE, ind_sol, hh_sol, cts_sol, tra_sol):
         
         # additional HH outputs
         ## total demand and demand per subsector
-        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_HOUSEHOLD, FILE.FILENAME_OUTPUT_DEMAND_HOUSEHOLD_SUBSECTORS)
+        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_HOUSEHOLD, FILE.FILENAME_OUTPUT_HH_DEMAND_SUBSECTORS)
         data = {'Energy_PerSubsector': hh_sol.energy_demand_subsector, 
                 'Energy_Useful_Total': hh_sol.energy_demand_usefulenergy}
   
@@ -54,24 +54,39 @@ def out_data(CTRL, FILE, ind_sol, hh_sol, cts_sol, tra_sol):
             for sheet_name in data.keys():
                 data[sheet_name].to_excel(ew, sheet_name=sheet_name, index=False)
         
-        ## Pers Per household
-        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_HOUSEHOLD, FILE.FILENAME_OUTPUT_CHARACTERISTICS_HOUSEHOLDS)
-        data = {'Pers per Household': hh_sol.hh_sh.person_per_HH_prog, 
-                'Area per Household': hh_sol.hh_sh.table_area_prog_country,
-                'Specific energy consumption': hh_sol.hh_sh.table_spec_energy_use_prog,
-                'Living area total': hh_sol.hh_sh.table_total_area_country}
+        ## Characteristics of the households
+        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_HOUSEHOLD, FILE.FILENAME_OUTPUT_HH_CHARACTERISTICS)
+        data = {'Person per household': hh_sol.hh_data_forecast.person_per_hh_forecast, 
+                'Area per household (m2)': hh_sol.hh_data_forecast.area_per_hh_forecast,
+                'Living area total (Mil. m2)': hh_sol.hh_data_forecast.area_total_forecast,
+                'Spec. sp. heating (kWh per m2)': hh_sol.hh_sh.spec_energy_spheat_forecast,
+                'Spec. sp. cooling (kWh per m2)': hh_sol.hh_sc.spec_energy_forecast,
+                'Spec. light&appl (kWh per per.)': hh_sol.hh_liandap.spec_energy_forecast,
+                'Spec. cooking (kWh per person)': hh_sol.hh_co.spec_energy_forecast
+                }
         
         with pd.ExcelWriter(path) as ew: 
             for sheet_name in data.keys():
                 data[sheet_name].to_excel(ew, sheet_name=sheet_name, index=False)
     
-        ## historical data
-        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_HOUSEHOLD, FILE.FILENAME_OUTPUT_ENERGYDEMAND_HIS_HOUSEHOLDS)
+        ## historical energy data
+        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_HOUSEHOLD, FILE.FILENAME_OUTPUT_HH_DEMAND_SUBSECTORS_HIS)
         data = {'lighting and appliances': hh_sol.hh_liandap.energy_demand_his,
                 'space cooling': hh_sol.hh_sc.energy_demand_his,
                 'cooking': hh_sol.hh_co.energy_demand_his,
                 'space heating': hh_sol.hh_sh.energy_demand_his, 
                 'hot water': hh_sol.hh_hw.energy_demand_his}
+        
+        with pd.ExcelWriter(path) as ew: 
+            for sheet_name in data.keys():
+                data[sheet_name].to_excel(ew, sheet_name=sheet_name, index=False)
+                
+        ## Characteristics of the households
+        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_HOUSEHOLD, FILE.FILENAME_OUTPUT_HH_CHARACTERISTICS_HIS)
+        data = {'Area per household (m2)': hh_sol.hh_data_forecast.area_per_hh_hist,
+                'Living area total (Mil. m2)': hh_sol.hh_data_forecast.area_total_hist,
+                'Spec. light&appl (kWh per per.)': hh_sol.hh_liandap.spec_energy_hist,
+                'Spec. cooking (kWh per person)': hh_sol.hh_co.spec_energy_hist}
         
         with pd.ExcelWriter(path) as ew: 
             for sheet_name in data.keys():
@@ -117,7 +132,7 @@ def out_data(CTRL, FILE, ind_sol, hh_sol, cts_sol, tra_sol):
 
         # Additional TRA outputs
         ## Person traffic results
-        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_TRAFFIC, FILE.FILENAME_OUTPUT_DEMAND_PERSONTRAFFIC)
+        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_TRAFFIC, FILE.FILENAME_OUTPUT_PT_DEMAND)
         data = {'Elec_PerCountry': tra_sol.tra_pt.energy_demand_pt_elec, 
             'Hydrogen_PerCountry': tra_sol.tra_pt.energy_demand_pt_h2,
             'Total_EnergyCarrier_PerCountry': tra_sol.tra_pt.pt_energy_total}
@@ -126,7 +141,7 @@ def out_data(CTRL, FILE, ind_sol, hh_sol, cts_sol, tra_sol):
                 data[sheet_name].to_excel(ew, sheet_name=sheet_name, index=False)
 
         ## Freight traffic results
-        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_TRAFFIC, FILE.FILENAME_OUTPUT_DEMAND_FREIGHTTRAFFIC)
+        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_TRAFFIC, FILE.FILENAME_OUTPUT_FT_DEMAND)
         data = {'Elec_PerCountry': tra_sol.tra_ft.energy_demand_ft_elec, 
             'Hydrogen_PerCountry': tra_sol.tra_ft.energy_demand_ft_h2,
             'Total_EnergyCarrier_PerCountry': tra_sol.tra_ft.ft_energy_total}
@@ -134,7 +149,7 @@ def out_data(CTRL, FILE, ind_sol, hh_sol, cts_sol, tra_sol):
             for sheet_name in data.keys():
                 data[sheet_name].to_excel(ew, sheet_name=sheet_name, index=False)
                 
-        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_TRAFFIC, FILE.FILENAME_OUTPUT_PRODUCTION_VOLUME_TOTAL)
+        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_TRAFFIC, FILE.FILENAME_OUTPUT_TRA_PRODUCTION_VOLUME)
         data = {"total_" + str(CTRL.FORECAST_YEAR): tra_sol.tra_ft.ft_volume_sum_forecast, 
             "total_" + str(CTRL.TRA_REFERENCE_YEAR_PRODUCTION_HIS): tra_sol.tra_ft.ft_volume_sum_historical,
             "single_" + str(CTRL.TRA_REFERENCE_YEAR_PRODUCTION_HIS): tra_sol.tra_ft.production_sum_historical_singlesectors}
@@ -143,7 +158,7 @@ def out_data(CTRL, FILE, ind_sol, hh_sol, cts_sol, tra_sol):
                 data[sheet_name].to_excel(ew, sheet_name=sheet_name, index=False)
                 
         ## Person and freight traffic 
-        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA, FILE.FILENAME_OUTPUT_KILOMETERS_TRAFFIC)
+        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA, FILE.FILENAME_OUTPUT_TRA_KILOMETERS)
         data = {'Person_kilometers': tra_sol.tra_pt.pt_Mrd_pkm, 
             'Tonne_kilometers': tra_sol.tra_ft.ft_Mil_tkm}
         with pd.ExcelWriter(path) as ew: 
@@ -151,7 +166,7 @@ def out_data(CTRL, FILE, ind_sol, hh_sol, cts_sol, tra_sol):
                 data[sheet_name].to_excel(ew, sheet_name=sheet_name, index=False)
                 
         ## Modal split
-        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_TRAFFIC, FILE.FILENAME_OUTPUT_MODALSPLIT_TRAFFIC)
+        path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA_TRAFFIC, FILE.FILENAME_OUTPUT_TRA_MODALSPLIT)
         data = {'Pt Modal Split': tra_sol.tra_pt.modalsplit_percountry_scaled,
             'Ft Modal Split': tra_sol.tra_ft.modalsplit_percountry_scaled,
             'Pt Modal Split_unscaled': tra_sol.tra_pt.modalsplit_percountry,
