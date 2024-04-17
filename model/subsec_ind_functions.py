@@ -1,11 +1,5 @@
 ###############################################################################                                                                                   
-# Chair:            Chair of Renewable and Sustainable Energy Systems (ENS)
-# Assistant(s):     Andjelka Kerekes (andelka.kerekes@tum.de)
-
-# Date:             
-# Version:          v3.0
-# Status:           done
-# Python-Version:   3.7.3 (64-bit)
+# Functions for industrial sector calculations
 ###############################################################################
 """This module defines functions for the industry sector
 If subsectors have to be added:

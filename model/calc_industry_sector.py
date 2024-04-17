@@ -1,12 +1,5 @@
 ###############################################################################                                                                                   
-# Chair:            Chair of Renewable and Sustainable Energy Systems (ENS)
-# Assistant(s):     Andjelka Kerekes (andelka.kerekes@tum.de)/ 
-#                   Larissa Breuning (larissa.breuning@tum.de)
-
-# Date:             
-# Version:          v3.0
-# Status:           done
-# Python-Version:   3.7.3 (64-bit)
+# Forecast of the industrial sector
 ###############################################################################
 """This module makes a prognosis about the product demand in Europe, per NUTS0
  level. Calculates energy demand for each product in industry as a 

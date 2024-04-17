@@ -1,13 +1,12 @@
 ###############################################################################                                                                                   
-# Chair:            Chair of Renewable and Sustainable Energy Systems (ENS)
-# Programm title:   Energy demand model (endemo)
-# Assistant(s):     Larissa Breuning (larissa.breuning@tum.de)/
-#                   Andjelka Kerekes (andelka.bujandric@tum.de) 
-#                   
+# Programm title:   endemo (Energy demand model)
 
-# Date:             
-# Version:          v3.0
-# Status:           done
+# Developer(s):     Andelka Kerekes (andelka.kerekes@tum.de) 
+#                   Larissa Breuning (larissa.breuning@tum.de)
+
+# Chair:            Chair of Renewable and Sustainable Energy Systems (ENS)
+# University:       Technical University of Munich (TUM)
+           
 # Python-Version:   3.7.3 (64-bit)
 ###############################################################################
 """The module calculates the forecast energy demand for a defined geographical 

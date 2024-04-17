@@ -1,12 +1,5 @@
 ###############################################################################                                                                                   
-# Chair:            Chair of Renewable and Sustainable Energy Systems (ENS)
-# Assistant(s):     Larissa Breuning (larissa.breuning@tum.de) /
-#                   Andjelka Kerekes (andelka.kerekes@tum.de)
-
-# Date:             
-# Version:          v3.0
-# Status:           done
-# Python-Version:   3.7.3 (64-bit)
+# Libraries
 ###############################################################################
 import pandas as pd
 import csv

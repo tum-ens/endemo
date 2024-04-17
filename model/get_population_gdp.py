@@ -1,5 +1,5 @@
 ###############################################################################                                                                                   
-# Data loader for population Forecast Nuts2-Level
+# Forecast of population on NUTS2 level and GDP forecast
 ###############################################################################
 """The function predicts the population development for a desired year.
 """
