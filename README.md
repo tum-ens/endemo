@@ -19,10 +19,9 @@ Results are obtainable as yearly data as well as hourly time series.
 ## Data set
 Underlaying data and assumptions set is provided for users easier and quicker data-base funded forecasts and analysis.
 
-## Data set - coypright
+## Data set - copyright
 Unless otherwise indicated (e.g. in individual licence notices), the data set provided as the input file for this model is licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) licence (https://creativecommons.org/licenses/by/4.0/). This means that reuse is allowed, provided appropriate credit is given and changes are indicated. 
 The individual licence notices regarding the data contained is provided to the best of the authors' knowledge and belief.
-
 
 ## Installation
 
@@ -66,3 +65,6 @@ After installation, got to the directory you downloaded or cloned endemo into an
 `python main.py`.
 
 The results will be stored in the folder *results*.
+
+## Cite
+See  https://ssrn.com/abstract=4803430
