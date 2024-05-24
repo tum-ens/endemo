@@ -1,4 +1,4 @@
-# endemo
+# endemo v2.0.0 Alpha
 
 The module calculates the forecast energy demand for a defined  geographical area. The result output includes the energy-related sectors (households; industry; traffic; commerce, trade and services).   
 
