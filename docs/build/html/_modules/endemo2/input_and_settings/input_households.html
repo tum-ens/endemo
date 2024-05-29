@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.input_and_settings.input_households &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.input_and_settings.input_households</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.input_and_settings.input_households</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.containers</span> <span class="kn">import</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">HisProg</span><span class="p">,</span> <span class="n">Heat</span><span class="p">,</span> <span class="n">Datapoint</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.enumerations</span> <span class="kn">import</span> <span class="n">DemandType</span><span class="p">,</span> <span class="n">HouseholdsSubsectorId</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.conversions_unit</span> <span class="kn">import</span> <span class="n">Unit</span><span class="p">,</span> <span class="n">get_conversion_scalar</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.control_parameters</span> <span class="kn">import</span> <span class="n">ControlParameters</span>
+
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">utility</span> <span class="k">as</span> <span class="n">uty</span>
+
+
+<span class="n">hh_subsectors</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">SPACE_HEATING</span><span class="p">,</span>
+        <span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">SPACE_COOLING</span><span class="p">,</span>
+        <span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">WATER_HEATING</span><span class="p">,</span>
+        <span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">COOKING</span><span class="p">,</span>
+        <span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">LIGHTING_AND_APPLIANCES</span><span class="p">,</span>
+        <span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">OTHER</span>
+
+<span class="p">]</span>
+
+<span class="n">hh_visible_subsectors</span> <span class="o">=</span> <span class="n">hh_subsectors</span>
+
+
+<div class="viewcode-block" id="HouseholdsInput"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput">[docs]</a><span class="k">class</span> <span class="nc">HouseholdsInput</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The HouseholdInput is responsible for reading all input data related to the Households sector.</span>
+
+<span class="sd">    :ivar dict[str, dict[HouseholdsSubsectorId, dict[str, [Datapoint]]]] historical_consumption:</span>
+<span class="sd">        The historical energy consumption for each subsector in each country.</span>
+<span class="sd">        Is of form {country_name -&gt; {subsector_id -&gt; {energy_carrier -&gt; data}}}.</span>
+
+<span class="sd">    :ivar dict[str, float] hw_dict_hot_water_per_person_per_day: The amount of hot water per person per day in liter</span>
+<span class="sd">        for each country. Is of form {country_name -&gt; liters}.</span>
+<span class="sd">    :ivar dict[str, float] hw_dict_hot_water_calibration: The hot water calibration value for each country.</span>
+<span class="sd">        Is of form {country_name -&gt; calibration value}.</span>
+<span class="sd">    :ivar float hw_specific_capacity: The hot water specific capacity.</span>
+<span class="sd">    :ivar float hw_outlet_temperature: The hot water outlet temperature.</span>
+<span class="sd">    :ivar dict[str, float] hw_inlet_temperature: The hot water inlet temperature for each country.</span>
+<span class="sd">        Is of form {country_name -&gt; float}.</span>
+
+<span class="sd">    :ivar dict[str, (Datapoint, float)] sh_specific_heat: The specific heat forecast start point and change rate</span>
+<span class="sd">        for each country. Is of form {country_name -&gt; (start_point, change_rate)}</span>
+<span class="sd">    :ivar dict[str, (Datapoint, float)] sh_area_per_household: The area per household forecast start point and</span>
+<span class="sd">        change rate for each country. Is of form {country_name -&gt; (start_point, change_rate)}</span>
+<span class="sd">    :ivar HisProg(dict[str, [Datapoint]](), dict[str, [Datapoint]]()) sh_persons_per_household:</span>
+<span class="sd">        The datapoints for the persons per household in every year to interpolate between.</span>
+<span class="sd">        Is of form {country_name -&gt; [(year, value)]}.</span>
+<span class="sd">    :ivar dict[str, float] hw_dict_space_heating_calibration: The space heating calibration value for each country.</span>
+<span class="sd">        Is of form {country_name -&gt; calibration value}.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">hh_input_sheet_names</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">SPACE_HEATING</span><span class="p">:</span> <span class="s2">&quot;1a_SpaceHeating&quot;</span><span class="p">,</span>
+        <span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">SPACE_COOLING</span><span class="p">:</span> <span class="s2">&quot;1b_SpaceCooling&quot;</span><span class="p">,</span>
+        <span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">WATER_HEATING</span><span class="p">:</span> <span class="s2">&quot;1c_WaterHeating&quot;</span><span class="p">,</span>
+        <span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">COOKING</span><span class="p">:</span> <span class="s2">&quot;1d_Cooking&quot;</span><span class="p">,</span>
+        <span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">LIGHTING_AND_APPLIANCES</span><span class="p">:</span> <span class="s2">&quot;1e_LightingAndAppliances&quot;</span><span class="p">,</span>
+        <span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">OTHER</span><span class="p">:</span> <span class="s2">&quot;1f_OtherEndUses&quot;</span>
+    <span class="p">}</span>
+
+    <span class="n">hh_energy_carrier_unit_conversion</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;electricity&quot;</span><span class="p">:</span> <span class="n">get_conversion_scalar</span><span class="p">(</span><span class="n">Unit</span><span class="o">.</span><span class="n">GWh</span><span class="p">,</span> <span class="n">Unit</span><span class="o">.</span><span class="n">TWh</span><span class="p">),</span>  <span class="c1"># GWh -&gt; TWh</span>
+        <span class="s2">&quot;derived heat&quot;</span><span class="p">:</span> <span class="n">get_conversion_scalar</span><span class="p">(</span><span class="n">Unit</span><span class="o">.</span><span class="n">TJ</span><span class="p">,</span> <span class="n">Unit</span><span class="o">.</span><span class="n">TWh</span><span class="p">),</span>  <span class="c1"># TJ -&gt; TWh</span>
+        <span class="s2">&quot;gas&quot;</span><span class="p">:</span> <span class="n">get_conversion_scalar</span><span class="p">(</span><span class="n">Unit</span><span class="o">.</span><span class="n">TJ</span><span class="p">,</span> <span class="n">Unit</span><span class="o">.</span><span class="n">TWh</span><span class="p">),</span>  <span class="c1"># TJ -&gt; TWh</span>
+        <span class="s2">&quot;solid fossil fuels&quot;</span><span class="p">:</span> <span class="mf">28157.5373355095</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">,</span>  <span class="c1"># kt -&gt; TWh; considering MJ/t = GJ/kt</span>
+        <span class="s2">&quot;total oil &amp; petroleum products&quot;</span><span class="p">:</span> <span class="mf">43208.3523702321</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">,</span>  <span class="c1"># kt -&gt; TWh; considering MJ/t = GJ/kt</span>
+        <span class="s2">&quot;total renew. &amp; wastes&quot;</span><span class="p">:</span> <span class="n">get_conversion_scalar</span><span class="p">(</span><span class="n">Unit</span><span class="o">.</span><span class="n">TJ</span><span class="p">,</span> <span class="n">Unit</span><span class="o">.</span><span class="n">TWh</span><span class="p">)</span>  <span class="c1"># TJ -&gt; TWh</span>
+    <span class="p">}</span>
+
+    <span class="n">hh_his_sheets_skip_rows</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span><span class="p">,</span> <span class="n">hh_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+
+        <span class="c1"># read historical input data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">historical_consumption</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1"># {country_name -&gt; {subsector_id -&gt; {energy_carrier -&gt; data}}}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">read_historical_consumption</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">hh_path</span><span class="p">)</span>
+
+        <span class="c1"># read input for hot water (hw)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hw_dict_hot_water_per_person_per_day</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># dict{country_name -&gt; liters}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hw_dict_hot_water_calibration</span> <span class="o">=</span> <span class="kc">None</span>          <span class="c1"># dict{country_name -&gt; calibration value}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hw_specific_capacity</span> <span class="o">=</span> <span class="kc">None</span>                   <span class="c1"># float</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hw_outlet_temperature</span> <span class="o">=</span> <span class="kc">None</span>                  <span class="c1"># float</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hw_inlet_temperature</span> <span class="o">=</span> <span class="kc">None</span>                   <span class="c1"># dict{country_name -&gt; float}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hw_read_hot_water_input</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">hh_path</span><span class="p">)</span>
+
+        <span class="c1"># read input for space heating (sh)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sh_specific_heat</span> <span class="o">=</span> <span class="kc">None</span>                    <span class="c1"># {country_name -&gt; (start_point, change_rate)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sh_area_per_household</span> <span class="o">=</span> <span class="kc">None</span>               <span class="c1"># {country_name -&gt; (start_point, change_rate)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sh_persons_per_household</span> <span class="o">=</span> <span class="kc">None</span>            <span class="c1"># {country_name -&gt; [Datapoint]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sh_dict_space_heating_calibration</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># {country_name -&gt; calibration value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sh_read_space_heating_input</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">hh_path</span><span class="p">)</span>
+
+        <span class="c1"># read load profile</span>
+        <span class="k">if</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">toggle_hourly_forecast</span><span class="p">:</span>
+            <span class="n">df_load_profile</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">hh_path</span> <span class="o">/</span> <span class="s2">&quot;hh_timeseries.xlsx&quot;</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s2">&quot;timeseries&quot;</span><span class="p">)</span>
+
+            <span class="n">electricity</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;Elec&quot;</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">efh_heat_q1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;EFH_Heat_Q1&quot;</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">efh_heat_q2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;EFH_Heat_Q2&quot;</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">efh_h2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;EFH_H2&quot;</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">mfh_heat_q1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;MFH_Heat_Q1&quot;</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">mfh_heat_q2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;MFH_Heat_Q2&quot;</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">mfh_h2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_load_profile</span><span class="p">[</span><span class="s2">&quot;MFH_H2&quot;</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_single_households</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="p">[</span><span class="n">Any</span><span class="p">]]()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_single_households</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span> <span class="o">=</span> <span class="n">electricity</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_single_households</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="p">[</span><span class="n">Heat</span><span class="p">(</span><span class="n">q1</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span> <span class="k">for</span> <span class="n">q1</span><span class="p">,</span> <span class="n">q2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">efh_heat_q1</span><span class="p">,</span> <span class="n">efh_heat_q2</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_single_households</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span> <span class="o">=</span> <span class="n">efh_h2</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_multiple_households</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="p">[</span><span class="n">Any</span><span class="p">]]()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_multiple_households</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span> <span class="o">=</span> <span class="n">electricity</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_multiple_households</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="p">[</span><span class="n">Heat</span><span class="p">(</span><span class="n">q1</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span> <span class="k">for</span> <span class="n">q1</span><span class="p">,</span> <span class="n">q2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">mfh_heat_q1</span><span class="p">,</span> <span class="n">mfh_heat_q2</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_multiple_households</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span> <span class="o">=</span> <span class="n">mfh_h2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_single_households</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_profile_multiple_households</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="HouseholdsInput.read_historical_consumption"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.read_historical_consumption">[docs]</a>    <span class="k">def</span> <span class="nf">read_historical_consumption</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">hh_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Read the files for the historical energy consumption of each country in the households sector. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">historical_consumption</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">HouseholdsSubsectorId</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]]]()</span>
+        <span class="k">for</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">active_countries</span><span class="p">:</span>
+            <span class="c1"># read input timelines</span>
+            <span class="n">file_rel_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;energy_consumption_households&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">country_name</span> <span class="o">+</span> <span class="s2">&quot;_2018.xlsm&quot;</span><span class="p">)</span>
+            <span class="n">ex_hh_consumption_his</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">hh_path</span> <span class="o">/</span> <span class="n">file_rel_path</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">historical_consumption</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">HouseholdsSubsectorId</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]]()</span>
+            <span class="k">for</span> <span class="n">subsector</span><span class="p">,</span> <span class="n">sheet_name</span> <span class="ow">in</span> <span class="n">HouseholdsInput</span><span class="o">.</span><span class="n">hh_input_sheet_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">df_subsector_historical</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_hh_consumption_his</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">,</span>
+                                                        <span class="n">skiprows</span><span class="o">=</span><span class="n">HouseholdsInput</span><span class="o">.</span><span class="n">hh_his_sheets_skip_rows</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">historical_consumption</span><span class="p">[</span><span class="n">country_name</span><span class="p">][</span><span class="n">subsector</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]()</span>
+                <span class="c1"># get each row</span>
+                <span class="n">years</span> <span class="o">=</span> <span class="n">df_subsector_historical</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_subsector_historical</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                    <span class="n">energy_carrier</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Product&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+                    <span class="k">if</span> <span class="n">energy_carrier</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">HouseholdsInput</span><span class="o">.</span><span class="n">hh_energy_carrier_unit_conversion</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="c1"># skip rows other than defined energy carriers</span>
+                        <span class="k">continue</span>
+
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+                    <span class="n">zipped</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">float_lists_to_datapoint_list</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+                    <span class="n">his_data</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">filter_out_nan_and_inf</span><span class="p">(</span><span class="n">zipped</span><span class="p">)</span>
+                    <span class="n">his_data</span> <span class="o">=</span> \
+                        <span class="n">uty</span><span class="o">.</span><span class="n">map_data_y</span><span class="p">(</span><span class="n">his_data</span><span class="p">,</span>
+                                       <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">HouseholdsInput</span><span class="o">.</span><span class="n">hh_energy_carrier_unit_conversion</span><span class="p">[</span><span class="n">energy_carrier</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">his_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="c1"># todo: is this correct? Example: Denmark SpaceCooling</span>
+                        <span class="n">his_data</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2018</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)]</span>    <span class="c1"># assume 0.0 if no data is present in file</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">historical_consumption</span><span class="p">[</span><span class="n">country_name</span><span class="p">][</span><span class="n">subsector</span><span class="p">][</span><span class="n">energy_carrier</span><span class="p">]</span> <span class="o">=</span> <span class="n">his_data</span></div>
+
+<div class="viewcode-block" id="HouseholdsInput.hw_read_hot_water_input"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.hw_read_hot_water_input">[docs]</a>    <span class="k">def</span> <span class="nf">hw_read_hot_water_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span><span class="p">,</span> <span class="n">hh_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Reads the input file for hot water in the households sector. &quot;&quot;&quot;</span>
+        <span class="n">ex_hot_water</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">hh_path</span> <span class="o">/</span> <span class="s2">&quot;Hot_Water.xlsx&quot;</span><span class="p">)</span>
+
+        <span class="c1"># read liter per person per day</span>
+        <span class="n">df_hot_water</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_hot_water</span><span class="p">,</span> <span class="s2">&quot;WaterPerPers&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hw_dict_hot_water_per_person_per_day</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>  <span class="c1"># country_name -&gt; liters</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_hot_water</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">country_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">country_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">active_countries</span><span class="p">:</span>
+                <span class="c1"># skip inactive countries or rows without data</span>
+                <span class="k">continue</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hw_dict_hot_water_per_person_per_day</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Hot water [liter/d/per]&quot;</span><span class="p">])</span>
+
+        <span class="c1"># read calibration value</span>
+        <span class="n">df_calibration_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_hot_water</span><span class="p">,</span> <span class="s2">&quot;Calibration&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hw_dict_hot_water_calibration</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>  <span class="c1"># country_name -&gt; calibration values</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_calibration_values</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">country_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hw_dict_hot_water_calibration</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Calibration parameter [-]&quot;</span><span class="p">])</span>
+
+        <span class="c1"># read other parameters</span>
+        <span class="n">df_parameters</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_hot_water</span><span class="p">,</span> <span class="s2">&quot;TechnData&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hw_specific_capacity</span> <span class="o">=</span> \
+            <span class="nb">float</span><span class="p">(</span><span class="n">df_parameters</span><span class="p">[</span><span class="n">df_parameters</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Specific capacity&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hw_outlet_temperature</span> <span class="o">=</span> \
+            <span class="nb">float</span><span class="p">(</span><span class="n">df_parameters</span><span class="p">[</span><span class="n">df_parameters</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Outlet temperature&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hw_inlet_temperature</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>  <span class="c1"># country_name -&gt; temperature</span>
+        <span class="k">for</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">active_countries</span><span class="p">:</span>
+            <span class="n">parameter_name</span> <span class="o">=</span> <span class="s2">&quot;Inlet temperature &quot;</span> <span class="o">+</span> <span class="n">country_name</span>
+            <span class="k">if</span> <span class="n">parameter_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df_parameters</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">():</span>
+                <span class="c1"># use default inlet temperature</span>
+                <span class="n">parameter_name</span> <span class="o">=</span> <span class="s2">&quot;Inlet temperature all&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hw_inlet_temperature</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">df_parameters</span><span class="p">[</span><span class="n">df_parameters</span><span class="p">[</span><span class="s2">&quot;Parameter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">parameter_name</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="HouseholdsInput.sh_read_space_heating_input"><a class="viewcode-back" href="../../../endemo2.input_and_settings.html#endemo2.input_and_settings.input_households.HouseholdsInput.sh_read_space_heating_input">[docs]</a>    <span class="k">def</span> <span class="nf">sh_read_space_heating_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span><span class="p">,</span> <span class="n">hh_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Reads the input file for space heating in the households sector. &quot;&quot;&quot;</span>
+        <span class="n">ex_space_heating</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelFile</span><span class="p">(</span><span class="n">hh_path</span> <span class="o">/</span> <span class="s2">&quot;Space_Heating.xlsx&quot;</span><span class="p">)</span>
+
+        <span class="c1"># read specific heat</span>
+        <span class="n">df_spec_heat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_space_heating</span><span class="p">,</span> <span class="s2">&quot;SpecificEnergyUse&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sh_specific_heat</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">(</span><span class="n">Datapoint</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]()</span>   <span class="c1"># country_name -&gt; (start_point, change_rate)</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_spec_heat</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">country_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">country_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">active_countries</span><span class="p">:</span>
+                <span class="c1"># skip inactive countries and invalid rows</span>
+                <span class="k">continue</span>
+            <span class="n">start_year</span> <span class="o">=</span> <span class="mi">2019</span>
+            <span class="n">start_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">start_year</span><span class="p">])</span>
+            <span class="n">change_rate</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Trend Rate [%] calc&quot;</span><span class="p">]</span><span class="o">/</span><span class="mf">100.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sh_specific_heat</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Datapoint</span><span class="p">(</span><span class="n">start_year</span><span class="p">,</span> <span class="n">start_value</span><span class="p">),</span> <span class="n">change_rate</span>
+
+        <span class="c1"># read area per household</span>
+        <span class="n">df_area_per_household</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_space_heating</span><span class="p">,</span> <span class="s2">&quot;AreaPerHousehold&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sh_area_per_household</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">(</span><span class="n">Datapoint</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]()</span>  <span class="c1"># country_name -&gt; (start_point, change_rate)</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_area_per_household</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">country_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">country_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">active_countries</span><span class="p">:</span>
+                <span class="c1"># skip inactive countries and invalid rows</span>
+                <span class="k">continue</span>
+            <span class="n">start_year</span> <span class="o">=</span> <span class="mi">2012</span>
+            <span class="n">start_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Area per household [m2/HH] (&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">start_year</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">])</span>
+            <span class="n">change_rate</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Trend Rate [%]&quot;</span><span class="p">]</span><span class="o">/</span><span class="mf">100.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sh_area_per_household</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Datapoint</span><span class="p">(</span><span class="n">start_year</span><span class="p">,</span> <span class="n">start_value</span><span class="p">),</span> <span class="n">change_rate</span>
+
+        <span class="c1"># read persons per household</span>
+        <span class="n">df_persons_per_household</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_space_heating</span><span class="p">,</span> <span class="s2">&quot;PersPerHousehold&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sh_persons_per_household</span> <span class="o">=</span> <span class="n">HisProg</span><span class="p">(</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]](),</span>  <span class="c1"># historical</span>
+                                                <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="n">Datapoint</span><span class="p">]]())</span>    <span class="c1"># prognosis</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_persons_per_household</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">country_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">country_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">active_countries</span><span class="p">:</span>
+                <span class="c1"># skip inactive countries and invalid rows</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># historical</span>
+            <span class="n">first_year_to_read</span> <span class="o">=</span> <span class="mi">2006</span>
+            <span class="n">last_year_to_read</span> <span class="o">=</span> <span class="mi">2020</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sh_persons_per_household</span><span class="o">.</span><span class="n">historical</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">first_year_to_read</span><span class="p">,</span> <span class="n">last_year_to_read</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sh_persons_per_household</span><span class="o">.</span><span class="n">historical</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Datapoint</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="n">year</span><span class="p">]))</span>
+
+            <span class="c1"># prognosis</span>
+            <span class="n">first_year_to_read</span> <span class="o">=</span> <span class="mi">2020</span>
+            <span class="n">last_year_to_read</span> <span class="o">=</span> <span class="mi">2050</span>    <span class="c1"># should be first year + multiple of step_size</span>
+            <span class="n">step_size</span> <span class="o">=</span> <span class="mi">10</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">sh_persons_per_household</span><span class="o">.</span><span class="n">prognosis</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">first_year_to_read</span><span class="p">,</span> <span class="n">last_year_to_read</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">step_size</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">year</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sh_persons_per_household</span><span class="o">.</span><span class="n">prognosis</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Datapoint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+
+        <span class="c1"># read calibration value</span>
+        <span class="n">df_calibration_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">ex_space_heating</span><span class="p">,</span> <span class="s2">&quot;Calibration&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sh_dict_space_heating_calibration</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>  <span class="c1"># country_name -&gt; calibration values</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_calibration_values</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">country_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sh_dict_space_heating_calibration</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;Calibration parameter [-]&quot;</span><span class="p">])</span></div></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.model_instance.instance_filter.general_instance_filter &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.model_instance.instance_filter.general_instance_filter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.model_instance.instance_filter.general_instance_filter</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains all instance filters that relate to the general part of the model.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.containers</span> <span class="kn">import</span> <span class="n">CA</span><span class="p">,</span> <span class="n">Datapoint</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.nuts_tree</span> <span class="kn">import</span> <span class="n">NutsRegionLeaf</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.prediction_models</span> <span class="kn">import</span> <span class="n">RigidTimeseries</span><span class="p">,</span> <span class="n">IntervalForecast</span><span class="p">,</span> <span class="n">Timeseries</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.control_parameters</span> <span class="kn">import</span> <span class="n">ControlParameters</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.enumerations</span> <span class="kn">import</span> <span class="n">SectorIdentifier</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_manager</span> <span class="kn">import</span> <span class="n">InputManager</span>
+<span class="kn">from</span> <span class="nn">endemo2.preprocessing.preprocessing_step_one</span> <span class="kn">import</span> <span class="n">NUTS2Preprocessed</span><span class="p">,</span> <span class="n">GDPPreprocessed</span>
+<span class="kn">from</span> <span class="nn">endemo2.preprocessing.preprocessor</span> <span class="kn">import</span> <span class="n">Preprocessor</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_general</span> <span class="kn">import</span> <span class="n">GeneralInput</span>
+
+
+<div class="viewcode-block" id="InstanceFilter"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.InstanceFilter">[docs]</a><span class="k">class</span> <span class="nc">InstanceFilter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    The parent class of all instance filters. </span>
+<span class="sd">    </span>
+<span class="sd">    :ivar ControlParameters ctrl: The control parameters object.</span>
+<span class="sd">    :ivar Preprocessor preprocessor: The preprocessor object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">:</span> <span class="n">Preprocessor</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span> <span class="o">=</span> <span class="n">ctrl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span> <span class="o">=</span> <span class="n">preprocessor</span></div>
+        
+
+<div class="viewcode-block" id="CountryInstanceFilter"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter">[docs]</a><span class="k">class</span> <span class="nc">CountryInstanceFilter</span><span class="p">(</span><span class="n">InstanceFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This instance filter serves as a filter between the instance settings and the actual calculation of a</span>
+<span class="sd">    country&#39;s demand.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span><span class="p">,</span> <span class="n">general_input</span><span class="p">:</span> <span class="n">GeneralInput</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">:</span> <span class="n">Preprocessor</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">general_input</span> <span class="o">=</span> <span class="n">general_input</span>
+
+<div class="viewcode-block" id="CountryInstanceFilter.get_country_abbreviations"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter.get_country_abbreviations">[docs]</a>    <span class="k">def</span> <span class="nf">get_country_abbreviations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CA</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the countries abbreviations. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">general_input</span><span class="o">.</span><span class="n">abbreviations</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="CountryInstanceFilter.get_active_sectors"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter.get_active_sectors">[docs]</a>    <span class="k">def</span> <span class="nf">get_active_sectors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SectorIdentifier</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the active sectors. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">get_active_sectors</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CountryInstanceFilter.get_gdp_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter.get_gdp_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_gdp_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the gdp of a country in the target year. &quot;&quot;&quot;</span>
+        <span class="n">gdp_pp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">gdp_pp</span>
+        <span class="n">gdp_prognosis_pp</span><span class="p">:</span> <span class="n">IntervalForecast</span> <span class="o">=</span> <span class="n">gdp_pp</span><span class="o">.</span><span class="n">gdp_prognosis_pp</span>
+        <span class="n">gdp_historical_pp</span><span class="p">:</span> <span class="n">Timeseries</span> <span class="o">=</span> <span class="n">gdp_pp</span><span class="o">.</span><span class="n">gdp_historical_pp</span>
+
+        <span class="n">target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
+
+        <span class="n">gdp_start_point</span> <span class="o">=</span> <span class="n">Datapoint</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="n">gdp_historical_pp</span><span class="o">.</span><span class="n">get_value_at_year</span><span class="p">(</span><span class="mi">2020</span><span class="p">))</span>  <span class="c1"># todo: create entry in settings for this value</span>
+        <span class="k">if</span> <span class="n">target_year</span> <span class="o">&lt;=</span> <span class="n">gdp_start_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="c1"># use historical data</span>
+            <span class="k">return</span> <span class="n">gdp_historical_pp</span><span class="o">.</span><span class="n">get_value_at_year</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># prognosis</span>
+            <span class="n">gdp_prog</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">gdp_prognosis_pp</span><span class="o">.</span><span class="n">get_forecast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span><span class="p">,</span> <span class="n">gdp_start_point</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gdp_prog</span></div>
+
+<div class="viewcode-block" id="CountryInstanceFilter.get_population_country_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter.get_population_country_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_population_country_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the population of a country in the target year. &quot;&quot;&quot;</span>
+        <span class="n">population_pp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">population_pp</span>
+        <span class="n">his_pop_country</span><span class="p">:</span> <span class="n">Timeseries</span> <span class="o">=</span> <span class="n">population_pp</span><span class="o">.</span><span class="n">population_historical_whole_country</span>
+        <span class="n">prog_pop_country</span><span class="p">:</span> <span class="n">RigidTimeseries</span> <span class="o">=</span> <span class="n">population_pp</span><span class="o">.</span><span class="n">population_whole_country_prognosis</span>
+
+        <span class="n">target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
+
+        <span class="k">if</span> <span class="n">target_year</span> <span class="o">&gt;</span> <span class="n">his_pop_country</span><span class="o">.</span><span class="n">get_last_data_entry</span><span class="p">()[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">prog_pop_country</span><span class="o">.</span><span class="n">get_value_at_year</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">his_pop_country</span><span class="o">.</span><span class="n">get_value_at_year</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CountryInstanceFilter.get_population_nuts2_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter.get_population_nuts2_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_population_nuts2_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the population for all nuts2 regions of a country in target year. &quot;&quot;&quot;</span>
+        <span class="n">country_pp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">nuts2_pp</span><span class="p">:</span> <span class="n">NUTS2Preprocessed</span> <span class="o">=</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">nuts2_pp</span>
+        <span class="k">if</span> <span class="n">nuts2_pp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># country doesn&#39;t have any nuts2 data</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="n">historical_nuts2_population_data</span> <span class="o">=</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">nuts2_pp</span><span class="o">.</span><span class="n">population_historical_tree_root</span>
+        <span class="n">prognosis_nuts2_population_data</span> <span class="o">=</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">nuts2_pp</span><span class="o">.</span><span class="n">population_prognosis_tree_root</span>
+
+        <span class="n">target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
+
+        <span class="n">nuts2_population_in_target_year</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>
+        <span class="k">if</span> <span class="n">target_year</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">industry_settings</span><span class="o">.</span><span class="n">last_available_year</span><span class="p">:</span>
+            <span class="c1"># use historical data</span>
+            <span class="n">nuts2_leafs</span><span class="p">:</span> <span class="p">[</span><span class="n">NutsRegionLeaf</span><span class="p">]</span> <span class="o">=</span> <span class="n">historical_nuts2_population_data</span><span class="o">.</span><span class="n">get_all_leaf_nodes</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">nuts2_leaf</span> <span class="ow">in</span> <span class="n">nuts2_leafs</span><span class="p">:</span>
+                <span class="n">region_name</span> <span class="o">=</span> <span class="n">nuts2_leaf</span><span class="o">.</span><span class="n">region_name</span>
+                <span class="n">his_nuts2_ts</span><span class="p">:</span> <span class="n">RigidTimeseries</span> <span class="o">=</span> <span class="n">nuts2_leaf</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+                <span class="n">nuts2_population_in_target_year</span><span class="p">[</span><span class="n">region_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">his_nuts2_ts</span><span class="o">.</span><span class="n">get_value_at_year</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># use prediction data</span>
+            <span class="n">nuts2_leafs</span><span class="p">:</span> <span class="p">[</span><span class="n">NutsRegionLeaf</span><span class="p">]</span> <span class="o">=</span> <span class="n">prognosis_nuts2_population_data</span><span class="o">.</span><span class="n">get_all_leaf_nodes</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">nuts2_leaf</span> <span class="ow">in</span> <span class="n">nuts2_leafs</span><span class="p">:</span>
+                <span class="n">region_name</span> <span class="o">=</span> <span class="n">nuts2_leaf</span><span class="o">.</span><span class="n">region_name</span>
+
+                <span class="c1"># get start point for prediction data -&gt; take last available historical data</span>
+                <span class="n">his_start_year_ts</span><span class="p">:</span> <span class="n">RigidTimeseries</span> <span class="o">=</span> \
+                    <span class="n">historical_nuts2_population_data</span><span class="o">.</span><span class="n">get_specific_node</span><span class="p">(</span><span class="n">region_name</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+                <span class="n">nuts2_last_available_population_data_point</span><span class="p">:</span> <span class="n">Datapoint</span> <span class="o">=</span> \
+                    <span class="n">his_start_year_ts</span><span class="o">.</span><span class="n">get_last_available_data_entry_or_zero</span><span class="p">()</span>
+
+                <span class="c1"># do forecast for nuts2 region</span>
+                <span class="n">nuts2_pop_forecast</span><span class="p">:</span> <span class="n">IntervalForecast</span> <span class="o">=</span> <span class="n">nuts2_leaf</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+                <span class="n">nuts2_population_in_target_year</span><span class="p">[</span><span class="n">region_name</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="n">nuts2_pop_forecast</span><span class="o">.</span><span class="n">get_forecast</span><span class="p">(</span><span class="n">target_year</span><span class="p">,</span> <span class="n">nuts2_last_available_population_data_point</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">nuts2_population_in_target_year</span></div>
+
+<div class="viewcode-block" id="CountryInstanceFilter.get_population_nuts2_percentages_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter.get_population_nuts2_percentages_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_population_nuts2_percentages_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the population density distributed into nuts2 regions of a country in the target year. &quot;&quot;&quot;</span>
+        <span class="n">country_pp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">nuts2_pp</span><span class="p">:</span> <span class="n">NUTS2Preprocessed</span> <span class="o">=</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">nuts2_pp</span>
+        <span class="k">if</span> <span class="n">nuts2_pp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># country doesn&#39;t have any nuts2 data</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="n">nuts2_population_in_target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_population_nuts2_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span>
+        <span class="n">country_population_in_target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_population_nuts2_sum</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span>
+        <span class="c1"># fill result structure by dividing nuts2 region population though total population</span>
+        <span class="n">result_nuts2_population_percentage</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>
+        <span class="k">for</span> <span class="n">region_name</span><span class="p">,</span> <span class="n">region_pop</span> <span class="ow">in</span> <span class="n">nuts2_population_in_target_year</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">result_nuts2_population_percentage</span><span class="p">[</span><span class="n">region_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">region_pop</span> <span class="o">/</span> <span class="n">country_population_in_target_year</span>
+
+        <span class="k">return</span> <span class="n">result_nuts2_population_percentage</span></div>
+
+<div class="viewcode-block" id="CountryInstanceFilter.get_population_nuts2_sum"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.general_instance_filter.CountryInstanceFilter.get_population_nuts2_sum">[docs]</a>    <span class="k">def</span> <span class="nf">get_population_nuts2_sum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the sum of the nuts2 population for a country. &quot;&quot;&quot;</span>
+        <span class="n">country_pp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">nuts2_pp</span><span class="p">:</span> <span class="n">NUTS2Preprocessed</span> <span class="o">=</span> <span class="n">country_pp</span><span class="o">.</span><span class="n">nuts2_pp</span>
+        <span class="k">if</span> <span class="n">nuts2_pp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># country doesn&#39;t have any nuts2 data</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="n">nuts2_population_in_target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_population_nuts2_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span>
+        <span class="n">nuts2_population_sum_in_target_year</span> <span class="o">=</span> \
+            <span class="n">math</span><span class="o">.</span><span class="n">fsum</span><span class="p">([</span><span class="n">nuts2_pop</span> <span class="k">for</span> <span class="n">nuts2_pop</span> <span class="ow">in</span> <span class="n">nuts2_population_in_target_year</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+
+        <span class="k">return</span> <span class="n">nuts2_population_sum_in_target_year</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

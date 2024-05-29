@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.data_structures.enumerations &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.data_structures.enumerations</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.data_structures.enumerations</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains all Enums of endemo.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+
+
+<div class="viewcode-block" id="SubsectorGroup"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.enumerations.SubsectorGroup">[docs]</a><span class="k">class</span> <span class="nc">SubsectorGroup</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum to group the industry _subsectors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">CHEMICALS_AND_PETROCHEMICALS</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">FOOD_AND_TOBACCO</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">IRON_AND_STEEL</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">NON_METALIC_MINERALS</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">PAPER</span> <span class="o">=</span> <span class="mi">4</span></div>
+
+
+<div class="viewcode-block" id="GroupType"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.enumerations.GroupType">[docs]</a><span class="k">class</span> <span class="nc">GroupType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum to differentiate different country group types.</span>
+
+<span class="sd">    :ivar SEPARATE: All countries in this type of group are calculated separately.</span>
+<span class="sd">    :ivar JOINED: The data of all countries in a group of type joined is lumped together and shared coefficients are</span>
+<span class="sd">        calculated.</span>
+<span class="sd">    :ivar JOINED_DIVERSIFIED: The data of all countries in a group of type joined_diversified is lumped together and</span>
+<span class="sd">        shared coefficients are calculated. But each country has a differing offset additionally.</span>
+<span class="sd">    :ivar EMPTY: Indicates that no group type is chosen.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SEPARATE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">JOINED</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">JOINED_DIVERSIFIED</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">EMPTY</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+<div class="viewcode-block" id="ForecastMethod"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.enumerations.ForecastMethod">[docs]</a><span class="k">class</span> <span class="nc">ForecastMethod</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The ForecastMethod indicates the preferred way to extrapolate historical data.</span>
+
+<span class="sd">    :ivar LINEAR: The forecast method utilizing linear regression.</span>
+<span class="sd">    :ivar QUADRATIC: The forecast method utilizing quadratic regression.</span>
+<span class="sd">    :ivar EXPONENTIAL: The forecast method utilizing exponential growth.</span>
+<span class="sd">    :ivar QUADRATIC_OFFSET: The forecast method utilizing quadratic regression and an additional offset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LINEAR</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">QUADRATIC</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">EXPONENTIAL</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">QUADRATIC_OFFSET</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">LOGARITHMIC</span> <span class="o">=</span> <span class="mi">4</span></div>
+
+
+<div class="viewcode-block" id="ScForecastMethod"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.enumerations.ScForecastMethod">[docs]</a><span class="k">class</span> <span class="nc">ScForecastMethod</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The ScForecastMethod indicates type of forecast for specific consumption, primarily in the CTS sector. &quot;&quot;&quot;</span>
+    <span class="n">LINEAR</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">LOGARITHMIC</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">CONST_MEAN</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">CONST_LAST</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+<div class="viewcode-block" id="DemandType"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.enumerations.DemandType">[docs]</a><span class="k">class</span> <span class="nc">DemandType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Enum to easily differentiate the type of demand. &quot;&quot;&quot;</span>
+    <span class="n">ELECTRICITY</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">HEAT</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">HYDROGEN</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">FUEL</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+<div class="viewcode-block" id="StartPoint"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.enumerations.StartPoint">[docs]</a><span class="k">class</span> <span class="nc">StartPoint</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Denotes the type of start points used for the exponential forecast method. &quot;&quot;&quot;</span>
+    <span class="n">LAST_AVAILABLE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">AVERAGE_VALUE</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">MANUAL</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="SectorIdentifier"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.enumerations.SectorIdentifier">[docs]</a><span class="k">class</span> <span class="nc">SectorIdentifier</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The enum class to quickly discern sectors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">INDUSTRY</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">HOUSEHOLDS</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">TRANSPORT</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">COMMERCIAL_TRADE_SERVICES</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+<div class="viewcode-block" id="HouseholdsSubsectorId"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.enumerations.HouseholdsSubsectorId">[docs]</a><span class="k">class</span> <span class="nc">HouseholdsSubsectorId</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The enum class to quickly recognise the different household sectors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SPACE_HEATING</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">SPACE_COOLING</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">WATER_HEATING</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">COOKING</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">LIGHTING_AND_APPLIANCES</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">OTHER</span> <span class="o">=</span> <span class="mi">5</span></div>
+
+
+<div class="viewcode-block" id="TransportModalSplitMethod"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModalSplitMethod">[docs]</a><span class="k">class</span> <span class="nc">TransportModalSplitMethod</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The enum indicating how the modal split for the transport sector should be obtained.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">HISTORICAL_TIME_TREND</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">HISTORICAL_CONSTANT</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">USER_DEFINED</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="TransportFinalEnergyDemandScenario"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportFinalEnergyDemandScenario">[docs]</a><span class="k">class</span> <span class="nc">TransportFinalEnergyDemandScenario</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The enum indicating how the final energy demand should be split.</span>
+<span class="sd">    Either by the given reference or user defined values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">REFERENCE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">USER_DEFINED</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="TrafficType"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.enumerations.TrafficType">[docs]</a><span class="k">class</span> <span class="nc">TrafficType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The type of traffic. &quot;&quot;&quot;</span>
+    <span class="n">PERSON</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">FREIGHT</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">BOTH</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="TransportModal"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.enumerations.TransportModal">[docs]</a><span class="k">class</span> <span class="nc">TransportModal</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The enum to differentiate different modes of transport or combinations of them.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">road</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">car</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">bus</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">rail</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">road_rail</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">ship</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">flight</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">road_rail_ship</span> <span class="o">=</span> <span class="mi">7</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

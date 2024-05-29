@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.industry.products.SpecificConsumptionData &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="endemo2.input" href="endemo2.input.html" />
+    <link rel="prev" title="endemo2.industry.products.ProductPrimSec" href="endemo2.industry.products.ProductPrimSec.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="endemo2.execution.html">endemo2.execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.general.html">endemo2.general</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="endemo2.industry.html">endemo2.industry</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="endemo2.industry.products.html">endemo2.industry.products</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="endemo2.industry.products.Product.html">endemo2.industry.products.Product</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.industry.products.ProductPrimSec.html">endemo2.industry.products.ProductPrimSec</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">endemo2.industry.products.SpecificConsumptionData</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.industry.products.SpecificConsumptionData"><code class="docutils literal notranslate"><span class="pre">SpecificConsumptionData</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.input.html">endemo2.input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.sectors.html">endemo2.sectors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.utility.html">endemo2.utility</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="endemo2.industry.html">endemo2.industry</a></li>
+          <li class="breadcrumb-item"><a href="endemo2.industry.products.html">endemo2.industry.products</a></li>
+      <li class="breadcrumb-item active">endemo2.industry.products.SpecificConsumptionData</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="endemo2-industry-products-specificconsumptiondata">
+<h1>endemo2.industry.products.SpecificConsumptionData<a class="headerlink" href="#endemo2-industry-products-specificconsumptiondata" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.industry.products.SpecificConsumptionData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SpecificConsumptionData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">product_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_amount_per_year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_manager</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#SpecificConsumptionData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.SpecificConsumptionData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Holds all consumption data for one product within an industry of a country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_manager</strong> (<a class="reference internal" href="endemo2.input.input.Input.html#endemo2.input.input.Input" title="endemo2.input.input.Input"><em>Input</em></a>) – The input manager, containing information needed to create this object.</p></li>
+<li><p><strong>product_input</strong> (<a class="reference internal" href="endemo2.input.input.ProductInput.html#endemo2.input.input.ProductInput" title="endemo2.input.input.ProductInput"><em>ProductInput</em></a>) – The input for this specific product type, needed to create it. (Redundant)</p></li>
+<li><p><strong>product_amount_per_year</strong> (<a class="reference internal" href="endemo2.utility.prediction_models.Timeseries.html#endemo2.utility.prediction_models.Timeseries" title="endemo2.utility.prediction_models.Timeseries"><em>Timeseries</em></a>) – The timeseries object from the product to get the predicted product
+amount, used in calculations. (Redundant, but used to prevent circular dependencies)</p></li>
+<li><p><strong>country_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Name of the country, this product belongs to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>default_specific_consumption</strong> (<a class="reference internal" href="endemo2.general.demand_containers.SC.html#endemo2.general.demand_containers.SC" title="endemo2.general.demand_containers.SC"><em>SC</em></a>) – The specific consumption for a product type, that is used as default if
+there is no historical data to predict the specific consumption.</p></li>
+<li><p><strong>ts_his_specific_consumption</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a><em>[</em><a class="reference internal" href="endemo2.general.demand_containers.DemandType.html#endemo2.general.demand_containers.DemandType" title="endemo2.general.demand_containers.DemandType"><em>DemandType</em></a><em>, </em><a class="reference internal" href="endemo2.utility.prediction_models.Timeseries.html#endemo2.utility.prediction_models.Timeseries" title="endemo2.utility.prediction_models.Timeseries"><em>Timeseries</em></a><em>]</em>) – The dictionary holding timeseries of different
+demand types for specific consumption.
+Includes different energy carriers with varying efficiencies and is given per product.</p></li>
+<li><p><strong>efficiency</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><a class="reference internal" href="endemo2.general.demand_containers.EH.html#endemo2.general.demand_containers.EH" title="endemo2.general.demand_containers.EH"><em>EH</em></a><em>]</em>) – Efficiency of each energy carrier in percent in [0,1].</p></li>
+<li><p><strong>_product_amount_per_year</strong> (<a class="reference internal" href="endemo2.utility.prediction_models.Timeseries.html#endemo2.utility.prediction_models.Timeseries" title="endemo2.utility.prediction_models.Timeseries"><em>Timeseries</em></a>) – A reference to the timeseries of the product_amount_per_year taken from
+the product object.</p></li>
+<li><p><strong>_calculate_sc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – Indicates whether the specific consumption should be calculated or default value should
+be used.</p></li>
+<li><p><strong>county_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Name of the country the product of this sc belongs to.</p></li>
+<li><p><strong>product_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Name of the product this sc belongs to.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.industry.products.SpecificConsumptionData.get" title="endemo2.industry.products.SpecificConsumptionData.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a></p></td>
+<td><p>Getter for the specific consumption</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#endemo2.industry.products.SpecificConsumptionData.get__calculate_sc" title="endemo2.industry.products.SpecificConsumptionData.get__calculate_sc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get__calculate_sc</span></code></a></p></td>
+<td><p>Getter for attribute __calculate_sc</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.industry.products.SpecificConsumptionData.get_coef" title="endemo2.industry.products.SpecificConsumptionData.get_coef"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coef</span></code></a></p></td>
+<td><p>Get the coefficients of the specific consumption timeseries for a specified demand type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_historical_specific_demand</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.industry.products.SpecificConsumptionData.get_scale" title="endemo2.industry.products.SpecificConsumptionData.get_scale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_scale</span></code></a></p></td>
+<td><p>Get the specific consumption value, while also applying a scaling operation.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.SpecificConsumptionData.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#SpecificConsumptionData.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.SpecificConsumptionData.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the specific consumption</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>year</strong> – Target year, for which we want to know the specific consumption amount.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="endemo2.general.demand_containers.SC.html#endemo2.general.demand_containers.SC" title="endemo2.general.demand_containers.SC"><code class="xref py py-class docutils literal notranslate"><span class="pre">SC</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The calculated specific consumption amounts.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.SpecificConsumptionData.get__calculate_sc">
+<span class="sig-name descname"><span class="pre">get__calculate_sc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#SpecificConsumptionData.get__calculate_sc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.SpecificConsumptionData.get__calculate_sc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for attribute __calculate_sc</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.SpecificConsumptionData.get_coef">
+<span class="sig-name descname"><span class="pre">get_coef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">demand_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#SpecificConsumptionData.get_coef"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.SpecificConsumptionData.get_coef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the coefficients of the specific consumption timeseries for a specified demand type.
+:type demand_type: <a class="reference internal" href="endemo2.general.demand_containers.DemandType.html#endemo2.general.demand_containers.DemandType" title="endemo2.general.demand_containers.DemandType"><code class="xref py py-class docutils literal notranslate"><span class="pre">DemandType</span></code></a>
+:param demand_type: The demand type to get coefficients for. Example: DemandType.ELECTRICITY.
+:rtype: <a class="reference internal" href="endemo2.utility.prediction_models.Coef.html#endemo2.utility.prediction_models.Coef" title="endemo2.utility.prediction_models.Coef"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coef</span></code></a>
+:return: The coefficients for the demand type.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.industry.products.SpecificConsumptionData.get_scale">
+<span class="sig-name descname"><span class="pre">get_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalar</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/industry/products.html#SpecificConsumptionData.get_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.industry.products.SpecificConsumptionData.get_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the specific consumption value, while also applying a scaling operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year</strong> – Target year, for which we want to know the specific consumption amount.</p></li>
+<li><p><strong>scalar</strong> – The scalar, scaling the specific consumption.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="endemo2.general.demand_containers.SC.html#endemo2.general.demand_containers.SC" title="endemo2.general.demand_containers.SC"><code class="xref py py-class docutils literal notranslate"><span class="pre">SC</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The scaled specific consumption.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="endemo2.industry.products.ProductPrimSec.html" class="btn btn-neutral float-left" title="endemo2.industry.products.ProductPrimSec" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="endemo2.input.html" class="btn btn-neutral float-right" title="endemo2.input" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

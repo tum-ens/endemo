@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.endemo &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.endemo</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.endemo</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">endemo2.data_structures.enumerations</span> <span class="kn">import</span> <span class="n">SectorIdentifier</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.control_parameters</span> <span class="kn">import</span> <span class="n">ControlParameters</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_manager</span> <span class="kn">import</span> <span class="n">InputManager</span>
+<span class="kn">from</span> <span class="nn">endemo2.model_instance.instance_filter.cts_instance_filter</span> <span class="kn">import</span> <span class="n">CtsInstanceFilter</span>
+<span class="kn">from</span> <span class="nn">endemo2.model_instance.instance_filter.general_instance_filter</span> <span class="kn">import</span> <span class="n">CountryInstanceFilter</span>
+<span class="kn">from</span> <span class="nn">endemo2.model_instance.instance_filter.households_instance_filter</span> <span class="kn">import</span> <span class="n">HouseholdsInstanceFilter</span>
+<span class="kn">from</span> <span class="nn">endemo2.model_instance.instance_filter.industry_instance_filter</span> \
+    <span class="kn">import</span> <span class="nn">IndustryInstanceFilter</span><span class="o">,</span> <span class="nn">ProductInstanceFilter</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings</span> <span class="kn">import</span> <span class="n">input_general</span>
+<span class="kn">from</span> <span class="nn">endemo2.model_instance.instance_filter.transport_instance_filter</span> <span class="kn">import</span> <span class="n">TransportInstanceFilter</span>
+<span class="kn">from</span> <span class="nn">endemo2.model_instance.model</span> <span class="kn">import</span> <span class="n">country</span>
+<span class="kn">from</span> <span class="nn">endemo2.output.output_instance</span> <span class="kn">import</span> <span class="n">generate_instance_output</span>
+<span class="kn">from</span> <span class="nn">endemo2.output.output_preprocessing</span> <span class="kn">import</span> <span class="n">generate_preprocessing_output</span>
+<span class="kn">from</span> <span class="nn">endemo2.preprocessing.preprocessor</span> <span class="kn">import</span> <span class="n">Preprocessor</span>
+
+
+<div class="viewcode-block" id="Endemo"><a class="viewcode-back" href="../../endemo2.html#endemo2.endemo.Endemo">[docs]</a><span class="k">class</span> <span class="nc">Endemo</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the whole program. From here we control what the model does on the highest level.</span>
+
+<span class="sd">    :ivar Input input_manager: holds all the processed input_and_settings from the Excel sheets for the current run of</span>
+<span class="sd">        the program.</span>
+<span class="sd">    :ivar dict[str, Country] countries_in_group: holds all the country objects, accessible by the countries_in_group english name.</span>
+<span class="sd">    :ivar Preprocessor preprocessor: holds an additional layer of preprocessed data, building upon the input_manager.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">countries</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">country_instance_filter</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">industry_instance_filter</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">product_instance_filter</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cts_instance_filter</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hh_instance_filter</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transport_instance_filter</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Endemo.execute_with_preprocessing"><a class="viewcode-back" href="../../endemo2.html#endemo2.endemo.Endemo.execute_with_preprocessing">[docs]</a>    <span class="k">def</span> <span class="nf">execute_with_preprocessing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Executes the whole program from start to end.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># read input_and_settings</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading Input ...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span> <span class="o">=</span> <span class="n">InputManager</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Input was successfully read.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># do preprocessing</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Preprocessing Data ...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span> <span class="o">=</span> <span class="n">Preprocessor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Preprocessing was successfully completed.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># create model instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_instance</span><span class="p">()</span>
+
+        <span class="c1"># generate output files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_all_output</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Endemo.execute_without_preprocessing"><a class="viewcode-back" href="../../endemo2.html#endemo2.endemo.Endemo.execute_without_preprocessing">[docs]</a>    <span class="k">def</span> <span class="nf">execute_without_preprocessing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Executes only the model with the updated settings.</span>
+<span class="sd">        Builds upon, but does not recalculate preprocessing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_settings</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_instance</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_model_output</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Endemo.update_settings"><a class="viewcode-back" href="../../endemo2.html#endemo2.endemo.Endemo.update_settings">[docs]</a>    <span class="k">def</span> <span class="nf">update_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Rereads the instance settings. &quot;&quot;&quot;</span>
+        <span class="c1"># read input_and_settings, TODO: separate the instance settings from pre-preprocessing settings</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Updating settings for new scenario...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span><span class="o">.</span><span class="n">update_set_and_control_parameters</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Settings were successfully updated.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Endemo.create_instance"><a class="viewcode-back" href="../../endemo2.html#endemo2.endemo.Endemo.create_instance">[docs]</a>    <span class="k">def</span> <span class="nf">create_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Creates an instance of the model. &quot;&quot;&quot;</span>
+
+        <span class="c1"># create instance filters</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating instance filters...&quot;</span><span class="p">)</span>
+        <span class="n">prepro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span>
+
+        <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span>
+        <span class="n">general_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span><span class="o">.</span><span class="n">general_input</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">country_instance_filter</span> <span class="o">=</span> <span class="n">CountryInstanceFilter</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">general_input</span><span class="p">,</span> <span class="n">prepro</span><span class="p">)</span>
+
+        <span class="c1"># create instances for active sectors</span>
+        <span class="n">active_subsectors</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">get_active_sectors</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">INDUSTRY</span> <span class="ow">in</span> <span class="n">active_subsectors</span><span class="p">:</span>
+            <span class="n">industry_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">industry_instance_filter</span> <span class="o">=</span> \
+                <span class="n">IndustryInstanceFilter</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">industry_input</span><span class="p">,</span> <span class="n">prepro</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_instance_filter</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">product_instance_filter</span> <span class="o">=</span> \
+                <span class="n">ProductInstanceFilter</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">prepro</span><span class="p">,</span> <span class="n">industry_input</span><span class="p">,</span> <span class="n">general_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_instance_filter</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">COMMERCIAL_TRADE_SERVICES</span> <span class="ow">in</span> <span class="n">active_subsectors</span><span class="p">:</span>
+            <span class="n">cts_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span><span class="o">.</span><span class="n">cts_input</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cts_instance_filter</span> <span class="o">=</span> <span class="n">CtsInstanceFilter</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">general_input</span><span class="p">,</span> <span class="n">cts_input</span><span class="p">,</span> <span class="n">prepro</span><span class="p">,</span>
+                                                         <span class="bp">self</span><span class="o">.</span><span class="n">country_instance_filter</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">HOUSEHOLDS</span> <span class="ow">in</span> <span class="n">active_subsectors</span><span class="p">:</span>
+            <span class="n">hh_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span><span class="o">.</span><span class="n">hh_input</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hh_instance_filter</span> <span class="o">=</span> <span class="n">HouseholdsInstanceFilter</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">general_input</span><span class="p">,</span> <span class="n">hh_input</span><span class="p">,</span> <span class="n">prepro</span><span class="p">,</span>
+                                                               <span class="bp">self</span><span class="o">.</span><span class="n">country_instance_filter</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">TRANSPORT</span> <span class="ow">in</span> <span class="n">active_subsectors</span><span class="p">:</span>
+            <span class="n">transport_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span><span class="o">.</span><span class="n">transport_input</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transport_instance_filter</span> <span class="o">=</span> <span class="n">TransportInstanceFilter</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">transport_input</span><span class="p">,</span> <span class="n">prepro</span><span class="p">,</span>
+                                                                     <span class="bp">self</span><span class="o">.</span><span class="n">country_instance_filter</span><span class="p">,</span>
+                                                                     <span class="bp">self</span><span class="o">.</span><span class="n">industry_instance_filter</span><span class="p">,</span>
+                                                                     <span class="bp">self</span><span class="o">.</span><span class="n">product_instance_filter</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Instance filters were successfully created.&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initiating model scenario...&quot;</span><span class="p">)</span>
+        <span class="c1"># create countries_in_group</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">countries</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">country</span><span class="o">.</span><span class="n">Country</span><span class="p">]()</span>
+        <span class="k">for</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">active_countries</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">countries</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="n">Country</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_instance_filter</span><span class="p">,</span>
+                                                           <span class="bp">self</span><span class="o">.</span><span class="n">industry_instance_filter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_instance_filter</span><span class="p">,</span>
+                                                           <span class="bp">self</span><span class="o">.</span><span class="n">cts_instance_filter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hh_instance_filter</span><span class="p">,</span>
+                                                           <span class="bp">self</span><span class="o">.</span><span class="n">transport_instance_filter</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Model scenario was successfully initiated.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Endemo.write_all_output"><a class="viewcode-back" href="../../endemo2.html#endemo2.endemo.Endemo.write_all_output">[docs]</a>    <span class="k">def</span> <span class="nf">write_all_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Writes the whole output to the output folder. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_preprocessing_output</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_model_output</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Endemo.write_preprocessing_output"><a class="viewcode-back" href="../../endemo2.html#endemo2.endemo.Endemo.write_preprocessing_output">[docs]</a>    <span class="k">def</span> <span class="nf">write_preprocessing_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Writes all the output that comes from preprocessing. &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Writing preprocessing output...&quot;</span><span class="p">)</span>
+        <span class="n">generate_preprocessing_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Preprocessing output was successfully written.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Endemo.write_model_output"><a class="viewcode-back" href="../../endemo2.html#endemo2.endemo.Endemo.write_model_output">[docs]</a>    <span class="k">def</span> <span class="nf">write_model_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Writes all the output that comes from the model instance. &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Writing scenario output...&quot;</span><span class="p">)</span>
+        <span class="n">generate_instance_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_manager</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">countries</span><span class="p">,</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">country_instance_filter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_instance_filter</span><span class="p">,</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">industry_instance_filter</span><span class="p">,</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">cts_instance_filter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hh_instance_filter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport_instance_filter</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Model output was successfully written.&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

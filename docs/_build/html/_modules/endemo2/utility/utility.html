@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.utility.utility &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/endemo2.html">API reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.utility.utility</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.utility.utility</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">endemo2.utility</span> <span class="kn">import</span> <span class="n">prediction_models</span> <span class="k">as</span> <span class="n">pm</span>
+
+
+<div class="viewcode-block" id="str_dict"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.str_dict.html#endemo2.utility.utility.str_dict">[docs]</a><span class="k">def</span> <span class="nf">str_dict</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Used to convert a dictionary to a string in a more readable form than if we would use the regular python</span>
+<span class="sd">    implementation.</span>
+
+<span class="sd">    Dictionary: {</span>
+<span class="sd">    key : value,</span>
+<span class="sd">    key : value,</span>
+<span class="sd">    ...</span>
+<span class="sd">    }</span>
+
+<span class="sd">    :param dictionary: The dictionary to convert to string.</span>
+<span class="sd">    :return: The string representation of the dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;Dictionary: {&quot;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">is</span> <span class="n">dictionary</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="n">str_dict</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span>
+    <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;}&quot;</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="is_zero"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.is_zero.html#endemo2.utility.utility.is_zero">[docs]</a><span class="k">def</span> <span class="nf">is_zero</span><span class="p">(</span><span class="n">xs</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks for a list of floats if there are only zeroes present in it. Returns also true for empty list.</span>
+
+<span class="sd">    :param xs: The list to check</span>
+<span class="sd">    :return: True if contains only zeros, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="is_tuple_list_zero"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.is_tuple_list_zero.html#endemo2.utility.utility.is_tuple_list_zero">[docs]</a><span class="k">def</span> <span class="nf">is_tuple_list_zero</span><span class="p">(</span><span class="n">xys</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A wrapper for the is_zero function that applies it on a list of tuples, where only the second entries in a tuple</span>
+<span class="sd">    are checked for being zero.</span>
+
+<span class="sd">    :param xys: The tuple list which should be checked for zeroes.</span>
+<span class="sd">    :return: True if the left column/entries of the list of tuples only contains zeros.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">xys</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">xys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">is_zero</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">xys</span><span class="p">))[</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="plot_timeseries"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.plot_timeseries.html#endemo2.utility.utility.plot_timeseries">[docs]</a><span class="k">def</span> <span class="nf">plot_timeseries</span><span class="p">(</span><span class="n">ts</span><span class="p">:</span> <span class="n">pm</span><span class="o">.</span><span class="n">Timeseries</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">x_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">y_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Show a timeseries plotted with different optional labels.</span>
+
+<span class="sd">    :param ts: The timeseries to be plotted.</span>
+<span class="sd">    :param title: The title of the plot.</span>
+<span class="sd">    :param x_label: The label for the x-axis of the plot.</span>
+<span class="sd">    :param y_label: The label for the y-axis of the plot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">ts</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+
+    <span class="n">coef</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span>
+
+    <span class="c1"># Plot points</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;grey&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;data points&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Plot exp regression</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="n">exp_change</span><span class="p">((</span><span class="n">coef</span><span class="o">.</span><span class="n">exp</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">coef</span><span class="o">.</span><span class="n">exp</span><span class="o">.</span><span class="n">y0</span><span class="p">),</span> <span class="n">coef</span><span class="o">.</span><span class="n">exp</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">x</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;exponential&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Plot linear regression</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="n">lin_prediction</span><span class="p">((</span><span class="n">coef</span><span class="o">.</span><span class="n">lin</span><span class="o">.</span><span class="n">k0</span><span class="p">,</span> <span class="n">coef</span><span class="o">.</span><span class="n">lin</span><span class="o">.</span><span class="n">k1</span><span class="p">),</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">x</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Plot quadratic regression</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="n">quadr_prediction</span><span class="p">((</span><span class="n">coef</span><span class="o">.</span><span class="n">quadr</span><span class="o">.</span><span class="n">k0</span><span class="p">,</span> <span class="n">coef</span><span class="o">.</span><span class="n">quadr</span><span class="o">.</span><span class="n">k1</span><span class="p">,</span> <span class="n">coef</span><span class="o">.</span><span class="n">quadr</span><span class="o">.</span><span class="n">k2</span><span class="p">),</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">x</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+             <span class="n">label</span><span class="o">=</span><span class="s2">&quot;quadratic&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">x_label</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">y_label</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="linear_regression"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.linear_regression.html#endemo2.utility.utility.linear_regression">[docs]</a><span class="k">def</span> <span class="nf">linear_regression</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">visualize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply linear regression on data and return the coefficients.</span>
+
+<span class="sd">    :param data: The data on which linear regression is applied.</span>
+<span class="sd">    :param visualize: Indicate, whether the result should be immediately plotted.</span>
+<span class="sd">    :return: The calculated coefficients (k0, k1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Unzip data List</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Use numpy linear regression</span>
+    <span class="n">ks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">k0</span><span class="p">,</span> <span class="n">k1</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="n">visualize</span><span class="p">:</span>
+        <span class="c1"># Plot points</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Plot regression line</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="n">k1</span> <span class="o">*</span> <span class="n">e</span> <span class="o">+</span> <span class="n">k0</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">x</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">k0</span><span class="p">,</span> <span class="n">k1</span></div>
+
+
+<div class="viewcode-block" id="quadratic_regression"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.quadratic_regression.html#endemo2.utility.utility.quadratic_regression">[docs]</a><span class="k">def</span> <span class="nf">quadratic_regression</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">visualize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply quadratic regression on data and return the coefficients.</span>
+
+<span class="sd">    :param data: The data on which linear regression is applied.</span>
+<span class="sd">    :param visualize: Indicate, whether the result should be immediately plotted.</span>
+<span class="sd">    :return: The calculated coefficients (k0, k1, k3)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Unzip data List</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Use numpy linear regression</span>
+    <span class="n">ks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">k0</span><span class="p">,</span> <span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">ks</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="n">visualize</span><span class="p">:</span>
+        <span class="c1"># Plot points</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Plot regression line</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="n">k2</span> <span class="o">*</span> <span class="n">e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">k1</span> <span class="o">*</span> <span class="n">e</span> <span class="o">+</span> <span class="n">k0</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">x</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">k0</span><span class="p">,</span> <span class="n">k1</span><span class="p">,</span> <span class="n">k2</span></div>
+
+
+<div class="viewcode-block" id="quadratic_regression_delta"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.quadratic_regression_delta.html#endemo2.utility.utility.quadratic_regression_delta">[docs]</a><span class="k">def</span> <span class="nf">quadratic_regression_delta</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">visualize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> \
+        <span class="o">-&gt;</span> <span class="p">((</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :todo: implement later</span>
+
+<span class="sd">    :param data: The data on which linear regression is applied.</span>
+<span class="sd">    :param visualize: Indicate, whether the result should be immediately plotted.</span>
+<span class="sd">    :return: The calculated coefficients (k0, k1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="n">e_1</span> <span class="o">=</span> <span class="n">a_1</span> <span class="o">=</span> <span class="n">b_1</span> <span class="o">=</span> <span class="n">c_1</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">e_2</span> <span class="o">=</span> <span class="n">c_2</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">e_3</span> <span class="o">=</span> <span class="n">c_3</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># ??? what is to come ???</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="exp_change"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.exp_change.html#endemo2.utility.utility.exp_change">[docs]</a><span class="k">def</span> <span class="nf">exp_change</span><span class="p">(</span><span class="n">start_point</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="n">change_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">target_x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the result of exponential growth on a start point.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        y_{new} = y_{start} * (1+r)^{x_{new}-x_{start}}</span>
+
+<span class="sd">    :param start_point: (x_start, y_start)</span>
+<span class="sd">    :param change_rate: r</span>
+<span class="sd">    :param target_x: x_new</span>
+<span class="sd">    :return: y_new</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="p">(</span><span class="n">start_x</span><span class="p">,</span> <span class="n">start_y</span><span class="p">)</span> <span class="o">=</span> <span class="n">start_point</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">start_y</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">change_rate</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">target_x</span> <span class="o">-</span> <span class="n">start_x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="lin_prediction"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.lin_prediction.html#endemo2.utility.utility.lin_prediction">[docs]</a><span class="k">def</span> <span class="nf">lin_prediction</span><span class="p">(</span><span class="n">coef</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="n">target_x</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the result of a linear function according to given coefficients.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        f(x)=k_0+k_1*x</span>
+
+<span class="sd">    :param coef: (k_0, k_1)</span>
+<span class="sd">    :param target_x: x</span>
+<span class="sd">    :return: f(x)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">k0</span> <span class="o">=</span> <span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">k1</span> <span class="o">=</span> <span class="n">coef</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">k0</span> <span class="o">+</span> <span class="n">k1</span> <span class="o">*</span> <span class="n">target_x</span></div>
+
+
+<div class="viewcode-block" id="quadr_prediction"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.quadr_prediction.html#endemo2.utility.utility.quadr_prediction">[docs]</a><span class="k">def</span> <span class="nf">quadr_prediction</span><span class="p">(</span><span class="n">coef</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="n">target_x</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the result of a quadratic function according to given coefficients.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        f(x)=k_0+k_1*x+k_2*x^2</span>
+
+<span class="sd">    :param coef: (k_0, k_1, k_2)</span>
+<span class="sd">    :param target_x: x</span>
+<span class="sd">    :return: f(x)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">k0</span> <span class="o">=</span> <span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">k1</span> <span class="o">=</span> <span class="n">coef</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">k2</span> <span class="o">=</span> <span class="n">coef</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">k0</span> <span class="o">+</span> <span class="n">k1</span> <span class="o">*</span> <span class="n">target_x</span> <span class="o">+</span> <span class="n">k2</span> <span class="o">*</span> <span class="n">target_x</span> <span class="o">**</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="is_permissible_float"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.is_permissible_float.html#endemo2.utility.utility.is_permissible_float">[docs]</a><span class="k">def</span> <span class="nf">is_permissible_float</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if a string could be converted to a float that is not NaN or Inf, without throwing an exception.</span>
+
+<span class="sd">    :param x: The string to check for float conversion.</span>
+<span class="sd">    :return: True if it can be converted to float, else False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="filter_out_nan_and_inf"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.filter_out_nan_and_inf.html#endemo2.utility.utility.filter_out_nan_and_inf">[docs]</a><span class="k">def</span> <span class="nf">filter_out_nan_and_inf</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)])</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filters out all entries in the list of tuples, where one of the values is either Inf or NaN.</span>
+
+<span class="sd">    :param data: The list of tuples to filter</span>
+<span class="sd">    :return: The filtered list of tuples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filter_lambda</span> <span class="o">=</span> \
+        <span class="k">lambda</span> <span class="n">xys</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="n">xys</span> <span class="k">if</span> <span class="n">is_permissible_float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_permissible_float</span><span class="p">(</span><span class="n">y</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">filter_lambda</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<span class="c1"># zip 2 lists, where they have the same x value. Works only on ascending x values!!</span>
+<div class="viewcode-block" id="zip_on_x"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.zip_on_x.html#endemo2.utility.utility.zip_on_x">[docs]</a><span class="k">def</span> <span class="nf">zip_on_x</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">b</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)])</span> <span class="o">-&gt;</span> <span class="p">((</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A helper function for combine_data_on_x. This is a generator, that returns one value after another.</span>
+<span class="sd">    Can be cast to list to apply on whole input at once and create a list as output of form [(a, b), (a, d)]</span>
+
+<span class="sd">    :param a: List 1 [(a, b)]</span>
+<span class="sd">    :param b: List 2 [(c, d)]</span>
+<span class="sd">    :return: Next zipped entry in format ((a, b), (a, d)) for where a == c</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="ow">or</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+            <span class="k">break</span>
+        <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">continue</span>
+        <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">yield</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">continue</span>
+        <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">continue</span></div>
+
+
+<div class="viewcode-block" id="combine_data_on_x"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.combine_data_on_x.html#endemo2.utility.utility.combine_data_on_x">[docs]</a><span class="k">def</span> <span class="nf">combine_data_on_x</span><span class="p">(</span><span class="n">xys1</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">xys2</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">ascending_x</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> \
+        <span class="o">-&gt;</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Zip the two lists of tuples on the condition that the first tuple entry matches.</span>
+
+<span class="sd">    :param xys1: List to zip nr1 [(a,b)]</span>
+<span class="sd">    :param xys2: List to zip nr2 [(c, d)]</span>
+<span class="sd">    :param ascending_x: Indicates that the first tuple entry is ascending in the lists.</span>
+<span class="sd">                        If true, a more efficient algorithm can be used.</span>
+<span class="sd">    :return: The zipped list in format [(b, d)] for where a == c</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">ascending_x</span><span class="p">:</span>
+        <span class="c1"># runtime in O(n)</span>
+        <span class="n">zipped</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">zip_on_x</span><span class="p">(</span><span class="n">xys1</span><span class="p">,</span> <span class="n">xys2</span><span class="p">))</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">arg</span><span class="p">:</span> <span class="p">(</span><span class="n">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">arg</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span> <span class="n">zipped</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># runtime in O(n^2)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">xys1</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">xys2</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">xys1</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">xys2</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">xys1</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">xys2</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="zip_data_on_x_and_map"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.zip_data_on_x_and_map.html#endemo2.utility.utility.zip_data_on_x_and_map">[docs]</a><span class="k">def</span> <span class="nf">zip_data_on_x_and_map</span><span class="p">(</span><span class="n">xys1</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">xys2</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">function</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Combines two data lists and applies the given function to them.</span>
+<span class="sd">    x-axis has to be ascending.</span>
+
+<span class="sd">    :param [(float, float)] xys1: Data list one.</span>
+<span class="sd">    :param [(float, float)] xys2: Data list two.</span>
+<span class="sd">    :param function: The function that is applied. Should be of form lambda x y1 y2 -&gt; ...</span>
+<span class="sd">    :return: The result of the applied function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">zipped</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">zip_on_x</span><span class="p">(</span><span class="n">xys1</span><span class="p">,</span> <span class="n">xys2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">function</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span> <span class="k">for</span> <span class="p">((</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">),</span> <span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">))</span> <span class="ow">in</span> <span class="n">zipped</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="map_data_y"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.map_data_y.html#endemo2.utility.utility.map_data_y">[docs]</a><span class="k">def</span> <span class="nf">map_data_y</span><span class="p">(</span><span class="n">xys</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">function</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies the given function component-wise on the y-axis of the given data.</span>
+
+<span class="sd">    :param xys: The given data.</span>
+<span class="sd">    :param function: Function to apply to y-axis. Should be of form lambda x -&gt; ...</span>
+<span class="sd">    :return: The mapped data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="n">xys</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="cut_after_x"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.cut_after_x.html#endemo2.utility.utility.cut_after_x">[docs]</a><span class="k">def</span> <span class="nf">cut_after_x</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)],</span> <span class="n">last_x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cuts the tail of a list, according to first entry of tuple being larger than last_x.</span>
+
+<span class="sd">    :param data: The data list, whose tail will be cut off.</span>
+<span class="sd">    :param last_x: The x-axis value indicating where to cut the list. (last_x is kept)</span>
+<span class="sd">    :return: The cut data list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">last_x</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">last_x</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="n">counter</span><span class="p">]</span>
+        <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="convert_table_to_filtered_data_series_per_country"><a class="viewcode-back" href="../../../_autosummary/endemo2.utility.utility.convert_table_to_filtered_data_series_per_country.html#endemo2.utility.utility.convert_table_to_filtered_data_series_per_country">[docs]</a><span class="k">def</span> <span class="nf">convert_table_to_filtered_data_series_per_country</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a dictionary from a table.</span>
+<span class="sd">    A key is the first value in row. The corresponding value is a list [column_name, column_value] for the whole row.</span>
+
+<span class="sd">    :param df: The dataframe to process</span>
+<span class="sd">    :return: The row-oriented dictionary { first_row_entry -&gt; [column_name, column_value]}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dict_out</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">it</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">itertuples</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+        <span class="n">country_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">zipped</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">)[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">:]))</span>
+        <span class="n">his_data</span> <span class="o">=</span> <span class="n">filter_out_nan_and_inf</span><span class="p">(</span><span class="n">zipped</span><span class="p">)</span>
+        <span class="n">dict_out</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">his_data</span>
+    <span class="k">return</span> <span class="n">dict_out</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

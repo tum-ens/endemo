@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.model_instance.instance_filter.households_instance_filter &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.model_instance.instance_filter.households_instance_filter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.model_instance.instance_filter.households_instance_filter</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">unittest.util</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.containers</span> <span class="kn">import</span> <span class="n">Demand</span><span class="p">,</span> <span class="n">Heat</span><span class="p">,</span> <span class="n">Interval</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.enumerations</span> <span class="kn">import</span> <span class="n">DemandType</span><span class="p">,</span> <span class="n">ForecastMethod</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.prediction_models</span> <span class="kn">import</span> <span class="n">Timeseries</span><span class="p">,</span> <span class="n">Coef</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.conversions_unit</span> <span class="kn">import</span> <span class="n">convert</span><span class="p">,</span> <span class="n">Unit</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.control_parameters</span> <span class="kn">import</span> <span class="n">ControlParameters</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_general</span> <span class="kn">import</span> <span class="n">GeneralInput</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_households</span> <span class="kn">import</span> <span class="n">HouseholdsInput</span><span class="p">,</span> <span class="n">HouseholdsSubsectorId</span><span class="p">,</span> <span class="n">hh_subsectors</span><span class="p">,</span> \
+    <span class="n">hh_visible_subsectors</span>
+<span class="kn">from</span> <span class="nn">endemo2.model_instance.instance_filter.general_instance_filter</span> <span class="kn">import</span> <span class="n">CountryInstanceFilter</span><span class="p">,</span> <span class="n">InstanceFilter</span>
+<span class="kn">from</span> <span class="nn">endemo2.preprocessing.preprocessor</span> <span class="kn">import</span> <span class="n">Preprocessor</span>
+<span class="kn">from</span> <span class="nn">endemo2</span> <span class="kn">import</span> <span class="n">utility</span> <span class="k">as</span> <span class="n">uty</span>
+
+
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter">[docs]</a><span class="k">class</span> <span class="nc">HouseholdsInstanceFilter</span><span class="p">(</span><span class="n">InstanceFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The instance filter for the Households sector. &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span><span class="p">,</span> <span class="n">general_input</span><span class="p">:</span> <span class="n">GeneralInput</span><span class="p">,</span> <span class="n">hh_input</span><span class="p">:</span> <span class="n">HouseholdsInput</span><span class="p">,</span>
+                 <span class="n">preprocessor</span><span class="p">:</span> <span class="n">Preprocessor</span><span class="p">,</span> <span class="n">country_if</span><span class="p">:</span> <span class="n">CountryInstanceFilter</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">general_input</span> <span class="o">=</span> <span class="n">general_input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hh_input</span> <span class="o">=</span> <span class="n">hh_input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">country_if</span> <span class="o">=</span> <span class="n">country_if</span>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_subsectors"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_subsectors">[docs]</a>    <span class="k">def</span> <span class="nf">get_subsectors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">HouseholdsSubsectorId</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get a list of the Households sector&#39;s subsectors. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">hh_visible_subsectors</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_energy_consumption_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_energy_consumption_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_energy_consumption_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">subsector_id</span><span class="p">:</span> <span class="n">HouseholdsSubsectorId</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the linear time trend forecast for a subsector in a country. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">subsector_id</span> <span class="ow">is</span> <span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">LIGHTING_AND_APPLIANCES</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energy_consumption_lighting_and_appliances_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span>
+
+        <span class="n">subsector_pp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="n">Timeseries</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">households_pp</span><span class="o">.</span><span class="n">sectors_pp</span><span class="p">[</span><span class="n">subsector_id</span><span class="p">]</span>
+
+        <span class="c1"># do forecast</span>
+        <span class="n">target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
+
+        <span class="n">dict_demand</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>
+        <span class="k">for</span> <span class="n">demand_type</span><span class="p">,</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">subsector_pp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">coef</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span>
+            <span class="n">coef</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">)</span>
+            <span class="n">dict_demand</span><span class="p">[</span><span class="n">demand_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">coef</span><span class="o">.</span><span class="n">get_function_y</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+
+        <span class="c1"># multiply with population; that way the value is not per capita anymore</span>
+        <span class="n">population_in_target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_population_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">demand_type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]:</span>
+            <span class="n">dict_demand</span><span class="p">[</span><span class="n">demand_type</span><span class="p">]</span> <span class="o">*=</span> <span class="n">population_in_target_year</span>
+
+        <span class="k">return</span> <span class="n">dict_demand</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">],</span> <span class="n">dict_demand</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">],</span> <span class="n">dict_demand</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_energy_consumption_lighting_and_appliances_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_energy_consumption_lighting_and_appliances_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_energy_consumption_lighting_and_appliances_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the linear time trend forecast for the lighting and appliances subsector. This is special. &quot;&quot;&quot;</span>
+        <span class="n">country_pp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">lighting_subsector_pp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="n">Timeseries</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">country_pp</span><span class="o">.</span><span class="n">households_pp</span><span class="o">.</span><span class="n">sectors_pp</span><span class="p">[</span><span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">LIGHTING_AND_APPLIANCES</span><span class="p">]</span>
+        <span class="n">other_subsector_pp</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="n">Timeseries</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">country_pp</span><span class="o">.</span><span class="n">households_pp</span><span class="o">.</span><span class="n">sectors_pp</span><span class="p">[</span><span class="n">HouseholdsSubsectorId</span><span class="o">.</span><span class="n">OTHER</span><span class="p">]</span>
+
+        <span class="c1"># do forecast</span>
+        <span class="n">target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
+
+        <span class="n">dict_demand</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>
+        <span class="k">for</span> <span class="n">demand_type</span><span class="p">,</span> <span class="n">ts_lighting</span> <span class="ow">in</span> <span class="n">lighting_subsector_pp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">ts_other</span> <span class="o">=</span> <span class="n">other_subsector_pp</span><span class="p">[</span><span class="n">demand_type</span><span class="p">]</span>
+
+            <span class="n">coef_other</span> <span class="o">=</span> <span class="n">ts_other</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span>
+            <span class="n">coef_lighting</span> <span class="o">=</span> <span class="n">ts_lighting</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span>
+
+            <span class="n">coef_other</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">)</span>
+            <span class="n">coef_lighting</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">)</span>
+
+            <span class="n">dict_demand</span><span class="p">[</span><span class="n">demand_type</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">coef_lighting</span><span class="o">.</span><span class="n">get_function_y</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span> <span class="o">+</span> <span class="n">coef_other</span><span class="o">.</span><span class="n">get_function_y</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+
+        <span class="c1"># multiply with population; that way the value is not per capita anymore</span>
+        <span class="n">population_in_target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_population_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">demand_type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]:</span>
+            <span class="n">dict_demand</span><span class="p">[</span><span class="n">demand_type</span><span class="p">]</span> <span class="o">*=</span> <span class="n">population_in_target_year</span>
+
+        <span class="k">return</span> <span class="n">dict_demand</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">],</span> <span class="n">dict_demand</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">],</span> <span class="n">dict_demand</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_hot_water_liter_per_capita"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_hot_water_liter_per_capita">[docs]</a>    <span class="k">def</span> <span class="nf">get_hot_water_liter_per_capita</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the amount of hot water per person in a year in m^3. &quot;&quot;&quot;</span>
+        <span class="n">hot_water_per_person</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hh_input</span><span class="o">.</span><span class="n">hw_dict_hot_water_per_person_per_day</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">hot_water_per_person</span> <span class="o">*=</span> <span class="mi">365</span>     <span class="c1"># per year</span>
+        <span class="n">hot_water_per_person</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="n">Unit</span><span class="o">.</span><span class="n">liter</span><span class="p">,</span> <span class="n">Unit</span><span class="o">.</span><span class="n">m3</span><span class="p">,</span> <span class="n">hot_water_per_person</span><span class="p">)</span>    <span class="c1"># liter -&gt; m^3</span>
+        <span class="k">return</span> <span class="n">hot_water_per_person</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_hot_water_specific_capacity"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_hot_water_specific_capacity">[docs]</a>    <span class="k">def</span> <span class="nf">get_hot_water_specific_capacity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the specific capacity for hot water. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hh_input</span><span class="o">.</span><span class="n">hw_specific_capacity</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_hot_water_inlet_temperature"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_hot_water_inlet_temperature">[docs]</a>    <span class="k">def</span> <span class="nf">get_hot_water_inlet_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the inlet temperature of hot water in a given country. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hh_input</span><span class="o">.</span><span class="n">hw_inlet_temperature</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_hot_water_outlet_temperature"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_hot_water_outlet_temperature">[docs]</a>    <span class="k">def</span> <span class="nf">get_hot_water_outlet_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the outlet temperature of water. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hh_input</span><span class="o">.</span><span class="n">hw_outlet_temperature</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_hot_water_calibration_factor"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_hot_water_calibration_factor">[docs]</a>    <span class="k">def</span> <span class="nf">get_hot_water_calibration_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the hot water calibration factor for a given country. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hh_input</span><span class="o">.</span><span class="n">hw_dict_hot_water_calibration</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_population_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_population_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_population_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the population of a country in the target year. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_if</span><span class="o">.</span><span class="n">get_population_country_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_heat_levels"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_heat_levels">[docs]</a>    <span class="k">def</span> <span class="nf">get_heat_levels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Heat</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the heat levels of the household sector. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">hh_settings</span><span class="o">.</span><span class="n">heat_levels</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_area_per_household_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_area_per_household_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_area_per_household_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the area per household in target year for a given country. &quot;&quot;&quot;</span>
+        <span class="n">start_point</span><span class="p">,</span> <span class="n">change_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hh_input</span><span class="o">.</span><span class="n">sh_area_per_household</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
+
+        <span class="n">forecast_coef</span> <span class="o">=</span> <span class="n">Coef</span><span class="p">()</span>
+        <span class="n">forecast_coef</span><span class="o">.</span><span class="n">set_exp</span><span class="p">(</span><span class="n">start_point</span><span class="p">,</span> <span class="n">change_rate</span><span class="p">)</span>
+        <span class="n">forecast_coef</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">EXPONENTIAL</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">forecast_coef</span><span class="o">.</span><span class="n">get_function_y</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_avg_persons_per_household_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_avg_persons_per_household_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_avg_persons_per_household_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get average number of persons per household in target year for a given country. &quot;&quot;&quot;</span>
+        <span class="n">person_per_household</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hh_input</span><span class="o">.</span><span class="n">sh_persons_per_household</span>
+        <span class="n">target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
+
+        <span class="c1"># Timeseries without coefficients, if coefficients are needed move to preprocessing.</span>
+        <span class="n">person_per_household_historical</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">(</span><span class="n">person_per_household</span><span class="o">.</span><span class="n">historical</span><span class="p">[</span><span class="n">country_name</span><span class="p">])</span>
+
+        <span class="c1"># use historical if available</span>
+        <span class="k">if</span> <span class="n">target_year</span> <span class="o">&lt;=</span> <span class="n">person_per_household_historical</span><span class="o">.</span><span class="n">get_last_data_entry</span><span class="p">()[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">person_per_household_historical</span><span class="o">.</span><span class="n">get_value_at_year</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+
+        <span class="c1"># do prognosis</span>
+        <span class="n">person_per_household_intervals</span> <span class="o">=</span> <span class="n">person_per_household</span><span class="o">.</span><span class="n">prognosis</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+
+        <span class="c1"># find correct interval</span>
+        <span class="n">interval</span> <span class="o">=</span> <span class="n">uty</span><span class="o">.</span><span class="n">find_interval_between_datapoints</span><span class="p">(</span><span class="n">person_per_household_intervals</span><span class="p">,</span> <span class="n">target_year</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Target year not within bounds of the average person per household input.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">uty</span><span class="o">.</span><span class="n">exponential_interpolation</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">interval</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">target_year</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_space_heating_specific_heat_in_target_year"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_space_heating_specific_heat_in_target_year">[docs]</a>    <span class="k">def</span> <span class="nf">get_space_heating_specific_heat_in_target_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the amount of specific heat for space heating in a given country in TWh. &quot;&quot;&quot;</span>
+        <span class="n">start_point</span><span class="p">,</span> <span class="n">change_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hh_input</span><span class="o">.</span><span class="n">sh_specific_heat</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
+
+        <span class="n">forecast_coef</span> <span class="o">=</span> <span class="n">Coef</span><span class="p">()</span>
+        <span class="n">forecast_coef</span><span class="o">.</span><span class="n">set_exp</span><span class="p">(</span><span class="n">start_point</span><span class="p">,</span> <span class="n">change_rate</span><span class="p">)</span>
+        <span class="n">forecast_coef</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">EXPONENTIAL</span><span class="p">)</span>
+
+        <span class="c1"># do forecast</span>
+        <span class="n">forecasted_specific_demand</span> <span class="o">=</span> <span class="n">forecast_coef</span><span class="o">.</span><span class="n">get_function_y</span><span class="p">(</span><span class="n">target_year</span><span class="p">)</span>
+
+        <span class="c1"># convert unit kWh -&gt; TWh</span>
+        <span class="n">forecasted_specific_demand</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="n">Unit</span><span class="o">.</span><span class="n">kWh</span><span class="p">,</span> <span class="n">Unit</span><span class="o">.</span><span class="n">TWh</span><span class="p">,</span> <span class="n">forecasted_specific_demand</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">forecasted_specific_demand</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_space_heating_calibration_factor"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_space_heating_calibration_factor">[docs]</a>    <span class="k">def</span> <span class="nf">get_space_heating_calibration_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the calibration factor for space heating. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hh_input</span><span class="o">.</span><span class="n">sh_dict_space_heating_calibration</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_nuts2_distribution"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_nuts2_distribution">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuts2_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the distribution percentages/100 for the nuts2 regions. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_if</span><span class="o">.</span><span class="n">get_population_nuts2_percentages_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_single_household_share"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_single_household_share">[docs]</a>    <span class="k">def</span> <span class="nf">get_single_household_share</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the percentage/100 of the share of single person households.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">hh_settings</span><span class="o">.</span><span class="n">single_households_share</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_load_profile_efh"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_load_profile_efh">[docs]</a>    <span class="k">def</span> <span class="nf">get_load_profile_efh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the load profile for the single person households. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hh_input</span><span class="o">.</span><span class="n">load_profile_single_households</span></div>
+
+<div class="viewcode-block" id="HouseholdsInstanceFilter.get_load_profile_mfh"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.households_instance_filter.HouseholdsInstanceFilter.get_load_profile_mfh">[docs]</a>    <span class="k">def</span> <span class="nf">get_load_profile_mfh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the load profile for the multiple person households. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hh_input</span><span class="o">.</span><span class="n">load_profile_multiple_households</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

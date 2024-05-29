@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.model_instance.instance_filter.cts_instance_filter &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.model_instance.instance_filter.cts_instance_filter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.model_instance.instance_filter.cts_instance_filter</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">endemo2.data_structures.containers</span> <span class="kn">import</span> <span class="n">SpecConsum</span><span class="p">,</span> <span class="n">Heat</span><span class="p">,</span> <span class="n">Demand</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.enumerations</span> <span class="kn">import</span> <span class="n">DemandType</span><span class="p">,</span> <span class="n">ScForecastMethod</span><span class="p">,</span> <span class="n">ForecastMethod</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.prediction_models</span> <span class="kn">import</span> <span class="n">Coef</span><span class="p">,</span> <span class="n">Timeseries</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.conversions_unit</span> <span class="kn">import</span> <span class="n">Unit</span><span class="p">,</span> <span class="n">convert</span><span class="p">,</span> <span class="n">get_conversion_scalar</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.control_parameters</span> <span class="kn">import</span> <span class="n">ControlParameters</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_cts</span> <span class="kn">import</span> <span class="n">CtsInput</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_general</span> <span class="kn">import</span> <span class="n">GeneralInput</span>
+<span class="kn">from</span> <span class="nn">endemo2.model_instance.instance_filter.general_instance_filter</span> <span class="kn">import</span> <span class="n">CountryInstanceFilter</span><span class="p">,</span> <span class="n">InstanceFilter</span>
+<span class="kn">from</span> <span class="nn">endemo2.preprocessing.preprocessing_step_one</span> <span class="kn">import</span> <span class="n">CountryPreprocessed</span><span class="p">,</span> <span class="n">CtsPreprocessed</span>
+<span class="kn">from</span> <span class="nn">endemo2.preprocessing.preprocessor</span> <span class="kn">import</span> <span class="n">Preprocessor</span>
+
+
+<div class="viewcode-block" id="CtsInstanceFilter"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter">[docs]</a><span class="k">class</span> <span class="nc">CtsInstanceFilter</span><span class="p">(</span><span class="n">InstanceFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The instance filter for the CTS sector. &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">:</span> <span class="n">ControlParameters</span><span class="p">,</span> <span class="n">general_input</span><span class="p">:</span> <span class="n">GeneralInput</span><span class="p">,</span> <span class="n">cts_input</span><span class="p">:</span> <span class="n">CtsInput</span><span class="p">,</span>
+                 <span class="n">preprocessor</span><span class="p">:</span> <span class="n">Preprocessor</span><span class="p">,</span> <span class="n">country_if</span><span class="p">:</span> <span class="n">CountryInstanceFilter</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctrl</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">general_input</span> <span class="o">=</span> <span class="n">general_input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cts_input</span> <span class="o">=</span> <span class="n">cts_input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">country_if</span> <span class="o">=</span> <span class="n">country_if</span>
+
+<div class="viewcode-block" id="CtsInstanceFilter.get_cts_subsector_names"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_cts_subsector_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_cts_subsector_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the names of all _subsectors of the cts sector. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cts_input</span><span class="o">.</span><span class="n">subsector_names</span></div>
+
+<div class="viewcode-block" id="CtsInstanceFilter.get_specific_consumption"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_specific_consumption">[docs]</a>    <span class="k">def</span> <span class="nf">get_specific_consumption</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SpecConsum</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the specific consumption for a country in TWh/thousand employees. &quot;&quot;&quot;</span>
+        <span class="n">cts_pp</span><span class="p">:</span> <span class="n">CtsPreprocessed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">cts_pp</span>
+        <span class="n">ts_specific_consumption</span> <span class="o">=</span> <span class="n">cts_pp</span><span class="o">.</span><span class="n">specific_consumption</span>
+
+        <span class="c1"># get predictions</span>
+        <span class="n">target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
+
+        <span class="n">sc</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>
+        <span class="k">for</span> <span class="n">demand_type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]:</span>
+            <span class="n">sc_ts</span> <span class="o">=</span> <span class="n">ts_specific_consumption</span><span class="p">[</span><span class="n">demand_type</span><span class="p">]</span>
+            <span class="n">sc_coef</span> <span class="o">=</span> <span class="n">sc_ts</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span>
+
+            <span class="c1"># use different forecast methods</span>
+            <span class="n">sc_forecast_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">cts_settings</span><span class="o">.</span><span class="n">trend_calc_for_spec</span>
+            <span class="k">match</span> <span class="n">sc_forecast_method</span><span class="p">:</span>
+                <span class="k">case</span> <span class="n">ScForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">:</span>
+                    <span class="n">sc_coef</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">)</span>
+                <span class="k">case</span> <span class="n">ScForecastMethod</span><span class="o">.</span><span class="n">LOGARITHMIC</span><span class="p">:</span>
+                    <span class="n">sc_coef</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LOGARITHMIC</span><span class="p">)</span>
+                <span class="k">case</span> <span class="n">ScForecastMethod</span><span class="o">.</span><span class="n">CONST_MEAN</span><span class="p">:</span>
+                    <span class="n">mean_y</span> <span class="o">=</span> <span class="n">sc_ts</span><span class="o">.</span><span class="n">get_mean_y</span><span class="p">()</span>
+                    <span class="p">(</span><span class="n">last_year</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">sc_ts</span><span class="o">.</span><span class="n">get_last_data_entry</span><span class="p">()</span>
+                    <span class="n">sc_coef</span><span class="o">.</span><span class="n">set_exp</span><span class="p">((</span><span class="n">last_year</span><span class="p">,</span> <span class="n">mean_y</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
+                    <span class="n">sc_coef</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">EXPONENTIAL</span><span class="p">)</span>
+                <span class="k">case</span> <span class="n">ScForecastMethod</span><span class="o">.</span><span class="n">CONST_LAST</span><span class="p">:</span>
+                    <span class="p">(</span><span class="n">last_year</span><span class="p">,</span> <span class="n">last_value</span><span class="p">)</span> <span class="o">=</span> <span class="n">sc_ts</span><span class="o">.</span><span class="n">get_last_data_entry</span><span class="p">()</span>
+                    <span class="n">sc_coef</span><span class="o">.</span><span class="n">set_exp</span><span class="p">((</span><span class="n">last_year</span><span class="p">,</span> <span class="n">last_value</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
+                    <span class="n">sc_coef</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">EXPONENTIAL</span><span class="p">)</span>
+            <span class="n">sc</span><span class="p">[</span><span class="n">demand_type</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sc_coef</span><span class="o">.</span><span class="n">get_function_y</span><span class="p">(</span><span class="n">target_year</span><span class="p">))</span>
+
+        <span class="n">specific_consumption</span> <span class="o">=</span> <span class="n">SpecConsum</span><span class="p">(</span><span class="n">sc</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">],</span> <span class="n">sc</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">],</span> <span class="n">sc</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">])</span>
+
+        <span class="c1"># efficiency scale heat as fuel todo: should this be done later? reference says no</span>
+
+        <span class="c1"># convert from GWh/thousand employee to TWh/thousand employee</span>
+        <span class="n">specific_consumption</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">get_conversion_scalar</span><span class="p">(</span><span class="n">Unit</span><span class="o">.</span><span class="n">GWh</span><span class="p">,</span> <span class="n">Unit</span><span class="o">.</span><span class="n">TWh</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">specific_consumption</span></div>
+
+<div class="viewcode-block" id="CtsInstanceFilter.get_heat_levels"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_heat_levels">[docs]</a>    <span class="k">def</span> <span class="nf">get_heat_levels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Heat</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the heat levels. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">cts_settings</span><span class="o">.</span><span class="n">heat_levels</span></div>
+
+<div class="viewcode-block" id="CtsInstanceFilter.get_load_profile"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_load_profile">[docs]</a>    <span class="k">def</span> <span class="nf">get_load_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the load profiles. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cts_input</span><span class="o">.</span><span class="n">load_profile</span></div>
+
+<div class="viewcode-block" id="CtsInstanceFilter.get_employee_share_of_population_country"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_employee_share_of_population_country">[docs]</a>    <span class="k">def</span> <span class="nf">get_employee_share_of_population_country</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">subsector_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the share of population that is employed in a certain subsector. &quot;&quot;&quot;</span>
+        <span class="n">cts_pp</span><span class="p">:</span> <span class="n">CtsPreprocessed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">cts_pp</span>
+
+        <span class="c1"># get target_year form settings</span>
+        <span class="n">target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
+
+        <span class="c1"># get coef from preprocessing</span>
+        <span class="n">ts_employee_share</span><span class="p">:</span> <span class="n">Timeseries</span> <span class="o">=</span> <span class="n">cts_pp</span><span class="o">.</span><span class="n">employee_share_in_subsector_country</span><span class="p">[</span><span class="n">subsector_name</span><span class="p">]</span>
+        <span class="n">coef</span> <span class="o">=</span> <span class="n">ts_employee_share</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span>
+        <span class="n">coef</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">)</span>
+
+        <span class="c1"># predict</span>
+        <span class="n">value_in_2018</span> <span class="o">=</span> <span class="n">ts_employee_share</span><span class="o">.</span><span class="n">get_value_at_year</span><span class="p">(</span><span class="mi">2018</span><span class="p">)</span>
+        <span class="n">prediction</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">coef</span><span class="o">.</span><span class="n">get_function_y</span><span class="p">(</span><span class="n">target_year</span><span class="p">))</span>  <span class="c1"># cannot be smaller than 0</span>
+        <span class="c1"># prediction = min(prediction, value_in_2018 * 1.15)  # cap it.</span>
+        <span class="n">prediction</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">prediction</span></div>
+
+<div class="viewcode-block" id="CtsInstanceFilter.get_employee_share_of_population_nuts2"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_employee_share_of_population_nuts2">[docs]</a>    <span class="k">def</span> <span class="nf">get_employee_share_of_population_nuts2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">subsector_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the share of population in a nuts2 region that is employed in a certain subsector. &quot;&quot;&quot;</span>
+        <span class="n">cts_pp</span><span class="p">:</span> <span class="n">CtsPreprocessed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span><span class="o">.</span><span class="n">countries_pp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">cts_pp</span>
+
+        <span class="c1"># get target_year form settings</span>
+        <span class="n">target_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">target_year</span>
+
+        <span class="n">dict_res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>
+        <span class="k">for</span> <span class="n">region_name</span><span class="p">,</span> <span class="n">dict_subsector_employee_share</span> <span class="ow">in</span> <span class="n">cts_pp</span><span class="o">.</span><span class="n">employee_share_in_subsector_nuts2</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># get coef from preprocessing</span>
+            <span class="n">ts_employee_share</span> <span class="o">=</span> <span class="n">dict_subsector_employee_share</span><span class="p">[</span><span class="n">subsector_name</span><span class="p">]</span>
+            <span class="n">coef</span> <span class="o">=</span> <span class="n">ts_employee_share</span><span class="o">.</span><span class="n">get_coef</span><span class="p">()</span>
+            <span class="n">coef</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="n">ForecastMethod</span><span class="o">.</span><span class="n">LINEAR</span><span class="p">)</span>
+
+            <span class="c1"># predict</span>
+            <span class="n">value_in_2018</span> <span class="o">=</span> <span class="n">ts_employee_share</span><span class="o">.</span><span class="n">get_value_at_year</span><span class="p">(</span><span class="mi">2018</span><span class="p">)</span>
+            <span class="n">prediction</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">coef</span><span class="o">.</span><span class="n">get_function_y</span><span class="p">(</span><span class="n">target_year</span><span class="p">))</span>  <span class="c1"># cannot be smaller than 0</span>
+            <span class="n">prediction</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">value_in_2018</span> <span class="o">*</span> <span class="mf">1.15</span><span class="p">)</span>  <span class="c1"># cap it. todo: maybe this can be done better?</span>
+            <span class="n">dict_res</span><span class="p">[</span><span class="n">region_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">prediction</span>
+
+        <span class="k">return</span> <span class="n">dict_res</span></div>
+
+<div class="viewcode-block" id="CtsInstanceFilter.get_population_country"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_population_country">[docs]</a>    <span class="k">def</span> <span class="nf">get_population_country</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the population of the country in target year. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_if</span><span class="o">.</span><span class="n">get_population_country_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CtsInstanceFilter.get_population_nuts2"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_population_nuts2">[docs]</a>    <span class="k">def</span> <span class="nf">get_population_nuts2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the population of each nuts2 region of a country in target year. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_if</span><span class="o">.</span><span class="n">get_population_nuts2_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CtsInstanceFilter.get_nuts2_spec_demand_scalar"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_nuts2_spec_demand_scalar">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuts2_spec_demand_scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">subsector_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the scalar for the specific consumption that distributes demand across nuts2 regions. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">cts_settings</span><span class="o">.</span><span class="n">nuts2_distribution_per_pop_density</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_if</span><span class="o">.</span><span class="n">get_population_nuts2_percentages_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">employee_share_nuts2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_employee_share_of_population_nuts2</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">subsector_name</span><span class="p">)</span>
+            <span class="n">population_nuts2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_population_nuts2</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span>
+            <span class="n">res_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]()</span>
+            <span class="k">for</span> <span class="n">region_name</span><span class="p">,</span> <span class="n">employee_share</span> <span class="ow">in</span> <span class="n">employee_share_nuts2</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">res_dict</span><span class="p">[</span><span class="n">region_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">employee_share</span> <span class="o">*</span> <span class="n">population_nuts2</span><span class="p">[</span><span class="n">region_name</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">res_dict</span></div>
+
+<div class="viewcode-block" id="CtsInstanceFilter.get_nuts2_regions"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_nuts2_regions">[docs]</a>    <span class="k">def</span> <span class="nf">get_nuts2_regions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the nuts2 regions for a country. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_if</span><span class="o">.</span><span class="n">get_population_nuts2_in_target_year</span><span class="p">(</span><span class="n">country_name</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>  <span class="c1"># todo: make more pretty</span></div>
+
+<div class="viewcode-block" id="CtsInstanceFilter.get_heat_substitution"><a class="viewcode-back" href="../../../../endemo2.model_instance.instance_filter.html#endemo2.model_instance.instance_filter.cts_instance_filter.CtsInstanceFilter.get_heat_substitution">[docs]</a>    <span class="k">def</span> <span class="nf">get_heat_substitution</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the heat substitution variables from settings. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">cts_settings</span><span class="o">.</span><span class="n">heat_substitution</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

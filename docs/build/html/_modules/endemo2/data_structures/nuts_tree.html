@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.data_structures.nuts_tree &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.data_structures.nuts_tree</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.data_structures.nuts_tree</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains everything one needs to represent NUTS regions as a tree structure.</span>
+<span class="sd">The leafs are NUTS2 regions, the root is the 2-letter country code and the in-between-nodes are for navigation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span>
+
+
+<div class="viewcode-block" id="NutsRegion"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegion">[docs]</a><span class="k">class</span> <span class="nc">NutsRegion</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents one NUTS Region according to individual codes.</span>
+
+<span class="sd">    :param str region_name: The NUTS tag of the region. For example: DE, DE1, DE11, ...</span>
+
+<span class="sd">    :ivar str region_name: The NUTS tag of the region. For example: DE, DE1, DE11, ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">region_name</span> <span class="o">=</span> <span class="n">region_name</span></div>
+
+
+<div class="viewcode-block" id="NutsRegionLeaf"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionLeaf">[docs]</a><span class="k">class</span> <span class="nc">NutsRegionLeaf</span><span class="p">(</span><span class="n">NutsRegion</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents one NUTS2 Region according to individual codes. It is the leaf of the NUTS tree.</span>
+
+<span class="sd">    :param str region_name: The NUTS tag of the region. For example: DE11, DE12 ...</span>
+<span class="sd">    :param Any data: The timeseries for the value the tree is associated with. This can be any type of data.</span>
+
+<span class="sd">    :ivar str region_name: The NUTS tag of the region. For example: DE11, DE12 ...</span>
+<span class="sd">    :ivar Any data: The timeseries for the value the tree is associated with. This can be any type of data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">region_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;[leaf: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">region_name</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
+
+<div class="viewcode-block" id="NutsRegionLeaf.get"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionLeaf.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the leaf&#39;s data. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div></div>
+
+
+<div class="viewcode-block" id="NutsRegionNode"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode">[docs]</a><span class="k">class</span> <span class="nc">NutsRegionNode</span><span class="p">(</span><span class="n">NutsRegion</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents one NUTS Region according to individual codes. Not a NUTS2 region, but a node in the tree.</span>
+
+<span class="sd">    :param str region_name: The NUTS tag of the region. For example: DE, DE1, DE2, ...</span>
+
+<span class="sd">    :ivar str region_name: The NUTS tag of the region. For example: DE, DE1, DE2, ...</span>
+<span class="sd">    :ivar dict[str, NutsRegion] _subregions: The child regions, accessible per NUTS tag. For DE: {DE1 -&gt; .., DE2 -&gt; ..}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">region_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sub_regions</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">NutsRegionNode</span><span class="p">,</span> <span class="n">NutsRegionLeaf</span><span class="p">]]()</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;[root: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">region_name</span> <span class="o">+</span> <span class="s2">&quot;, children: &quot;</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_regions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;]&quot;</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_regions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+<div class="viewcode-block" id="NutsRegionNode.get_region_name"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.get_region_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_region_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Getter for the region_name. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">region_name</span></div>
+
+<div class="viewcode-block" id="NutsRegionNode.add_leaf_region"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.add_leaf_region">[docs]</a>    <span class="k">def</span> <span class="nf">add_leaf_region</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuts2region_obj</span><span class="p">:</span> <span class="n">NutsRegionLeaf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Traverses the NUTS Tree recursively to insert a leaf node.</span>
+
+<span class="sd">        :param nuts2region_obj: The NutsRegionLeaf object to insert into the tree</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">region_name</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="ow">is</span> <span class="nb">len</span><span class="p">(</span><span class="n">nuts2region_obj</span><span class="o">.</span><span class="n">region_name</span><span class="p">):</span>
+            <span class="c1"># region is direct subregion</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sub_regions</span><span class="p">[</span><span class="n">nuts2region_obj</span><span class="o">.</span><span class="n">region_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">nuts2region_obj</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">region_name</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">nuts2region_obj</span><span class="o">.</span><span class="n">region_name</span><span class="p">):</span>
+            <span class="c1"># region is a subregion of a subregion, search for right one to insert</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_regions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">nuts2region_obj</span><span class="o">.</span><span class="n">region_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+                    <span class="c1"># found parent region</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_sub_regions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">add_leaf_region</span><span class="p">(</span><span class="n">nuts2region_obj</span><span class="p">)</span>
+                    <span class="k">return</span>
+            <span class="c1"># found no region, create in-between</span>
+            <span class="n">new_inbetween_region_name</span> <span class="o">=</span> <span class="n">nuts2region_obj</span><span class="o">.</span><span class="n">region_name</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">region_name</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">new_inbetween_obj</span> <span class="o">=</span> <span class="n">NutsRegionNode</span><span class="p">(</span><span class="n">new_inbetween_region_name</span><span class="p">)</span>
+            <span class="n">new_inbetween_obj</span><span class="o">.</span><span class="n">add_leaf_region</span><span class="p">(</span><span class="n">nuts2region_obj</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sub_regions</span><span class="p">[</span><span class="n">new_inbetween_region_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_inbetween_obj</span></div>
+
+<div class="viewcode-block" id="NutsRegionNode.get_specific_node"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.get_specific_node">[docs]</a>    <span class="k">def</span> <span class="nf">get_specific_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">region_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NutsRegion</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Traverse tree and find the node with region code.</span>
+
+<span class="sd">        :param region_code: The region code of the node to find.</span>
+<span class="sd">        :return: The NutsRegion object of the region with region_code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">region_name</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="ow">is</span> <span class="nb">len</span><span class="p">(</span><span class="n">region_code</span><span class="p">):</span>
+            <span class="c1"># region is direct subregion</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_regions</span><span class="p">[</span><span class="n">region_code</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">region_name</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">region_code</span><span class="p">):</span>
+            <span class="c1"># region is a subregion of a subregion, search for right one to insert</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_regions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">region_code</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+                    <span class="c1"># found parent region</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_regions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">get_specific_node</span><span class="p">(</span><span class="n">region_code</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NutsRegionNode.get_nodes_dfs"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.get_nodes_dfs">[docs]</a>    <span class="k">def</span> <span class="nf">get_nodes_dfs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">NutsRegion</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of all nodes in Depth-First-Search order.</span>
+<span class="sd">        Used mostly for debugging purposes.</span>
+
+<span class="sd">        :return: The list of nodes in DFS-order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sub_regions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># leaf node, return only self</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># recursively return this node and all children</span>
+            <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">subregion</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_regions</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">nodes</span> <span class="o">+=</span> <span class="n">subregion</span><span class="o">.</span><span class="n">get_nodes_dfs</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">nodes</span></div>
+
+<div class="viewcode-block" id="NutsRegionNode.get_all_leaf_nodes"><a class="viewcode-back" href="../../../endemo2.data_structures.html#endemo2.data_structures.nuts_tree.NutsRegionNode.get_all_leaf_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_leaf_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">NutsRegionLeaf</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of all leaf nodes.</span>
+
+<span class="sd">        :return: The list of leaf nodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sub_regions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># leaf node, return only self</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># recursively return this node and all children</span>
+            <span class="n">nodes</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">subregion</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_regions</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subregion</span><span class="p">,</span> <span class="n">NutsRegionLeaf</span><span class="p">):</span>
+                    <span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subregion</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">nodes</span> <span class="o">+=</span> <span class="n">subregion</span><span class="o">.</span><span class="n">get_all_leaf_nodes</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">nodes</span></div></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.utility.prediction_models.PredictedTimeseries &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="endemo2.utility.prediction_models.Quadr" href="endemo2.utility.prediction_models.Quadr.html" />
+    <link rel="prev" title="endemo2.utility.prediction_models.Lin" href="endemo2.utility.prediction_models.Lin.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="endemo2.execution.html">endemo2.execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.general.html">endemo2.general</a></li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.industry.html">endemo2.industry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.input.html">endemo2.input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="endemo2.sectors.html">endemo2.sectors</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="endemo2.utility.html">endemo2.utility</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="endemo2.utility.prediction_models.html">endemo2.utility.prediction_models</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="endemo2.utility.prediction_models.Coef.html">endemo2.utility.prediction_models.Coef</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.utility.prediction_models.Exp.html">endemo2.utility.prediction_models.Exp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.utility.prediction_models.Lin.html">endemo2.utility.prediction_models.Lin</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">endemo2.utility.prediction_models.PredictedTimeseries</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#endemo2.utility.prediction_models.PredictedTimeseries"><code class="docutils literal notranslate"><span class="pre">PredictedTimeseries</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.utility.prediction_models.Quadr.html">endemo2.utility.prediction_models.Quadr</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.utility.prediction_models.StartPoint.html">endemo2.utility.prediction_models.StartPoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.utility.prediction_models.TimeStepSequence.html">endemo2.utility.prediction_models.TimeStepSequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endemo2.utility.prediction_models.Timeseries.html">endemo2.utility.prediction_models.Timeseries</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="endemo2.utility.utility.html">endemo2.utility.utility</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="endemo2.utility.html">endemo2.utility</a></li>
+          <li class="breadcrumb-item"><a href="endemo2.utility.prediction_models.html">endemo2.utility.prediction_models</a></li>
+      <li class="breadcrumb-item active">endemo2.utility.prediction_models.PredictedTimeseries</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="endemo2-utility-prediction-models-predictedtimeseries">
+<h1>endemo2.utility.prediction_models.PredictedTimeseries<a class="headerlink" href="#endemo2-utility-prediction-models-predictedtimeseries" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="endemo2.utility.prediction_models.PredictedTimeseries">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PredictedTimeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">historical_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calculation_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ForecastMethod.LINEAR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_of_change</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/utility/prediction_models.html#PredictedTimeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.prediction_models.PredictedTimeseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="endemo2.utility.prediction_models.Timeseries.html#endemo2.utility.prediction_models.Timeseries" title="endemo2.utility.prediction_models.Timeseries"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timeseries</span></code></a></p>
+<p>A variant of the timeseries class, where there is a manual forecast available that is read from the input and used
+for the forecast.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>historical_data</strong> (<em>[</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>)</em><em>]</em>) – The historical data. Passed onto parent class.</p></li>
+<li><p><strong>prediction_data</strong> (<em>[</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>)</em><em>]</em>) – The manual prediction data. This is saved and used for the forecast.</p></li>
+<li><p><strong>calculation_type</strong> (<a class="reference internal" href="endemo2.input.control_parameters.ForecastMethod.html#endemo2.input.control_parameters.ForecastMethod" title="endemo2.input.control_parameters.ForecastMethod"><em>ForecastMethod</em></a>) – The forecast type, should the parent class be used instead. Is passed on to
+the parent class.</p></li>
+<li><p><strong>rate_of_change</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – The rate of change for the exponential forecast method, should this one be selected
+for use in the parent class.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_prediction</strong> (<em>[</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>)</em><em>]</em>) – The manual prediction, which is used for the forecast.</p>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_coef" title="endemo2.utility.prediction_models.PredictedTimeseries.get_coef"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coef</span></code></a></p></td>
+<td><p>Getter for the coefficient container.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_data" title="endemo2.utility.prediction_models.PredictedTimeseries.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
+<td><p>Getter for the historical data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_last_data_entry" title="endemo2.utility.prediction_models.PredictedTimeseries.get_last_data_entry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_last_data_entry</span></code></a></p></td>
+<td><p>Getter for the last available entry in historical data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_manual_prog" title="endemo2.utility.prediction_models.PredictedTimeseries.get_manual_prog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_manual_prog</span></code></a></p></td>
+<td><p>Get the prognosis of the y-axis value for a target x-axis value from the manual forecast.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_mean_y" title="endemo2.utility.prediction_models.PredictedTimeseries.get_mean_y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mean_y</span></code></a></p></td>
+<td><p>Get mean of all values on the y-axis of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_prediction_raw" title="endemo2.utility.prediction_models.PredictedTimeseries.get_prediction_raw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_prediction_raw</span></code></a></p></td>
+<td><p>Getter for the manual prediction data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_prog" title="endemo2.utility.prediction_models.PredictedTimeseries.get_prog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_prog</span></code></a></p></td>
+<td><p>Get the prognosis of the y-axis value by the standard method for this class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_prog_exp" title="endemo2.utility.prediction_models.PredictedTimeseries.get_prog_exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_prog_exp</span></code></a></p></td>
+<td><p>Get the prognosis of the y-axis value for a target x-axis value with the exponential forecast method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_prog_lin" title="endemo2.utility.prediction_models.PredictedTimeseries.get_prog_lin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_prog_lin</span></code></a></p></td>
+<td><p>Get the prognosis of the y-axis value for a target x-axis value with the linear forecast method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_prog_quadr" title="endemo2.utility.prediction_models.PredictedTimeseries.get_prog_quadr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_prog_quadr</span></code></a></p></td>
+<td><p>Get the prognosis of the y-axis value for a target x-axis value with the quadratic forecast method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_value" title="endemo2.utility.prediction_models.PredictedTimeseries.get_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_value</span></code></a></p></td>
+<td><p>Get the y-axis value for a certain target_x.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.utility.prediction_models.PredictedTimeseries.get_coef">
+<span class="sig-name descname"><span class="pre">get_coef</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_coef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the coefficient container.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="endemo2.utility.prediction_models.Coef.html#endemo2.utility.prediction_models.Coef" title="endemo2.utility.prediction_models.Coef"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coef</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.utility.prediction_models.PredictedTimeseries.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the historical data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.utility.prediction_models.PredictedTimeseries.get_last_data_entry">
+<span class="sig-name descname"><span class="pre">get_last_data_entry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_last_data_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the last available entry in historical data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.utility.prediction_models.PredictedTimeseries.get_manual_prog">
+<span class="sig-name descname"><span class="pre">get_manual_prog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/utility/prediction_models.html#PredictedTimeseries.get_manual_prog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_manual_prog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the prognosis of the y-axis value for a target x-axis value from the manual forecast.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – The target x-axis value.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The predicted y value at x-axis value x.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.utility.prediction_models.PredictedTimeseries.get_mean_y">
+<span class="sig-name descname"><span class="pre">get_mean_y</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_mean_y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get mean of all values on the y-axis of the data.
+:rtype: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>
+:return: The mean of all y values of the data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.utility.prediction_models.PredictedTimeseries.get_prediction_raw">
+<span class="sig-name descname"><span class="pre">get_prediction_raw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/utility/prediction_models.html#PredictedTimeseries.get_prediction_raw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_prediction_raw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the manual prediction data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[(&lt;class ‘float’&gt;, &lt;class ‘float’&gt;)]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.utility.prediction_models.PredictedTimeseries.get_prog">
+<span class="sig-name descname"><span class="pre">get_prog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/utility/prediction_models.html#PredictedTimeseries.get_prog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_prog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the prognosis of the y-axis value by the standard method for this class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_x</strong> – The target x-axis value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The predicted y value at x-axis value x.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.utility.prediction_models.PredictedTimeseries.get_prog_exp">
+<span class="sig-name descname"><span class="pre">get_prog_exp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_prog_exp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the prognosis of the y-axis value for a target x-axis value with the exponential forecast method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> – The target x-axis value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The predicted y value at x-axis value x.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.utility.prediction_models.PredictedTimeseries.get_prog_lin">
+<span class="sig-name descname"><span class="pre">get_prog_lin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_prog_lin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the prognosis of the y-axis value for a target x-axis value with the linear forecast method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> – The target x-axis value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The predicted y value at x-axis value x.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.utility.prediction_models.PredictedTimeseries.get_prog_quadr">
+<span class="sig-name descname"><span class="pre">get_prog_quadr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_prog_quadr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the prognosis of the y-axis value for a target x-axis value with the quadratic forecast method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> – The target x-axis value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The predicted y value at x-axis value x.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="endemo2.utility.prediction_models.PredictedTimeseries.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/endemo2/utility/prediction_models.html#PredictedTimeseries.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#endemo2.utility.prediction_models.PredictedTimeseries.get_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the y-axis value for a certain target_x.
+Combines historical data and prediction data. When historical data is available it is used.
+When not, a prognosis is made instead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_x</strong> – The target x-axis value.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The corresponding y-axis value, historical or prognosis.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="endemo2.utility.prediction_models.Lin.html" class="btn btn-neutral float-left" title="endemo2.utility.prediction_models.Lin" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="endemo2.utility.prediction_models.Quadr.html" class="btn btn-neutral float-right" title="endemo2.utility.prediction_models.Quadr" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

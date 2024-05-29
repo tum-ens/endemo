@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>endemo2.preprocessing.preprocessing_step_one &mdash; Endemo 2.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Endemo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../endemo2.html">endemo2 package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Endemo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">endemo2.preprocessing.preprocessing_step_one</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for endemo2.preprocessing.preprocessing_step_one</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains all classed used for the first stage of preprocessing.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.nuts_tree</span> <span class="kn">import</span> <span class="n">NutsRegionNode</span><span class="p">,</span> <span class="n">NutsRegionLeaf</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.containers</span> <span class="kn">import</span> <span class="n">EH</span><span class="p">,</span> <span class="n">HisProg</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.enumerations</span> <span class="kn">import</span> <span class="n">DemandType</span><span class="p">,</span> <span class="n">SectorIdentifier</span><span class="p">,</span> <span class="n">TransportModal</span><span class="p">,</span> <span class="n">TrafficType</span>
+<span class="kn">from</span> <span class="nn">endemo2.data_structures.prediction_models</span> <span class="kn">import</span> <span class="n">Timeseries</span><span class="p">,</span> <span class="n">RigidTimeseries</span><span class="p">,</span> <span class="n">IntervalForecast</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_general</span> <span class="kn">import</span> <span class="n">GeneralInput</span><span class="p">,</span> <span class="n">Abbreviations</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_households</span> <span class="kn">import</span> <span class="n">HouseholdsInput</span><span class="p">,</span> <span class="n">HouseholdsSubsectorId</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_manager</span> <span class="kn">import</span> <span class="n">InputManager</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_cts</span> <span class="kn">import</span> <span class="n">CtsInput</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_industry</span> <span class="kn">import</span> <span class="n">ProductInput</span>
+<span class="kn">from</span> <span class="nn">endemo2.input_and_settings.input_transport</span> <span class="kn">import</span> <span class="n">TransportInput</span>
+<span class="kn">from</span> <span class="nn">endemo2.preprocessing.preprocessing_utility</span> <span class="kn">import</span> <span class="n">energy_carrier_to_energy_consumption</span>
+
+<div class="viewcode-block" id="TransportPreprocessed"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.TransportPreprocessed">[docs]</a><span class="k">class</span> <span class="nc">TransportPreprocessed</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Preprocesses everything of the transport sector.</span>
+
+<span class="sd">    :ivar dict[TrafficType, dict[TransportModal, Timeseries]] modal_split_timeseries: The preprocessed</span>
+<span class="sd">        percentages of modal splits for each traffic type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">general_input</span><span class="p">:</span> <span class="n">GeneralInput</span><span class="p">,</span> <span class="n">transport_input</span><span class="p">:</span> <span class="n">TransportInput</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">modal_split_timeseries</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TrafficType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="n">Timeseries</span><span class="p">]]()</span>
+        <span class="k">for</span> <span class="n">traffic_type</span> <span class="ow">in</span> <span class="n">TransportInput</span><span class="o">.</span><span class="n">tra_modal_lists</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># preprocess modal split timeseries for given traffic type</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modal_split_timeseries</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TransportModal</span><span class="p">,</span> <span class="n">Timeseries</span><span class="p">]()</span>  <span class="c1"># {modal_id -&gt; ts}</span>
+            <span class="k">for</span> <span class="n">modal_id</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">transport_input</span><span class="o">.</span><span class="n">modal_split_his</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">ts</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="c1"># preprocess coefficients</span>
+                <span class="n">ts</span><span class="o">.</span><span class="n">generate_coef</span><span class="p">()</span>
+                <span class="c1"># save</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">modal_split_timeseries</span><span class="p">[</span><span class="n">traffic_type</span><span class="p">][</span><span class="n">modal_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts</span></div>
+
+
+<div class="viewcode-block" id="HouseholdsPreprocessed"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.HouseholdsPreprocessed">[docs]</a><span class="k">class</span> <span class="nc">HouseholdsPreprocessed</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Preprocesses everything of the households sector.</span>
+
+<span class="sd">    :ivar dict[HouseholdsSubsectorId, dict[DemandType, Timeseries]] sectors_pp: The timeseries for the energy</span>
+<span class="sd">        consumption of each subsector and demand type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">general_input</span><span class="p">:</span> <span class="n">GeneralInput</span><span class="p">,</span> <span class="n">households_input</span><span class="p">:</span> <span class="n">HouseholdsInput</span><span class="p">,</span>
+                 <span class="n">population_historical</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">):</span>
+
+        <span class="c1"># create timeseries out of historical energy carrier data</span>
+        <span class="n">dict_subsector_energy_carrier_his</span> <span class="o">=</span> <span class="n">households_input</span><span class="o">.</span><span class="n">historical_consumption</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">efficiency_hh</span> <span class="o">=</span> <span class="n">general_input</span><span class="o">.</span><span class="n">efficiency_hh</span>
+
+        <span class="c1"># enum_subsector -&gt; str_energy_carrier -&gt; [(float, float)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sectors_pp</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">HouseholdsSubsectorId</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="n">Timeseries</span><span class="p">]]()</span>
+        <span class="k">for</span> <span class="n">subsector</span><span class="p">,</span> <span class="n">dict_energy_carrier_his</span> <span class="ow">in</span> <span class="n">dict_subsector_energy_carrier_his</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">ts_electricity</span><span class="p">,</span> <span class="n">ts_heat</span> <span class="o">=</span> <span class="n">energy_carrier_to_energy_consumption</span><span class="p">(</span><span class="n">efficiency_hh</span><span class="p">,</span> <span class="n">dict_energy_carrier_his</span><span class="p">)</span>
+
+            <span class="c1"># divide by historical population to make the time trend per capita</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sectors_pp</span><span class="p">[</span><span class="n">subsector</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="n">Timeseries</span><span class="p">]()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sectors_pp</span><span class="p">[</span><span class="n">subsector</span><span class="p">][</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts_electricity</span><span class="o">.</span><span class="n">divide_by</span><span class="p">(</span><span class="n">population_historical</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sectors_pp</span><span class="p">[</span><span class="n">subsector</span><span class="p">][</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts_heat</span><span class="o">.</span><span class="n">divide_by</span><span class="p">(</span><span class="n">population_historical</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sectors_pp</span><span class="p">[</span><span class="n">subsector</span><span class="p">][</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">([(</span><span class="mi">2018</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)])</span>
+
+            <span class="c1"># generate coefficients</span>
+            <span class="k">for</span> <span class="n">demand_type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]:</span>
+                <span class="c1"># Difference to ENDEMO Ver. 1!!! LINEAR Regression instead of exponential</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sectors_pp</span><span class="p">[</span><span class="n">subsector</span><span class="p">][</span><span class="n">demand_type</span><span class="p">]</span><span class="o">.</span><span class="n">generate_coef</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CtsPreprocessed"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CtsPreprocessed">[docs]</a><span class="k">class</span> <span class="nc">CtsPreprocessed</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Preprocesses everything of the cts sector.</span>
+
+<span class="sd">    :ivar dict[DemandType, Timeseries] specific_consumption: The specific consumption timeseries for each demand type</span>
+<span class="sd">        of form {demand_type -&gt; timeseries}.</span>
+<span class="sd">    :ivar dict[str, Timeseries] employee_share_in_subsector_country: The timeseries of the share of the population that</span>
+<span class="sd">        is an employee in a certain subsector. Is of form {country_name -&gt; timeseries}</span>
+<span class="sd">    :ivar dict[str, dict[str, Timeseries]] employee_share_in_subsector_nuts2: The timeseries of the share of the</span>
+<span class="sd">        population of a nuts2 region that is an employee in a certain subsector.</span>
+<span class="sd">        Is of form {country_name -&gt; {region_name -&gt; timeseries}}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">general_input</span><span class="p">:</span> <span class="n">GeneralInput</span><span class="p">,</span> <span class="n">cts_input</span><span class="p">:</span> <span class="n">CtsInput</span><span class="p">,</span> <span class="n">pop_his</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">,</span>
+                 <span class="n">pop_nuts2_his</span><span class="p">:</span> <span class="n">NutsRegionNode</span><span class="p">):</span>
+
+        <span class="c1"># preprocess specific consumption; demand_type -&gt; timeseries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption</span> <span class="o">=</span> \
+            <span class="n">CtsPreprocessed</span><span class="o">.</span><span class="n">preprocess_specific_consumption</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">general_input</span><span class="p">,</span> <span class="n">cts_input</span><span class="p">)</span>
+
+        <span class="c1"># preprocess subsector number of employees per country; subsector_name -&gt; num_employees_timeseries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">employee_share_in_subsector_country</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Timeseries</span><span class="p">]()</span>
+        <span class="k">for</span> <span class="n">subsector_name</span><span class="p">,</span> <span class="n">num_employees_data</span> <span class="ow">in</span> <span class="n">cts_input</span><span class="o">.</span><span class="n">dict_employee_number_country</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># put data into timeseries object</span>
+            <span class="n">ts_num_employees</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">(</span><span class="n">num_employees_data</span><span class="p">)</span>
+
+            <span class="c1"># calculate share of population</span>
+            <span class="n">ts_num_employees</span><span class="o">.</span><span class="n">divide_by</span><span class="p">(</span><span class="n">pop_his</span><span class="p">)</span>
+
+            <span class="c1"># generate coefficients</span>
+            <span class="n">ts_num_employees</span><span class="o">.</span><span class="n">generate_coef</span><span class="p">()</span>
+
+            <span class="c1"># save</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">employee_share_in_subsector_country</span><span class="p">[</span><span class="n">subsector_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts_num_employees</span>
+
+        <span class="c1"># preprocess subsector number of employees per nuts2; nuts2_region -&gt; subsector_name -&gt; num_employees_timeseries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">employee_share_in_subsector_nuts2</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Timeseries</span><span class="p">]]()</span>
+        <span class="k">for</span> <span class="n">region_name</span><span class="p">,</span> <span class="n">dict_subsector_employee</span> <span class="ow">in</span> <span class="n">cts_input</span><span class="o">.</span><span class="n">dict_employee_number_nuts2</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dict_nuts2_pop_his</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">leaf</span><span class="o">.</span><span class="n">region_name</span><span class="p">,</span> <span class="n">leaf</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="n">pop_nuts2_his</span><span class="o">.</span><span class="n">get_all_leaf_nodes</span><span class="p">()])</span>
+            <span class="k">for</span> <span class="n">subsector_name</span><span class="p">,</span> <span class="n">num_employees_data</span> <span class="ow">in</span> <span class="n">dict_subsector_employee</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># put data into timeseries object</span>
+                <span class="n">ts_num_employees</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">(</span><span class="n">num_employees_data</span><span class="p">)</span>
+
+                <span class="c1"># calculate share of population</span>
+                <span class="n">ts_num_employees</span><span class="o">.</span><span class="n">divide_by</span><span class="p">(</span><span class="n">dict_nuts2_pop_his</span><span class="p">[</span><span class="n">region_name</span><span class="p">])</span>
+
+                <span class="c1"># generate coefficients</span>
+                <span class="n">ts_num_employees</span><span class="o">.</span><span class="n">generate_coef</span><span class="p">()</span>
+
+                <span class="c1"># save</span>
+                <span class="k">if</span> <span class="n">region_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">employee_share_in_subsector_nuts2</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">employee_share_in_subsector_nuts2</span><span class="p">[</span><span class="n">region_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">employee_share_in_subsector_nuts2</span><span class="p">[</span><span class="n">region_name</span><span class="p">][</span><span class="n">subsector_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts_num_employees</span>
+
+<div class="viewcode-block" id="CtsPreprocessed.preprocess_specific_consumption"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CtsPreprocessed.preprocess_specific_consumption">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">preprocess_specific_consumption</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">general_input</span><span class="p">:</span> <span class="n">GeneralInput</span><span class="p">,</span> <span class="n">cts_input</span><span class="p">:</span> <span class="n">CtsInput</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="n">Timeseries</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Preprocesses the specific consumption of the cts sector.</span>
+
+<span class="sd">        :param country_name: The name of the country to preprocess the specific consumption for</span>
+<span class="sd">        :param general_input: The general input object.</span>
+<span class="sd">        :param cts_input: The cts sector input object.</span>
+<span class="sd">        :return: The specific consumption timeseries for each demand type of form {demand_type -&gt; timeseries}.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># get data from input</span>
+        <span class="n">dict_ec_his</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">cts_input</span><span class="o">.</span><span class="n">energy_carrier_consumption</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="n">efficiency</span> <span class="o">=</span> <span class="n">general_input</span><span class="o">.</span><span class="n">efficiency</span>
+
+        <span class="c1"># calculate demand from energy carriers with efficiency</span>
+        <span class="n">electricity_demand_sum</span><span class="p">,</span> <span class="n">heat_demand_sum</span> <span class="o">=</span> <span class="n">energy_carrier_to_energy_consumption</span><span class="p">(</span><span class="n">efficiency</span><span class="p">,</span> <span class="n">dict_ec_his</span><span class="p">)</span>
+
+        <span class="c1"># get number of employees per year in cts sector historical</span>
+        <span class="n">number_of_employees_ts</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">(</span><span class="n">cts_input</span><span class="o">.</span><span class="n">dict_employee_number_country_cts</span><span class="p">[</span><span class="n">country_name</span><span class="p">])</span>
+
+        <span class="c1"># divide by number of employees to get specific consumption</span>
+        <span class="n">res_specific_consumption</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="n">Timeseries</span><span class="p">]()</span>  <span class="c1"># demand_type -&gt; Timeseries</span>
+        <span class="n">res_specific_consumption</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span> <span class="o">=</span> <span class="n">electricity_demand_sum</span><span class="o">.</span><span class="n">divide_by</span><span class="p">(</span><span class="n">number_of_employees_ts</span><span class="p">)</span>
+        <span class="n">res_specific_consumption</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">]</span> <span class="o">=</span> <span class="n">heat_demand_sum</span><span class="o">.</span><span class="n">divide_by</span><span class="p">(</span><span class="n">number_of_employees_ts</span><span class="p">)</span>
+        <span class="n">res_specific_consumption</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">([(</span><span class="mi">2018</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)])</span>
+
+        <span class="c1"># generate coefficients</span>
+        <span class="k">for</span> <span class="n">demand_type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">,</span> <span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]:</span>
+            <span class="n">res_specific_consumption</span><span class="p">[</span><span class="n">demand_type</span><span class="p">]</span><span class="o">.</span><span class="n">generate_coef</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">res_specific_consumption</span></div></div>
+
+
+<div class="viewcode-block" id="SpecificConsumptionPreprocessed"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.SpecificConsumptionPreprocessed">[docs]</a><span class="k">class</span> <span class="nc">SpecificConsumptionPreprocessed</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The preprocessed specific consumption for a given product.</span>
+
+<span class="sd">    :ivar SpecConsum default_specific_consumption: The specific consumption for a product type, that is used as default</span>
+<span class="sd">        if there is no historical data to predict the specific consumption.</span>
+<span class="sd">    :ivar dict[DemandType, Timeseries] specific_consumption_historical:</span>
+<span class="sd">        The dictionary holding the timeseries for each demand type&#39;s historical demand.</span>
+<span class="sd">    :ivar bool historical_sc_available: Indicates whether there is any historical data for the given product in the</span>
+<span class="sd">        given country.</span>
+<span class="sd">    :ivar EH bat: The specific consumption of the best available technology.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">product_input</span><span class="p">:</span> <span class="n">ProductInput</span><span class="p">,</span> <span class="n">general_input</span><span class="p">:</span> <span class="n">GeneralInput</span><span class="p">,</span>
+                 <span class="n">quantity_per_year</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">):</span>
+
+        <span class="c1"># read bat consumption</span>
+        <span class="k">if</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">product_input</span><span class="o">.</span><span class="n">bat</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bat</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">bat</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bat</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">bat</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]</span>
+
+        <span class="c1"># read default specific consumption for product in countries_in_group industry</span>
+        <span class="k">if</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">product_input</span><span class="o">.</span><span class="n">specific_consumption_default</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">default_specific_consumption</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">specific_consumption_default</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">default_specific_consumption</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">specific_consumption_default</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]</span>
+
+        <span class="c1"># get efficiency</span>
+        <span class="n">efficiency</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">EH</span><span class="p">]</span> <span class="o">=</span> <span class="n">general_input</span><span class="o">.</span><span class="n">efficiency</span>
+
+        <span class="c1"># read historical specific consumption data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption_historical</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">DemandType</span><span class="p">,</span> <span class="n">Timeseries</span><span class="p">]()</span>
+        <span class="k">if</span> <span class="n">product_input</span><span class="o">.</span><span class="n">specific_consumption_historical</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
+                <span class="ow">and</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">product_input</span><span class="o">.</span><span class="n">specific_consumption_historical</span><span class="p">:</span>
+            <span class="n">dict_sc_his</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">specific_consumption_historical</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+
+            <span class="n">electricity_demand_sum</span><span class="p">,</span> <span class="n">heat_demand_sum</span> <span class="o">=</span> <span class="n">energy_carrier_to_energy_consumption</span><span class="p">(</span><span class="n">efficiency</span><span class="p">,</span> <span class="n">dict_sc_his</span><span class="p">)</span>
+
+            <span class="c1"># divide by product amount to get per product consumption (sc)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption_historical</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span> <span class="o">=</span> <span class="n">electricity_demand_sum</span><span class="o">.</span><span class="n">divide_by</span><span class="p">(</span>
+                <span class="n">quantity_per_year</span><span class="p">)</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>  <span class="c1"># kt -&gt; t; TJ/t -&gt; GJ/t</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption_historical</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">]</span> <span class="o">=</span> <span class="n">heat_demand_sum</span><span class="o">.</span><span class="n">divide_by</span><span class="p">(</span>
+                <span class="n">quantity_per_year</span><span class="p">)</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>  <span class="c1"># kt -&gt; t; TJ/t -&gt; GJ/t</span>
+
+            <span class="k">if</span> <span class="n">electricity_demand_sum</span><span class="o">.</span><span class="n">is_zero</span><span class="p">()</span> <span class="ow">and</span> <span class="n">heat_demand_sum</span><span class="o">.</span><span class="n">is_zero</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">historical_sc_available</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">historical_sc_available</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="c1"># generate coefficients</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption_historical</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">ELECTRICITY</span><span class="p">]</span><span class="o">.</span><span class="n">generate_coef</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption_historical</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HEAT</span><span class="p">]</span><span class="o">.</span><span class="n">generate_coef</span><span class="p">()</span>
+
+                <span class="c1"># create hydrogen dummy. If there is any data for hydrogen, replace this</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption_historical</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">([(</span><span class="mi">2018</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption_historical</span><span class="p">[</span><span class="n">DemandType</span><span class="o">.</span><span class="n">HYDROGEN</span><span class="p">]</span><span class="o">.</span><span class="n">generate_coef</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">historical_sc_available</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="ProductPreprocessed"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.ProductPreprocessed">[docs]</a><span class="k">class</span> <span class="nc">ProductPreprocessed</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The preprocessed product information for a given country.</span>
+
+<span class="sd">    :ivar Timeseries amount_vs_year: Used to predict the product amount. The x-axis is time in years.</span>
+<span class="sd">    :ivar TwoDseries amount_vs_gdp: Used to predict the product amount. The x-axis is the countries_in_group&#39; gdp.</span>
+<span class="sd">    :ivar Timeseries amount_per_capita_vs_year: Used to predict the product amount per capita.</span>
+<span class="sd">        The x-axis is time in years.</span>
+<span class="sd">    :ivar TwoDseries amount_per_capita_vs_gdp: Used to predict the product amount per capita.</span>
+<span class="sd">        The x-axis is time in years.</span>
+
+<span class="sd">    :ivar SpecificConsumptionPreprocessed specific_consumption_pp: The preprocessed specific consumption data.</span>
+<span class="sd">    :ivar dict[str, float] _nuts2_installed_capacity:</span>
+<span class="sd">        The installed capacity for this product in each NUTS2 region for the country this product belongs to.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">product_input</span><span class="p">:</span> <span class="n">ProductInput</span><span class="p">,</span> <span class="n">population_historical</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">,</span>
+                 <span class="n">gdp_historical</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">,</span> <span class="n">general_input</span><span class="p">:</span> <span class="n">GeneralInput</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">product_input</span><span class="o">.</span><span class="n">production</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># fill Timeseries and TwoDseries</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">amount_vs_year</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">(</span><span class="n">product_input</span><span class="o">.</span><span class="n">production</span><span class="p">[</span><span class="n">country_name</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># if country not in product tables, we know it doesn&#39;t product anything. Take any reasonable year to put 0.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">amount_vs_year</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">([(</span><span class="mi">2000</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">amount_per_capita_vs_year</span> <span class="o">=</span> \
+            <span class="n">Timeseries</span><span class="o">.</span><span class="n">map_two_timeseries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">amount_vs_year</span><span class="p">,</span> <span class="n">population_historical</span><span class="p">,</span>
+                                          <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1</span> <span class="o">/</span> <span class="n">y2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amount_vs_gdp</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="o">.</span><span class="n">merge_two_timeseries</span><span class="p">(</span><span class="n">gdp_historical</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amount_vs_year</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amount_per_capita_vs_gdp</span> <span class="o">=</span> \
+            <span class="n">Timeseries</span><span class="o">.</span><span class="n">merge_two_timeseries</span><span class="p">(</span><span class="n">gdp_historical</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amount_per_capita_vs_year</span><span class="p">)</span>
+
+        <span class="c1"># calculate coefficients</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amount_vs_year</span><span class="o">.</span><span class="n">generate_coef</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amount_vs_gdp</span><span class="o">.</span><span class="n">generate_coef</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amount_per_capita_vs_year</span><span class="o">.</span><span class="n">generate_coef</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amount_per_capita_vs_gdp</span><span class="o">.</span><span class="n">generate_coef</span><span class="p">()</span>
+
+        <span class="c1"># preprocess specific consumption</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specific_consumption_pp</span> <span class="o">=</span> \
+            <span class="n">SpecificConsumptionPreprocessed</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">product_input</span><span class="p">,</span> <span class="n">general_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amount_vs_year</span><span class="p">)</span>
+
+        <span class="c1"># save nuts2 installed capacity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_installed_capacity</span> <span class="o">=</span> <span class="n">product_input</span><span class="o">.</span><span class="n">nuts2_installed_capacity</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="IndustryPreprocessed"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.IndustryPreprocessed">[docs]</a><span class="k">class</span> <span class="nc">IndustryPreprocessed</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The preprocessed industry sector for a given country.</span>
+
+<span class="sd">    :ivar dict[str, ProductPreprocessed] products_pp: All preprocessed products, accessible by product name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">input_manager</span><span class="p">:</span> <span class="n">InputManager</span><span class="p">,</span> <span class="n">pop_his</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">,</span> <span class="n">gdp_his</span><span class="p">:</span> <span class="n">Timeseries</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">products_pp</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">general_input</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">general_input</span>
+
+        <span class="k">for</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">product_input</span> <span class="ow">in</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">industry_input</span><span class="o">.</span><span class="n">dict_product_input</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">products_pp</span><span class="p">[</span><span class="n">product_name</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">ProductPreprocessed</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">product_input</span><span class="p">,</span> <span class="n">pop_his</span><span class="p">,</span> <span class="n">gdp_his</span><span class="p">,</span> <span class="n">general_input</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NUTS2Preprocessed"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.NUTS2Preprocessed">[docs]</a><span class="k">class</span> <span class="nc">NUTS2Preprocessed</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    All preprocessed data relating to nuts2 that are general. (For product-specific nuts2 data, see ProductPreprocessed)</span>
+
+<span class="sd">    :ivar NutsRegionNode population_historical_tree_root: The nuts2 tree containing all historical population data for</span>
+<span class="sd">        a given country.</span>
+<span class="sd">    :ivar NutsRegionNode population_prognosis_tree_root: The nuts2 tree containing all population prognosis data for a</span>
+<span class="sd">        given country.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">nuts2_population_data</span><span class="p">:</span> <span class="n">HisProg</span><span class="p">):</span>
+        <span class="n">abbrev</span> <span class="o">=</span> <span class="n">Abbreviations</span><span class="o">.</span><span class="n">dict_en_alpha2_map</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population_historical_tree_root</span> <span class="o">=</span> <span class="n">NutsRegionNode</span><span class="p">(</span><span class="n">abbrev</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population_prognosis_tree_root</span> <span class="o">=</span> <span class="n">NutsRegionNode</span><span class="p">(</span><span class="n">abbrev</span><span class="p">)</span>
+
+        <span class="c1"># fill nuts historical tree</span>
+        <span class="k">for</span> <span class="n">region_name</span><span class="p">,</span> <span class="n">region_data</span> <span class="ow">in</span> <span class="n">nuts2_population_data</span><span class="o">.</span><span class="n">historical</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">region_name</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="c1"># create and add leaf to root</span>
+            <span class="n">region_data_ts</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">(</span><span class="n">region_data</span><span class="p">)</span>
+            <span class="n">subregion</span> <span class="o">=</span> <span class="n">NutsRegionLeaf</span><span class="p">(</span><span class="n">region_name</span><span class="p">,</span> <span class="n">region_data_ts</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">population_historical_tree_root</span><span class="o">.</span><span class="n">add_leaf_region</span><span class="p">(</span><span class="n">subregion</span><span class="p">)</span>
+
+        <span class="c1"># fill nuts prediction tree</span>
+        <span class="k">for</span> <span class="n">region_name</span><span class="p">,</span> <span class="n">region_forecast</span> <span class="ow">in</span> <span class="n">nuts2_population_data</span><span class="o">.</span><span class="n">prognosis</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">region_name</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="c1"># create and add leaf to root</span>
+            <span class="n">region_data_if</span> <span class="o">=</span> <span class="n">IntervalForecast</span><span class="p">(</span><span class="n">region_forecast</span><span class="p">)</span>
+            <span class="n">subregion</span> <span class="o">=</span> <span class="n">NutsRegionLeaf</span><span class="p">(</span><span class="n">region_name</span><span class="p">,</span> <span class="n">region_data_if</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">population_prognosis_tree_root</span><span class="o">.</span><span class="n">add_leaf_region</span><span class="p">(</span><span class="n">subregion</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PopulationPreprocessed"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.PopulationPreprocessed">[docs]</a><span class="k">class</span> <span class="nc">PopulationPreprocessed</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The preprocessed population data for a whole country.</span>
+
+<span class="sd">    :ivar Timeseries population_historical_whole_country: The timeseries for the countries_in_group population.</span>
+<span class="sd">    :ivar RigidTimeseries population_whole_country_prognosis: The manual prediction data for the countries_in_group</span>
+<span class="sd">        population.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">general_input</span><span class="p">):</span>
+        <span class="c1"># fill whole country population data and prognosis</span>
+        <span class="n">whole_country_input</span> <span class="o">=</span> <span class="n">general_input</span><span class="o">.</span><span class="n">population</span><span class="o">.</span><span class="n">country_population</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population_historical_whole_country</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">(</span><span class="n">whole_country_input</span><span class="o">.</span><span class="n">historical</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population_whole_country_prognosis</span> <span class="o">=</span> <span class="n">RigidTimeseries</span><span class="p">(</span><span class="n">whole_country_input</span><span class="o">.</span><span class="n">prognosis</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GDPPreprocessed"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.GDPPreprocessed">[docs]</a><span class="k">class</span> <span class="nc">GDPPreprocessed</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The preprocessed GDP data for a give country.</span>
+
+<span class="sd">    :ivar Timeseries gdp_historical_pp: The timeseries for the historical gdp data.</span>
+<span class="sd">    :ivar IntervalForecast gdp_prognosis_pp: The gdp&#39;s forecast.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">general_input</span><span class="p">:</span> <span class="n">GeneralInput</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gdp_historical_pp</span> <span class="o">=</span> <span class="n">Timeseries</span><span class="p">(</span><span class="n">general_input</span><span class="o">.</span><span class="n">gdp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">historical</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gdp_prognosis_pp</span> <span class="o">=</span> <span class="n">IntervalForecast</span><span class="p">(</span><span class="n">general_input</span><span class="o">.</span><span class="n">gdp</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">prognosis</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CountryPreprocessed"><a class="viewcode-back" href="../../../endemo2.preprocessing.html#endemo2.preprocessing.preprocessing_step_one.CountryPreprocessed">[docs]</a><span class="k">class</span> <span class="nc">CountryPreprocessed</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A preprocessed country.</span>
+
+<span class="sd">    :ivar PopulationPreprocessed population_pp: The preprocessed country-wide population.</span>
+<span class="sd">    :ivar GDPPreprocessed gdp_pp: The preprocessed gdp data.</span>
+<span class="sd">    :ivar bool has_nuts2: Indicates whether country has data for nuts2 regions.</span>
+<span class="sd">    :ivar NUTS2Preprocessed nuts2_pp: The preprocessed nuts2 data.</span>
+<span class="sd">    :ivar IndustryPreprocessed industry_pp: The preprocessed industry data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">,</span> <span class="n">input_manager</span><span class="p">:</span> <span class="n">InputManager</span><span class="p">):</span>
+        <span class="n">general_input</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">general_input</span>
+
+        <span class="c1"># preprocess general country attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population_pp</span> <span class="o">=</span> <span class="n">PopulationPreprocessed</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">general_input</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gdp_pp</span> <span class="o">=</span> <span class="n">GDPPreprocessed</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">general_input</span><span class="p">)</span>
+
+        <span class="c1"># preprocess NUTS2 data if present</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_nuts2</span> <span class="o">=</span> <span class="n">country_name</span> <span class="ow">in</span> <span class="n">general_input</span><span class="o">.</span><span class="n">population</span><span class="o">.</span><span class="n">nuts2_population</span>  <span class="c1"># TODO: also make more pretty</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_nuts2</span><span class="p">:</span>
+            <span class="n">nuts2_data</span> <span class="o">=</span> <span class="n">general_input</span><span class="o">.</span><span class="n">population</span><span class="o">.</span><span class="n">nuts2_population</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_pp</span> <span class="o">=</span> <span class="n">NUTS2Preprocessed</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">nuts2_data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_pp</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># preprocess all active sectors</span>
+        <span class="n">active_sectors</span> <span class="o">=</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">ctrl</span><span class="o">.</span><span class="n">general_settings</span><span class="o">.</span><span class="n">get_active_sectors</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">INDUSTRY</span> <span class="ow">in</span> <span class="n">active_sectors</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">industry_pp</span> <span class="o">=</span> <span class="n">IndustryPreprocessed</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">input_manager</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">population_pp</span><span class="o">.</span><span class="n">population_historical_whole_country</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">gdp_pp</span><span class="o">.</span><span class="n">gdp_historical_pp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">COMMERCIAL_TRADE_SERVICES</span> <span class="ow">in</span> <span class="n">active_sectors</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cts_pp</span> <span class="o">=</span> <span class="n">CtsPreprocessed</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">general_input</span><span class="p">,</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">cts_input</span><span class="p">,</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">population_pp</span><span class="o">.</span><span class="n">population_historical_whole_country</span><span class="p">,</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">nuts2_pp</span><span class="o">.</span><span class="n">population_historical_tree_root</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">HOUSEHOLDS</span> <span class="ow">in</span> <span class="n">active_sectors</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">households_pp</span> <span class="o">=</span> <span class="n">HouseholdsPreprocessed</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">general_input</span><span class="p">,</span>
+                                                        <span class="n">input_manager</span><span class="o">.</span><span class="n">hh_input</span><span class="p">,</span>
+                                                        <span class="bp">self</span><span class="o">.</span><span class="n">population_pp</span><span class="o">.</span><span class="n">population_historical_whole_country</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">SectorIdentifier</span><span class="o">.</span><span class="n">TRANSPORT</span> <span class="ow">in</span> <span class="n">active_sectors</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transport_pp</span> <span class="o">=</span> <span class="n">TransportPreprocessed</span><span class="p">(</span><span class="n">country_name</span><span class="p">,</span> <span class="n">general_input</span><span class="p">,</span> <span class="n">input_manager</span><span class="o">.</span><span class="n">transport_input</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christiane Kobalt.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
