@@ -20,7 +20,7 @@ def get_last_nonnan_value(data_table, country):
     return data_table[data_table.columns[-1-counter]][idx_country]
 
 #------------------------------------------------------------------------------
-def linear_regression_gdp_lin(corr_industry_table, corr_gdp_table, country, skip_years):
+def mask_two_df(corr_industry_table, corr_gdp_table, country, skip_years):
     
     varx_total = corr_gdp_table.iloc[list(corr_gdp_table["Country"]).index(country)].values.tolist()
     varx = []; var_y = []
@@ -33,8 +33,26 @@ def linear_regression_gdp_lin(corr_industry_table, corr_gdp_table, country, skip
     vary_total = corr_industry_table.iloc[list(corr_industry_table["Country"]).index(country)].values.tolist()
     vary = [element for idx, element in enumerate(vary_total) if idx not in idx_dismiss]
     mask = (~np.isnan(varx) & ~np.isnan(vary)).tolist()
-    slope, intercept, r_value, p_value, std_err = scipy.stats.linregress([elem_x for idx, elem_x in enumerate(varx) if mask[idx]], 
-                                                                         [elem_y for idx, elem_y in enumerate(vary) if mask[idx]])
+    varx = [elem_x for idx, elem_x in enumerate(varx) if mask[idx]]
+    vary = [elem_y for idx, elem_y in enumerate(vary) if mask[idx]]
+
+    return varx, vary
+
+#------------------------------------------------------------------------------
+    
+def linear_regression_gdp_lin(corr_industry_table, corr_gdp_table, country, skip_years):
+    
+    varx, vary = mask_two_df(corr_industry_table, corr_gdp_table, country, skip_years)
+    slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(varx, vary)
+
+    return slope, intercept
+
+#------------------------------------------------------------------------------
+    
+def linear_regression_gdp_log(corr_industry_table, corr_gdp_table, country, skip_years):
+    
+    varx, vary = mask_two_df(corr_industry_table, corr_gdp_table, country, skip_years)
+    slope, intercept = np.polyfit(np.log(varx), vary, 1)
 
     return slope, intercept
 

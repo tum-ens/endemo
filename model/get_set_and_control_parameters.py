@@ -13,6 +13,7 @@
 import pandas as pd
 import os
 import math
+import numpy as np
 
 class CONTROL():
     
@@ -44,7 +45,8 @@ class CONTROL():
         # Industry [IND]
         
         # Main settable parameters in industry
-        self.IND_SUBECTORS = settings_IND_subsector["Subsectors"][settings_IND_subsector["Active subsectors"]==True].tolist()    
+        self.IND_SUBECTORS = settings_IND_subsector["Subsectors"][:-1][settings_IND_subsector["Active subsectors"]==True].tolist()    # skip unspecified industry
+        self.IND_REST_SUBSEC = settings_IND_subsector["Active subsectors"][list(settings_IND_subsector["Subsectors"]).index("unspecified industry")]
         self.IND_VOLUM_PROGNOS = settings_IND_general["Value"][list(settings_IND_general["Parameter"]).index("Forecast method")] # "U-shape" or "Trend" or "Exponential"
         self.IND_ACTIVATE_TIME_TREND_MODEL = False #bool(settings_IND_general["Value"][list(settings_IND_general["Parameter"]).index("Time trend model activation for U-shape method")])
         self.IND_PRODUCTION_QUANTITY_PER_CAPITA = bool(settings_IND_general["Value"][list(settings_IND_general["Parameter"]).index("Production quantity calculated per capita")])
@@ -66,7 +68,11 @@ class CONTROL():
                 self.IND_SKIP_YEARS = []
             else:
                 self.IND_SKIP_YEARS = [settings_IND_general["Value"][list(settings_IND_general["Parameter"]).index("Skip years")]]
-        self.IND_END_YEAR = int(settings_IND_general["Value"][list(settings_IND_general["Parameter"]).index("Last available year")])
+        ind_end_year = settings_IND_general["Value"][list(settings_IND_general["Parameter"]).index("Last considered year")]
+        if math.isnan(ind_end_year):
+            self.IND_END_YEAR = np.nan
+        else:
+            self.IND_END_YEAR = int(ind_end_year)
         
         if self.IND_VOLUM_PROGNOS == "Trend":
             if self.IND_ACTIVATE_TIME_TREND_MODEL == True:

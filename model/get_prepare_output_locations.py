@@ -82,12 +82,12 @@ class LOCATIONS():
         self.FILENAME_OUTPUT_GDP = "GDP_Projections_"+str(forecast_year)+".xlsx"
         
         self.FILENAME_OUTPUT_DEMAND = "_energy_demand_" + str(forecast_year) + ".xlsx"
-        self.FILENAME_OUTPUT_DEMAND_NUTS2 = "_energy_demand_NUTS2_" + str(forecast_year) + ".xlsx"
+        self.FILENAME_OUTPUT_DEMAND_NUTS2 = "_energy_demand_subregion_" + str(forecast_year) + ".xlsx"
         self.FILENAME_OUTPUT_DEMAND_IND = "IND_energy_demand_" + str(forecast_year) + "_"+ ind_volume_prognos +".xlsx"
-        self.FILENAME_OUTPUT_DEMAND_IND_NUTS2 = "IND_energy_demand_NUTS2_" + str(forecast_year) + "_"+ ind_volume_prognos +".xlsx"
+        self.FILENAME_OUTPUT_DEMAND_IND_NUTS2 = "IND_energy_demand_subregion_" + str(forecast_year) + "_"+ ind_volume_prognos +".xlsx"
         
         self.FILENAME_OUTPUT_DEMAND_TOTAL = 'Energy_demand_'+str(forecast_year)
-        self.FILENAME_OUTPUT_DEMAND_TOTAL_NUTS2 = 'Energy_demand_NUTS2_'+str(forecast_year)+'.csv'
+        self.FILENAME_OUTPUT_DEMAND_TOTAL_NUTS2 = 'Energy_demand_subregion_'+str(forecast_year)+'.csv'
         
         self.FILENAME_OUTPUT_TIMESERIES = '_energy_demand_timeseries_'+str(forecast_year)+'.xlsx'
         self.FILENAME_OUTPUT_TIMESERIES_TRA_PKM_TKM = "TRA_pkm_tkm_demand_timeseries"+str(forecast_year) + ".xlsx"

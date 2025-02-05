@@ -27,7 +27,7 @@ def start_calc(CTRL, FILE, ind_data, gen_data):
     abb_table= gen_data.abbreviations
     
     # specifying countries which are to be plotted
-    plot_countries = []# ["Spain", "Italy"] # CTRL.CONSIDERED_COUNTRIES#
+    plot_countries = CTRL.CONSIDERED_COUNTRIES #[] # ["Spain", "Italy"] #
                 #["Brunei Darussalam", "Indonesia", "Cambodia", "Lao PDR", "Malaysia", "Myanmar", "Philippines", "Singapore", "Thailand", "Vietnam"]
                 #["Belgium", "Bulgaria", "Czechia", "Denmark", "Germany", 
                 #"Ireland", "Greece", "Spain", "France", "Croatia", "Italy", 
@@ -36,7 +36,7 @@ def start_calc(CTRL, FILE, ind_data, gen_data):
                 #"Finland", "Sweden", "United Kingdom", "Norway", "Switzerland",
                 #"Montenegro", "North Macedonia", "Albania", "Serbia", 
                 #"Bosnia and Herzegovina", "Iceland"]
-    plot_industries = ["cement"] # ["alu_prim","cement", "steel_prim", "steel_sec", "copper_prim", "copper_sec", "paper"] #CTRL.IND_SUBECTORS
+    plot_industries = []#CTRL.IND_SUBECTORS # ["alu_prim","cement", "steel_prim", "steel_sec", "copper_prim", "copper_sec", "paper"] #CTRL.IND_SUBECTORS
         
     # Calculating energy demand per industrial subsector
     for industry in CTRL.IND_SUBECTORS:
@@ -50,9 +50,9 @@ def start_calc(CTRL, FILE, ind_data, gen_data):
                                                                          gen_data.gdp_table, abb_table, industry)
         group=1; coeff_content=[]
         country_group_separate, country_group_zero, country_group = country_clustering(CTRL.IND_VOLUM_PROGNOS, industry, CTRL.CONSIDERED_COUNTRIES)   
-        const_industries = ["ammonia","ethylene", "methanol", "propylene", "aromatics", 
-                    "ammonia_classic","ethylene_classic", "methanol_classic", "propylene_classic", "aromatics_classic",
-                    "alu_sec", "glass"]
+        const_industries = ["ammonia","ethylene", "methanol", "propylene", 
+                    "ammonia_classic","ethylene_classic", "methanol_classic", "propylene_classic", 
+                     "glass"] #"alu_sec", "aromatics","aromatics_classic", 
         #######################################################################
         # Industrial production quantities
         #######################################################################    
@@ -81,7 +81,7 @@ def start_calc(CTRL, FILE, ind_data, gen_data):
                     if industry in plot_industries: #active_group == "test" and
                         ind_plot_his_production_data_GDP(CTRL, industry, active_group, corr_industry_table,
                                                          corr_gdp_table)
-                        plot_model_data_GDP(FILE, CTRL.IND_ACTIVATE_TIME_TREND_MODEL, active_group, corr_gdp_table, koef, gen_data.GDP_prognosis, idx_group,
+                        plot_model_data_GDP(FILE, "sqrt", CTRL.FORECAST_YEAR, CTRL.IND_ACTIVATE_TIME_TREND_MODEL, active_group, corr_gdp_table, koef, gen_data.GDP_prognosis, idx_group,
                                       delta_active, industry, group, FILE.FILE_PATH_OUTPUT_DATA_INDUSTRY_GRAPHYCAL)
                     group+=1
             
@@ -99,7 +99,7 @@ def start_calc(CTRL, FILE, ind_data, gen_data):
                     if country in plot_countries and industry in plot_industries:
                         ind_plot_his_production_data_GDP(CTRL, industry, active_group, corr_industry_table, 
                                                          corr_gdp_table)
-                        plot_model_data_GDP(FILE, CTRL.IND_ACTIVATE_TIME_TREND_MODEL, active_group, corr_gdp_table, koef, gen_data.GDP_prognosis, idx_group,
+                        plot_model_data_GDP(FILE, "sqrt", CTRL.FORECAST_YEAR, CTRL.IND_ACTIVATE_TIME_TREND_MODEL, active_group, corr_gdp_table, koef, gen_data.GDP_prognosis, idx_group,
                                             delta_active, industry, group, FILE.FILE_PATH_OUTPUT_DATA_INDUSTRY_GRAPHYCAL)
                     group+=1
             
@@ -141,8 +141,21 @@ def start_calc(CTRL, FILE, ind_data, gen_data):
                     if country in plot_countries and industry in plot_industries: # 
                         ind_plot_his_production_data_GDP(CTRL, industry, [country], corr_industry_table,
                                                          corr_gdp_table)
-                        plot_model_data_GDP(FILE, False, [country], corr_gdp_table, [intercept, slope, 0, 0], gen_data.GDP_prognosis, idx_group,
+                        plot_model_data_GDP(FILE, "lin", CTRL.FORECAST_YEAR, False, [country], corr_gdp_table, [intercept, slope, 0, 0], gen_data.GDP_prognosis, idx_group,
                                             False, industry, "", FILE.FILE_PATH_OUTPUT_DATA_INDUSTRY_GRAPHYCAL)
+                        
+            elif CTRL.IND_VOLUM_PROGNOS == "Ln GDP function": 
+                # Calculate quantity parameters per land
+                for country in country_group_separate:
+                    idx_group = [list(corr_industry_table["Country"]).index(country)]
+                    slope, intercept = linear_regression_gdp_log(corr_industry_table, corr_gdp_table, country, CTRL.IND_SKIP_YEARS)       
+                    coeff_content.append([country, intercept, slope, 0, 0]) 
+                    if country in plot_countries and industry in plot_industries: # 
+                        ind_plot_his_production_data_GDP(CTRL, industry, [country], corr_industry_table,
+                                                         corr_gdp_table)
+                        plot_model_data_GDP(FILE, "log", CTRL.FORECAST_YEAR, False, [country], corr_gdp_table, [intercept, slope, 0, 0], gen_data.GDP_prognosis, idx_group,
+                                            False, industry, "", FILE.FILE_PATH_OUTPUT_DATA_INDUSTRY_GRAPHYCAL)
+
                                     
         
         if industry in const_industries or CTRL.IND_VOLUM_PROGNOS == "Exponential":
@@ -231,18 +244,21 @@ def start_calc(CTRL, FILE, ind_data, gen_data):
     result_vol.close()
     result_dem.close()
     
-    energy_demand_overall_df = overall_ind_demand(CTRL, result_dem, result_dem_path, ind_data.rest_table, ind_data.heat_levels, gen_data.efficiency_heat_levels)
+    if CTRL.IND_REST_SUBSEC:
+        energy_demand_overall_df = overall_ind_demand(CTRL, result_dem, result_dem_path, CTRL.IND_REST_SUBSEC, ind_data.rest_table, ind_data.heat_levels, gen_data.efficiency_heat_levels)
+    else:
+        energy_demand_overall_df = pd.DataFrame()
     ###########################################################################
     if CTRL.NUTS2_ACTIVATED:
         if CTRL.IND_NUTS2_INST_CAP_ACTIVATED:
-            overall_energy_demand_NUTS2 = redistribution_NUTS2_inst_cap(CTRL.IND_SUBECTORS, CTRL.FORECAST_YEAR, result_dem, gen_data.pop_forecast, ind_data.installed_capacity_NUTS2, abb_table, result_dem_NUTS2)
+            overall_energy_demand_NUTS2 = redistribution_NUTS2_inst_cap(CTRL, result_dem, gen_data.nuts_codes,gen_data.pop_forecast, ind_data.installed_capacity_NUTS2, abb_table, result_dem_NUTS2)
         else:
             overall_energy_demand_NUTS2 = redistribution_NUTS2_pop(CTRL.IND_SUBECTORS, CTRL.FORECAST_YEAR, result_dem, gen_data.pop_forecast, abb_table, result_dem_NUTS2)
         overall_energy_demand_NUTS2.to_excel(result_dem_NUTS2,sheet_name="IND", index=False, startrow=0)
         result_dem_NUTS2.close()
     ###########################################################################                        
     #if CTRL.IND_NUTS2_INST_CAP_ACTIVATED:
-    timeseries = energy_timeseries_calcul(CTRL, energy_demand_overall_df, ind_data, result_dem, result_dem_NUTS2, abb_table, gen_data.pop_forecast["Population_NUTS2"])
+    timeseries = energy_timeseries_calcul(CTRL, energy_demand_overall_df, ind_data, result_dem, result_dem_NUTS2, abb_table, gen_data.pop_forecast["Population_Subregion"])
     # elec_timeseries, heat_h2_timeseries =   
     # timeseries = []
     # else:

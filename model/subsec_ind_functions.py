@@ -25,6 +25,8 @@ def assign_his_prod_quantity(CTRL, ind_data, industry):
             industry = "steel_prim"
         else:
             industry = "steel"
+    elif "copper_" in industry:
+        industry = "copper"
         
     #if industry not in CTRL.IND_FOOD:
     industry_table = getattr(ind_data, industry + "_table")
@@ -133,13 +135,14 @@ def country_clustering(IND_VOLUM_PROGNOS, industry, CONSIDERED_COUNTRIES):
 def ind_production_per_person(FILE, industry, industry_table_pd, pop_table, abb_table, IND_END_YEAR, CONSIDERED_COUNTRIES ):
     
     start_year=max(int(industry_table_pd.columns[1]), int(pop_table.columns[1]))
+    end_year=min(int(industry_table_pd.columns[-1]), int(pop_table.columns[-1]),IND_END_YEAR)
     
     col_content = []
     with open(os.path.join(FILE.FILE_PATH_OUTPUT_DATA_INDUSTRY, "Production of " + industry + " per Person.csv"), "w", newline='') as result:
         wtr= csv.writer( result, delimiter=';')
 
         col_names=["Country"]
-        for i in range(start_year, IND_END_YEAR):
+        for i in range(start_year, end_year+1):
             col_names.append(int(i))
         wtr.writerow(col_names) 
         
@@ -156,7 +159,7 @@ def ind_production_per_person(FILE, industry, industry_table_pd, pop_table, abb_
             
             # product_per_person is product in Tonnes per person
             y=[country]     
-            for year in range(start_year, IND_END_YEAR):
+            for year in range(start_year, end_year+1):
                 year = str(year)
                 if idx_industry!=-1:
                     #if industry_table_pd[year][idx_industry]>0: 
@@ -184,9 +187,10 @@ def ind_corresponding_gdp_industry(CTRL, industry_table_pd,product_pp_table_c,
                                    gdp_table, abb_table, industry):
     
     start_year= max(int(industry_table_pd.columns[1]), int(gdp_table.columns[3]))
+    end_year=min(int(industry_table_pd.columns[-1]), int(gdp_table.columns[-1]),CTRL.IND_END_YEAR)
     
     col_names=["Country"]
-    for i in range(start_year,CTRL.IND_END_YEAR):
+    for i in range(start_year,end_year+1):
         col_names.append(i)
     
     corresponding_gdp=[]
@@ -194,7 +198,6 @@ def ind_corresponding_gdp_industry(CTRL, industry_table_pd,product_pp_table_c,
     
     for country in CTRL.CONSIDERED_COUNTRIES:
         abb_idx=list(abb_table["Country"]).index(country)
-        country_de=abb_table["Country_de"][abb_idx]
 
         try:
             idx_industry=list(industry_table_pd["Country"]).index(country)
@@ -208,12 +211,12 @@ def ind_corresponding_gdp_industry(CTRL, industry_table_pd,product_pp_table_c,
         x=[country]
         
         if idx_industry!=-1:
-            for year in range(start_year,CTRL.IND_END_YEAR):
+            for year in range(start_year,end_year+1):
                 year = str(year)
                 y.append(industry_table_pd[year][idx_industry]*1000)
                 x.append(gdp_table[int(year)][idx_gdp])
         else:
-            for year in range(start_year,CTRL.IND_END_YEAR):
+            for year in range(start_year,end_year+1):
                 y.append(0)
                 x.append(gdp_table[int(year)][idx_gdp])
                          
@@ -332,7 +335,7 @@ def ind_plot_his_production_data_timeline(CTRL,industry, active_group, correspon
     #plt.show()
     
 #------------------------------------------------------------------------------        
-def plot_model_data_GDP(FILE, IND_ACTIVATE_TIME_TREND_MODEL, active_group, corresponding_gdp_table, koef, gdp_prognosis,
+def plot_model_data_GDP(FILE, function, FORECAST_YEAR, IND_ACTIVATE_TIME_TREND_MODEL, active_group, corresponding_gdp_table, koef, gdp_prognosis,
                     idx_group, delta_active, industry, group, file_path):   
     
     start_year = corresponding_gdp_table.columns[1]
@@ -356,7 +359,7 @@ def plot_model_data_GDP(FILE, IND_ACTIVATE_TIME_TREND_MODEL, active_group, corre
         idx_gdp_prog=list(gdp_prognosis["Country"]).index(country)
         #end_gdp=gdp_prognosis["GDP"][idx_gdp_prog]//100*100
         # [1:] to skip the country name
-        end_gdp = max(max(gdp_list_withoutnan), gdp_prognosis["GDP"][idx_gdp_prog])//100*100
+        end_gdp = max(max(gdp_list_withoutnan), gdp_prognosis[FORECAST_YEAR][idx_gdp_prog])//100*100
         if end_gdp > start_gdp:
             x1 = np.arange(start_gdp , end_gdp, 100)
             t = np.arange(1 , end_gdp-start_gdp+1, 1)
@@ -364,22 +367,25 @@ def plot_model_data_GDP(FILE, IND_ACTIVATE_TIME_TREND_MODEL, active_group, corre
             x1 = np.arange(end_gdp, start_gdp, 100)
             t = np.arange(1, start_gdp-end_gdp+1, 1)
         
-        if delta_active:
-            if IND_ACTIVATE_TIME_TREND_MODEL==False:
-                if temp<N-1:
-                    y1 =  koef[0] + koef[1]*x1 + koef[2]*x1**2 + koef[3+temp]
+        if function in ["lin", "sqrt"]:
+            if delta_active:
+                if IND_ACTIVATE_TIME_TREND_MODEL==False:
+                    if temp<N-1:
+                        y1 =  koef[0] + koef[1]*x1 + koef[2]*x1**2 + koef[3+temp]
+                    else:
+                        y1 =  koef[0] + koef[1]*x1 + koef[2]*x1**2 
                 else:
-                    y1 =  koef[0] + koef[1]*x1 + koef[2]*x1**2 
+                    if temp<N-1:
+                        y1 =  koef[0] + koef[1]*x1 + koef[2]*x1**2 + koef[3]*t + koef[4+temp]
+                    else:
+                        y1 =  koef[0] + koef[1]*x1 + koef[2]*x1**2 + koef[3]*t
             else:
-                if temp<N-1:
-                    y1 =  koef[0] + koef[1]*x1 + koef[2]*x1**2 + koef[3]*t + koef[4+temp]
+                if IND_ACTIVATE_TIME_TREND_MODEL==False:
+                        y1 =  koef[0] + koef[1]*x1 + koef[2]*x1**2 
                 else:
-                    y1 =  koef[0] + koef[1]*x1 + koef[2]*x1**2 + koef[3]*t
-        else:
-            if IND_ACTIVATE_TIME_TREND_MODEL==False:
-                    y1 =  koef[0] + koef[1]*x1 + koef[2]*x1**2 
-            else:
-                    y1 =  koef[0] + koef[1]*x1 + koef[2]*x1**2 + koef[3]*t
+                        y1 =  koef[0] + koef[1]*x1 + koef[2]*x1**2 + koef[3]*t
+        elif function in ["log"]:
+            y1 =  koef[0] + koef[1]*np.log(x1)
                     
         # Model will cut all production values smaller then zero to be equal to zero
         y1[y1 < 0] = 0
@@ -458,7 +464,8 @@ def spec_en_source_timelines (CTRL, FILE, ind_data, industry, efficiency_table, 
     #                                    sheet_name=sheet,skiprows=0)  
     
     start_y=max(int(en_demand["Elektrizitaet"].columns[1]), int(corr_industry_table.columns[1]))
-    years=list(range(start_y, CTRL.IND_END_YEAR))
+    end_year=min(int(industry_table_pd.columns[-1]), int(gdp_table.columns[-1]),CTRL.IND_END_YEAR)
+    years=list(range(start_y, end_year+1))
     years.insert(0,"Country")
     spec_energy_el=[]
     spec_energy_heat=[]
@@ -536,27 +543,32 @@ def industry_en_demand(CTRL, ind_data, spec_consum_const, efficiency_table, effi
     volume=[]
     for country in CTRL.CONSIDERED_COUNTRIES: 
         idx_gdp=list(GDP_prognosis["Country"]).index(country)
-        gdp=GDP_prognosis["GDP"][idx_gdp]
+        gdp=GDP_prognosis[CTRL.FORECAST_YEAR][idx_gdp]
+        idx_coeff=list(volume_coeff["Country"]).index(country)
         
         # Forecasting production quantities (total or per person)
         if CTRL.IND_VOLUM_PROGNOS in ["Linear time trend", "Exponential"] or industry in const_industries:
-            idx_coeff=list(volume_coeff["Country"]).index(country)
             volume_val = (getattr(CTRL, "prod_quant_share_" + industry) *
                           (volume_coeff["coeff_0"][idx_coeff]
                            + volume_coeff["coeff_1"][idx_coeff] * CTRL.FORECAST_YEAR
                            + volume_coeff["coeff_c"][idx_coeff]))
             
             if CTRL.IND_VOLUM_PROGNOS == "Exponential" or industry in const_industries:
-                volume_val =  volume_val * (1+ getattr(CTRL,"prod_quant_change_" + industry)/100)**(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR + 1)
+                volume_val =  volume_val * (1+ getattr(CTRL,"prod_quant_change_" + industry)/100)**(CTRL.FORECAST_YEAR - CTRL.REF_YEAR)
                 
-        else:
+        elif CTRL.IND_VOLUM_PROGNOS in ["Quadratic GDP function", "Linear GDP function"]:
             if CTRL.IND_ACTIVATE_TIME_TREND_MODEL==False:
-                idx_coeff=list(volume_coeff["Country"]).index(country)
                 volume_val = (getattr(CTRL, "prod_quant_share_" + industry) *
                               (volume_coeff["coeff_0"][idx_coeff]
                                + volume_coeff["coeff_1"][idx_coeff]*gdp
                                + volume_coeff["coeff_2"][idx_coeff]*gdp**2
                                + volume_coeff["coeff_c"][idx_coeff]))
+        
+        elif CTRL.IND_VOLUM_PROGNOS == "Ln GDP function":
+            volume_val = (getattr(CTRL, "prod_quant_share_" + industry) *
+              (volume_coeff["coeff_0"][idx_coeff]
+               + volume_coeff["coeff_1"][idx_coeff]*np.log(gdp)))
+            
         if volume_val<0:
             volume_val=0
         
@@ -565,7 +577,7 @@ def industry_en_demand(CTRL, ind_data, spec_consum_const, efficiency_table, effi
             abb_pop=abb_table["Abbreviation"][list(abb_table["Country"]).index(country)]
             try:
                 idx_pop=list(pop_prognosis["Country"]).index(country)
-                pop_val=pop_prognosis[str(CTRL.FORECAST_YEAR)][idx_pop]
+                pop_val=pop_prognosis[CTRL.FORECAST_YEAR][idx_pop]
             except:
                 idx_pop=list(pop_table["Country"]).index(country) 
                 end_pop_year=pop_table.columns[len(pop_table.columns)-1]
@@ -617,17 +629,17 @@ def industry_en_demand(CTRL, ind_data, spec_consum_const, efficiency_table, effi
             
             if CTRL.IND_CALC_METHOD == "exp":
                 spec_consum_el = (spec_consum["Spec electricity consumption [GJ/t]"][idx_spec_consum] 
-                                  * (1 - getattr(CTRL, "spec_demand_improvement_" + industry)/100)**(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1))
+                                  * (1 - getattr(CTRL, "spec_demand_improvement_" + industry)/100)**(CTRL.FORECAST_YEAR - CTRL.REF_YEAR))
                 
                 spec_consum_heat_total = (spec_consum["Spec heat consumption [GJ/t]"][idx_spec_consum] 
-                                    * (1 - getattr(CTRL, "spec_demand_improvement_" + industry)/100)**(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1)
+                                    * (1 - getattr(CTRL, "spec_demand_improvement_" + industry)/100)**(CTRL.FORECAST_YEAR - CTRL.REF_YEAR)
                                     * efficiency)
             elif CTRL.IND_CALC_METHOD == "lin":
                 spec_consum_el = (spec_consum["Spec electricity consumption [GJ/t]"][idx_spec_consum] 
-                                  * (1 - getattr(CTRL, "spec_demand_improvement_" + industry)/100*(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1)))
+                                  * (1 - getattr(CTRL, "spec_demand_improvement_" + industry)/100*(CTRL.FORECAST_YEAR - CTRL.REF_YEAR)))
                 
                 spec_consum_heat_total = (spec_consum["Spec heat consumption [GJ/t]"][idx_spec_consum] 
-                                    * (1 - getattr(CTRL, "spec_demand_improvement_" + industry)/100*(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1))
+                                    * (1 - getattr(CTRL, "spec_demand_improvement_" + industry)/100*(CTRL.FORECAST_YEAR - CTRL.REF_YEAR))
                                     * efficiency)
         
         ## Limiting minimal specific energy demand on BAT value
@@ -691,14 +703,14 @@ def overall_ind_demand(CTRL, result_dem, result_dem_path, rest_table, heat_level
         
         if CTRL.IND_CALC_METHOD == "exp":
             rest_el = (rest_table["Rest el"][idx]/100 * rest_table["electricity TWh "+str(CTRL.REF_YEAR)][idx] 
-                       * (1 + CTRL.IND_REST_PROGRESS/100)**(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1))
+                       * (1 + CTRL.IND_REST_PROGRESS/100)**(CTRL.FORECAST_YEAR - CTRL.REF_YEAR))
             rest_heat = (rest_table["Rest heat"][idx]/100 * rest_table["fuel TWh "+str(CTRL.REF_YEAR)][idx] 
-                       * (1 + CTRL.IND_REST_PROGRESS/100)**(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1))
+                       * (1 + CTRL.IND_REST_PROGRESS/100)**(CTRL.FORECAST_YEAR - CTRL.REF_YEAR))
         elif CTRL.IND_CALC_METHOD == "lin":
             rest_el = (rest_table["Rest el"][idx]/100 * rest_table["electricity TWh "+str(CTRL.REF_YEAR)][idx] 
-                       * (1 + CTRL.IND_REST_PROGRESS/100*(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1)))
+                       * (1 + CTRL.IND_REST_PROGRESS/100*(CTRL.FORECAST_YEAR - CTRL.REF_YEAR)))
             rest_heat = (rest_table["Rest heat"][idx]/100 * rest_table["fuel TWh "+str(CTRL.REF_YEAR)][idx] 
-                       * (1 + CTRL.IND_REST_PROGRESS/100*(CTRL.FORECAST_YEAR - CTRL.IND_END_YEAR +1)))
+                       * (1 + CTRL.IND_REST_PROGRESS/100*(CTRL.FORECAST_YEAR - CTRL.REF_YEAR)))
             
         idx_heat_level = list(heat_levels["Industry"]).index("rest")
         energy_heat_levels = []
@@ -736,14 +748,16 @@ def overall_ind_demand(CTRL, result_dem, result_dem_path, rest_table, heat_level
     return df_overall
 
 #------------------------------------------------------------------------------
-def redistribution_NUTS2_inst_cap(IND_SUBECTORS,FORECAST_YEAR, energy_demand, pop_prognosis, inst_cap_NUTS2, abb_table, result_dem_NUTS2):
+def redistribution_NUTS2_inst_cap(CTRL, energy_demand, nuts_codes, pop_prognosis, inst_cap_NUTS2, abb_table, result_dem_NUTS2):
     
     temp = 0
-    for industry in IND_SUBECTORS:
+    for industry in CTRL.IND_SUBECTORS:
         if industry == "steel_direct":
             industry_cap = "steel"
         elif "_classic" in industry:
             industry_cap = industry.replace("_classic","")
+        elif "copper_" in industry:
+            industry_cap = "copper"
         else:
             industry_cap = industry
             
@@ -755,7 +769,8 @@ def redistribution_NUTS2_inst_cap(IND_SUBECTORS,FORECAST_YEAR, energy_demand, po
                 
         for idx_country_demand, country in enumerate(energy_demand_sheet["Country"]):
             abb = abb_table["Abbreviation"][list(abb_table["Country"]).index(country)]
-            nuts2_regions = [i for i in pop_prognosis["Population_NUTS2"]["NUTS2"] if i[0:2] == abb]
+            # nuts2_regions = [i for i in pop_prognosis["Population_NUTS2"]["NUTS2"] if i[0:2] == abb]
+            nuts2_regions = nuts_codes[(nuts_codes["Country"] == country) & (nuts_codes["Skip region"]!="x")]["Subregion"]
         #rather
         # for nuts2_region in pop_prognosis:
             # find country abb -> country -> demand of country
@@ -764,8 +779,14 @@ def redistribution_NUTS2_inst_cap(IND_SUBECTORS,FORECAST_YEAR, energy_demand, po
             
             
             for region in nuts2_regions:
-                idx_nuts2region = list(inst_cap_NUTS2[industry_cap]["NUTS2"]).index(region)
-                region_proportion = inst_cap_NUTS2[industry_cap][industry_cap+" %"][idx_nuts2region]
+                try:
+                    idx_nuts2region = list(inst_cap_NUTS2[industry_cap]["NUTS2"]).index(region)
+                except:
+                    idx_nuts2region = -1
+                if idx_nuts2region != -1:
+                    region_proportion = inst_cap_NUTS2[industry_cap][industry_cap+" %"][idx_nuts2region]
+                else:
+                    region_proportion = 0
                 content_row = [region]
                 for i in col[1:len(col)]:
                     content_row.append(energy_demand_sheet[i][idx_country_demand]*region_proportion)
@@ -779,9 +800,10 @@ def redistribution_NUTS2_inst_cap(IND_SUBECTORS,FORECAST_YEAR, energy_demand, po
             overall_energy_demand_NUTS2 = overall_energy_demand_NUTS2.set_index("NUTS2").add(energy_demand_NUTS2.set_index("NUTS2"), fill_value=0).reset_index()
         temp += 1
     
-    rest_df = pd.read_excel(energy_demand, "rest")
-    energy_demand_NUTS2 = redistribution_NUTS2(FORECAST_YEAR, rest_df, pop_prognosis, abb_table)
-    energy_demand_NUTS2.to_excel(result_dem_NUTS2,sheet_name="rest", index=False, startrow=0)
+    if CTRL.IND_REST_SUBSEC:
+        rest_df = pd.read_excel(energy_demand, "rest")
+        energy_demand_NUTS2 = redistribution_NUTS2(CTRL.FORECAST_YEAR, rest_df, pop_prognosis, abb_table)
+        energy_demand_NUTS2.to_excel(result_dem_NUTS2,sheet_name="rest", index=False, startrow=0)
     overall_energy_demand_NUTS2 = overall_energy_demand_NUTS2.set_index("NUTS2").add(energy_demand_NUTS2.set_index("NUTS2"), fill_value=0).reset_index() 
 
         

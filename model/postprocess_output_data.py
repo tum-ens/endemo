@@ -21,7 +21,7 @@ def out_data(CTRL, FILE, ind_sol, hh_sol, cts_sol, tra_sol):
     #------------------------------------------------------------------------------
     # Industry.
 
-    if CTRL.IND_ACTIVATED == True:
+    if CTRL.IND_ACTIVATED and CTRL.ACTIVATE_TIMESERIES:
          # defining all outputs
         result_energy_timeseries = pd.ExcelWriter(os.path.join(FILE.FILE_PATH_OUTPUT_DATA,'IND'+FILE.FILENAME_OUTPUT_TIMESERIES), engine='xlsxwriter')
         #if CTRL.IND_NUTS2_INST_CAP_ACTIVATED:
@@ -204,7 +204,7 @@ def out_data(CTRL, FILE, ind_sol, hh_sol, cts_sol, tra_sol):
             for sheet in ["HH", "TRA", "CTS"]:
                 df_sector = pd.read_excel(os.path.join(FILE.FILE_PATH_OUTPUT_DATA, sheet+FILE.FILENAME_OUTPUT_DEMAND_NUTS2),
                                         sheet_name=[sheet],skiprows=0)[sheet]
-                overall_demand_df = overall_demand_df.set_index("NUTS2").add(df_sector.set_index("NUTS2"), fill_value=0).reset_index()
+                overall_demand_df = overall_demand_df.set_index("Subregion").add(df_sector.set_index("Subregion"), fill_value=0).reset_index()
                 
             path = os.path.join(FILE.FILE_PATH_OUTPUT_DATA, FILE.FILENAME_OUTPUT_DEMAND_TOTAL_NUTS2)
             overall_demand_df.to_csv(path, index=False, sep=";")
