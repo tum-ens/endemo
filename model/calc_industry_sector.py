@@ -244,27 +244,23 @@ def start_calc(CTRL, FILE, ind_data, gen_data):
     result_vol.close()
     result_dem.close()
     
-    if CTRL.IND_REST_SUBSEC:
-        energy_demand_overall_df = overall_ind_demand(CTRL, result_dem, result_dem_path, CTRL.IND_REST_SUBSEC, ind_data.rest_table, ind_data.heat_levels, gen_data.efficiency_heat_levels)
-    else:
-        energy_demand_overall_df = pd.DataFrame()
+    energy_demand_overall_df = overall_ind_demand(CTRL, result_dem, result_dem_path, ind_data, gen_data.efficiency_heat_levels)
     ###########################################################################
     if CTRL.NUTS2_ACTIVATED:
         if CTRL.IND_NUTS2_INST_CAP_ACTIVATED:
             overall_energy_demand_NUTS2 = redistribution_NUTS2_inst_cap(CTRL, result_dem, gen_data.nuts_codes,gen_data.pop_forecast, ind_data.installed_capacity_NUTS2, abb_table, result_dem_NUTS2)
         else:
-            overall_energy_demand_NUTS2 = redistribution_NUTS2_pop(CTRL.IND_SUBECTORS, CTRL.FORECAST_YEAR, result_dem, gen_data.pop_forecast, abb_table, result_dem_NUTS2)
+            overall_energy_demand_NUTS2 = redistribution_NUTS2_pop(CTRL, result_dem, gen_data.pop_forecast, abb_table, result_dem_NUTS2)
         overall_energy_demand_NUTS2.to_excel(result_dem_NUTS2,sheet_name="IND", index=False, startrow=0)
         result_dem_NUTS2.close()
     ###########################################################################                        
-    #if CTRL.IND_NUTS2_INST_CAP_ACTIVATED:
-    timeseries = energy_timeseries_calcul(CTRL, energy_demand_overall_df, ind_data, result_dem, result_dem_NUTS2, abb_table, gen_data.pop_forecast["Population_Subregion"])
-    # elec_timeseries, heat_h2_timeseries =   
-    # timeseries = []
-    # else:
-        #timeseries = energy_timeseries_calcul_old(CTRL, energy_demand_overall_df,result_dem_NUTS2, ind_data.load_profile)
-        #elec_timeseries = []; heat_h2_timeseries = []
-    
+    if CTRL.ACTIVATE_TIMESERIES:
+        timeseries = energy_timeseries_calcul(CTRL, energy_demand_overall_df, ind_data, result_dem, result_dem_NUTS2, abb_table, gen_data.pop_forecast["Population_Subregion"])
+    else:
+        timeseries = []
+        print("Calculation of load timeseries deactivated.")
+
+  
     sol = IND_SOL(energy_demand_overall_df, timeseries)
     return sol
 
@@ -272,5 +268,4 @@ class IND_SOL(): #(volume_koef, volume, energy_demand_overall, energy_timeseries
     def __init__(self, energy_demand_overall_df, timeseries):
         self.energy_demand = energy_demand_overall_df
         self.timeseries = timeseries
-        #self.elec_timeseries = elec_timeseries
-        #self.heat_h2_timeseries = heat_h2_timeseries
+

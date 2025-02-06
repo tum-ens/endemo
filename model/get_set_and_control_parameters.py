@@ -81,6 +81,7 @@ class CONTROL():
             
         for industry in self.IND_SUBECTORS:
             setattr(self, "prod_quant_change_" + industry, settings_IND_subsector["Parameter: production quantity change in %/year"][list(settings_IND_subsector["Subsectors"]).index(industry)])
+            setattr(self, "prod_quant_max_" + industry, settings_IND_subsector["Production quantity upper limit (unit description)"][list(settings_IND_subsector["Subsectors"]).index(industry)])
             setattr(self, "spec_demand_improvement_" + industry, settings_IND_subsector["Parameter: efficiency improvement in %/year"][list(settings_IND_subsector["Subsectors"]).index(industry)])
             
             if industry in ["steel_direct", "steel_prim", "steel"]:

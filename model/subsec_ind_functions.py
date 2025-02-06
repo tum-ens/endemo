@@ -548,29 +548,27 @@ def industry_en_demand(CTRL, ind_data, spec_consum_const, efficiency_table, effi
         
         # Forecasting production quantities (total or per person)
         if CTRL.IND_VOLUM_PROGNOS in ["Linear time trend", "Exponential"] or industry in const_industries:
-            volume_val = (getattr(CTRL, "prod_quant_share_" + industry) *
-                          (volume_coeff["coeff_0"][idx_coeff]
+            volume_val =  (volume_coeff["coeff_0"][idx_coeff]
                            + volume_coeff["coeff_1"][idx_coeff] * CTRL.FORECAST_YEAR
-                           + volume_coeff["coeff_c"][idx_coeff]))
+                           + volume_coeff["coeff_c"][idx_coeff])
             
             if CTRL.IND_VOLUM_PROGNOS == "Exponential" or industry in const_industries:
                 volume_val =  volume_val * (1+ getattr(CTRL,"prod_quant_change_" + industry)/100)**(CTRL.FORECAST_YEAR - CTRL.REF_YEAR)
                 
         elif CTRL.IND_VOLUM_PROGNOS in ["Quadratic GDP function", "Linear GDP function"]:
             if CTRL.IND_ACTIVATE_TIME_TREND_MODEL==False:
-                volume_val = (getattr(CTRL, "prod_quant_share_" + industry) *
-                              (volume_coeff["coeff_0"][idx_coeff]
+                volume_val = (volume_coeff["coeff_0"][idx_coeff]
                                + volume_coeff["coeff_1"][idx_coeff]*gdp
                                + volume_coeff["coeff_2"][idx_coeff]*gdp**2
-                               + volume_coeff["coeff_c"][idx_coeff]))
+                               + volume_coeff["coeff_c"][idx_coeff])
         
         elif CTRL.IND_VOLUM_PROGNOS == "Ln GDP function":
-            volume_val = (getattr(CTRL, "prod_quant_share_" + industry) *
-              (volume_coeff["coeff_0"][idx_coeff]
-               + volume_coeff["coeff_1"][idx_coeff]*np.log(gdp)))
+            volume_val = (volume_coeff["coeff_0"][idx_coeff] 
+                          + volume_coeff["coeff_1"][idx_coeff]*np.log(gdp))
             
-        if volume_val<0:
-            volume_val=0
+        volume_val = max(volume_val, 0)
+        volume_val = min(volume_val, getattr(CTRL, "prod_quant_max_" + industry))
+        volume_val = volume_val * getattr(CTRL, "prod_quant_share_" + industry)
         
         # Reading population projection (for the case of production quantity per person)
         if CTRL.IND_PRODUCTION_QUANTITY_PER_CAPITA:
@@ -649,7 +647,7 @@ def industry_en_demand(CTRL, ind_data, spec_consum_const, efficiency_table, effi
         
         # Forecasting energy demand
         ## unit t*GJ/t -> TWh
-        energy_el=volume_val*pop_val*spec_consum_el /100 /1000/3600
+        energy_el=volume_val*pop_val*spec_consum_el /100 /1000/3600 # devided with 100 due to prod_quant_share_
         energy_heat=volume_val*pop_val*spec_consum_heat/100/1000/3600
         energy_h2=volume_val*pop_val*spec_consum_h2/100/1000/3600
         
@@ -687,7 +685,7 @@ def industry_en_demand(CTRL, ind_data, spec_consum_const, efficiency_table, effi
     return energy, volume
     
 #------------------------------------------------------------------------------
-def overall_ind_demand(CTRL, result_dem, result_dem_path, rest_table, heat_levels, efficiency_heat_levels):
+def overall_ind_demand(CTRL, result_dem, result_dem_path, ind_data, efficiency_heat_levels):
     
     df = pd.read_excel(result_dem, CTRL.IND_SUBECTORS[0])
     for sheet in CTRL.IND_SUBECTORS[1:len(CTRL.IND_SUBECTORS)]:
@@ -696,52 +694,58 @@ def overall_ind_demand(CTRL, result_dem, result_dem_path, rest_table, heat_level
     writer = pd.ExcelWriter(result_dem_path, engine = 'openpyxl', mode='a')
     df.to_excel(writer, sheet_name="forecasted", index = False)
     
-    content = []
-    column_names = ["Country",	"Electricity [TWh]", "Heat [TWh]", "Hydrogen [TWh]", "Heat Q1 [TWh]", "Heat Q2 [TWh]", "Heat Q3 [TWh]", "Heat Q4 [TWh]"]
-    for country in df["Country"]:
-        idx = list(rest_table["Country"]).index(country)
+    if CTRL.IND_REST_SUBSEC:
+        content = []
+        column_names = ["Country",	"Electricity [TWh]", "Heat [TWh]", "Hydrogen [TWh]", "Heat Q1 [TWh]", "Heat Q2 [TWh]", "Heat Q3 [TWh]", "Heat Q4 [TWh]"]
+        rest_table = ind_data.rest_table
+        for country in df["Country"]:
+            idx = list(rest_table["Country"]).index(country)
+            
+            if CTRL.IND_CALC_METHOD == "exp":
+                rest_el = (rest_table["Rest el"][idx]/100 * rest_table["electricity TWh "+str(CTRL.REF_YEAR)][idx] 
+                           * (1 + CTRL.IND_REST_PROGRESS/100)**(CTRL.FORECAST_YEAR - CTRL.REF_YEAR))
+                rest_heat = (rest_table["Rest heat"][idx]/100 * rest_table["fuel TWh "+str(CTRL.REF_YEAR)][idx] 
+                           * (1 + CTRL.IND_REST_PROGRESS/100)**(CTRL.FORECAST_YEAR - CTRL.REF_YEAR))
+            elif CTRL.IND_CALC_METHOD == "lin":
+                rest_el = (rest_table["Rest el"][idx]/100 * rest_table["electricity TWh "+str(CTRL.REF_YEAR)][idx] 
+                           * (1 + CTRL.IND_REST_PROGRESS/100*(CTRL.FORECAST_YEAR - CTRL.REF_YEAR)))
+                rest_heat = (rest_table["Rest heat"][idx]/100 * rest_table["fuel TWh "+str(CTRL.REF_YEAR)][idx] 
+                           * (1 + CTRL.IND_REST_PROGRESS/100*(CTRL.FORECAST_YEAR - CTRL.REF_YEAR)))
+            
+            heat_levels = ind_data.heat_levels
+            idx_heat_level = list(heat_levels["Industry"]).index("rest")
+            energy_heat_levels = []
+            elec_from_heat = 0; h2_from_heat = 0; energy_heat_remaining = 0
+            for level in ["Q1", "Q2", "Q3", "Q4"]:
+                
+                energy_heat_level_total = rest_heat * heat_levels[level][idx_heat_level]/100
+                
+                idx_level = list(efficiency_heat_levels["Energy carrier"]).index(level)
+                
+                elec_from_heat += (energy_heat_level_total 
+                                   * getattr(CTRL, "IND_ELEC_SUBSTITUTION_OF_HEAT_" + level)
+                                   / efficiency_heat_levels["Electricity [-]"][idx_level])
+                h2_from_heat += (energy_heat_level_total 
+                                 * getattr(CTRL, "IND_H2_SUBSTITUTION_OF_HEAT_" + level)
+                                 / efficiency_heat_levels["Hydrogen [-]"][idx_level])
+                energy_heat_level = (energy_heat_level_total 
+                                     * (1 - getattr(CTRL, "IND_ELEC_SUBSTITUTION_OF_HEAT_" + level)
+                                        - getattr(CTRL, "IND_H2_SUBSTITUTION_OF_HEAT_" + level)) 
+                                     / efficiency_heat_levels["Fuel [-]"][idx_level]) # for "heat" no efficincy conversion, for "fuel" *1/efficincy
+                energy_heat_remaining += energy_heat_level
+                energy_heat_levels.append(energy_heat_level)
         
-        if CTRL.IND_CALC_METHOD == "exp":
-            rest_el = (rest_table["Rest el"][idx]/100 * rest_table["electricity TWh "+str(CTRL.REF_YEAR)][idx] 
-                       * (1 + CTRL.IND_REST_PROGRESS/100)**(CTRL.FORECAST_YEAR - CTRL.REF_YEAR))
-            rest_heat = (rest_table["Rest heat"][idx]/100 * rest_table["fuel TWh "+str(CTRL.REF_YEAR)][idx] 
-                       * (1 + CTRL.IND_REST_PROGRESS/100)**(CTRL.FORECAST_YEAR - CTRL.REF_YEAR))
-        elif CTRL.IND_CALC_METHOD == "lin":
-            rest_el = (rest_table["Rest el"][idx]/100 * rest_table["electricity TWh "+str(CTRL.REF_YEAR)][idx] 
-                       * (1 + CTRL.IND_REST_PROGRESS/100*(CTRL.FORECAST_YEAR - CTRL.REF_YEAR)))
-            rest_heat = (rest_table["Rest heat"][idx]/100 * rest_table["fuel TWh "+str(CTRL.REF_YEAR)][idx] 
-                       * (1 + CTRL.IND_REST_PROGRESS/100*(CTRL.FORECAST_YEAR - CTRL.REF_YEAR)))
+            content.append([country, rest_el + elec_from_heat, energy_heat_remaining, 0 + h2_from_heat]+energy_heat_levels)
             
-        idx_heat_level = list(heat_levels["Industry"]).index("rest")
-        energy_heat_levels = []
-        elec_from_heat = 0; h2_from_heat = 0; energy_heat_remaining = 0
-        for level in ["Q1", "Q2", "Q3", "Q4"]:
-            
-            energy_heat_level_total = rest_heat * heat_levels[level][idx_heat_level]/100
-            
-            idx_level = list(efficiency_heat_levels["Energy carrier"]).index(level)
-            
-            elec_from_heat += (energy_heat_level_total 
-                               * getattr(CTRL, "IND_ELEC_SUBSTITUTION_OF_HEAT_" + level)
-                               / efficiency_heat_levels["Electricity [-]"][idx_level])
-            h2_from_heat += (energy_heat_level_total 
-                             * getattr(CTRL, "IND_H2_SUBSTITUTION_OF_HEAT_" + level)
-                             / efficiency_heat_levels["Hydrogen [-]"][idx_level])
-            energy_heat_level = (energy_heat_level_total 
-                                 * (1 - getattr(CTRL, "IND_ELEC_SUBSTITUTION_OF_HEAT_" + level)
-                                    - getattr(CTRL, "IND_H2_SUBSTITUTION_OF_HEAT_" + level)) 
-                                 / efficiency_heat_levels["Fuel [-]"][idx_level]) # for "heat" no efficincy conversion, for "fuel" *1/efficincy
-            energy_heat_remaining += energy_heat_level
-            energy_heat_levels.append(energy_heat_level)
     
-        content.append([country, rest_el + elec_from_heat, energy_heat_remaining, 0 + h2_from_heat]+energy_heat_levels)
-        
-
-    df_rest = pd.DataFrame(content, columns=column_names)
-    df_rest.to_excel(writer, sheet_name="rest", index=False, startrow=0)
+        df_rest = pd.DataFrame(content, columns=column_names)
+        df_rest.to_excel(writer, sheet_name="rest", index=False, startrow=0)
     
-    df_overall = df.set_index("Country").add(df_rest.set_index("Country"), fill_value=0).reset_index()
-    df_overall.to_excel(writer, sheet_name="IND_demand", index=False, startrow=0)
+        df_overall = df.set_index("Country").add(df_rest.set_index("Country"), fill_value=0).reset_index()
+        df_overall.to_excel(writer, sheet_name="IND_demand", index=False, startrow=0)
+    else:
+        df_overall = df
+        df_overall.to_excel(writer, sheet_name="IND_demand", index=False, startrow=0)
     
     writer.close()
     
@@ -761,7 +765,7 @@ def redistribution_NUTS2_inst_cap(CTRL, energy_demand, nuts_codes, pop_prognosis
         else:
             industry_cap = industry
             
-        col = ["NUTS2"]
+        col = ["Subregion"]
         energy_demand_sheet = pd.read_excel(energy_demand, industry)
         for i in energy_demand_sheet.columns[1:len(energy_demand_sheet.columns)]:
             col.append(i)
@@ -780,7 +784,7 @@ def redistribution_NUTS2_inst_cap(CTRL, energy_demand, nuts_codes, pop_prognosis
             
             for region in nuts2_regions:
                 try:
-                    idx_nuts2region = list(inst_cap_NUTS2[industry_cap]["NUTS2"]).index(region)
+                    idx_nuts2region = list(inst_cap_NUTS2[industry_cap]["Subregion"]).index(region)
                 except:
                     idx_nuts2region = -1
                 if idx_nuts2region != -1:
@@ -797,31 +801,33 @@ def redistribution_NUTS2_inst_cap(CTRL, energy_demand, nuts_codes, pop_prognosis
         if temp == 0:
             overall_energy_demand_NUTS2 = energy_demand_NUTS2
         else:
-            overall_energy_demand_NUTS2 = overall_energy_demand_NUTS2.set_index("NUTS2").add(energy_demand_NUTS2.set_index("NUTS2"), fill_value=0).reset_index()
+            overall_energy_demand_NUTS2 = overall_energy_demand_NUTS2.set_index("Subregion").add(energy_demand_NUTS2.set_index("Subregion"), fill_value=0).reset_index()
         temp += 1
     
     if CTRL.IND_REST_SUBSEC:
         rest_df = pd.read_excel(energy_demand, "rest")
         energy_demand_NUTS2 = redistribution_NUTS2(CTRL.FORECAST_YEAR, rest_df, pop_prognosis, abb_table)
         energy_demand_NUTS2.to_excel(result_dem_NUTS2,sheet_name="rest", index=False, startrow=0)
-    overall_energy_demand_NUTS2 = overall_energy_demand_NUTS2.set_index("NUTS2").add(energy_demand_NUTS2.set_index("NUTS2"), fill_value=0).reset_index() 
+        overall_energy_demand_NUTS2 = overall_energy_demand_NUTS2.set_index("Subregion").add(energy_demand_NUTS2.set_index("Subregion"), fill_value=0).reset_index() 
 
-        
     return overall_energy_demand_NUTS2
 
 #------------------------------------------------------------------------------
-def redistribution_NUTS2_pop(IND_SUBECTORS, FORECAST_YEAR, result_dem, pop_prognosis, abb_table, result_dem_NUTS2):
+def redistribution_NUTS2_pop(CTRL, result_dem, pop_prognosis, abb_table, result_dem_NUTS2):
     
     temp = 0
-    for industry in IND_SUBECTORS+["rest"]:
+    subsectors = CTRL.IND_SUBECTORS
+    if CTRL.IND_REST_SUBSEC:
+        subsectors += ["rest"]
+    for industry in subsectors:
         ind_df = pd.read_excel(result_dem, industry)
-        energy_demand_NUTS2 = redistribution_NUTS2(FORECAST_YEAR, ind_df, pop_prognosis, abb_table)
+        energy_demand_NUTS2 = redistribution_NUTS2(CTRL.FORECAST_YEAR, ind_df, pop_prognosis, abb_table)
         energy_demand_NUTS2.to_excel(result_dem_NUTS2,sheet_name=industry, index=False, startrow=0)
         
         if temp == 0:
             overall_energy_demand_NUTS2 = energy_demand_NUTS2
         else:
-            overall_energy_demand_NUTS2 = overall_energy_demand_NUTS2.set_index("NUTS2").add(energy_demand_NUTS2.set_index("NUTS2"), fill_value=0).reset_index()
+            overall_energy_demand_NUTS2 = overall_energy_demand_NUTS2.set_index("Subregion").add(energy_demand_NUTS2.set_index("Subregion"), fill_value=0).reset_index()
         temp += 1
         
     return overall_energy_demand_NUTS2    
@@ -829,141 +835,119 @@ def redistribution_NUTS2_pop(IND_SUBECTORS, FORECAST_YEAR, result_dem, pop_progn
 #------------------------------------------------------------------------------
 # !!Annahme: alle Länder in der Enery/Year haben schon die  Reihenfolge von CTRL.CONSIDERED_COUNTRIES!!
 def energy_timeseries_calcul(CTRL, energy_demand_overall_df, ind_data, result_dem, result_dem_NUTS2, abb_table, pop_prognosis):
-    if CTRL.ACTIVATE_TIMESERIES:
-        # calculation of electricity timeseries: start
         
-        ## definition of column names
-        if CTRL.NUTS2_ACTIVATED:
-            year_dem_sheet = pd.read_excel(result_dem_NUTS2, "IND")
-            regions = year_dem_sheet["NUTS2"]
-        else:
-            regions = CTRL.CONSIDERED_COUNTRIES
-            year_dem_sheet = energy_demand_overall_df
-            
-        ## definition of column content
-        content = []
-        for idx_time, time in enumerate(ind_data.load_profile["t"]):
-            row = [time]
-            for idx_region, country in enumerate(regions):
-                row.append(year_dem_sheet["Electricity [TWh]"][idx_region] * ind_data.load_profile["Electricity"][idx_time])
-            content.append(row)       
-        
-        elec_timeseries_col = ["t"]; heat_h2_timeseries_col = ["t"]
-        for region in regions:
-            elec_timeseries_col.append(region+ ".Elec")
-        print("Calculated electricity load timeseries. Df is beeing made.")
-        elec_timeseries = pd.DataFrame(content, columns = elec_timeseries_col)
-        # calculation of electricity timeseries: end
-        
-        
-        # calculation of heat and hydrogen timeseries: start
-        print("Calculation of heat and hydrogen load timeseries.")
-        ## definition of column names
-        heat_h2_col= [];
-        considered_countries_code = [abb_table["Abbreviation"][list(abb_table["Country"]).index(region)] for region in  CTRL.CONSIDERED_COUNTRIES]
-        if CTRL.NUTS2_ACTIVATED:
-            region_type = "NUTS2"
-            for region in pop_prognosis["NUTS2"]: ## NUR WENN NUTS2 aus countries die considered sind!
-                if region[0:2] in considered_countries_code:
-                    for short_type in ["Heat_Q1", "Heat_Q2", "Heat_Q3", "Heat_Q4", "H2"]:
-                        heat_h2_col.append(region+"."+short_type)
-        else:
-            region_type = "Country"
-            for region in CTRL.CONSIDERED_COUNTRIES:
-                for short_type in ["Heat_Q1", "Heat_Q2", "Heat_Q3", "Heat_Q4", "H2"]:
-                    heat_h2_col.append(region+"."+short_type)
-       
-        ## definition of column content: 
-        ## There will be one matrix layer per each industry-subsector with demand time-series of all observed regions.
-        ## Matrix layers per industry-subsector will be added.
-        ## Thus a matrix layer with demand time-series of all observed regions with sumarized industrial demands will be obtained.
- 
-        for counter, industry in enumerate((CTRL.IND_SUBECTORS+["rest"])):
-            matrix_ind = []
-            industry_temp = industry.replace("_classic", "")
-            if industry_temp in ["cement","glass"]:
-                ind_group = "non_metalic_minerals"
-            elif industry_temp == "paper":
-                ind_group = industry
-            elif industry_temp in ["chlorin", "methanol", "ethylene","propylene","aromatics", "ammonia"]:
-                ind_group = "chemicals_and_petrochemicals"
-            # elif industry_temp in CTRL.IND_FOOD:
-            #     ind_group = "food_and_tobacco"
-            else: # steel, alu, copper
-                ind_group = "iron_and_steel"
-            heat_load_profiles = getattr(ind_data, "heat_load_profile_"+ind_group)
-            
-            if CTRL.NUTS2_ACTIVATED:
-                year_dem_sheet = pd.read_excel(result_dem_NUTS2, industry)
-                
-                for region in pop_prognosis["NUTS2"]: #in enumerate(year_dem_sheet[region_type]): #NUTS2 
-                    country_code = region[0:2]
-                    idx_dem = list(year_dem_sheet["NUTS2"]).index(region)
-                    if country_code in ["CH", "IS","AL", "BA"]: # no time series for this countries
-                        #print(f"No information for timeseries for {country_code}. Some approximations made")
-                        if country_code in ["CH", "IS"] :
-                            country_code_profile = "AT";
-                        else:
-                            country_code_profile = "MK";
-                    else:
-                        country_code_profile = country_code
-
-                    try:
-                        idx_profile = list(heat_load_profiles["NUTS0_code"]).index(country_code_profile)
-                    except:
-                        print("NO LOAD PROFILE for {}. Default is German profile.". format(country))
-                        idx_profile = list(heat_load_profiles["NUTS0_code"]).index("DE")
-                    heat_load_profile_country = heat_load_profiles["load"][idx_profile:(idx_profile+8760)]
-                    
-                    for dem_type, short_type in zip(["Heat Q1 [TWh]", "Heat Q2 [TWh]", "Heat Q3 [TWh]", "Heat Q4 [TWh]", "Hydrogen [TWh]"],
-                                                    ["Heat_Q1", "Heat_Q2", "Heat_Q3", "Heat_Q4", "H2"]):
-                        # same profile for all subcategories
-                        if pd.isna(year_dem_sheet[dem_type][idx_dem]) == False:
-                            col_body = pd.concat([pd.Series(0, [0]), heat_load_profile_country.iloc[:]])
-                            col_body = col_body * year_dem_sheet[dem_type][idx_dem] /1000000
-                        else:
-                            col_body = pd.concat([pd.Series(0, [0]), heat_load_profile_country.iloc[:]]) * 0
-                        matrix_ind.append(col_body)
-                        #print(matrix_ind)
-            else:
-                year_dem_sheet = pd.read_excel(result_dem, industry)
-                for region in CTRL.CONSIDERED_COUNTRIES: # Country
-                    country_code = abb_table["Abbreviation"][list(abb_table["Country"]).index(region)]
-                    idx_dem = list(year_dem_sheet["Country"]).index(region)
-                    if country_code in ["CH", "IS","AL", "BA"]: # no time series for this countries
-                        #print(f"No information for timeseries for {country_code}. Some approximations made")
-                        if country_code in ["CH", "IS"] :
-                            country_code_profile = "AT";
-                        else:
-                            country_code_profile = "MK";
-                    else:
-                        country_code_profile = country_code
-                    idx_profile = list(heat_load_profiles["NUTS0_code"]).index(country_code_profile)
-                    heat_load_profile_country = heat_load_profiles["load"][idx_profile:idx_profile+8760]
-                    for dem_type, short_type in zip(["Heat Q1 [TWh]", "Heat Q2 [TWh]", "Heat Q3 [TWh]", "Heat Q4 [TWh]", "Hydrogen [TWh]"],
-                                                    ["Heat_Q1", "Heat_Q2", "Heat_Q3", "Heat_Q4", "H2"]):
-                        # same profile for all subcategories
-                        if pd.isna(year_dem_sheet[dem_type][idx_dem]) == False:
-                            col_body = pd.concat([pd.Series(0, [0]), heat_load_profile_country.iloc[:]])
-                            col_body = col_body * year_dem_sheet[dem_type][idx_dem] /1000000
-                        else:
-                            col_body = pd.concat([pd.Series(0, [0]), heat_load_profile_country.iloc[:]]) * 0
-                        matrix_ind.append(col_body)
-            if counter == 0:
-                matrix = np.array(matrix_ind.copy())#np.zeros((8760, 4))
-            else:
-                matrix += np.array(matrix_ind)
-                    
+    # calculation of electricity timeseries: start
+    ## definition of column names
+    if CTRL.NUTS2_ACTIVATED:
+        year_dem_sheet = pd.read_excel(result_dem_NUTS2, "IND")
+        regions = year_dem_sheet["Subregion"]
+        region_type = "Subregion"
+        result_file = result_dem_NUTS2
+        function_abb = get_abb_NUTS2
     else:
-        content = []; elec_timeseries_col = ["t"]
-        matrix = []; heat_h2_col = []
-        print("Calculation of load timeseries deactivated.")
+        year_dem_sheet = energy_demand_overall_df
+        regions = CTRL.CONSIDERED_COUNTRIES
+        region_type = "Country"
+        result_file = result_dem
+        function_abb = get_abb_country
+        
+    ## definition of column content
+    content = []
+    for idx_time, time in enumerate(ind_data.load_profile["t"]):
+        row = [time]
+        for idx_region, country in enumerate(regions):
+            row.append(year_dem_sheet["Electricity [TWh]"][idx_region] * ind_data.load_profile["Electricity"][idx_time])
+        content.append(row)       
+    
+    elec_timeseries_col = ["t"]; heat_h2_timeseries_col = ["t"]
+    for region in regions:
+        elec_timeseries_col.append(region+ ".Elec")
+    print("Calculated electricity load timeseries. Df is beeing made.")
+    elec_timeseries = pd.DataFrame(content, columns = elec_timeseries_col)
+    # calculation of electricity timeseries: end
+    
+    
+    # calculation of heat and hydrogen timeseries: start
+    print("Calculation of heat and hydrogen load timeseries.")
+    ## definition of column names
+    heat_h2_col= [];
+    for region in regions:
+        for short_type in ["Heat_Q1", "Heat_Q2", "Heat_Q3", "Heat_Q4", "H2"]:
+            heat_h2_col.append(region+"."+short_type)
+   
+    ## definition of column content: 
+    ## There will be one matrix layer per each industry-subsector with demand time-series of all observed regions.
+    ## Matrix layers per industry-subsector will be added.
+    ## Thus a matrix layer with demand time-series of all observed regions with sumarized industrial demands will be obtained.
+            
+    subsectors = CTRL.IND_SUBECTORS
+    if CTRL.IND_REST_SUBSEC:
+        subsectors += ["rest"]
+    for counter, industry in enumerate(subsectors):
+        matrix_ind = []
+        industry_temp = industry.replace("_classic", "")
+        if industry_temp in ["cement","glass"]:
+            ind_group = "non_metalic_minerals"
+        elif industry_temp == "paper":
+            ind_group = industry
+        elif industry_temp in ["chlorin", "methanol", "ethylene","propylene","aromatics", "ammonia"]:
+            ind_group = "chemicals_and_petrochemicals"
+        # elif industry_temp in CTRL.IND_FOOD:
+        #     ind_group = "food_and_tobacco"
+        else: # steel, alu, copper
+            ind_group = "iron_and_steel"
+        heat_load_profiles = getattr(ind_data, "heat_load_profile_"+ind_group)
+        
+        
+        year_dem_sheet = pd.read_excel(result_file, industry)
+        for region in regions:
+            country_code = function_abb(region, abb_table)
 
+            idx_dem = list(year_dem_sheet[region_type]).index(region)
+            if country_code in ["CH", "IS","AL", "BA"]: # no time series for this countries
+                #print(f"No information for timeseries for {country_code}. Some approximations made")
+                if country_code in ["CH", "IS"] :
+                    country_code_profile = "AT";
+                else:
+                    country_code_profile = "MK";
+            else:
+                country_code_profile = country_code
+
+            try:
+                idx_profile = list(heat_load_profiles["NUTS0_code"]).index(country_code_profile)
+            except:
+                print("NO LOAD PROFILE for {}. Default is German profile.". format(country_code))
+                idx_profile = list(heat_load_profiles["NUTS0_code"]).index("DE")
+            heat_load_profile_country = heat_load_profiles["load"][idx_profile:(idx_profile+8760)]
+            
+            for dem_type, short_type in zip(["Heat Q1 [TWh]", "Heat Q2 [TWh]", "Heat Q3 [TWh]", "Heat Q4 [TWh]", "Hydrogen [TWh]"],
+                                            ["Heat_Q1", "Heat_Q2", "Heat_Q3", "Heat_Q4", "H2"]):
+                # same profile for all subcategories
+                if pd.isna(year_dem_sheet[dem_type][idx_dem]) == False:
+                    col_body = pd.concat([pd.Series(0, [0]), heat_load_profile_country.iloc[:]])
+                    col_body = col_body * year_dem_sheet[dem_type][idx_dem] /1000000
+                else:
+                    col_body = pd.concat([pd.Series(0, [0]), heat_load_profile_country.iloc[:]]) * 0
+                matrix_ind.append(col_body)
+
+                    
+        if counter == 0:
+            matrix = np.array(matrix_ind.copy())#np.zeros((8760, 4))
+        else:
+            matrix += np.array(matrix_ind)
+                
+    
     elec_timeseries = pd.DataFrame(content, columns = elec_timeseries_col)
     heat_h2_timeseries = pd.DataFrame(matrix).transpose()
     heat_h2_timeseries.columns = heat_h2_col
     #heat_h2_timeseries = heat_h2_timeseries.assign(t=pd.Series([i for i in range(0,8760)]))
     timeseries = pd.concat([elec_timeseries, heat_h2_timeseries], axis=1)
-    return timeseries # elec_timeseries, heat_h2_timeseries 
+    return timeseries 
 
+#------------------------------------------------------------------------------ 
+def get_abb_NUTS2(region, abb_table):
+    return region[0:2]
+
+def get_abb_country(region, abb_table):
+    return abb_table["Abbreviation"][list(abb_table["Country"]).index(region)]
 #------------------------------------------------------------------------------ 
