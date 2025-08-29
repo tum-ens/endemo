@@ -1,18 +1,20 @@
-# EnDeMo v3.0.0
+# endemo v3.0.0
 
-The module calculates the forecast energy demand for a defined  geographical area. The result output includes the energy-related sectors (households; industry; traffic; commerce, trade and services).   
-
-Note: This is a public version. The majority of the input data and output results are exemplary and are provided solely for the purpose of demonstrating the model's functionality. They should not be used for planning or analytical purposes.
+The module estimates future energy demand for a defined geographical area and energy consumption sector(s) (for example households; industry; traffic; commerce, trade and services).   
 
 ## Features
-...
+ The tool estimates
+1. useful energy demand (application types are defined by user; application form "Heat" additionally distingueses multiple temperature levels)
+2. final energy demand (energy carriers are defined by user)
+3. a number of factors (like household size, industrial production quantities etc. - user defined) which impact this demand.
+
+The estimations are done per consumption sectors (defined by user - example industry, households, commercial, trade and services (CTS) and/or traffic.)
+
+Results are obtainable as yearly data as well as hourly time series.
 
 ## Documentation
 
-The documentation of the source code can be found locally in folder docs/_build/html/index.html
-Please open with it within a browser. 
-
-Creating a bookmark within the browser can help you find the documentation more quickly when used often.
+The documentation of the source code is in progress.
 
 ## Installation
 
@@ -20,14 +22,14 @@ Creating a bookmark within the browser can help you find the documentation more 
 If you intend to further develop the software, please install the git version control system first. In Linux distributions, git can be installed via the package manager. For Windows, go to http://git-scm.com/. Remark: At step "Adjusting your PATH environment", select "Run Git from the Windows Command Prompt".
 
 Then, in a directory of your choice, clone this repository by:
-`git clone https://github.com/AmaduEpishev1/endemov3.0.0.git`
+`git clone https://github.com/tum-ens/endemo.git`
 
 A better way to clone repositories is to use a password-protected SSH key. See the [Github documentation](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) on how to add an SSH key to your account.
 
 Continue at “Installation of endemo” below.
 
 ### Download (users only)
-If you do not intend to further develop the software, pick the [latest release](https://github.com/AmaduEpishev1/endemov3.0.0.git) and download the zip file.
+If you do not intend to further develop the software, pick the [latest release](https://github.com/tum-ens/endemo/releases) and download the zip file.
 
 ### Installation of endemo
 We recommend using the Python distribution Anaconda or Mamba. If you don't want  to use it or already have an existing Python (version 3.10 recommended) installation, you can also download the required packages by yourself.
@@ -44,6 +46,7 @@ We recommend using the Python distribution Anaconda or Mamba. If you don't want 
    5. Each time you open a new terminal for running endemo, you can activate the environment by `conda activate endemo2`.
    6. At first run, you may have to init conda or mamba by running `conda init`
 
+Continue at [Get Started](https://github.com/tum-ens/endemo/tree/dev#get-started). 
 
 #### Manually (the hard way)
 
@@ -55,4 +58,3 @@ For all packages, best take the latest release or release  candidate version. Bo
 After installation, got to the directory you downloaded or cloned endemo into and execute the script main.py by using the following on the command prompt (Windows) or Terminal (Linux) : python main.py.
 
 The results will be stored in the folder output.
-
