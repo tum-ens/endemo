@@ -1,27 +1,20 @@
-# endemo
+# endemo v3.0.0
 
-*endemo* is an energy demand model and a modelling framework.
+The module estimates future energy demand for a defined geographical area and energy consumption sector(s) (for example households; industry; traffic; commerce, trade and services).   
 
 ## Features
-The tool forecast and analysis energy demand for a defined geographical area. It considers four main consumption sectors: industry, households, commercial, trade and services (CTS) and traffic.
-*endemo* calculates 
-1. useful energy demand (in form of heat with distinction of temperature levels, energy for electrical applications)
-2. energy services (mobility with distinction of freight and passenger transport)
-3. feedstock hydrogen (non-energetic usage)
-4. final energy demand (in form of electricity, fuel, hydrogen for both energetic as well non-energetic usage)
+ The tool estimates
+1. useful energy demand (application types are defined by user; application form "Heat" additionally distingueses multiple temperature levels)
+2. final energy demand (energy carriers are defined by user)
+3. a number of factors (like household size, industrial production quantities etc. - user defined) which impact this demand.
 
-and a number of factors (like household size, industrial production quantities etc.) which impact this demand. 
-
-For included European countries it can deliver the results on NUTS2 (nomenclature of territorial units for statistics level 2) or on country level.
+The estimations are done per consumption sectors (defined by user - example industry, households, commercial, trade and services (CTS) and/or traffic.)
 
 Results are obtainable as yearly data as well as hourly time series.
 
-## Data set
-Underlaying data and assumptions set is provided for users easier and quicker data-base funded forecasts and analysis.
+## Documentation
 
-## Data set - copyright
-Unless otherwise indicated (e.g. in individual licence notices), the data set provided as the input file for this model is licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) licence (https://creativecommons.org/licenses/by/4.0/). This means that reuse is allowed, provided appropriate credit is given and changes are indicated. 
-The individual licence notices regarding the data contained is provided to the best of the authors' knowledge and belief.
+The documentation of the source code is in progress.
 
 ## Installation
 
@@ -48,11 +41,12 @@ We recommend using the Python distribution Anaconda or Mamba. If you don't want 
 2. Packages
    1. Download the environment file endemo-env.yml.
    2. Launch a new command prompt (Windows: Win+R, type "cmd", Enter / Linux: CTRL+Alt+T)
-   3. Install it via conda or mamba by `conda env create -f endemo-env.yml`.
-   4. Each time you open a new terminal for running endemo, you can activate the environment by `conda activate endemo`.
-   5. At first run, you may have to init conda or mamba by running `conda init`
+   3. Install it via conda or mamba by `conda env create -f endemo-env.yml`
+   4. Install per terminal additional packages: `pip install brotli==1.1.0 dash==2.7.0 dash-bootstrap-components==1.4.1 flask==2.3.3 importlib-metadata==8.7.0 narwhals==1.37.1 plotly==6.0.1 typing-extensions==4.0.0 werkzeug==2.3.7 xlsxwriter==3.2.0 zstandard==0.23.0`
+   5. Each time you open a new terminal for running endemo, you can activate the environment by `conda activate endemo2`.
+   6. At first run, you may have to init conda or mamba by running `conda init`
 
-Continue at [Get Started](https://github.com/tum-ens/endemo#get-started).
+Continue at [Get Started](https://github.com/tum-ens/endemo/tree/dev#get-started). 
 
 #### Manually (the hard way)
 
@@ -61,10 +55,6 @@ For all packages, best take the latest release or release  candidate version. Bo
 <a name="get-started"></a>
 ## Get started
 
-After installation, got to the directory you downloaded or cloned endemo into and execute the script *main.py* by using the following on the command prompt (Windows) or Terminal (Linux) :
-`python main.py`.
+After installation, got to the directory you downloaded or cloned endemo into and execute the script main.py by using the following on the command prompt (Windows) or Terminal (Linux) : python main.py.
 
-The results will be stored in the folder *results*.
-
-## Cite
-See  https://ssrn.com/abstract=4803430
+The results will be stored in the folder output.
