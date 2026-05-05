@@ -501,30 +501,6 @@ class Visualizer:
         return fig
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def _generate_energy_bar_plot_go(self, data, year): #TODO to fix for dash howevre it shows the counts i dont know how to fix it
         data['Value'] = pd.to_numeric(data['Value'])
         agg_data = data.groupby(['Region', 'Energy_Type', 'Sector'], as_index=False)['Value'].sum()

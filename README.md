@@ -1,3 +1,4 @@
+
 # endemo
 
 
@@ -490,4 +491,5 @@ Methodological reference
 Kerekes, A., Breuning, L., Kuhn, P., and Hamacher, T. endemo – an Open-Source Energy Demand Modelling Framework in European Context.
 
 See https://ssrn.com/abstract=4803430
+
 

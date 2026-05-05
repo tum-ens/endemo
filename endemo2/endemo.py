@@ -123,7 +123,7 @@ class Endemo:
             forecast_subregion_division(self.data)
         print(f"[{self._timestamp()}] Forecast for DDrs and Subregions done ({perf_counter() - step_start:.2f}s)")
 
-        # #Calculate the forecast (calculate ECUs and DDet) #noch schön machen!
+        # #Calculate the forecast (calculate ECUs and DDet) #noch schï¿½n machen!
         print(f"[{self._timestamp()}] Do Predictions...")
         step_start = perf_counter()
         calc_ECU_DDet(self.data)
