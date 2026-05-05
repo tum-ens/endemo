@@ -185,4 +185,4 @@ dependencies:
     - dash==2.7.0
     - dash-bootstrap-components==1.4.1 
     - plotly==6.0.1
-prefix: C:\Users\Chris\anaconda3\envs\endemo2
+

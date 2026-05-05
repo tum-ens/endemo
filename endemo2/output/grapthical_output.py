@@ -5,7 +5,42 @@ import pandas as pd
 import numpy as np
 from dash import Dash, dcc, html, Input, Output
 import dash_bootstrap_components as dbc
-from endemo2.data_structures.conversions_string import region_colors
+region_colors = {
+    'Belgium': '#FF7F0E',  # Orange
+    'Bulgaria': '#1F77B4',  # Blue
+    'Czechia': '#2CA02C',  # Green
+    'Denmark': '#D62728',  # Red
+    'Germany': '#9467BD',  # Purple
+    'Ireland': '#8C564B',  # Brown
+    'Greece': '#E377C2',  # Pink
+    'Spain': '#7F7F7F',  # Gray
+    'France': '#BCBD22',  # Lime
+    'Croatia': '#17BECF',  # Cyan
+    'Italy': '#F08080',  # Light Coral
+    'Latvia': '#00CED1',  # Dark Turquoise
+    'Luxembourg': '#DAA520',  # Goldenrod
+    'Hungary': '#8A2BE2',  # Blue Violet
+    'Netherlands': '#5F9EA0',  # Cadet Blue
+    'Austria': '#FF1493',  # Deep Pink
+    'Poland': '#ADFF2F',  # Green Yellow
+    'Portugal': '#FF4500',  # Orange Red
+    'Romania': '#7FFF00',  # Chartreuse
+    'Slovenia': '#40E0D0',  # Turquoise
+    'Slovakia': '#9ACD32',  # Yellow Green
+    'Finland': '#FFD700',  # Gold
+    'Sweden': '#DC143C',  # Crimson
+    'United Kingdom': '#4682B4',  # Steel Blue
+    'Norway': '#00FA9A',  # Medium Spring Green
+    'Switzerland': '#B22222',  # Firebrick
+    'Montenegro': '#9932CC',  # Dark Orchid
+    'North Macedonia': '#556B2F',  # Dark Olive Green
+    'Albania': '#6495ED',  # Cornflower Blue
+    'Serbia': '#DB7093',  # Pale Violet Red
+    'Bosnia and Herzegovina': '#20B2AA',  # Light Sea Green
+    'Iceland': '#FF6347',  # Tomato
+    'Lithuania': '#6A5ACD',  # Slate Blue
+    'Estonia': '#66CDAA'  # Medium Aquamarine
+}
 
 class GraphDataPreparer:
     def __init__(self, data):
@@ -464,30 +499,6 @@ class Visualizer:
             font_size=12
         )
         return fig
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     def _generate_energy_bar_plot_go(self, data, year): #TODO to fix for dash howevre it shows the counts i dont know how to fix it
